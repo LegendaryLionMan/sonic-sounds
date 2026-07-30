@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://album-studio.local/schemas/intake.json",
+  "title": "album-studio intake brief",
+  "description": "Form payload exported by site/intake.html. Read by the music-album-planning-questionnaire skill to write a CONCEPT-BRIEF.md.",
+  "type": "object",
+  "required": ["schemaVersion", "albumSlug", "submittedAt", "answers"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "albumSlug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,40}$",
+      "description": "URL-safe album identifier, derived from artist name + date (e.g. 'maren-sol-half-light-hours-2026-06-25')"
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of form export"
+    },
+    "intakeFormVersion": { "const": "2026-07-28" },
+    "answers": {
+      "type": "object",
+      "description": "Map of M·01..E·21 question IDs to answer objects",
+      "properties": {
+        "M01_concept":       { "$ref": "#/$defs/answerText" },
+        "M02_scope":         { "$ref": "#/$defs/answerSelect", "enum": ["single", "ep", "album", "double-feature", "concept-piece"] },
+        "M03_genre":         { "$ref": "#/$defs/answerText" },
+        "M04_references":    { "$ref": "#/$defs/answerRefs" },
+        "M05_vocal":         { "$ref": "#/$defs/answerVocal" },
+        "M06_language":      { "$ref": "#/$defs/answerLanguages" },
+        "M07_runtime":       { "$ref": "#/$defs/answerSelect", "enum": ["radio-edit", "standard", "extended", "immersive"] },
+        "M08_artist":        { "$ref": "#/$defs/answerText" },
+        "R09_title":         { "$ref": "#/$defs/answerText" },
+        "R10_tracklist":     { "$ref": "#/$defs/answerTracklist" },
+        "R11_motif":         { "$ref": "#/$defs/answerText" },
+        "R12_production":    { "$ref": "#/$defs/answerSelect", "enum": ["stripped", "full-band", "electronic", "cinematic", "hybrid"] },
+        "R13_lyricalSource": { "$ref": "#/$defs/answerSelect", "enum": ["user-writes", "agent-writes", "co-write"] },
+        "R14_distribution":  { "$ref": "#/$defs/answerSelect", "enum": ["just-for-me", "routenote-free", "full-dsp", "physical-and-dsp"] },
+        "E15_arc":           { "$ref": "#/$defs/answerText" },
+        "E16_influences":    { "$ref": "#/$defs/answerText" },
+        "E17_coverArt":      { "$ref": "#/$defs/answerText" },
+        "E18_anchor":        { "$ref": "#/$defs/answerText" },
+        "E19_pressScope":    { "$ref": "#/$defs/answerSelect", "enum": ["music-only", "music-press", "music-press-social", "everything"] },
+        "E20_musicVideos":   { "$ref": "#/$defs/answerSelect", "enum": ["0", "1-2", "3-5"] },
+        "E21_deadline":      { "$ref": "#/$defs/answerDate" }
+      },
+      "additionalProperties": false
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Map of question IDs to true if the user accepted an agent default instead of answering",
+      "additionalProperties": { "type": "boolean" }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "List of question IDs the user chose not to answer (Recommended or Extra tier only)",
+      "items": { "type": "string", "pattern": "^[RE][0-9]{2}_" }
+    }
+  },
+  "$defs": {
+    "answerText": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value":      { "type": "string", "minLength": 1 },
+        "isDefault":  { "type": "boolean", "default": false }
+      }
+    },
+    "answerSelect": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value":      { "type": "string" },
+        "isDefault":  { "type": "boolean", "default": false }
+      }
+    },
+    "answerRefs": {
+      "type": "object",
+      "required": ["artists"],
+      "properties": {
+        "artists": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name":      { "type": "string" },
+              "compAlbum": { "type": "string" },
+              "rationale": { "type": "string" }
+            }
+          }
+        },
+        "isDefault": { "type": "boolean", "default": false }
+      }
+    },
+    "answerVocal": {
+      "type": "object",
+      "required": ["approach"],
+      "properties": {
+        "approach":   { "type": "string", "enum": ["solo", "duet", "choir", "spoken-word", "instrumental"] },
+        "character":  { "type": "string", "description": "Free-text voice character description" },
+        "isDefault":  { "type": "boolean", "default": false }
+      }
+    },
+    "answerLanguages": {
+      "type": "object",
+      "required": ["languages"],
+      "properties": {
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 2 }
+        },
+        "isDefault": { "type": "boolean", "default": false }
+      }
+    },
+    "answerTracklist": {
+      "type": "object",
+      "required": ["tracks"],
+      "properties": {
+        "tracks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": ["index", "title"],
+            "properties": {
+              "index": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "title": { "type": "string", "minLength": 1 },
+              "theme": { "type": "string" }
+            }
+          }
+        },
+        "isDefault": { "type": "boolean", "default": false }
+      }
+    },
+    "answerDate": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value":     { "type": "string", "format": "date" },
+        "isDefault": { "type": "boolean", "default": false }
+      }
+    }
+  },
+  "additionalProperties": false
+}

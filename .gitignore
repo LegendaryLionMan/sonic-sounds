@@ -1,0 +1,44 @@
+# album-studio .gitignore
+# Last updated: 2026-08-01 (structure cleanup)
+# Why: prevents re-spread of artifacts; see docs/STRUCTURE-POLICY.md.
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# --- Open Design artifacts (rebuildable, ~70 KB per prototype) ---
+.od-skills/
+
+# --- Placeholders (mark a not-yet-built subdirectory) ---
+.placeholder
+*.placeholder
+
+# --- Local scratch / temp dumps ---
+*.tmp
+*.bak
+
+# --- Large media outside the project (lives in OneDrive music-test-*) ---
+# Music research sandboxes are large (200+ MB) and rebuildable.
+# They're stored on disk for reference but not in git.
+music/archive/
+
+# Audio quality research: keep scripts + JSON data + reports; ignore mp3 outputs
+# (rebuildable from music-3.0 with same brief)
+planning/audio-quality-2026-07-30/*.mp3
+
+# --- Editor / OS noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# --- Secrets ---
+.env
+.env.local
+*.key
+*.pem

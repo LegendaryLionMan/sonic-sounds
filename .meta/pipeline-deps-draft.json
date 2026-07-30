@@ -1,0 +1,203 @@
+{
+  "$schema": "https://album-studio.local/schemas/pipeline-deps.json",
+  "version": "0.1",
+  "schema_version_locked": "2026-07-30",
+  "description": "Declarative 12-layer DAG for album creation. Each layer specifies its dependencies, the approval gate, the mmx_action that produces it, and which output_table it writes. Consumed by db/pipeline.py to answer: 'can layer X run for album Y?' and 'what's the next runnable layer?'.",
+  "_note_status": "DRAFT — review before Day 2 of v3.2 plan",
+  "_note_unlocks": "Q29c (locked 2026-07-29): declarative DAG, not imperative scripts",
+
+  "layers": [
+    {
+      "id": "L1",
+      "display_name": "Artist brand",
+      "description": "5-sentence artist profile. Pulled from M08_artist + walkthrough decisions.",
+      "depends_on": [],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": null,
+      "output_table": null,
+      "output_paths": ["albums/<slug>/press/artist-profile.md"],
+      "auto_skip_if": ["M08_artist is empty"],
+      "typical_duration_min": 5
+    },
+    {
+      "id": "L2",
+      "display_name": "Tracklist + lyrics",
+      "description": "All lyrics for all tracks. Halts at STEP 1.5 for user approval of all lyrics BEFORE any music generation.",
+      "depends_on": ["L1"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": null,
+      "output_table": "lyrics_drafts",
+      "output_paths": ["albums/<slug>/lyrics-lrc/"],
+      "checkpoint_at_step": "1.5",
+      "typical_duration_min": 60
+    },
+    {
+      "id": "L3",
+      "display_name": "Lyrics finalize",
+      "description": "Lock final lyrics per track. Quality scoring. Mark is_current=1, set is_locked=1.",
+      "depends_on": ["L2"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": null,
+      "output_table": "lyrics_drafts",
+      "typical_duration_min": 10
+    },
+    {
+      "id": "L4",
+      "display_name": "Music tracks (generation)",
+      "description": "Generate all audio via mmx music generate. Halts at STEP 1.7 for user approval of all composed prompts BEFORE any music API call.",
+      "depends_on": ["L3"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "music_generate",
+      "output_table": "tracks",
+      "output_paths": ["albums/<slug>/music/"],
+      "checkpoint_at_step": "1.7",
+      "per_song_params_captured": true,
+      "estimated_quota_per_track_pct": 4,
+      "typical_duration_min": 90
+    },
+    {
+      "id": "L5",
+      "display_name": "Mastering",
+      "description": "Apply loudnorm two-pass per track, embed ID3 metadata, gapless-stitch album sequence. NOT a music API call — pure ffmpeg + mutagen.",
+      "depends_on": ["L4"],
+      "approval_required": false,
+      "approval_layer": "auto",
+      "mmx_action": null,
+      "output_table": "tracks",
+      "output_paths": ["albums/<slug>/music/"],
+      "tools": ["ffmpeg-loudnorm", "mutagen-id3v24", "ffmpeg-acrossfade"],
+      "typical_duration_min": 15
+    },
+    {
+      "id": "L6",
+      "display_name": "Cover art",
+      "description": "Generate cover art via mmx image_generate. 3 candidates, user picks.",
+      "depends_on": ["L1"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "image_generate",
+      "output_table": "assets",
+      "output_paths": ["albums/<slug>/cover-art/"],
+      "candidates_count": 3,
+      "estimated_quota_per_call_pct": 2,
+      "typical_duration_min": 20
+    },
+    {
+      "id": "L7",
+      "display_name": "Cassette sticker",
+      "description": "Generate cassette J-card sticker using the cassette-mesh template. SVG-based.",
+      "depends_on": ["L1", "L4"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "image_generate",
+      "output_table": "assets",
+      "output_paths": ["albums/<slug>/cassette-stickers/"],
+      "template": "cassette-mesh",
+      "estimated_quota_per_call_pct": 2,
+      "typical_duration_min": 20
+    },
+    {
+      "id": "L8",
+      "display_name": "Press pack",
+      "description": "Press release, bio, fact sheet, hi-res photos. Markdown + image.",
+      "depends_on": ["L1", "L6"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": null,
+      "output_table": null,
+      "output_paths": ["albums/<slug>/press/"],
+      "deliverables": ["press-release.md", "fact-sheet.md", "bio.md"],
+      "typical_duration_min": 30
+    },
+    {
+      "id": "L9",
+      "display_name": "Merch assets",
+      "description": "T-shirt designs, poster variants, bundle artwork.",
+      "depends_on": ["L1", "L6"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "image_generate",
+      "output_table": "assets",
+      "output_paths": ["albums/<slug>/merch/"],
+      "deliverables": ["tee-shirt-front.png", "tee-shirt-back.png", "poster-A2.png"],
+      "estimated_quota_per_call_pct": 2,
+      "typical_duration_min": 30
+    },
+    {
+      "id": "L10",
+      "display_name": "Music videos",
+      "description": "Generate video storyboards (mp4) for 1-3 tracks. mmx video_generate.",
+      "depends_on": ["L4"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "video_generate",
+      "output_table": "assets",
+      "output_paths": ["albums/<slug>/videos/"],
+      "deliverables": ["storyboard-N.mp4"],
+      "estimated_quota_per_call_pct": 8,
+      "typical_duration_min": 45
+    },
+    {
+      "id": "L11",
+      "display_name": "Social bundle",
+      "description": "Cover variants for Instagram square, Twitter header, Spotify Canvas-style loops. Pre-save campaign assets.",
+      "depends_on": ["L6", "L4"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": "image_generate",
+      "output_table": "assets",
+      "output_paths": ["albums/<slug>/social/"],
+      "deliverables": ["instagram-square.png", "twitter-header.png", "storyboard-loop.mp4"],
+      "estimated_quota_per_call_pct": 1,
+      "typical_duration_min": 20
+    },
+    {
+      "id": "L12",
+      "display_name": "Distribute",
+      "description": "Move superseded versions to _OLD/, generate INDEX.md, mirror to OneDrive, prepare DSP submission package (DDEX XML if full-dsp, or zipped folder for manual upload).",
+      "depends_on": ["L5", "L6", "L7", "L8", "L9", "L10", "L11"],
+      "approval_required": true,
+      "approval_layer": "user",
+      "mmx_action": null,
+      "output_table": null,
+      "output_paths": ["albums/<slug>/_OLD/", "albums/<slug>/INDEX.md"],
+      "scripts": ["scripts/finalize-album.py"],
+      "typical_duration_min": 15
+    }
+  ],
+
+  "summary_stats": {
+    "total_layers": 12,
+    "user_approval_gates": 11,
+    "auto_layers": 1,
+    "mmx_actions": ["music_generate", "image_generate", "video_generate"],
+    "estimated_total_quota_pct": 35,
+    "estimated_total_duration_min": 360
+  },
+
+  "execution_model": {
+    "concurrency": "single-album serial, cross-album parallel OK",
+    "checkpoint_strategy": "halt after each L4 prompt-set approval, each L6/L7/L9/L10/L11 candidate approval, L8 final approval, L12 finalize",
+    "retry_policy": "Q28: never auto-retry. User clicks [retry] or [skip].",
+    "resume_strategy": "SQLite-backed. Restart picks up at last completed layer."
+  },
+
+  "approval_gates_explained": {
+    "L1": "Approve 5-sentence artist profile. Can edit inline.",
+    "L2": "Approve all lyrics for all tracks. Can request edits via chat.",
+    "L3": "Lock final lyrics. Last chance to edit before music generation.",
+    "L4": "Approve all composed prompts. Per-track: re-generate / approve / skip.",
+    "L5": "Auto-master. User sees summary; can override loudness target.",
+    "L6": "Approve cover art from 3 candidates. Can re-roll.",
+    "L7": "Approve cassette sticker. Can re-roll.",
+    "L8": "Approve press pack. Can edit text inline.",
+    "L9": "Approve merch. Per-asset re-roll.",
+    "L10": "Approve music videos. Per-video re-roll.",
+    "L11": "Approve social bundle. Per-asset re-roll.",
+    "L12": "Final sign-off. Generates _OLD/INDEX.md, mirrors to OneDrive."
+  }
+}
