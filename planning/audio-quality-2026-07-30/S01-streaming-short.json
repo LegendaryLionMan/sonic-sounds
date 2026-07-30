@@ -1,0 +1,26 @@
+{
+  "file": "S01-streaming-short.mp3",
+  "size_bytes": 7789174,
+  "ebu_integrated_lufs": -15.7,
+  "ebu_threshold_lufs": -25.8,
+  "ebu_loudness_range_lu": 3.7,
+  "ebu_true_peak_dbtp": 0.1,
+  "peak_db": 0.10494,
+  "rms_db": -18.002182,
+  "crest_linear": 8.716215,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.845075,
+  "dynamic_range_db": 200.380344,
+  "zero_crossings": 528839.0,
+  "spectral_mean": 1.62669e-05,
+  "spectral_centroid": 4095.12,
+  "spectral_flatness": 0.188735,
+  "duration_s": 243.384188,
+  "bit_rate": 256028,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "B02-bpm-120-mid.mp3",
+  "size_bytes": 2943215,
+  "ebu_integrated_lufs": -13.6,
+  "ebu_threshold_lufs": -23.8,
+  "ebu_loudness_range_lu": 7.8,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": 0.249241,
+  "rms_db": -15.721704,
+  "crest_linear": 5.983831,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.869832,
+  "dynamic_range_db": 159.116649,
+  "zero_crossings": 154630.0,
+  "spectral_mean": 1.91383e-05,
+  "spectral_centroid": 2076.52,
+  "spectral_flatness": 0.163821,
+  "duration_s": 91.788481,
+  "bit_rate": 256521,
+  "format_name": "mp3",
+  "quality_tags": [
+    "neutral",
+    "gritty/noisy"
+  ]
+}

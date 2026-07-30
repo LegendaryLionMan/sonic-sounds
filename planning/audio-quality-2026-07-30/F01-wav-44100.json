@@ -1,0 +1,26 @@
+{
+  "file": "F01-wav-44100.wav",
+  "size_bytes": 14920930,
+  "ebu_integrated_lufs": -15.7,
+  "ebu_threshold_lufs": -25.8,
+  "ebu_loudness_range_lu": 6.4,
+  "ebu_true_peak_dbtp": -0.1,
+  "peak_db": -0.162143,
+  "rms_db": -18.128909,
+  "crest_linear": 7.827796,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.835405,
+  "dynamic_range_db": 96.052465,
+  "zero_crossings": 209792.0,
+  "spectral_mean": 1.1663e-05,
+  "spectral_centroid": 4068.27,
+  "spectral_flatness": 0.292795,
+  "duration_s": 84.578685,
+  "bit_rate": 1411318,
+  "format_name": "wav",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

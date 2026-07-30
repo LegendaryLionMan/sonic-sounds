@@ -1,0 +1,26 @@
+{
+  "file": "F02-mp3-256k.mp3",
+  "size_bytes": 4860219,
+  "ebu_integrated_lufs": -15.4,
+  "ebu_threshold_lufs": -25.6,
+  "ebu_loudness_range_lu": 5.2,
+  "ebu_true_peak_dbtp": -0.0,
+  "peak_db": -0.041711,
+  "rms_db": -17.476067,
+  "crest_linear": 7.09473,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.846136,
+  "dynamic_range_db": 163.830832,
+  "zero_crossings": 264919.0,
+  "spectral_mean": 4.6107e-06,
+  "spectral_centroid": 9880.92,
+  "spectral_flatness": 0.191888,
+  "duration_s": 151.626304,
+  "bit_rate": 256431,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

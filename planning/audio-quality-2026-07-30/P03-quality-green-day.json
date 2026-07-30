@@ -1,0 +1,26 @@
+{
+  "file": "P03-quality-green-day.mp3",
+  "size_bytes": 5189063,
+  "ebu_integrated_lufs": -14.3,
+  "ebu_threshold_lufs": -24.6,
+  "ebu_loudness_range_lu": 7.8,
+  "ebu_true_peak_dbtp": 0.2,
+  "peak_db": 0.201376,
+  "rms_db": -17.234115,
+  "crest_linear": 7.351748,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.853523,
+  "dynamic_range_db": 160.013598,
+  "zero_crossings": 492991.0,
+  "spectral_mean": 2.50578e-06,
+  "spectral_centroid": 3960.02,
+  "spectral_flatness": 0.235969,
+  "duration_s": 161.889524,
+  "bit_rate": 256424,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

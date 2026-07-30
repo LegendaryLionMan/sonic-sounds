@@ -1,0 +1,26 @@
+{
+  "file": "F03-mp3-128k.mp3",
+  "size_bytes": 1740380,
+  "ebu_integrated_lufs": -14.9,
+  "ebu_threshold_lufs": -24.9,
+  "ebu_loudness_range_lu": 3.3,
+  "ebu_true_peak_dbtp": -0.4,
+  "peak_db": -0.4189,
+  "rms_db": -17.424111,
+  "crest_linear": 6.449157,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.848365,
+  "dynamic_range_db": 163.51186,
+  "zero_crossings": 325435.0,
+  "spectral_mean": 1.74212e-06,
+  "spectral_centroid": 451.235,
+  "spectral_flatness": 0.102735,
+  "duration_s": 108.530068,
+  "bit_rate": 128287,
+  "format_name": "mp3",
+  "quality_tags": [
+    "dark",
+    "textured"
+  ]
+}

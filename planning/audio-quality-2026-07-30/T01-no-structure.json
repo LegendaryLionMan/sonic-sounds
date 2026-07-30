@@ -1,0 +1,26 @@
+{
+  "file": "T01-no-structure.mp3",
+  "size_bytes": 2928153,
+  "ebu_integrated_lufs": -16.5,
+  "ebu_threshold_lufs": -26.7,
+  "ebu_loudness_range_lu": 7.7,
+  "ebu_true_peak_dbtp": -0.5,
+  "peak_db": -0.601324,
+  "rms_db": -18.860067,
+  "crest_linear": 7.933467,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.831709,
+  "dynamic_range_db": 163.271219,
+  "zero_crossings": 254525.0,
+  "spectral_mean": 1.26055e-05,
+  "spectral_centroid": 5111.98,
+  "spectral_flatness": 0.389844,
+  "duration_s": 91.312472,
+  "bit_rate": 256539,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

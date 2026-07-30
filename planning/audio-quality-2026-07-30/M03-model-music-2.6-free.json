@@ -1,0 +1,26 @@
+{
+  "file": "M03-model-music-2.6-free.mp3",
+  "size_bytes": 4758971,
+  "ebu_integrated_lufs": -10.7,
+  "ebu_threshold_lufs": -21.1,
+  "ebu_loudness_range_lu": 10.5,
+  "ebu_true_peak_dbtp": 0.6,
+  "peak_db": 0.642239,
+  "rms_db": -13.488029,
+  "crest_linear": 5.068075,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.880746,
+  "dynamic_range_db": 186.914554,
+  "zero_crossings": 607227.0,
+  "spectral_mean": 3.09647e-06,
+  "spectral_centroid": 2765.21,
+  "spectral_flatness": 0.316543,
+  "duration_s": 148.45678,
+  "bit_rate": 256450,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

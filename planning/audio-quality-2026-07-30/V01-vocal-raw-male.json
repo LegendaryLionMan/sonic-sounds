@@ -1,0 +1,26 @@
+{
+  "file": "V01-vocal-raw-male.mp3",
+  "size_bytes": 6685180,
+  "ebu_integrated_lufs": -15.4,
+  "ebu_threshold_lufs": -25.6,
+  "ebu_loudness_range_lu": 5.0,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": -0.044704,
+  "rms_db": -18.028764,
+  "crest_linear": 7.898457,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.826368,
+  "dynamic_range_db": 190.091813,
+  "zero_crossings": 549299.0,
+  "spectral_mean": 4.13723e-06,
+  "spectral_centroid": 4779.02,
+  "spectral_flatness": 0.392343,
+  "duration_s": 208.596463,
+  "bit_rate": 256387,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "L01-lyrics-optimizer.mp3",
+  "size_bytes": 7558751,
+  "ebu_integrated_lufs": -14.2,
+  "ebu_threshold_lufs": -24.3,
+  "ebu_loudness_range_lu": 5.8,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": 0.034183,
+  "rms_db": -16.986782,
+  "crest_linear": 7.052485,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.851688,
+  "dynamic_range_db": 160.41395,
+  "zero_crossings": 976335.0,
+  "spectral_mean": 4.11373e-06,
+  "spectral_centroid": 5321.56,
+  "spectral_flatness": 0.393128,
+  "duration_s": 235.868299,
+  "bit_rate": 256371,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "P02-quality-blink.mp3",
+  "size_bytes": 2918112,
+  "ebu_integrated_lufs": -13.6,
+  "ebu_threshold_lufs": -23.8,
+  "ebu_loudness_range_lu": 5.5,
+  "ebu_true_peak_dbtp": 0.2,
+  "peak_db": 0.193773,
+  "rms_db": -16.779648,
+  "crest_linear": 7.171657,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.859023,
+  "dynamic_range_db": 158.532903,
+  "zero_crossings": 384111.0,
+  "spectral_mean": 2.8228e-05,
+  "spectral_centroid": 2864.08,
+  "spectral_flatness": 0.150015,
+  "duration_s": 90.987392,
+  "bit_rate": 256572,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

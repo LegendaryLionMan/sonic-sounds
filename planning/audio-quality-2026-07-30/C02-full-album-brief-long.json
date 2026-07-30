@@ -1,0 +1,26 @@
+{
+  "file": "C02-full-album-brief-long.mp3",
+  "size_bytes": 3805907,
+  "ebu_integrated_lufs": -14.5,
+  "ebu_threshold_lufs": -24.8,
+  "ebu_loudness_range_lu": 5.7,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": 0.195691,
+  "rms_db": -17.625776,
+  "crest_linear": 7.871074,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.844667,
+  "dynamic_range_db": 178.725357,
+  "zero_crossings": 565289.0,
+  "spectral_mean": 1.3701e-05,
+  "spectral_centroid": 10893.1,
+  "spectral_flatness": 0.456927,
+  "duration_s": 118.712018,
+  "bit_rate": 256479,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

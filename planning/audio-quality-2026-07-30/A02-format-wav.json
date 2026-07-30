@@ -1,0 +1,26 @@
+{
+  "file": "A02-format-wav.wav",
+  "size_bytes": 27759842,
+  "ebu_integrated_lufs": -14.9,
+  "ebu_threshold_lufs": -25.0,
+  "ebu_loudness_range_lu": 5.1,
+  "ebu_true_peak_dbtp": 1.0,
+  "peak_db": -0.013264,
+  "rms_db": -17.517473,
+  "crest_linear": 7.462528,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.845881,
+  "dynamic_range_db": 96.316069,
+  "zero_crossings": 451350.0,
+  "spectral_mean": 3.7226e-05,
+  "spectral_centroid": 3117.2,
+  "spectral_flatness": 0.193571,
+  "duration_s": 157.361633,
+  "bit_rate": 1411263,
+  "format_name": "wav",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

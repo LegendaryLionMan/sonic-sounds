@@ -1,0 +1,26 @@
+{
+  "file": "T02-explicit-structure.mp3",
+  "size_bytes": 5903651,
+  "ebu_integrated_lufs": -16.7,
+  "ebu_threshold_lufs": -27.2,
+  "ebu_loudness_range_lu": 11.0,
+  "ebu_true_peak_dbtp": 0.4,
+  "peak_db": 0.279791,
+  "rms_db": -19.26436,
+  "crest_linear": 9.776047,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.810045,
+  "dynamic_range_db": 161.983669,
+  "zero_crossings": 471863.0,
+  "spectral_mean": 3.78069e-06,
+  "spectral_centroid": 3253.04,
+  "spectral_flatness": 0.35276,
+  "duration_s": 184.19229,
+  "bit_rate": 256412,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

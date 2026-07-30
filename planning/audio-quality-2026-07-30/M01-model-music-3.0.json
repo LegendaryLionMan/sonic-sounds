@@ -1,0 +1,26 @@
+{
+  "file": "M01-model-music-3.0.mp3",
+  "size_bytes": 4027648,
+  "ebu_integrated_lufs": -15.1,
+  "ebu_threshold_lufs": -25.6,
+  "ebu_loudness_range_lu": 7.4,
+  "ebu_true_peak_dbtp": 0.1,
+  "peak_db": 0.061007,
+  "rms_db": -17.590173,
+  "crest_linear": 7.464783,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.841964,
+  "dynamic_range_db": 176.134128,
+  "zero_crossings": 245265.0,
+  "spectral_mean": 6.32435e-05,
+  "spectral_centroid": 718.549,
+  "spectral_flatness": 0.0209477,
+  "duration_s": 125.643175,
+  "bit_rate": 256449,
+  "format_name": "mp3",
+  "quality_tags": [
+    "dark",
+    "clean"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "V03-vocal-duet.mp3",
+  "size_bytes": 4456066,
+  "ebu_integrated_lufs": -14.7,
+  "ebu_threshold_lufs": -24.9,
+  "ebu_loudness_range_lu": 4.3,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": 0.051652,
+  "rms_db": -16.447408,
+  "crest_linear": 6.384125,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.864381,
+  "dynamic_range_db": 169.594364,
+  "zero_crossings": 201853.0,
+  "spectral_mean": 2.09015e-06,
+  "spectral_centroid": 1455.37,
+  "spectral_flatness": 0.184415,
+  "duration_s": 139.017868,
+  "bit_rate": 256431,
+  "format_name": "mp3",
+  "quality_tags": [
+    "warm",
+    "gritty/noisy"
+  ]
+}

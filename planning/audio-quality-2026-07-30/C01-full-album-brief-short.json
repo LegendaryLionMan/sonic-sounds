@@ -1,0 +1,26 @@
+{
+  "file": "C01-full-album-brief-short.mp3",
+  "size_bytes": 4340594,
+  "ebu_integrated_lufs": -14.0,
+  "ebu_threshold_lufs": -24.1,
+  "ebu_loudness_range_lu": 5.8,
+  "ebu_true_peak_dbtp": 0.1,
+  "peak_db": 0.107903,
+  "rms_db": -16.679674,
+  "crest_linear": 8.363026,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.854019,
+  "dynamic_range_db": 165.918647,
+  "zero_crossings": 303237.0,
+  "spectral_mean": 3.22105e-06,
+  "spectral_centroid": 2653.06,
+  "spectral_flatness": 0.311502,
+  "duration_s": 135.407166,
+  "bit_rate": 256446,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

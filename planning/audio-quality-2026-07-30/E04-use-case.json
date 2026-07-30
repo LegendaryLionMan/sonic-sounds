@@ -1,0 +1,26 @@
+{
+  "file": "E04-use-case.mp3",
+  "size_bytes": 3655292,
+  "ebu_integrated_lufs": -15.6,
+  "ebu_threshold_lufs": -26.1,
+  "ebu_loudness_range_lu": 7.3,
+  "ebu_true_peak_dbtp": -1.0,
+  "peak_db": -1.020995,
+  "rms_db": -19.032466,
+  "crest_linear": 7.777873,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.82165,
+  "dynamic_range_db": 164.691602,
+  "zero_crossings": 271481.0,
+  "spectral_mean": 3.24155e-06,
+  "spectral_centroid": 2270.01,
+  "spectral_flatness": 0.307255,
+  "duration_s": 114.021587,
+  "bit_rate": 256463,
+  "format_name": "mp3",
+  "quality_tags": [
+    "neutral",
+    "gritty/noisy"
+  ]
+}

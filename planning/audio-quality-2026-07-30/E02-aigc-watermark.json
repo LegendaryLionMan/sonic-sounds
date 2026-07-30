@@ -1,0 +1,26 @@
+{
+  "file": "E02-aigc-watermark.mp3",
+  "size_bytes": 2923133,
+  "ebu_integrated_lufs": -14.4,
+  "ebu_threshold_lufs": -24.6,
+  "ebu_loudness_range_lu": 3.5,
+  "ebu_true_peak_dbtp": 0.1,
+  "peak_db": 0.089361,
+  "rms_db": -17.809971,
+  "crest_linear": 7.666244,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.847482,
+  "dynamic_range_db": 153.314484,
+  "zero_crossings": 359568.0,
+  "spectral_mean": 1.12934e-05,
+  "spectral_centroid": 6183.62,
+  "spectral_flatness": 0.398894,
+  "duration_s": 91.149932,
+  "bit_rate": 256556,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

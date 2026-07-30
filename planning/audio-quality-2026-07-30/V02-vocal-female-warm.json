@@ -1,0 +1,26 @@
+{
+  "file": "V02-vocal-female-warm.mp3",
+  "size_bytes": 3849419,
+  "ebu_integrated_lufs": -14.5,
+  "ebu_threshold_lufs": -25.0,
+  "ebu_loudness_range_lu": 8.2,
+  "ebu_true_peak_dbtp": 0.8,
+  "peak_db": 0.398447,
+  "rms_db": -16.458907,
+  "crest_linear": 6.835287,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.847645,
+  "dynamic_range_db": 180.955187,
+  "zero_crossings": 140295.0,
+  "spectral_mean": 2.3786e-06,
+  "spectral_centroid": 3946.87,
+  "spectral_flatness": 0.120053,
+  "duration_s": 120.070385,
+  "bit_rate": 256477,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "textured"
+  ]
+}

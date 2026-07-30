@@ -1,0 +1,26 @@
+{
+  "file": "B03-bpm-165-fast.mp3",
+  "size_bytes": 5495315,
+  "ebu_integrated_lufs": -14.5,
+  "ebu_threshold_lufs": -24.6,
+  "ebu_loudness_range_lu": 3.5,
+  "ebu_true_peak_dbtp": 0.3,
+  "peak_db": 0.352668,
+  "rms_db": -17.217439,
+  "crest_linear": 7.205769,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.858297,
+  "dynamic_range_db": 164.92522,
+  "zero_crossings": 598137.0,
+  "spectral_mean": 2.42553e-06,
+  "spectral_centroid": 983.786,
+  "spectral_flatness": 0.14184,
+  "duration_s": 171.456145,
+  "bit_rate": 256406,
+  "format_name": "mp3",
+  "quality_tags": [
+    "warm",
+    "textured"
+  ]
+}

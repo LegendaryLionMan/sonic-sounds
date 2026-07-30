@@ -1,0 +1,26 @@
+{
+  "file": "B01-bpm-90-slow.mp3",
+  "size_bytes": 4018444,
+  "ebu_integrated_lufs": -13.6,
+  "ebu_threshold_lufs": -24.0,
+  "ebu_loudness_range_lu": 10.2,
+  "ebu_true_peak_dbtp": -0.2,
+  "peak_db": -0.184131,
+  "rms_db": -16.064986,
+  "crest_linear": 5.884974,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.86864,
+  "dynamic_range_db": 173.937138,
+  "zero_crossings": 267221.0,
+  "spectral_mean": 5.2104e-06,
+  "spectral_centroid": 6564.79,
+  "spectral_flatness": 0.458248,
+  "duration_s": 125.352925,
+  "bit_rate": 256456,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

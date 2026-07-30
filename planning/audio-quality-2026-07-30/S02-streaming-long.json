@@ -1,0 +1,26 @@
+{
+  "file": "S02-streaming-long.mp3",
+  "size_bytes": 10708202,
+  "ebu_integrated_lufs": -15.5,
+  "ebu_threshold_lufs": -25.9,
+  "ebu_loudness_range_lu": 10.7,
+  "ebu_true_peak_dbtp": 0.1,
+  "peak_db": 0.118565,
+  "rms_db": -17.960067,
+  "crest_linear": 8.322816,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.839864,
+  "dynamic_range_db": 167.759329,
+  "zero_crossings": 737485.0,
+  "spectral_mean": 5.76066e-06,
+  "spectral_centroid": 5084.1,
+  "spectral_flatness": 0.391067,
+  "duration_s": 334.603813,
+  "bit_rate": 256021,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

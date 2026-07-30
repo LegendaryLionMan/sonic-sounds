@@ -1,0 +1,26 @@
+{
+  "file": "G01-pure-indie-rock.mp3",
+  "size_bytes": 3911339,
+  "ebu_integrated_lufs": -14.8,
+  "ebu_threshold_lufs": -24.9,
+  "ebu_loudness_range_lu": 6.0,
+  "ebu_true_peak_dbtp": 0.0,
+  "peak_db": -0.025758,
+  "rms_db": -17.088814,
+  "crest_linear": 7.468072,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.852626,
+  "dynamic_range_db": 159.984257,
+  "zero_crossings": 210555.0,
+  "spectral_mean": 2.0291e-06,
+  "spectral_centroid": 1234.07,
+  "spectral_flatness": 0.16824,
+  "duration_s": 121.997642,
+  "bit_rate": 256486,
+  "format_name": "mp3",
+  "quality_tags": [
+    "warm",
+    "gritty/noisy"
+  ]
+}

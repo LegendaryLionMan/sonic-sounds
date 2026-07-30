@@ -1,0 +1,26 @@
+{
+  "file": "L03-instrumental.mp3",
+  "size_bytes": 5918712,
+  "ebu_integrated_lufs": -13.9,
+  "ebu_threshold_lufs": -24.6,
+  "ebu_loudness_range_lu": 10.7,
+  "ebu_true_peak_dbtp": 1.0,
+  "peak_db": 0.608441,
+  "rms_db": -16.370424,
+  "crest_linear": 6.943741,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.848624,
+  "dynamic_range_db": 170.311386,
+  "zero_crossings": 299739.0,
+  "spectral_mean": 3.11697e-06,
+  "spectral_centroid": 2623.98,
+  "spectral_flatness": 0.312269,
+  "duration_s": 184.679909,
+  "bit_rate": 256387,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

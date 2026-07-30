@@ -1,0 +1,26 @@
+{
+  "file": "G02-pop-punk-grunge.mp3",
+  "size_bytes": 4306287,
+  "ebu_integrated_lufs": -15.1,
+  "ebu_threshold_lufs": -25.5,
+  "ebu_loudness_range_lu": 10.9,
+  "ebu_true_peak_dbtp": -0.3,
+  "peak_db": -0.396293,
+  "rms_db": -17.817188,
+  "crest_linear": 7.768528,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.839891,
+  "dynamic_range_db": 167.157454,
+  "zero_crossings": 344877.0,
+  "spectral_mean": 2.05543e-06,
+  "spectral_centroid": 1706.95,
+  "spectral_flatness": 0.19866,
+  "duration_s": 134.327438,
+  "bit_rate": 256465,
+  "format_name": "mp3",
+  "quality_tags": [
+    "neutral",
+    "gritty/noisy"
+  ]
+}

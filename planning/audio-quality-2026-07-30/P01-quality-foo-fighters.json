@@ -1,0 +1,26 @@
+{
+  "file": "P01-quality-foo-fighters.mp3",
+  "size_bytes": 5040957,
+  "ebu_integrated_lufs": -15.0,
+  "ebu_threshold_lufs": -25.3,
+  "ebu_loudness_range_lu": 10.7,
+  "ebu_true_peak_dbtp": 1.0,
+  "peak_db": 0.40302,
+  "rms_db": -17.649313,
+  "crest_linear": 8.00523,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.843494,
+  "dynamic_range_db": 162.738048,
+  "zero_crossings": 407272.0,
+  "spectral_mean": 0.00023036,
+  "spectral_centroid": 1612.77,
+  "spectral_flatness": 0.0580784,
+  "duration_s": 157.280363,
+  "bit_rate": 256406,
+  "format_name": "mp3",
+  "quality_tags": [
+    "neutral",
+    "textured"
+  ]
+}

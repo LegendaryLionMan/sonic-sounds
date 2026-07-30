@@ -1,0 +1,26 @@
+{
+  "file": "A01-format-mp3.mp3",
+  "size_bytes": 2871254,
+  "ebu_integrated_lufs": -15.2,
+  "ebu_threshold_lufs": -26.0,
+  "ebu_loudness_range_lu": 12.3,
+  "ebu_true_peak_dbtp": 0.2,
+  "peak_db": 0.158901,
+  "rms_db": -18.090251,
+  "crest_linear": 7.8442,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.827833,
+  "dynamic_range_db": 170.768997,
+  "zero_crossings": 328019.0,
+  "spectral_mean": 5.49939e-06,
+  "spectral_centroid": 6862.14,
+  "spectral_flatness": 0.429556,
+  "duration_s": 89.547755,
+  "bit_rate": 256511,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "M04-model-music-2.5+.mp3",
+  "size_bytes": 2765822,
+  "ebu_integrated_lufs": -10.5,
+  "ebu_threshold_lufs": -20.5,
+  "ebu_loudness_range_lu": 4.3,
+  "ebu_true_peak_dbtp": 0.5,
+  "peak_db": 0.465543,
+  "rms_db": -13.215301,
+  "crest_linear": 4.944523,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.903416,
+  "dynamic_range_db": 181.083541,
+  "zero_crossings": 224082.0,
+  "spectral_mean": 0.00010307,
+  "spectral_centroid": 2227.57,
+  "spectral_flatness": 0.096314,
+  "duration_s": 86.250522,
+  "bit_rate": 256538,
+  "format_name": "mp3",
+  "quality_tags": [
+    "neutral",
+    "textured"
+  ]
+}

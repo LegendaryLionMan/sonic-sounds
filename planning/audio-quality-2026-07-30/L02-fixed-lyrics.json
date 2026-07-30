@@ -1,0 +1,26 @@
+{
+  "file": "L02-fixed-lyrics.mp3",
+  "size_bytes": 2843640,
+  "ebu_integrated_lufs": -14.5,
+  "ebu_threshold_lufs": -24.8,
+  "ebu_loudness_range_lu": 5.5,
+  "ebu_true_peak_dbtp": -1.0,
+  "peak_db": -1.035949,
+  "rms_db": -16.724819,
+  "crest_linear": 5.900045,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.855058,
+  "dynamic_range_db": 173.561449,
+  "zero_crossings": 175313.0,
+  "spectral_mean": 4.36257e-06,
+  "spectral_centroid": 5010.62,
+  "spectral_flatness": 0.343587,
+  "duration_s": 88.665397,
+  "bit_rate": 256572,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}

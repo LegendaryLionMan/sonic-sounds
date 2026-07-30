@@ -1,0 +1,26 @@
+{
+  "file": "O01-output-hex-default.mp3",
+  "size_bytes": 3821806,
+  "ebu_integrated_lufs": -14.9,
+  "ebu_threshold_lufs": -25.1,
+  "ebu_loudness_range_lu": 9.0,
+  "ebu_true_peak_dbtp": 0.6,
+  "peak_db": 0.514663,
+  "rms_db": -16.504894,
+  "crest_linear": 7.080894,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.847925,
+  "dynamic_range_db": 168.882698,
+  "zero_crossings": 210643.0,
+  "spectral_mean": 3.44714e-06,
+  "spectral_centroid": 2506.09,
+  "spectral_flatness": 0.32467,
+  "duration_s": 119.222857,
+  "bit_rate": 256447,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

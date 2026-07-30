@@ -1,0 +1,26 @@
+{
+  "file": "M02-model-music-2.6.mp3",
+  "size_bytes": 2134073,
+  "ebu_integrated_lufs": -11.2,
+  "ebu_threshold_lufs": -21.3,
+  "ebu_loudness_range_lu": 4.1,
+  "ebu_true_peak_dbtp": 0.4,
+  "peak_db": 0.360991,
+  "rms_db": -13.636235,
+  "crest_linear": 5.153908,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.88338,
+  "dynamic_range_db": 156.103784,
+  "zero_crossings": 207569.0,
+  "spectral_mean": 5.53711e-06,
+  "spectral_centroid": 2517.38,
+  "spectral_flatness": 0.209902,
+  "duration_s": 66.51356,
+  "bit_rate": 256678,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "file": "G03-cinematic-orchestral.mp3",
+  "size_bytes": 4607518,
+  "ebu_integrated_lufs": -16.6,
+  "ebu_threshold_lufs": -26.6,
+  "ebu_loudness_range_lu": 5.8,
+  "ebu_true_peak_dbtp": 1.7,
+  "peak_db": 0.956874,
+  "rms_db": -17.155299,
+  "crest_linear": 7.451837,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.816843,
+  "dynamic_range_db": 176.604039,
+  "zero_crossings": 102107.0,
+  "spectral_mean": 5.92766e-06,
+  "spectral_centroid": 3176.32,
+  "spectral_flatness": 0.281827,
+  "duration_s": 143.743129,
+  "bit_rate": 256430,
+  "format_name": "mp3",
+  "quality_tags": [
+    "bright",
+    "gritty/noisy"
+  ]
+}

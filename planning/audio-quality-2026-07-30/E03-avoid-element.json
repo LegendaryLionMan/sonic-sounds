@@ -1,0 +1,26 @@
+{
+  "file": "E03-avoid-element.mp3",
+  "size_bytes": 7532812,
+  "ebu_integrated_lufs": -15.5,
+  "ebu_threshold_lufs": -25.9,
+  "ebu_loudness_range_lu": 10.0,
+  "ebu_true_peak_dbtp": 1.0,
+  "peak_db": 0.573185,
+  "rms_db": -18.21497,
+  "crest_linear": 8.331635,
+  "flatness_db": 0.0,
+  "flatness_linear": 1.0,
+  "entropy": 0.830658,
+  "dynamic_range_db": 186.935062,
+  "zero_crossings": 555351.0,
+  "spectral_mean": 6.38414e-06,
+  "spectral_centroid": 9048.93,
+  "spectral_flatness": 0.346857,
+  "duration_s": 235.067211,
+  "bit_rate": 256362,
+  "format_name": "mp3",
+  "quality_tags": [
+    "harsh",
+    "gritty/noisy"
+  ]
+}
