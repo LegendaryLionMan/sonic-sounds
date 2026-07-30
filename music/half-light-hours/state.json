@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "updatedAt": "2026-07-28T15:30:00Z",
+  "album": {
+    "slug": "half-light-hours",
+    "artist": "Maren Sol",
+    "title": "Half-Light Hours",
+    "scope": "album",
+    "genre": "dream-folk"
+  },
+  "layers": [
+    { "id": 1,  "name": "Artist brand",                              "status": "done",        "updatedAt": "2026-07-28T11:42:00Z" },
+    { "id": 2,  "name": "Tracklist + lyrics",                        "status": "in-progress", "updatedAt": "2026-07-28T15:25:00Z" },
+    { "id": 3,  "name": "Music tracks",                              "status": "todo",        "updatedAt": null },
+    { "id": 4,  "name": "Album cover + posters",                     "status": "todo",        "updatedAt": null },
+    { "id": 5,  "name": "Spotify / DistroKid package",               "status": "todo",        "updatedAt": null },
+    { "id": 6,  "name": "EPK / Press kit",                           "status": "todo",        "updatedAt": null },
+    { "id": 7,  "name": "Social rollout (60-day)",                   "status": "todo",        "updatedAt": null },
+    { "id": 8,  "name": "Tour + merch catalog",                      "status": "todo",        "updatedAt": null },
+    { "id": 9,  "name": "Music video concepts + storyboards",        "status": "todo",        "updatedAt": null },
+    { "id": 10, "name": "Podcast / radio interview",                 "status": "todo",        "updatedAt": null },
+    { "id": 11, "name": "ID3 metadata embedding",                    "status": "blocked",     "updatedAt": "2026-07-28T15:20:00Z" },
+    { "id": 12, "name": "LRC synced lyrics",                         "status": "todo",        "updatedAt": null }
+  ],
+  "nextAction": {
+    "for": "user",
+    "text": "Review the draft lyrics for tracks 1–3 in music/half-light-hours/lyrics/ — Penelope will wait for your feedback before generating the rest.",
+    "link": "music/half-light-hours/lyrics/"
+  }
+}
