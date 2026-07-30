@@ -108,16 +108,21 @@ via CSS custom properties at the top of each file.
 
 ---
 
-## Mirrors
+## Project layout & mirrors
 
-Per the user's standard mirror rule:
+**Canonical layout:** see [`docs/STRUCTURE-POLICY.md`](docs/STRUCTURE-POLICY.md).
+That document is the **single source of truth** for where artifacts go. When in
+doubt: load it. When you create a new dir: check it against the policy first.
+When the policy is wrong: edit the policy, then place the artifact.
+
+**Mirror rule:** per the user's standard.
 
 | Source | Mirror |
 |---|---|
 | `~/Documents/Projects/album-studio/` | `~/OneDrive/Hermes/Agents/planning/album-studio/` |
 
-After every change, both copies must `md5sum` byte-match. (Mirror script
-documented in `.meta/sections-3-and-4.md` planning archive.)
+After every change, both copies must `md5sum` byte-match. The mirror loop is
+documented in `docs/STRUCTURE-POLICY.md` § R7.
 
 ---
 
