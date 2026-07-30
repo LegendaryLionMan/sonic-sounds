@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>album-studio · template 9 · minimal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080a;--card:transparent;--ink:#fafafa;--ink-soft:rgba(255,255,255,.6);--ink-muted:rgba(255,255,255,.35);
+  --accent:#fff;--rule:rgba(255,255,255,.06);
+  --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;background:var(--bg)}
+.wrap{max-width:80rem;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* TOPBAR — almost invisible */
+.topbar{display:flex;align-items:baseline;gap:1rem;padding-bottom:2rem;border-bottom:1px solid var(--rule)}
+.topbar .crumb{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+.topbar .crumb b{color:var(--ink);font-weight:500}
+.topbar .grow{flex:1}
+.topbar .cmd{font-family:var(--mono);font-size:.74rem;color:var(--ink-muted)}
+
+/* HERO — type only, no chrome */
+.hero{padding:3rem 0 4rem}
+.hero h1{font-family:var(--sans);font-weight:300;font-size:clamp(2.4rem,5vw,4rem);margin:0;letter-spacing:-.03em;line-height:1.05;color:var(--ink)}
+.hero h1 b{font-weight:500}
+.hero p{margin:1.5rem 0 0;color:var(--ink-soft);font-size:1rem;max-width:60ch}
+
+/* PANELS — just hairline + content, no chrome */
+.panel{padding:2.5rem 0;border-top:1px solid var(--rule)}
+.panel header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.panel header .hash{color:var(--ink)}
+.panel header .status{margin-left:auto;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);text-transform:none;letter-spacing:0}
+.panel .body{}
+
+/* GRID */
+.grid-cols{display:grid;gap:3rem}.cols-2{grid-template-columns:1.5fr 1fr}
+@media (max-width:980px){.cols-2{grid-template-columns:1fr}}
+
+/* VOICES — just text rows */
+.voices{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.voice{display:flex;align-items:center;gap:.85rem;padding:.85rem 0;border-bottom:1px solid var(--rule);cursor:pointer;transition:padding .2s}
+.voice:hover{padding-left:.5rem;border-bottom-color:var(--ink-soft)}
+.voice .swatch{width:8px;height:8px;border-radius:50%;flex:none}
+.voice .name{font-weight:500;color:var(--ink);font-size:.92rem}
+.voice .desc{font-size:.72rem;color:var(--ink-soft);font-family:var(--mono);margin-top:.1rem}
+.voice .play{margin-left:auto;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);background:none;border:0;cursor:pointer;padding:0}
+.voice .play:hover{color:var(--ink)}
+
+/* INTAKE */
+.intake-list{display:grid;gap:0;font-family:var(--mono)}
+.intake-list .row{display:flex;align-items:center;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--rule);font-size:.78rem;transition:padding-left .15s}
+.intake-list .row:hover{padding-left:.4rem;border-bottom-color:var(--ink-soft)}
+.intake-list .row .check{width:8px;height:8px;border:1px solid var(--rule);border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:.5rem}
+.intake-list .row .check.done{background:var(--ink);border-color:var(--ink)}
+.intake-list .row .id{color:var(--ink-muted);width:60px;flex:none;font-weight:500}
+.intake-list .row .prompt{flex:1;color:var(--ink-soft);font-family:var(--sans);font-size:.88rem}
+.intake-list .row .tier{font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+
+/* PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.pipeline span{aspect-ratio:1;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);transition:all .25s}
+.pipeline span:hover{background:rgba(255,255,255,.05)}
+.pipeline .d{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}
+.pipeline .i{border-color:var(--ink);color:var(--ink);font-weight:500}
+.pipeline .b{border-color:var(--ink-muted);color:var(--ink-muted)}
+
+/* ALBUMS */
+.albums{display:grid;gap:2rem;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.album{cursor:pointer}
+.album .cover{aspect-ratio:1/1;background:rgba(255,255,255,.04);margin-bottom:1rem;transition:background .2s}
+.album:hover .cover{background:rgba(255,255,255,.08)}
+.album .num{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+.album .title{font-weight:500;font-size:1rem;color:var(--ink);margin:.25rem 0 .1rem}
+.album .meta{font-size:.78rem;color:var(--ink-soft)}
+
+/* CHAT */
+.chat{display:flex;flex-direction:column;gap:1rem;min-height:12rem}
+.chat .msg{padding:0 0 1rem;border-bottom:1px solid var(--rule);font-size:1rem;color:var(--ink-soft)}
+.chat .msg.you{border-bottom-color:var(--ink);color:var(--ink)}
+.chat .msg .who{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);display:block;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.1em}
+.chat .input{margin-top:auto;padding:1rem 0;border-top:1px solid var(--rule);color:var(--ink-muted);font-size:.85rem}
+
+/* LAYOUTS */
+.layouts{display:grid;gap:.5rem;grid-template-columns:repeat(3,1fr)}
+.layout{padding:1rem .5rem;text-align:center;font-size:.78rem;color:var(--ink-soft);cursor:pointer;border-bottom:1px solid transparent;transition:border-color .2s,color .2s}
+.layout.active{border-bottom-color:var(--ink);color:var(--ink)}
+
+footer{padding:2rem 0 .25rem;margin-top:2rem;border-top:1px solid var(--rule);text-align:left;font-family:var(--mono);font-size:.7rem;color:var(--ink-muted)}
+footer code{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / minimal</b></span>
+  <span class="grow"></span>
+  <span class="cmd">⌘K command</span>
+</nav>
+
+<header class="hero">
+  <h1>twenty-one questions<br>later, you have a <b>record</b>.</h1>
+  <p>the chrome gets out of the way. 21 questions. 6 voices. 12 layers.</p>
+</header>
+
+<section class="panel">
+  <header><span class="hash">voices</span> · 6 ready<span class="status">live</span></header>
+  <div class="body">
+    <div class="voices">
+      <div class="voice"><span class="swatch" style="background:hsl(0 60% 60%)"></span><div><div class="name">Marielle</div><div class="desc">low · breathy · close</div></div><button class="play">▷</button></div>
+      <div class="voice"><span class="swatch" style="background:hsl(220 60% 60%)"></span><div><div class="name">Joaquín</div><div class="desc">baritone · rasp</div></div><button class="play">▷</button></div>
+      <div class="voice"><span class="swatch" style="background:hsl(140 60% 60%)"></span><div><div class="name">Ailani</div><div class="desc">mezzo · ribbon</div></div><button class="play">▷</button></div>
+      <div class="voice"><span class="swatch" style="background:hsl(330 60% 60%)"></span><div><div class="name">Rumi</div><div class="desc">alto · reverb</div></div><button class="play">▷</button></div>
+      <div class="voice"><span class="swatch" style="background:hsl(265 60% 60%)"></span><div><div class="name">Theo</div><div class="desc">spoken · dry</div></div><button class="play">▷</button></div>
+      <div class="voice"><span class="swatch" style="background:hsl(40 70% 60%)"></span><div><div class="name">Ensemble</div><div class="desc">6-voice choir</div></div><button class="play">▷</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">intake</span> · 3 / 8 mandatory<span class="status">in progress</span></header>
+    <div class="body">
+      <div class="intake-list">
+        <div class="row"><span class="check done">·</span><span class="id">M·01</span><span class="prompt">What is this album about?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">·</span><span class="id">M·02</span><span class="prompt">What scope?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">·</span><span class="id">M·03</span><span class="prompt">What genre family?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·04</span><span class="prompt">Reference artists (1–3)</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·05</span><span class="prompt">Vocal approach</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·06</span><span class="prompt">Languages for lyrics</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·07</span><span class="prompt">Runtime target</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·08</span><span class="prompt">Artist stage name</span><span class="tier">mandatory</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">pipeline</span> · half-light-hours<span class="status">1 active</span></header>
+    <div class="body">
+      <div class="pipeline">
+        <span class="d">01</span><span class="i">02</span><span>03</span><span>04</span><span>05</span><span class="b">06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <header><span class="hash">collection</span> · 3 albums<span class="status">live</span></header>
+  <div class="body">
+    <div class="albums">
+      <div class="album"><div class="cover"></div><div class="num">N°01 · 2026</div><div class="title">Half-Light Hours</div><div class="meta">Maren Sol · 9 tracks</div></div>
+      <div class="album"><div class="cover" style="background:rgba(255,255,255,.06)"></div><div class="num">N°02 · 2026</div><div class="title">Before the Storm</div><div class="meta">Joaquín · 7 tracks</div></div>
+      <div class="album"><div class="cover" style="background:rgba(255,255,255,.08)"></div><div class="num">N°03 · 2025</div><div class="title">Cassette for a Stranger</div><div class="meta">Ailani · 5 tracks</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">chat</span> · penelope<span class="status">1 message</span></header>
+    <div class="body">
+      <div class="chat">
+        <div class="msg you"><span class="who">You · 14:22</span>approve brief half-light-hours, then start layer 5.</div>
+        <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package from the manifest…</div>
+        <div class="input">type a message — or press ⌘K…</div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">layouts</span> · picker<span class="status">minimal (active)</span></header>
+    <div class="body">
+      <div class="layouts">
+        <div class="layout">studio</div>
+        <div class="layout active">minimal</div>
+        <div class="layout">wave</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer><code>album-studio · template 9 · minimal · hairline + content only</code></footer>
+
+</div>
+</body>
+</html>

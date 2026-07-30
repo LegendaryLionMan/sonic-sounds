@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>album-studio · template 13 · vinyl-mesh (vinyl silhouette made of mesh blobs)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a14;--ink:#fafafa;--ink-soft:rgba(255,255,255,.7);--ink-muted:rgba(255,255,255,.4);
+  --magenta:hsl(330 90% 60%);--cyan:hsl(190 90% 55%);--amber:hsl(40 90% 60%);--violet:hsl(270 90% 60%);
+  --rule:rgba(255,255,255,.08);
+  --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;background:var(--bg)}
+.wrap{max-width:90rem;margin:0 auto;padding:1.5rem;display:grid;gap:1rem}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;background:rgba(0,0,0,.4);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--rule);border-radius:14px}
+.topbar .crumb{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+.topbar .crumb b{color:var(--ink);font-weight:600}
+.topbar .grow{flex:1}
+.topbar .cmd{display:inline-flex;gap:.4rem;align-items:center;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  padding:.4rem .75rem;border-radius:8px;font-size:.74rem;color:var(--ink-soft);cursor:pointer}
+
+/* HERO — the centerpiece is the MESH-VINYL: a circular silhouette made of mesh-gradient blobs that orbit */
+.hero{padding:3rem 2.5rem;background:rgba(0,0,0,.3);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--rule);border-radius:18px;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 75% 50%,rgba(330,90,60,.1) 0%,transparent 50%);pointer-events:none}
+.hero .text{position:relative;z-index:2}
+.hero .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--magenta);margin:0 0 .75rem}
+.hero h1{font-family:var(--sans);font-weight:600;font-size:clamp(2rem,4vw,3rem);margin:0 0 1rem;letter-spacing:-.02em;line-height:1.05}
+.hero h1 b{font-weight:600;background:linear-gradient(135deg,var(--magenta) 0%,var(--cyan) 50%,var(--amber) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--ink-soft);font-size:1rem;margin:0 0 1.5rem;max-width:48ch}
+.hero .cta{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.5rem;color:#000;font-weight:600;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;background:#fff}
+
+/* THE MESH-VINYL — a circular clip with mesh blobs inside it, no black vinyl.
+   The blobs drift inside the circle, creating a "moving cover art" effect. */
+.mesh-vinyl{position:relative;width:300px;height:300px;border-radius:50%;margin:0 auto;
+  background:radial-gradient(circle at 30% 30%,var(--magenta) 0%,transparent 50%),
+             radial-gradient(circle at 70% 70%,var(--cyan) 0%,transparent 50%),
+             radial-gradient(circle at 50% 90%,var(--amber) 0%,transparent 50%),
+             radial-gradient(circle at 90% 30%,var(--violet) 0%,transparent 50%),
+             #0a0a14;
+  box-shadow:0 0 60px rgba(330,90,60,.3),0 0 80px rgba(190,90,55,.2),0 8px 60px rgba(0,0,0,.6);
+  overflow:hidden;animation:spin 30s linear infinite}
+.mesh-vinyl::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 30%,var(--violet) 0%,transparent 40%),
+             radial-gradient(circle at 70% 70%,var(--amber) 0%,transparent 40%),
+             radial-gradient(circle at 50% 30%,var(--cyan) 0%,transparent 40%);
+  filter:blur(20px);opacity:.7;animation:blob-orbit 8s ease-in-out infinite alternate}
+.mesh-vinyl::after{content:"";position:absolute;top:50%;left:50%;width:60px;height:60px;border-radius:50%;
+  background:rgba(0,0,0,.85);transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(255,255,255,.05),inset 0 0 0 4px rgba(255,255,255,.08)}
+.mesh-vinyl .center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 0 0 4px rgba(255,255,255,.1)}
+.mesh-vinyl .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-family:var(--mono);font-size:.6rem;color:#fff;letter-spacing:.06em;text-align:center;line-height:1.2;text-shadow:0 0 8px rgba(0,0,0,.8)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blob-orbit{0%{transform:rotate(0deg) scale(1)}100%{transform:rotate(60deg) scale(1.15)}}
+
+@media (max-width:780px){.hero{grid-template-columns:1fr;gap:1.5rem}.mesh-vinyl{width:220px;height:220px}}
+
+/* PANEL */
+.panel{background:rgba(255,255,255,.025);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--rule);border-radius:14px;overflow:hidden;transition:border-color .3s,transform .3s}
+.panel:hover{border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.panel header{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--rule);
+  background:rgba(0,0,0,.3);font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.panel header .hash{color:var(--magenta)}
+.panel header .status{margin-left:auto;font-size:.66rem;padding:.2rem .55rem;border-radius:999px;background:rgba(330,90,60,.15);color:var(--magenta);text-transform:uppercase;letter-spacing:.08em}
+.panel .body{padding:1rem 1.1rem}
+
+.grid-cols{display:grid;gap:1rem}.cols-2{grid-template-columns:1.3fr 1fr}
+@media (max-width:980px){.cols-2{grid-template-columns:1fr}}
+
+/* VOICES — each voice is a mini mesh-vinyl */
+.voices{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.voice{display:flex;align-items:center;gap:.75rem;padding:.7rem;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--rule);transition:all .2s;cursor:pointer}
+.voice:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2)}
+.voice .mini-vinyl{width:38px;height:38px;border-radius:50%;flex:none;overflow:hidden;position:relative;animation:spin 12s linear infinite}
+.voice .mini-vinyl::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,var(--voice-color) 0%,transparent 60%),radial-gradient(circle at 70% 70%,var(--voice-color-2) 0%,transparent 60%);filter:blur(2px)}
+.voice .mini-vinyl::after{content:"";position:absolute;top:50%;left:50%;width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,.7);transform:translate(-50%,-50%)}
+.voice .name{font-weight:500;color:var(--ink);font-size:.9rem}
+.voice .desc{font-size:.72rem;color:var(--ink-soft);font-family:var(--mono)}
+.voice .play{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.voice .play:hover{background:#fff;color:#000}
+
+/* INTAKE */
+.intake-list{display:grid;gap:.25rem}
+.intake-list .row{display:flex;align-items:center;gap:.6rem;padding:.45rem .65rem;border-radius:8px;font-size:.78rem}
+.intake-list .row:hover{background:rgba(255,255,255,.04)}
+.intake-list .row .check{width:16px;height:16px;border:1px solid var(--rule);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center}
+.intake-list .row .check.done{background:linear-gradient(135deg,var(--magenta),var(--cyan));border-color:transparent;color:#fff}
+.intake-list .row .id{color:var(--ink-muted);width:60px;flex:none;font-family:var(--mono);font-weight:500}
+.intake-list .row .prompt{flex:1;color:var(--ink-soft);font-family:var(--sans);font-size:.88rem}
+.intake-list .row .tier{font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+
+/* PIPELINE — each cell is a mini mesh */
+.pipeline{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.pipeline span{aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);transition:all .25s}
+.pipeline span:hover{transform:scale(1.06)}
+.pipeline .d{background:linear-gradient(135deg,var(--magenta),var(--cyan));border-color:transparent;color:#000;font-weight:600}
+.pipeline .i{background:linear-gradient(135deg,var(--amber),var(--magenta));border-color:transparent;color:#000;font-weight:600}
+.pipeline .b{background:rgba(255,255,255,.1);border-color:var(--rule);color:var(--ink)}
+
+/* ALBUMS — each cover IS a mesh-vinyl */
+.albums{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.album{border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid var(--rule);transition:all .3s;cursor:pointer}
+.album:hover{border-color:rgba(255,255,255,.3);transform:translateY(-3px)}
+.album .cover{aspect-ratio:1/1;position:relative;overflow:hidden;background:radial-gradient(circle at 30% 30%,hsl(330 90% 60%) 0%,transparent 50%),radial-gradient(circle at 70% 70%,hsl(190 90% 55%) 0%,transparent 50%),radial-gradient(circle at 50% 90%,hsl(40 90% 60%) 0%,transparent 50%),#0a0a14;animation:spin 30s linear infinite}
+.album .cover::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,hsl(270 90% 60%) 0%,transparent 35%);filter:blur(10px);animation:blob-orbit 6s ease-in-out infinite alternate}
+.album .cover::after{content:"";position:absolute;top:50%;left:50%;width:18%;aspect-ratio:1;border-radius:50%;background:rgba(0,0,0,.85);transform:translate(-50%,-50%);box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+.album .info{padding:.65rem .85rem}
+.album .num{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em}
+.album .title{font-weight:500;font-size:.95rem;color:var(--ink);margin:.15rem 0 .05rem}
+.album .meta{font-size:.74rem;color:var(--ink-soft)}
+
+/* CHAT */
+.chat{display:flex;flex-direction:column;gap:.5rem;min-height:12rem}
+.chat .msg{padding:.65rem .85rem;background:rgba(255,255,255,.03);border:1px solid var(--rule);border-radius:10px;font-size:.88rem}
+.chat .msg.you{border-left:2px solid var(--magenta);background:rgba(330,90,60,.06)}
+.chat .msg .who{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);display:block;margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.08em}
+.chat .input{margin-top:auto;background:rgba(255,255,255,.03);border:1px solid var(--rule);border-radius:10px;padding:.7rem .85rem;color:var(--ink-muted);font-size:.78rem}
+
+/* LAYOUTS */
+.layouts{display:grid;gap:.6rem;grid-template-columns:repeat(3,1fr)}
+.layout{padding:.85rem .65rem;border:1px solid var(--rule);border-radius:10px;text-align:center;font-size:.78rem;color:var(--ink-soft);cursor:pointer;transition:all .2s}
+.layout.active{border-color:var(--magenta);background:rgba(330,90,60,.08);color:var(--magenta)}
+.layout .glyph{aspect-ratio:16/9;background:rgba(255,255,255,.04);border-radius:6px;margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.layout .glyph::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,var(--magenta) 0%,transparent 40%),radial-gradient(circle at 70% 70%,var(--cyan) 0%,transparent 40%);opacity:.5}
+.layout .glyph::after{content:"";width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.85);position:relative;z-index:1}
+
+footer{padding:1rem 0 .25rem;text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-muted)}
+footer code{background:rgba(255,255,255,.04);padding:.15rem .5rem;border-radius:6px;border:1px solid var(--rule);color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / vinyl-mesh</b></span>
+  <span class="grow"></span>
+  <span class="cmd">MESH-VINYL · 30s/rev</span>
+  <span class="cmd">▷ PLAY</span>
+</nav>
+
+<header class="hero">
+  <div class="text">
+    <p class="eyebrow">SIGNATURE · NO BLACK VINYL</p>
+    <h1>the vinyl is <b>made of color</b>.</h1>
+    <p>where the black vinyl was, four mesh-gradient blobs orbit. the silhouette stays the same; the cover art breathes.</p>
+    <button class="cta">▷ Drop the needle</button>
+  </div>
+  <div class="mesh-vinyl" aria-label="Vinyl record made of mesh blobs">
+    <div class="center"></div>
+    <div class="label">HALF<br>LIGHT<br>HOURS</div>
+  </div>
+</header>
+
+<section class="panel">
+  <header><span class="hash">/voices</span> --audition · 6 ready<span class="status">playing</span></header>
+  <div class="body">
+    <div class="voices">
+      <div class="voice" style="--voice-color:hsl(0 90% 60%);--voice-color-2:hsl(40 90% 60%)"><div class="mini-vinyl"></div><div><div class="name">Marielle</div><div class="desc">low · breathy · close</div></div><button class="play">▷</button></div>
+      <div class="voice" style="--voice-color:hsl(220 90% 55%);--voice-color-2:hsl(280 90% 60%)"><div class="mini-vinyl"></div><div><div class="name">Joaquín</div><div class="desc">baritone · rasp</div></div><button class="play">▷</button></div>
+      <div class="voice" style="--voice-color:hsl(140 90% 55%);--voice-color-2:hsl(40 90% 60%)"><div class="mini-vinyl"></div><div><div class="name">Ailani</div><div class="desc">mezzo · ribbon</div></div><button class="play">▷</button></div>
+      <div class="voice" style="--voice-color:hsl(330 90% 60%);--voice-color-2:hsl(0 90% 60%)"><div class="mini-vinyl"></div><div><div class="name">Rumi</div><div class="desc">alto · reverb</div></div><button class="play">▷</button></div>
+      <div class="voice" style="--voice-color:hsl(265 90% 60%);--voice-color-2:hsl(220 90% 55%)"><div class="mini-vinyl"></div><div><div class="name">Theo</div><div class="desc">spoken · dry</div></div><button class="play">▷</button></div>
+      <div class="voice" style="--voice-color:hsl(40 90% 60%);--voice-color-2:hsl(0 90% 60%)"><div class="mini-vinyl"></div><div><div class="name">Ensemble</div><div class="desc">6-voice choir</div></div><button class="play">▷</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/intake</span> --checklist · 3 / 8 mandatory<span class="status">in progress</span></header>
+    <div class="body">
+      <div class="intake-list">
+        <div class="row"><span class="check done">✓</span><span class="id">M·01</span><span class="prompt">What is this album about?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·02</span><span class="prompt">What scope?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·03</span><span class="prompt">What genre family?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·04</span><span class="prompt">Reference artists (1–3)</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·05</span><span class="prompt">Vocal approach</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·06</span><span class="prompt">Languages for lyrics</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·07</span><span class="prompt">Runtime target</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·08</span><span class="prompt">Artist stage name</span><span class="tier">mandatory</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/pipeline</span> --half-light-hours<span class="status">1 active</span></header>
+    <div class="body">
+      <div class="pipeline">
+        <span class="d">01</span><span class="i">02</span><span>03</span><span>04</span><span>05</span><span class="b">06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <header><span class="hash">/collection</span> --the-shelf · 3 albums<span class="status">playing</span></header>
+  <div class="body">
+    <div class="albums">
+      <div class="album"><div class="cover"></div><div class="info"><div class="num">N°01 · 2026</div><div class="title">Half-Light Hours</div><div class="meta">Maren Sol · 9 tracks</div></div></div>
+      <div class="album"><div class="cover" style="background:radial-gradient(circle at 30% 30%,hsl(220 90% 55%) 0%,transparent 50%),radial-gradient(circle at 70% 70%,hsl(280 90% 60%) 0%,transparent 50%),radial-gradient(circle at 50% 90%,hsl(330 90% 60%) 0%,transparent 50%),#0a0a14"></div><div class="info"><div class="num">N°02 · 2026</div><div class="title">Before the Storm</div><div class="meta">Joaquín · 7 tracks</div></div></div>
+      <div class="album"><div class="cover" style="background:radial-gradient(circle at 30% 30%,hsl(140 90% 55%) 0%,transparent 50%),radial-gradient(circle at 70% 70%,hsl(40 90% 60%) 0%,transparent 50%),radial-gradient(circle at 50% 90%,hsl(190 90% 55%) 0%,transparent 50%),#0a0a14"></div><div class="info"><div class="num">N°03 · 2025</div><div class="title">Cassette for a Stranger</div><div class="meta">Ailani · 5 tracks</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/chat</span> --penelope<span class="status">1 msg</span></header>
+    <div class="body">
+      <div class="chat">
+        <div class="msg you"><span class="who">You · 14:22</span>approve brief half-light-hours, then start layer 5.</div>
+        <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package…</div>
+        <div class="input">type a message — or press ⌘K…</div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/layouts</span> --picker<span class="status">vinyl-mesh (active)</span></header>
+    <div class="body">
+      <div class="layouts">
+        <div class="layout"><div class="glyph"></div>vinyl</div>
+        <div class="layout active"><div class="glyph"></div>vinyl-mesh</div>
+        <div class="layout"><div class="glyph"></div>mesh</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer><code>album-studio · template 13 · vinyl-mesh · silhouette of color, no black vinyl</code></footer>
+
+</div>
+</body>
+</html>

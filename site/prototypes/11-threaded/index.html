@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>album-studio · template 11 · threaded (vinyl × cassette)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Major+Mono+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070a;--card:rgba(255,255,255,.025);--ink:#f5f5f7;--ink-soft:rgba(255,255,255,.7);--ink-muted:rgba(255,255,255,.4);
+  --tape:#cc1a2a;--gold:#d4a574;--rule:rgba(255,255,255,.08);
+  --sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--display:'Major Mono Display',monospace}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;background:var(--bg);
+  background-image:radial-gradient(ellipse 90rem 35rem at 50% 0%,rgba(204,26,42,.05) 0%,transparent 50%)}
+.wrap{max-width:90rem;margin:0 auto;padding:1.5rem;display:grid;gap:1rem;position:relative}
+.thread{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.thread svg{width:100%;height:100%}
+.thread path{fill:none;stroke:var(--tape);stroke-width:1.5;stroke-linecap:round;opacity:.55;
+  stroke-dasharray:18 3;animation:flow 4s linear infinite}
+@keyframes flow{0%{stroke-dashoffset:0}100%{stroke-dashoffset:-42}}
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;background:rgba(0,0,0,.4);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--rule);border-radius:14px;position:relative;z-index:2}
+.topbar .crumb{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+.topbar .crumb b{color:var(--ink);font-weight:600}
+.topbar .crumb .thread-icon{display:inline-block;width:1.5rem;height:.25rem;background:linear-gradient(90deg,var(--tape) 0%,var(--tape) 50%,transparent 50%);background-size:8px 100%;vertical-align:middle;margin:0 .5rem}
+.topbar .grow{flex:1}
+.topbar .cmd{display:inline-flex;gap:.4rem;align-items:center;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  padding:.4rem .75rem;border-radius:8px;font-size:.74rem;color:var(--ink-soft);cursor:pointer}
+.hero{padding:2.5rem;background:linear-gradient(180deg,rgba(255,255,255,.02) 0%,transparent 100%);
+  border:1px solid var(--rule);border-radius:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;align-items:center;
+  position:relative;overflow:hidden;min-height:320px}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(204,26,42,.08) 0%,transparent 40%),
+                                       radial-gradient(circle at 70% 50%,rgba(212,165,116,.06) 0%,transparent 40%);pointer-events:none}
+.hero .text{position:relative;z-index:3}
+.hero .text h1{font-family:var(--display);font-size:clamp(1.8rem,3.5vw,2.8rem);margin:0 0 .5rem;line-height:1.05;letter-spacing:-.01em}
+.hero .text h1 b{color:var(--tape);font-weight:normal}
+.hero .text p{color:var(--ink-soft);font-size:.95rem;margin:0 0 1.25rem;max-width:32ch}
+.hero .text .cta{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.5rem;background:#fff;color:#000;
+  font-weight:600;border-radius:8px;border:none;cursor:pointer;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase}
+.cassette{position:relative;z-index:3;background:linear-gradient(135deg,#f0c53c 0%,#d4a83a 50%,#f0c53c 100%);
+  border-radius:14px;padding:1.25rem;aspect-ratio:1.7/1;box-shadow:0 12px 40px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.2)}
+.cassette::before{content:"ALBUM-STUDIO";position:absolute;top:.5rem;left:1rem;font-family:var(--mono);font-size:.6rem;color:rgba(0,0,0,.5);letter-spacing:.12em;font-weight:600}
+.cassette::after{content:"C-90";position:absolute;bottom:.5rem;right:1rem;font-family:var(--mono);font-size:.6rem;color:rgba(0,0,0,.5);letter-spacing:.12em;font-weight:600}
+.cassette .reels{display:flex;justify-content:space-between;align-items:center;height:100%;padding:1rem 1.25rem}
+.cassette .reel{width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#1a1a1c 0%,#1a1a1c 22%,#444 22.5%,#666 50%,#1a1a1c 50.5%,#1a1a1c 100%);
+  position:relative;animation:spin 8s linear infinite}
+.cassette .reel::before{content:"";position:absolute;top:50%;left:50%;width:8px;height:8px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.cassette .reel::after{content:"";position:absolute;inset:30%;border-radius:50%;background:repeating-conic-gradient(from 0deg,transparent 0 20deg,rgba(0,0,0,.3) 20deg 25deg)}
+.cassette .label{position:absolute;top:35%;left:50%;transform:translateX(-50%);background:#fff;padding:.3rem .75rem;border-radius:3px;font-family:var(--mono);font-size:.7rem;color:#1a1a1c;letter-spacing:.06em;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.vinyl{position:relative;z-index:3;width:200px;height:200px;border-radius:50%;background:
+  radial-gradient(circle at center,#1a1a1c 0%,#1a1a1c 18%,#0a0a0c 18.5%,#0a0a0c 100%);
+  box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05) inset;margin:0 auto;
+  animation:spin 8s linear infinite}
+.vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle,#0a0a0c 0,#0a0a0c 1px,rgba(255,255,255,.02) 1px,rgba(255,255,255,.02) 2px)}
+.vinyl .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;
+  background:radial-gradient(circle,hsl(350 70% 40%) 0%,hsl(350 60% 25%) 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:.5rem;color:#fff;letter-spacing:.1em;text-align:center;line-height:1.2}
+.vinyl .center-hole{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:#000}
+.hero > .vinyl{justify-self:center}
+@media (max-width:780px){.hero{grid-template-columns:1fr;gap:1.5rem}.vinyl{justify-self:center}}
+.panel{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--rule);border-radius:14px;overflow:hidden;transition:border-color .3s,transform .3s}
+.panel:hover{border-color:rgba(204,26,42,.3);transform:translateY(-1px)}
+.panel header{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--rule);
+  background:rgba(0,0,0,.4);font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.panel header .hash{color:var(--tape)}
+.panel header .status{margin-left:auto;font-size:.66rem;padding:.2rem .55rem;border-radius:999px;background:rgba(204,26,42,.15);color:var(--tape);text-transform:uppercase;letter-spacing:.08em}
+.panel .body{padding:1rem 1.1rem}
+.grid-cols{display:grid;gap:1rem}.cols-2{grid-template-columns:1.3fr 1fr}
+@media (max-width:980px){.cols-2{grid-template-columns:1fr}}
+.voices{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.voice{display:flex;align-items:center;gap:.6rem;padding:.7rem;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--rule);transition:all .2s;cursor:pointer}
+.voice:hover{background:rgba(204,26,42,.05);border-color:rgba(204,26,42,.3)}
+.voice .reel-mini{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#1a1a1c 0%,#1a1a1c 22%,#444 22.5%,#1a1a1c 23%,#1a1a1c 100%);flex:none;animation:spin 6s linear infinite}
+.voice .name{font-weight:500;color:var(--ink);font-size:.9rem}
+.voice .desc{font-size:.72rem;color:var(--ink-soft);font-family:var(--mono)}
+.voice .play{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);background:rgba(255,255,255,.04);color:var(--tape);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.voice .play:hover{background:var(--tape);color:#fff}
+.intake-list{display:grid;gap:.25rem}
+.intake-list .row{display:flex;align-items:center;gap:.6rem;padding:.45rem .65rem;border-radius:8px;font-size:.78rem}
+.intake-list .row:hover{background:rgba(255,255,255,.04)}
+.intake-list .row .check{width:16px;height:16px;border:1px solid var(--rule);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center}
+.intake-list .row .check.done{background:var(--tape);border-color:var(--tape);color:#fff}
+.intake-list .row .id{color:var(--ink-muted);width:60px;flex:none;font-family:var(--mono);font-weight:500}
+.intake-list .row .prompt{flex:1;color:var(--ink-soft);font-family:var(--sans);font-size:.88rem}
+.intake-list .row .tier{font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+.pipeline{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.pipeline span{aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);transition:all .25s}
+.pipeline span:hover{transform:scale(1.06)}
+.pipeline .d{background:var(--gold);border-color:var(--gold);color:#000;font-weight:600}
+.pipeline .i{background:var(--tape);border-color:var(--tape);color:#fff;font-weight:600}
+.pipeline .b{background:rgba(255,255,255,.1);border-color:var(--rule);color:var(--ink)}
+.albums{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.album{border-radius:14px;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid var(--rule);transition:all .3s;cursor:pointer}
+.album:hover{border-color:var(--tape);transform:translateY(-3px)}
+.album .cover{aspect-ratio:1/1;background:radial-gradient(circle,#1a1a1c 0%,#1a1a1c 30%,#0a0a0c 31%,#0a0a0c 100%);position:relative;display:flex;align-items:center;justify-content:center}
+.album .cover .center{width:35%;aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,hsl(350 70% 40%) 0%,hsl(350 60% 25%) 100%);position:relative;animation:spin 4s linear infinite}
+.album .cover .center::after{content:"";position:absolute;top:50%;left:50%;width:8%;aspect-ratio:1;border-radius:50%;background:#000;transform:translate(-50%,-50%)}
+.album .info{padding:.65rem .85rem}
+.album .num{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em}
+.album .title{font-weight:500;font-size:.95rem;color:var(--ink);margin:.15rem 0 .05rem}
+.album .meta{font-size:.74rem;color:var(--ink-soft)}
+.chat{display:flex;flex-direction:column;gap:.5rem;min-height:12rem}
+.chat .msg{padding:.65rem .85rem;background:rgba(255,255,255,.03);border:1px solid var(--rule);border-radius:10px;font-size:.88rem}
+.chat .msg.you{border-left:2px solid var(--tape);background:rgba(204,26,42,.04)}
+.chat .msg .who{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);display:block;margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.08em}
+.chat .input{margin-top:auto;background:rgba(255,255,255,.03);border:1px solid var(--rule);border-radius:10px;padding:.7rem .85rem;color:var(--ink-muted);font-size:.78rem}
+.layouts{display:grid;gap:.6rem;grid-template-columns:repeat(3,1fr)}
+.layout{padding:.85rem .65rem;border:1px solid var(--rule);border-radius:10px;text-align:center;font-size:.78rem;color:var(--ink-soft);cursor:pointer;transition:all .2s}
+.layout.active{border-color:var(--tape);background:rgba(204,26,42,.08);color:var(--tape)}
+.layout .glyph{aspect-ratio:16/9;background:rgba(255,255,255,.04);border-radius:6px;margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.layout .glyph::before{content:"";width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,currentColor 0%,currentColor 30%,transparent 30.5%,transparent 100%);opacity:.7}
+.layout .glyph::after{content:"";flex:1;height:1.5px;background:currentColor;opacity:.7}
+footer{padding:1rem 0 .25rem;text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-muted)}
+footer code{background:rgba(255,255,255,.04);padding:.15rem .5rem;border-radius:6px;border:1px solid var(--rule);color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="thread" aria-hidden="true">
+  <svg viewBox="0 0 1200 360" preserveAspectRatio="none">
+    <path d="M 200,180 Q 350,80 450,180 T 750,180 Q 850,280 950,180" />
+  </svg>
+</div>
+<nav class="topbar">
+  <span class="crumb">album-studio<span class="thread-icon"></span><b>threaded</b></span>
+  <span class="grow"></span>
+  <span class="cmd">SIDE A · B SIDE</span>
+  <span class="cmd">▷ PLAY</span>
+</nav>
+<header class="hero">
+  <div class="text">
+    <h1>12 sides of an album you <b>haven't made</b> yet.</h1>
+    <p>The same red tape runs through the cassette and the vinyl. Same axis. Same rotation.</p>
+    <button class="cta">▷ Press play</button>
+  </div>
+  <div class="cassette" aria-label="Cassette tape">
+    <div class="reels">
+      <div class="reel"></div>
+      <div class="label">HALF-LIGHT<br>HOURS</div>
+      <div class="reel"></div>
+    </div>
+  </div>
+  <div class="vinyl" aria-label="Vinyl record">
+    <div class="label">HALF<br>LIGHT<br>HOURS</div>
+    <div class="center-hole"></div>
+  </div>
+</header>
+<section class="panel">
+  <header><span class="hash">/voices</span> --audition · 6 ready<span class="status">playing</span></header>
+  <div class="body">
+    <div class="voices">
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Marielle</div><div class="desc">low · breathy · close</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Joaquín</div><div class="desc">baritone · rasp</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Ailani</div><div class="desc">mezzo · ribbon</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Rumi</div><div class="desc">alto · reverb</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Theo</div><div class="desc">spoken · dry</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="reel-mini"></div><div><div class="name">Ensemble</div><div class="desc">6-voice choir</div></div><button class="play">▷</button></div>
+    </div>
+  </div>
+</section>
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/intake</span> --checklist · 3 / 8 mandatory<span class="status">in progress</span></header>
+    <div class="body">
+      <div class="intake-list">
+        <div class="row"><span class="check done">✓</span><span class="id">M·01</span><span class="prompt">What is this album about?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·02</span><span class="prompt">What scope?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·03</span><span class="prompt">What genre family?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·04</span><span class="prompt">Reference artists (1–3)</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·05</span><span class="prompt">Vocal approach</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·06</span><span class="prompt">Languages for lyrics</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·07</span><span class="prompt">Runtime target</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·08</span><span class="prompt">Artist stage name</span><span class="tier">mandatory</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/pipeline</span> --half-light-hours<span class="status">1 active</span></header>
+    <div class="body">
+      <div class="pipeline">
+        <span class="d">01</span><span class="i">02</span><span>03</span><span>04</span><span>05</span><span class="b">06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span>
+      </div>
+    </div>
+  </section>
+</div>
+<section class="panel">
+  <header><span class="hash">/collection</span> --the-shelf · 3 albums<span class="status">playing</span></header>
+  <div class="body">
+    <div class="albums">
+      <div class="album"><div class="cover"><div class="center"></div></div><div class="info"><div class="num">N°01 · 2026</div><div class="title">Half-Light Hours</div><div class="meta">Maren Sol · 9 tracks</div></div></div>
+      <div class="album"><div class="cover"><div class="center" style="background:linear-gradient(135deg,hsl(220 70% 40%) 0%,hsl(280 60% 30%) 100%)"></div></div><div class="info"><div class="num">N°02 · 2026</div><div class="title">Before the Storm</div><div class="meta">Joaquín · 7 tracks</div></div></div>
+      <div class="album"><div class="cover"><div class="center" style="background:linear-gradient(135deg,hsl(140 70% 40%) 0%,hsl(40 70% 35%) 100%)"></div></div><div class="info"><div class="num">N°03 · 2025</div><div class="title">Cassette for a Stranger</div><div class="meta">Ailani · 5 tracks</div></div></div>
+    </div>
+  </div>
+</section>
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/chat</span> --penelope<span class="status">1 msg</span></header>
+    <div class="body">
+      <div class="chat">
+        <div class="msg you"><span class="who">You · 14:22</span>approve brief half-light-hours, then start layer 5.</div>
+        <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package…</div>
+        <div class="input">type a message — or press ⌘K…</div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/layouts</span> --picker<span class="status">threaded (active)</span></header>
+    <div class="body">
+      <div class="layouts">
+        <div class="layout"><div class="glyph"></div>vinyl</div>
+        <div class="layout active"><div class="glyph"></div>threaded</div>
+        <div class="layout"><div class="glyph"></div>cassette</div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer><code>album-studio · template 11 · threaded · vinyl + cassette + the red tape</code></footer>
+</div>
+</body>
+</html>

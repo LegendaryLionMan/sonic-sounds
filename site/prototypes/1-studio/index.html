@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>album-studio · prototype B · studio-tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:           hsl(220 14% 8%);
+      --bg-soft:      hsl(220 12% 12%);
+      --bg-card:      hsl(220 12% 14%);
+      --ink:          hsl(0 0% 95%);
+      --ink-soft:     hsl(0 0% 70%);
+      --ink-muted:    hsl(0 0% 50%);
+      --accent:       hsl(160 60% 50%);
+      --warn:         hsl(40 80% 60%);
+      --done:         hsl(140 50% 55%);
+      --blocked:      hsl(0 80% 60%);
+      --rule:         hsl(220 10% 20%);
+      --sans:         'Inter', system-ui, sans-serif;
+      --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{background:var(--bg)}
+    body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.5;color:var(--ink);background:var(--bg);
+      background-image:linear-gradient(hsl(220 10% 20% / .2) 1px,transparent 1px),
+                      linear-gradient(90deg,hsl(220 10% 20% / .2) 1px,transparent 1px);
+      background-size:20px 20px}
+    .wrap{max-width:90rem;margin:0 auto;padding:1.5rem;display:grid;gap:1rem}
+
+    /* TOPBAR — like Linear's command bar */
+    .topbar{display:flex;gap:.75rem;align-items:center;padding:.5rem .75rem;background:var(--bg-card);border:1px solid var(--rule);border-radius:6px}
+    .topbar .crumb{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+    .topbar .crumb .sep{color:var(--ink-muted);margin:0 .4rem}
+    .topbar .crumb .now{color:var(--accent)}
+    .topbar .grow{flex:1}
+    .topbar .cmd{display:inline-flex;align-items:center;gap:.4rem;background:var(--bg-soft);border:1px solid var(--rule);
+      padding:.35rem .6rem;border-radius:4px;font-size:.72rem;color:var(--ink-soft)}
+    .topbar .cmd kbd{font-family:var(--mono);background:var(--bg);padding:.1rem .35rem;border-radius:3px;border:1px solid var(--rule);font-size:.66rem}
+
+    /* PANEL — every panel is a card with a system-mono header + body */
+    .panel{background:var(--bg-card);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+    .panel header{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;background:var(--bg-soft);
+      border-bottom:1px solid var(--rule);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft)}
+    .panel header .hash{color:var(--ink-muted)}
+    .panel header .status{margin-left:auto;font-size:.66rem;padding:.15rem .5rem;border-radius:3px;border:1px solid var(--rule)}
+    .panel header .status.ok{color:var(--done);border-color:var(--done)}
+    .panel header .status.idle{color:var(--ink-muted)}
+    .panel header .status.work{color:var(--warn);border-color:var(--warn)}
+    .panel .body{padding:.85rem}
+
+    /* GRID */
+    .grid-cols{display:grid;gap:1rem}
+    .cols-2{grid-template-columns:1.3fr 1fr}
+    .cols-3{grid-template-columns:1fr 1fr 1fr}
+    .cols-4{grid-template-columns:repeat(4,1fr)}
+    @media (max-width:980px){.cols-3,.cols-4{grid-template-columns:repeat(2,1fr)}.cols-2{grid-template-columns:1fr}}
+    @media (max-width:560px){.cols-3,.cols-4{grid-template-columns:1fr}}
+
+    /* HERO / HEADLINE — minimal */
+    .hero{padding:1rem 0}
+    .hero h1{font-family:var(--sans);font-weight:600;font-size:clamp(1.6rem,3vw,2.4rem);margin:0;color:var(--ink);letter-spacing:-.01em}
+    .hero p{margin:.4rem 0 0;color:var(--ink-soft);font-size:.92rem;font-family:var(--sans);max-width:60ch}
+
+    /* VOICE CARDS — dense list, mono-first */
+    .voices{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+    .voice{display:flex;align-items:center;gap:.6rem;padding:.6rem;background:var(--bg-soft);border:1px solid var(--rule);border-radius:4px;font-size:.78rem}
+    .voice:hover{border-color:var(--accent)}
+    .voice .swatch{width:32px;height:32px;border-radius:3px;flex:none}
+    .voice .name{font-weight:600;color:var(--ink);font-family:var(--sans)}
+    .voice .desc{font-size:.72rem;color:var(--ink-soft);font-family:var(--sans);line-height:1.4;margin-top:.1rem}
+    .voice .play{margin-left:auto;background:transparent;border:1px solid var(--rule);padding:.25rem .55rem;border-radius:3px;color:var(--accent);font-size:.7rem;cursor:pointer}
+
+    /* INTAKE PREVIEW — checklist */
+    .intake-list{display:grid;gap:.15rem;font-family:var(--mono);font-size:.78rem}
+    .intake-list .row{display:flex;align-items:center;gap:.5rem;padding:.3rem .4rem;border-radius:3px}
+    .intake-list .row:hover{background:var(--bg-soft)}
+    .intake-list .row .check{width:14px;height:14px;border:1px solid var(--rule);border-radius:2px;flex:none;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+    .intake-list .row .check.done{border-color:var(--done);background:var(--done);color:var(--bg)}
+    .intake-list .row .id{color:var(--ink-muted);width:60px;flex:none}
+    .intake-list .row .prompt{flex:1;color:var(--ink-soft);font-family:var(--sans);font-size:.86rem}
+    .intake-list .row .tier{font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+
+    /* DASHBOARD PREVIEW */
+    .pipeline{display:grid;grid-template-columns:repeat(12,1fr);gap:.25rem;font-size:.7rem}
+    .pipeline span{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+      background:var(--bg-soft);border:1px solid var(--rule);border-radius:3px;color:var(--ink-soft)}
+    .pipeline .d{background:var(--done);border-color:var(--done);color:var(--bg);font-weight:600}
+    .pipeline .i{background:var(--warn);border-color:var(--warn);color:var(--bg);font-weight:600}
+    .pipeline .b{background:var(--blocked);border-color:var(--blocked);color:var(--ink);font-weight:600}
+
+    /* COLLECTION */
+    .albums{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+    .album{background:var(--bg-soft);border:1px solid var(--rule);border-radius:4px;overflow:hidden;font-family:var(--sans)}
+    .album .cover{aspect-ratio:1/1;background:linear-gradient(135deg,hsl(160 60% 50%) 0%,hsl(220 30% 30%) 100%)}
+    .album .info{padding:.55rem .65rem}
+    .album .num{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em}
+    .album .title{font-weight:600;font-size:.92rem;color:var(--ink);margin:.15rem 0 .05rem}
+    .album .meta{font-size:.74rem;color:var(--ink-soft)}
+
+    /* CHAT */
+    .chat{min-height:14rem;display:flex;flex-direction:column;gap:.5rem}
+    .chat .msg{padding:.5rem .65rem;background:var(--bg-soft);border:1px solid var(--rule);border-radius:4px;font-family:var(--sans);font-size:.86rem;color:var(--ink-soft)}
+    .chat .msg.you{border-left:2px solid var(--accent);color:var(--ink)}
+    .chat .msg .who{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);display:block;margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.06em}
+    .chat .input{margin-top:auto;background:var(--bg-soft);border:1px solid var(--rule);border-radius:4px;padding:.55rem .65rem;color:var(--ink-muted);font-size:.78rem}
+
+    /* LAYOUTS — three layout chips */
+    .layouts{display:grid;gap:.5rem;grid-template-columns:repeat(3,1fr)}
+    .layout{padding:.6rem;border:1px solid var(--rule);border-radius:4px;font-size:.78rem;text-align:center;color:var(--ink-soft)}
+    .layout.active{border-color:var(--accent);background:hsl(160 60% 50% / .08);color:var(--accent)}
+    .layout .glyph{aspect-ratio:16/9;background:repeating-linear-gradient(45deg,hsl(0 0% 100% / .06) 0 4px,transparent 4px 8px);margin-bottom:.3rem;border-radius:3px}
+
+    /* FOOTER */
+    footer.grid{font-family:var(--mono);font-size:.7rem;color:var(--ink-muted);text-align:right;padding-top:.5rem;border-top:1px solid var(--rule)}
+    footer code{background:var(--bg-soft);padding:.1rem .4rem;border-radius:3px;border:1px solid var(--rule);color:var(--ink-soft)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <span class="crumb">album-studio <span class="sep">/</span> <span>prj:604f3634</span> <span class="sep">/</span> <span class="now">overview</span></span>
+    <span class="grow"></span>
+    <span class="cmd">⌘K <span>command</span></span>
+    <span class="cmd">↑↓ <span>navigate</span></span>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <h1>album-studio</h1>
+    <p>Make the album you haven't made yet. 21 questions, 6 voices, a 12-stage pipeline.</p>
+  </header>
+
+  <!-- ROW 1 — Voices (full width) -->
+  <section class="panel" aria-label="Voices">
+    <header>
+      <span class="hash">$</span> voices <span style="color:var(--ink-muted)">--audition</span>
+      <span class="status ok">6 / 6 ready</span>
+    </header>
+    <div class="body">
+      <div class="voices">
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(8 56% 38%),hsl(40 38% 60%))"></div>
+          <div><div class="name">Marielle</div><div class="desc">Low, breathy, close-mic'd</div></div>
+          <button class="play">▷</button>
+        </div>
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(220 38% 48%),hsl(280 38% 60%))"></div>
+          <div><div class="name">Joaquín</div><div class="desc">Warm baritone, slight rasp</div></div>
+          <button class="play">▷</button>
+        </div>
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(140 38% 36%),hsl(40 50% 60%))"></div>
+          <div><div class="name">Ailani</div><div class="desc">Bright mezzo, vintage ribbon</div></div>
+          <button class="play">▷</button>
+        </div>
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(0 38% 38%),hsl(320 38% 50%))"></div>
+          <div><div class="name">Rumi</div><div class="desc">Androgynous alto, reverb tail</div></div>
+          <button class="play">▷</button>
+        </div>
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(280 38% 38%),hsl(220 38% 48%))"></div>
+          <div><div class="name">Theo</div><div class="desc">Spoken word, dry, narrator</div></div>
+          <button class="play">▷</button>
+        </div>
+        <div class="voice">
+          <div class="swatch" style="background:linear-gradient(135deg,hsl(40 50% 60%),hsl(8 56% 38%))"></div>
+          <div><div class="name">Ensemble</div><div class="desc">6-voice choir, close harmony</div></div>
+          <button class="play">▷</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROW 2 — Intake (left, 60%) + Pipeline (right, 40%) -->
+  <div class="grid-cols cols-2">
+
+    <section class="panel" aria-label="Intake checklist">
+      <header>
+        <span class="hash">$</span> intake <span style="color:var(--ink-muted)">--checklist</span>
+        <span class="status work">3 / 8 mandatory</span>
+      </header>
+      <div class="body">
+        <div class="intake-list">
+          <div class="row"><span class="check done">✓</span><span class="id">M·01</span><span class="prompt">What is this album about?</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check done">✓</span><span class="id">M·02</span><span class="prompt">What scope? single / EP / album / ...</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check done">✓</span><span class="id">M·03</span><span class="prompt">What genre family?</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check"></span><span class="id">M·04</span><span class="prompt">Reference artists (1–3)</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check"></span><span class="id">M·05</span><span class="prompt">Vocal approach</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check"></span><span class="id">M·06</span><span class="prompt">Languages for lyrics</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check"></span><span class="id">M·07</span><span class="prompt">Runtime target per track</span><span class="tier">mandatory</span></div>
+          <div class="row"><span class="check"></span><span class="id">M·08</span><span class="prompt">Artist stage name</span><span class="tier">mandatory</span></div>
+        </div>
+        <p style="margin:.85rem 0 0;font-size:.7rem;color:var(--ink-muted);font-family:var(--mono)">
+          ↓ + 13 recommended & extra — most have defaults
+        </p>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Pipeline preview">
+      <header>
+        <span class="hash">$</span> pipeline <span style="color:var(--ink-muted)">--half-light-hours</span>
+        <span class="status work">1 in progress</span>
+      </header>
+      <div class="body">
+        <div class="pipeline">
+          <span class="d">01</span>
+          <span class="i">02</span>
+          <span>03</span><span>04</span><span>05</span>
+          <span class="b">06</span>
+          <span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span>
+        </div>
+        <p style="margin:.75rem 0 0;font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)">
+          → review draft lyrics for tracks 1–3 in <code style="background:var(--bg-soft);padding:.1rem .3rem;border-radius:3px;border:1px solid var(--rule)">music/half-light-hours/lyrics/</code>
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ROW 3 — Collection (full width) -->
+  <section class="panel" aria-label="Collection">
+    <header>
+      <span class="hash">$</span> collection <span style="color:var(--ink-muted)">--the-shelf</span>
+      <span class="status ok">3 albums</span>
+    </header>
+    <div class="body">
+      <div class="albums">
+        <div class="album"><div class="cover"></div><div class="info"><div class="num">N°01 · 2026</div><div class="title">Half-Light Hours</div><div class="meta">Maren Sol · 9 tracks</div></div></div>
+        <div class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(220 38% 38%),hsl(280 38% 50%))"></div><div class="info"><div class="num">N°02 · 2026</div><div class="title">Before the Storm</div><div class="meta">Joaquín Yáñez · 7 tracks</div></div></div>
+        <div class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(140 38% 36%),hsl(40 50% 60%))"></div><div class="info"><div class="num">N°03 · 2025</div><div class="title">Cassette for a Stranger</div><div class="meta">Ailani Park · 5 tracks</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROW 4 — Chat (left, 60%) + Layouts (right, 40%) -->
+  <div class="grid-cols cols-2">
+
+    <section class="panel" aria-label="Chat">
+      <header>
+        <span class="hash">$</span> chat <span style="color:var(--ink-muted)">--penelope</span>
+        <span class="status idle">1 message</span>
+      </header>
+      <div class="body">
+        <div class="chat">
+          <div class="msg you"><span class="who">You · 14:22</span>approve brief half-light-hours, then start layer 5.</div>
+          <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package from the manifest…</div>
+          <div class="input">Type a message…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Layouts">
+      <header>
+        <span class="hash">$</span> layouts <span style="color:var(--ink-muted)">--picker</span>
+        <span class="status ok">studio (active)</span>
+      </header>
+      <div class="body">
+        <div class="layouts">
+          <div class="layout"><div class="glyph" style="background:repeating-linear-gradient(hsl(0 0% 100% / .06) 0 1px,transparent 1px 6px)"></div>editorial</div>
+          <div class="layout active"><div class="glyph"></div>studio</div>
+          <div class="layout"><div class="glyph" style="background:repeating-linear-gradient(hsl(0 0% 100% / .06) 0 4px,transparent 4px 8px)"></div>cinematic</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="grid">
+    <code>album-studio · prototype B · studio-tool · /site/prototypes/b-studio</code>
+  </footer>
+
+</div>
+</body>
+</html>

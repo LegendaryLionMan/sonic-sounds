@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>album-studio · prototype A · editorial-magazine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:        hsl(40 28% 96%);
+      --paper-deep:   hsl(40 18% 88%);
+      --ink:          hsl(0 0% 8%);
+      --ink-soft:     hsl(0 0% 30%);
+      --accent:       hsl(8 56% 38%);
+      --rule:         hsl(0 0% 20% / 0.18);
+      --serif:        'Fraunces', 'Iowan Old Style', Georgia, serif;
+      --sans:         'Inter', system-ui, sans-serif;
+      --mono:         'JetBrains Mono', monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{background:var(--paper)}
+    body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.6;color:var(--ink);
+      background:
+        radial-gradient(80rem 40rem at 10% 0%, hsl(8 56% 38% / 0.05), transparent 60%),
+        radial-gradient(60rem 30rem at 90% 100%, hsl(40 38% 60% / 0.08), transparent 70%),
+        var(--paper);}
+    .wrap{max-width:84rem;margin:0 auto;padding:2rem 2rem 6rem}
+
+    /* MASTHEAD — magazine letterhead */
+    .masthead{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:end;
+      padding:2rem 0 1rem;border-bottom:2px solid var(--ink)}
+    .masthead .logo{font-family:var(--serif);font-weight:700;font-size:1.5rem;letter-spacing:-.02em}
+    .masthead .issue{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft)}
+
+    /* HEADLINE — featured article treatment */
+    .hero{padding:3rem 0 4rem;border-bottom:1px solid var(--rule)}
+    .hero .kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 .5rem}
+    .hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.6rem,7.5vw,5.6rem);
+      line-height:.95;letter-spacing:-.03em;margin:0 0 1rem;max-width:18ch}
+    .hero .standfirst{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(1.1rem,2vw,1.4rem);
+      color:var(--ink-soft);max-width:48ch;margin:0 0 2rem}
+    .hero .byline{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+
+    /* PANEL — every section has a panel layout, masthead-anchored */
+    section.panel{padding:4rem 0;border-bottom:1px solid var(--rule)}
+    section.panel .label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 .25rem}
+    section.panel h2{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.02em;line-height:1;margin:0 0 .75rem}
+    section.panel .lede{font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--ink-soft);max-width:46ch;margin:0 0 2rem}
+
+    /* VOICES — gallery grid like a magazine spread */
+    .voices{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
+    .voice{border-top:1px solid var(--ink);padding-top:.75rem}
+    .voice .portrait{
+      aspect-ratio:1/1;background:var(--ink);margin-bottom:.75rem;
+      background-image:linear-gradient(135deg,hsl(8 56% 38%) 0%,hsl(40 38% 60%) 100%);
+      position:relative;overflow:hidden;
+    }
+    .voice .portrait::after{content:"";position:absolute;inset:0;background:hsl(0 0% 100% / .15);mix-blend-mode:overlay}
+    .voice .num{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft)}
+    .voice .name{font-family:var(--serif);font-weight:700;font-size:1.25rem;margin:.25rem 0 .1rem}
+    .voice .description{font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--ink-soft);line-height:1.4}
+    .voice .play{display:inline-flex;align-items:center;gap:.4rem;margin-top:.6rem;font-family:var(--mono);
+      font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--ink);
+      padding:.4rem .7rem;border-radius:999px;cursor:pointer;text-decoration:none;color:inherit}
+    .voice .play::before{content:"►"}
+    @media (max-width:980px){.voices{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.voices{grid-template-columns:1fr}}
+
+    /* INTAKE PREVIEW */
+    .intake-preview{background:var(--paper-deep);padding:3rem 2rem;margin:1rem 0 0;border:1px solid var(--rule)}
+    .intake-preview ol{counter-reset:q;list-style:none;padding:0;margin:1.5rem 0;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .intake-preview li{counter-increment:q;font-family:var(--serif);font-size:1.05rem;line-height:1.5;padding-left:2rem;position:relative}
+    .intake-preview li::before{content:counter(q,decimal-leading-zero);position:absolute;left:0;font-family:var(--mono);font-size:.78rem;color:var(--accent);font-weight:bold}
+    @media (max-width:720px){.intake-preview ol{grid-template-columns:1fr}}
+
+    /* DASHBOARD PREVIEW */
+    .dash-preview{display:grid;grid-template-columns:repeat(6,1fr);gap:.5rem;font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+    .dash-preview span{display:flex;align-items:center;justify-content:center;padding:1.5rem 0;border:1px solid var(--rule);background:var(--paper)}
+    .dash-preview .d{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .dash-preview .i{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+    .dash-preview .b{background:hsl(0 0% 0% / .04);color:var(--ink);border-color:var(--ink)}
+
+    /* COLLECTION PREVIEW — magazine grid */
+    .collection{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2rem}
+    .album{border-top:2px solid var(--ink);padding-top:1rem}
+    .album .cover{aspect-ratio:1/1;background:linear-gradient(135deg,hsl(40 38% 60%) 0%,hsl(8 56% 38%) 100%);margin-bottom:1rem}
+    .album .num{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft)}
+    .album .title{font-family:var(--serif);font-weight:700;font-size:1.4rem;line-height:1.1;margin:.25rem 0}
+    .album .meta{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:.95rem}
+    @media (max-width:980px){.collection{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.collection{grid-template-columns:1fr}}
+
+    /* CHAT PREVIEW */
+    .chat-preview{background:var(--ink);color:var(--paper);padding:2rem;margin-top:1.5rem;font-family:var(--serif)}
+    .chat-preview .msg{margin-bottom:1rem;font-size:1rem;line-height:1.5}
+    .chat-preview .msg .who{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-deep);opacity:.6;display:block;margin-bottom:.15rem}
+    .chat-preview .input{margin-top:1rem;border-top:1px solid hsl(0 0% 100% / .15);padding-top:1rem;font-family:var(--mono);font-size:.85rem;color:var(--paper-deep);opacity:.5}
+
+    /* LAYOUT-PICKER */
+    .layouts{margin-top:1.5rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .layout{border:1px solid var(--rule);padding:1.25rem;background:var(--paper)}
+    .layout.active{border-color:var(--accent);border-width:2px;background:var(--paper)}
+    .layout .name{font-family:var(--serif);font-weight:700;font-size:1rem}
+    .layout .preview{aspect-ratio:16/9;background:repeating-linear-gradient(45deg,hsl(0 0% 0% / .03) 0 6px,transparent 6px 12px);margin-top:.5rem}
+
+    .footer-rule{margin-top:5rem;border-top:2px solid var(--ink);padding-top:1rem;font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.1em}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============== MASTHEAD ============== -->
+  <header class="masthead">
+    <div class="logo">album-studio</div>
+    <div class="issue">VOL 01 · ISSUE 26 · 2026</div>
+  </header>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero">
+    <p class="kicker">A platform for the album you haven't made yet</p>
+    <h1>Twenty-one questions later, you have a record.</h1>
+    <p class="standfirst">An editorial studio for the album you haven't made yet — interview your way into a concept, audition real voices, and keep every record you finish in one place.</p>
+    <p class="byline">Maren Sol · dream-folk · 12 minutes read · build pipeline ⌗●○</p>
+  </section>
+
+  <!-- ============== PANEL 1 — VOICES ============== -->
+  <section class="panel" aria-labelledby="voicesLabel">
+    <p class="label" id="voicesLabel">Panel I</p>
+    <h2>Voices, pre-staged.</h2>
+    <p class="lede">Six voices you can audition before you commit to one. Each is a real model — not a demo — and the same voice will sing your album when you press go.</p>
+    <div class="voices">
+      <article class="voice"><div class="portrait"></div><span class="num">V·01</span><h3 class="name">Marielle</h3><p class="description">Low, breathy, close-mic'd. A whisper that wants to be heard.</p><a class="play" href="#play">Audition</a></article>
+      <article class="voice"><div class="portrait" style="background:linear-gradient(135deg,hsl(220 38% 48%) 0%,hsl(280 38% 60%) 100%)"></div><span class="num">V·02</span><h3 class="name">Joaquín</h3><p class="description">Warm baritone, slight rasp. Built for narrative ballads.</p><a class="play" href="#play">Audition</a></article>
+      <article class="voice"><div class="portrait" style="background:linear-gradient(135deg,hsl(140 38% 36%) 0%,hsl(40 50% 60%) 100%)"></div><span class="num">V·03</span><h3 class="name">Ailani</h3><p class="description">Bright mezzo, agile. Folk-pop with a vintage ribbon compressor.</p><a class="play" href="#play">Audition</a></article>
+      <article class="voice"><div class="portrait" style="background:linear-gradient(135deg,hsl(0 38% 38%) 0%,hsl(320 38% 50%) 100%)"></div><span class="num">V·04</span><h3 class="name">Rumi</h3><p class="description">Androgynous alto, slight reverb tail. Bedroom-pop crooner.</p><a class="play" href="#play">Audition</a></article>
+      <article class="voice"><div class="portrait" style="background:linear-gradient(135deg,hsl(280 38% 38%) 0%,hsl(220 38% 48%) 100%)"></div><span class="num">V·05</span><h3 class="name">Theo</h3><p class="description">Spoken-word, dry. Emotive without singing — the narrator.</p><a class="play" href="#play">Audition</a></article>
+      <article class="voice"><div class="portrait" style="background:linear-gradient(135deg,hsl(40 50% 60%) 0%,hsl(8 56% 38%) 100%)"></div><span class="num">V·06</span><h3 class="name">Ensemble</h3><p class="description">Six-voice choir. For the cinematic scope and the close-harmony tracks.</p><a class="play" href="#play">Audition</a></article>
+    </div>
+  </section>
+
+  <!-- ============== PANEL 2 — INTAKE ============== -->
+  <section class="panel" aria-labelledby="intakeLabel">
+    <p class="label" id="intakeLabel">Panel II</p>
+    <h2>Twenty-one questions.</h2>
+    <p class="lede">Not a form — the first chapter of an editor's interview. Eight are mandatory; the rest have defaults ready if you skip them.</p>
+    <div class="intake-preview">
+      <ol>
+        <li>What is this album <em>about</em>? Not genre, not vibe — the emotional or narrative heart.</li>
+        <li>What scope? Single / EP / album / double-feature / concept piece.</li>
+        <li>What genre family at a minimum?</li>
+        <li>One to three reference artists whose sound you want to channel.</li>
+        <li>Vocal approach — solo / duet / choir / spoken word / instrumental.</li>
+        <li>Language(s) for lyrics.</li>
+        <li>Runtime target per track — radio / standard / extended / immersive.</li>
+        <li>Artist stage name.</li>
+        <li>Working album title.</li>
+        <li>Rough tracklist — titles or themes, your call.</li>
+      </ol>
+      <p style="font-family:var(--serif);font-style:italic;color:var(--ink-soft);margin:1rem 0 .5rem">…plus eleven more. Most have sensible defaults so you can skip them.</p>
+    </div>
+  </section>
+
+  <!-- ============== PANEL 3 — DASHBOARD ============== -->
+  <section class="panel" aria-labelledby="dashLabel">
+    <p class="label" id="dashLabel">Panel III</p>
+    <h2>The pipeline, at a glance.</h2>
+    <p class="lede">Twelve stages from concept to cassette. Each carries a status you can flip — done / in progress / blocked / to do. The dashboard reads a single file on disk.</p>
+    <div class="dash-preview" aria-label="12-layer pipeline preview">
+      <span class="d">DONE<br>01</span>
+      <span class="i">NOW<br>02</span>
+      <span>03</span>
+      <span>04</span>
+      <span>05</span>
+      <span class="b">06</span>
+      <span>07</span>
+      <span>08</span>
+      <span>09</span>
+      <span>10</span>
+      <span>11</span>
+      <span>12</span>
+    </div>
+  </section>
+
+  <!-- ============== PANEL 4 — COLLECTION ============== -->
+  <section class="panel" aria-labelledby="collLabel">
+    <p class="label" id="collLabel">Panel IV</p>
+    <h2>The collection.</h2>
+    <p class="lede">When an album is done it joins the others. The collection is the same idea as a record shelf — but you can press play on anything, anytime.</p>
+    <div class="collection">
+      <article class="album"><div class="cover"></div><span class="num">N°01 · 2026</span><h3 class="title">Half-Light Hours</h3><p class="meta">Maren Sol · 9 tracks · dream-folk</p></article>
+      <article class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(220 38% 38%) 0%,hsl(280 38% 50%) 100%)"></div><span class="num">N°02 · 2026</span><h3 class="title">Before the Storm</h3><p class="meta">Joaquín Yáñez · 7 tracks · narrative ballad</p></article>
+      <article class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(140 38% 36%) 0%,hsl(40 50% 60%) 100%)"></div><span class="num">N°03 · 2025</span><h3 class="title">Cassette for a Stranger</h3><p class="meta">Ailani Park · 5 tracks · folk-pop</p></article>
+    </div>
+  </section>
+
+  <!-- ============== PANEL 5 — CHAT + LAYOUTS ============== -->
+  <section class="panel" aria-labelledby="chatLabel">
+    <p class="label" id="chatLabel">Panel V</p>
+    <h2>Still chat-first when you want it.</h2>
+    <p class="lede">The conversational agent (Penelope) is one of six entry points, not the only one. Same transcripts; same intent signals.</p>
+    <div class="chat-preview" aria-label="Chat panel preview">
+      <div class="msg"><span class="who">You · 14:22</span>"approve brief half-light-hours, then start layer 5."</div>
+      <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package from the manifest I pulled from the build skill — back when it's ready.</div>
+      <div class="input">Press ⌘K to enter a prompt…</div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="layoutLabel">
+    <p class="label" id="layoutLabel">Panel VI</p>
+    <h2>Layouts — pick the one.</h2>
+    <p class="lede">Three readable arrangements of the same six panels. Switch any time; the data stays where it is.</p>
+    <div class="layouts">
+      <div class="layout active"><span class="name">Editorial</span><div class="preview"></div></div>
+      <div class="layout"><span class="name">Studio</span><div class="preview"></div></div>
+      <div class="layout"><span class="name">Cinematic</span><div class="preview"></div></div>
+    </div>
+  </section>
+
+  <footer class="footer-rule">PENELOPE × album-studio · prototype A · editorial-magazine</footer>
+</div>
+</body>
+</html>

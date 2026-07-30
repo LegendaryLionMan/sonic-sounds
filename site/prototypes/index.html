@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>album-studio · template gallery (17 variants)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html{margin:0;background:#060709;color:#fff;font-family:Inter,system-ui,sans-serif}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#161618 0%,#060709 60%)}
+.wrap{max-width:96rem;margin:0 auto;padding:3rem 1.5rem 5rem}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:hsl(160 80% 60%);margin:0 0 .5rem}
+h1{font-family:Inter;font-weight:600;font-size:clamp(2rem,4.5vw,3.4rem);margin:0 0 .5rem;letter-spacing:-.02em}
+h1 em{font-style:normal;color:hsl(160 80% 60%)}
+.lede{font-size:1.05rem;color:rgba(255,255,255,.65);max-width:60ch;margin:0 0 2.5rem}
+
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:2.5rem 0 1rem;display:flex;align-items:center;gap:1rem}
+.section-label::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.08)}
+
+.grid{display:grid;gap:1.25rem}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:1200px){.cols-3,.cols-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:680px){.cols-3,.cols-4{grid-template-columns:1fr}}
+
+.card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,background .2s}
+.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04)}
+.card .preview{aspect-ratio:16/10;background:#0a0a0c;border-bottom:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden}
+.card .preview iframe{width:200%;height:200%;border:0;transform:scale(0.5);transform-origin:0 0;position:absolute;top:0;left:0;pointer-events:none}
+.card .body{padding:1.1rem;flex:1;display:flex;flex-direction:column;gap:.4rem}
+.card .label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:.5rem}
+.card .label .n{background:rgba(255,255,255,.08);color:#fff;width:1.5rem;height:1.5rem;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.card h2{font-family:Inter;font-weight:600;font-size:1.2rem;margin:.2rem 0;letter-spacing:-.01em}
+.card p{flex:1;color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.5}
+.card .open{padding:.85rem 1.1rem;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;color:#fff;text-decoration:none;font-size:.85rem;transition:background .2s,color .2s}
+.card .open:hover{background:rgba(255,255,255,.06);color:hsl(160 80% 60%)}
+.card .open .arr{font-family:'JetBrains Mono',monospace}
+
+.meta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between}
+
+.group-originals .card .label{color:hsl(40 80% 60%)}
+.group-new .card .label{color:hsl(160 80% 60%)}
+.group-hybrid .card .label{color:hsl(330 80% 60%)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">album-studio · template gallery</p>
+  <h1><em>17 templates</em> · same six panels, seventeen visual systems</h1>
+  <p class="lede">3 originals · 8 music-oriented · 6 hybrids (vinyl × cassette × mesh × minimal). Pick one — or blend two.</p>
+
+  <div class="section-label">ORIGINALS · FROM THE FIRST ROUND</div>
+  <div class="grid cols-3 group-originals">
+    <a class="card" href="./a-editorial/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,hsl(40 28% 96%),hsl(40 18% 88%))"><iframe src="./a-editorial/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">A</span>editorial-magazine</div>
+        <h2>Editorial</h2>
+        <p>Cream paper, Fraunces serif. Magazine-issue feel. Slow reading.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+    <a class="card" href="./1-studio/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a)"><iframe src="./1-studio/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">1</span>studio-tool (parent)</div>
+        <h2>Studio</h2>
+        <p>Dark mono, status-board. Controls-first. Your reference baseline.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+    <a class="card" href="./c-cinematic/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse at top,#1a1410,#0a0a0a 70%)"><iframe src="./c-cinematic/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">C</span>cinematic</div>
+        <h2>Cinematic</h2>
+        <p>Black + amber. Cormorant Garamond. Slow + immersive.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+  </div>
+
+  <div class="section-label">MUSIC-ORIENTED · 8 TEMPLATES</div>
+  <div class="grid cols-4 group-new">
+
+    <a class="card" href="./2-wave/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#060709,#0d0f13)"><iframe src="./2-wave/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">2</span>wave</div>
+        <h2>Wave</h2>
+        <p>Live waveform in hero. White panels + neon-green accent.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./3-vinyl/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse at top,#1a0a0a,#0a0a0a 70%)"><iframe src="./3-vinyl/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">3</span>vinyl</div>
+        <h2>Vinyl</h2>
+        <p>Spinning record hero. Tonearm, label, gold + red accents.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./4-cassette/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#08080a,#ffae00)"><iframe src="./4-cassette/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">4</span>cassette</div>
+        <h2>Cassette</h2>
+        <p>Cassette tape hero. Two reels, "SIDE A · DOLBY".</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./5-equalizer/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#0a0a0e,#00f0c0)"><iframe src="./5-equalizer/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">5</span>equalizer</div>
+        <h2>Equalizer</h2>
+        <p>16 live EQ bands hero. Mini-EQ on every voice.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./6-spectrum/" target="_blank">
+      <div class="preview" style="background:radial-gradient(circle at center,#003322,#000)"><iframe src="./6-spectrum/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">6</span>spectrum</div>
+        <h2>Spectrum</h2>
+        <p>Full-bleed 24-band FFT background. Cyan-on-black.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./7-glasswave/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse at top left,#3a2a6a,#0a0814 70%)"><iframe src="./7-glasswave/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">7</span>glasswave</div>
+        <h2>Glasswave</h2>
+        <p>Frosted glass over drifting color blobs. Lavender.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./8-mesh/" target="_blank">
+      <div class="preview" style="background:radial-gradient(at 20% 30%,hsl(330 80% 50% / .4),#0a0a14 50%)"><iframe src="./8-mesh/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">8</span>mesh</div>
+        <h2>Mesh</h2>
+        <p>4-node aurora mesh gradient. Pink/blue/yellow.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./9-minimal/" target="_blank">
+      <div class="preview" style="background:#08080a"><iframe src="./9-minimal/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">9</span>minimal</div>
+        <h2>Minimal</h2>
+        <p>Hairline + content only. Sans, no chrome.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./10-cinematic/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse 80rem 40rem at 50% 0%,rgba(255,174,92,.05),#0a0a0c 50%)"><iframe src="./10-cinematic/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">10</span>studio-cinematic</div>
+        <h2>Studio-Cinematic</h2>
+        <p>Studio shell + Cormorant italic + amber.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+  </div>
+
+  <div class="section-label">HYBRIDS · 6 FRESH COMBINATIONS (VINYL × CASSETTE × MESH × MINIMAL)</div>
+  <div class="grid cols-3 group-hybrid">
+
+    <a class="card" href="./11-threaded/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse at top,#1a0a0a,#0a0a0a 70%)"><iframe src="./11-threaded/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">11</span>threaded (vinyl × cassette)</div>
+        <h2>Threaded</h2>
+        <p>A red tape line physically spirals from the cassette reel to the vinyl record. Both spin on the same 8s axis.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./12-bloom/" target="_blank">
+      <div class="preview" style="background:radial-gradient(ellipse at 30% 50%,hsl(290 90% 60% / .25),#08080a 60%)"><iframe src="./12-bloom/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">12</span>bloom (mesh × minimal)</div>
+        <h2>Bloom</h2>
+        <p>One single aurora bloom lives behind the now-playing card only. The rest of the page is hairline minimal.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./13-vinyl-mesh/" target="_blank">
+      <div class="preview" style="background:radial-gradient(circle at 30% 30%,hsl(330 90% 60%),#0a0a14 50%)"><iframe src="./13-vinyl-mesh/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">13</span>vinyl-mesh</div>
+        <h2>Vinyl-Mesh</h2>
+        <p>The vinyl silhouette is made of mesh blobs. No black vinyl — just colored shapes orbiting inside the circular mask.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./14-cassette-mesh/" target="_blank">
+      <div class="preview" style="background:radial-gradient(circle at 50% 50%,#f0c53c 0%,#d4a83a 40%,#0a0a14 100%)"><iframe src="./14-cassette-mesh/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">14</span>cassette-mesh</div>
+        <h2>Cassette-Mesh</h2>
+        <p>The cassette label sticker is a live aurora mesh that drifts and hue-rotates. Album covers use the same mesh treatment.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+    <a class="card" href="./15-morph/" target="_blank">
+      <div class="preview" style="background:linear-gradient(135deg,#0a0a14,#1a0a14)"><iframe src="./15-morph/" loading="lazy"></iframe></div>
+      <div class="body">
+        <div class="label"><span class="n">15</span>morph (all four)</div>
+        <h2>Morph</h2>
+        <p>One persistent shape on the right morphs as you scroll: vinyl → cassette → mesh → vinyl. Driven by scroll position.</p>
+      </div>
+      <div class="open">Open <span class="arr">→</span></div>
+    </a>
+
+  </div>
+
+  <div class="meta">
+    <span>album-studio · 17 templates · 2026-07-28</span>
+    <span>/site/prototypes/</span>
+  </div>
+</div>
+</body>
+</html>

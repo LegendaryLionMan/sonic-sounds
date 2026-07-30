@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>album-studio · template 6 · spectrum</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--card:rgba(255,255,255,.04);--ink:#fff;--ink-soft:rgba(255,255,255,.7);--ink-muted:rgba(255,255,255,.4);
+  --accent:#00f0c0;--rule:rgba(255,255,255,.08);
+  --sans:'Inter',system-ui,sans-serif;--display:'Space Grotesk',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55;background:var(--bg);overflow-x:hidden}
+.wrap{max-width:90rem;margin:0 auto;padding:1.5rem;display:grid;gap:1rem;position:relative;z-index:2}
+
+/* FULL-BLEED SPECTRUM BACKGROUND */
+.fft-bg{position:fixed;inset:0;z-index:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 2vw 0 2vw;pointer-events:none;opacity:.7}
+.fft-bg span{flex:1;background:linear-gradient(180deg,hsl(180 80% 50%) 0%,hsl(140 80% 40%) 50%,transparent 100%);animation:fft 3s ease-in-out infinite}
+@keyframes fft{0%,100%{height:5%}50%{height:75%}}
+.fft-bg span:nth-child(odd){animation-duration:2.4s}
+.fft-bg span:nth-child(3n){animation-duration:1.8s}
+.fft-bg span:nth-child(5n){animation-duration:2.2s}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;background:rgba(0,0,0,.4);
+  backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);
+  border:1px solid var(--rule);border-radius:12px}
+.topbar .crumb{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft)}
+.topbar .crumb b{color:var(--ink);font-weight:600}
+.topbar .grow{flex:1}
+.topbar .cmd{display:inline-flex;gap:.4rem;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  padding:.4rem .75rem;border-radius:8px;font-size:.74rem;color:var(--ink-soft);cursor:pointer}
+
+/* HERO */
+.hero{padding:3rem 2rem;background:rgba(0,0,0,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--rule);border-radius:16px;text-align:center}
+.hero .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 1rem}
+.hero h1{font-family:var(--display);font-weight:300;font-size:clamp(2.4rem,5.5vw,4rem);margin:0 0 1rem;letter-spacing:-.03em;line-height:1.05}
+.hero h1 b{font-weight:500;color:var(--accent)}
+.hero p{margin:0;color:var(--ink-soft);font-size:1rem;max-width:54ch;margin:0 auto}
+
+/* PANEL — translucent over the spectrum */
+.panel{background:rgba(0,0,0,.5);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);
+  border:1px solid var(--rule);border-radius:14px;overflow:hidden;transition:border-color .3s,transform .3s}
+.panel:hover{border-color:rgba(0,240,192,.3);transform:translateY(-1px)}
+.panel header{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--rule);
+  background:rgba(0,0,0,.3);font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+.panel header .hash{color:var(--accent)}
+.panel header .status{margin-left:auto;font-size:.66rem;padding:.2rem .55rem;border-radius:999px;background:rgba(0,240,192,.15);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.panel .body{padding:1rem 1.1rem}
+
+.grid-cols{display:grid;gap:1rem}.cols-2{grid-template-columns:1.3fr 1fr}
+@media (max-width:980px){.cols-2{grid-template-columns:1fr}}
+
+/* VOICES */
+.voices{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.voice{display:flex;align-items:center;gap:.6rem;padding:.65rem .75rem;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--rule);transition:all .2s}
+.voice:hover{background:rgba(0,240,192,.06);border-color:rgba(0,240,192,.3)}
+.voice .bars{display:flex;gap:1px;align-items:flex-end;height:24px;width:36px;flex:none}
+.voice .bars span{flex:1;background:var(--accent);border-radius:1px;animation:bars .9s ease-in-out infinite}
+.voice .bars span:nth-child(1){animation-delay:-.1s}
+.voice .bars span:nth-child(2){animation-delay:-.3s}
+.voice .bars span:nth-child(3){animation-delay:-.5s}
+.voice .bars span:nth-child(4){animation-delay:-.2s}
+@keyframes bars{0%,100%{height:25%}50%{height:100%}}
+.voice .name{font-weight:500;color:var(--ink);font-size:.9rem}
+.voice .desc{font-size:.72rem;color:var(--ink-soft);font-family:var(--mono)}
+.voice .play{margin-left:auto;width:32px;height:32px;border-radius:50%;border:1px solid var(--rule);background:rgba(255,255,255,.04);color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem}
+.voice .play:hover{background:var(--accent);color:#000}
+
+/* INTAKE */
+.intake-list{display:grid;gap:.25rem}
+.intake-list .row{display:flex;align-items:center;gap:.6rem;padding:.45rem .65rem;border-radius:8px;font-size:.78rem}
+.intake-list .row:hover{background:rgba(255,255,255,.04)}
+.intake-list .row .check{width:16px;height:16px;border:1px solid var(--rule);border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center}
+.intake-list .row .check.done{background:var(--accent);border-color:var(--accent);color:#000}
+.intake-list .row .id{color:var(--ink-muted);width:60px;flex:none;font-family:var(--mono);font-weight:500}
+.intake-list .row .prompt{flex:1;color:var(--ink-soft);font-family:var(--sans);font-size:.88rem}
+.intake-list .row .tier{font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.1em}
+
+/* PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.pipeline span{aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);transition:all .25s}
+.pipeline span:hover{transform:scale(1.06)}
+.pipeline .d{background:var(--accent);border-color:var(--accent);color:#000;font-weight:600}
+.pipeline .i{background:rgba(255,255,255,.6);border-color:rgba(255,255,255,.7);color:#000;font-weight:600}
+.pipeline .b{background:rgba(255,255,255,.15);border-color:var(--rule);color:var(--ink)}
+
+/* ALBUMS */
+.albums{display:grid;gap:.85rem;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.album{border-radius:14px;overflow:hidden;background:rgba(0,0,0,.5);border:1px solid var(--rule);transition:all .3s;cursor:pointer;backdrop-filter:blur(8px)}
+.album:hover{border-color:var(--accent);transform:translateY(-3px)}
+.album .cover{aspect-ratio:1/1;position:relative;background:linear-gradient(135deg,hsl(180 60% 30%) 0%,hsl(140 60% 30%) 100%)}
+.album .info{padding:.65rem .75rem}
+.album .num{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em}
+.album .title{font-weight:500;font-size:.95rem;color:var(--ink);margin:.15rem 0 .05rem}
+.album .meta{font-size:.74rem;color:var(--ink-soft)}
+
+/* CHAT */
+.chat{display:flex;flex-direction:column;gap:.5rem;min-height:12rem}
+.chat .msg{padding:.65rem .85rem;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:10px;font-size:.88rem}
+.chat .msg.you{border-left:2px solid var(--accent);background:rgba(0,240,192,.06)}
+.chat .msg .who{font-family:var(--mono);font-size:.66rem;color:var(--ink-muted);display:block;margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.08em}
+.chat .input{margin-top:auto;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:10px;padding:.7rem .85rem;color:var(--ink-muted);font-size:.78rem}
+
+/* LAYOUTS */
+.layouts{display:grid;gap:.6rem;grid-template-columns:repeat(3,1fr)}
+.layout{padding:.85rem .65rem;border:1px solid var(--rule);border-radius:10px;text-align:center;font-size:.78rem;color:var(--ink-soft);cursor:pointer;transition:all .2s}
+.layout.active{border-color:var(--accent);background:rgba(0,240,192,.08);color:var(--accent)}
+.layout .glyph{aspect-ratio:16/9;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:6px;margin-bottom:.5rem;display:flex;align-items:flex-end;justify-content:center;gap:1px;padding:.5rem}
+.layout .glyph span{flex:1;height:30%;background:currentColor;border-radius:1px}
+
+footer{padding:1rem 0 .25rem;text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--ink-muted)}
+footer code{background:rgba(255,255,255,.04);padding:.15rem .5rem;border-radius:6px;border:1px solid var(--rule);color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<!-- FULL-BLEED FFT BACKGROUND -->
+<div class="fft-bg" aria-hidden="true">
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="wrap">
+
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / spectrum</b></span>
+  <span class="grow"></span>
+  <span class="cmd">SPECTRUM · 24 BAND</span>
+  <span class="cmd">▷ LIVE</span>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">SPECTRUM · 24 BAND · LIVE</p>
+  <h1>the album's <b>frequency signature</b>.</h1>
+  <p>21 questions render as one spectrum. 12 layers render as another. Pick the dominant band, press go.</p>
+</header>
+
+<section class="panel">
+  <header><span class="hash">/voices</span> --audition · 6 ready<span class="status">live</span></header>
+  <div class="body">
+    <div class="voices">
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Marielle</div><div class="desc">low · breathy · close</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Joaquín</div><div class="desc">baritone · rasp</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Ailani</div><div class="desc">mezzo · ribbon</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Rumi</div><div class="desc">alto · reverb</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Theo</div><div class="desc">spoken · dry</div></div><button class="play">▷</button></div>
+      <div class="voice"><div class="bars"><span></span><span></span><span></span><span></span></div><div><div class="name">Ensemble</div><div class="desc">6-voice choir</div></div><button class="play">▷</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/intake</span> --checklist · 3 / 8 mandatory<span class="status">in progress</span></header>
+    <div class="body">
+      <div class="intake-list">
+        <div class="row"><span class="check done">✓</span><span class="id">M·01</span><span class="prompt">What is this album about?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·02</span><span class="prompt">What scope?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check done">✓</span><span class="id">M·03</span><span class="prompt">What genre family?</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·04</span><span class="prompt">Reference artists (1–3)</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·05</span><span class="prompt">Vocal approach</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·06</span><span class="prompt">Languages for lyrics</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·07</span><span class="prompt">Runtime target</span><span class="tier">mandatory</span></div>
+        <div class="row"><span class="check"></span><span class="id">M·08</span><span class="prompt">Artist stage name</span><span class="tier">mandatory</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/pipeline</span> --half-light-hours<span class="status">1 active</span></header>
+    <div class="body">
+      <div class="pipeline">
+        <span class="d">01</span><span class="i">02</span><span>03</span><span>04</span><span>05</span><span class="b">06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <header><span class="hash">/collection</span> --the-shelf · 3 albums<span class="status">live</span></header>
+  <div class="body">
+    <div class="albums">
+      <div class="album"><div class="cover"></div><div class="info"><div class="num">N°01 · 2026</div><div class="title">Half-Light Hours</div><div class="meta">Maren Sol · 9 tracks</div></div></div>
+      <div class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(220 50% 30%) 0%,hsl(280 40% 30%) 100%)"></div><div class="info"><div class="num">N°02 · 2026</div><div class="title">Before the Storm</div><div class="meta">Joaquín · 7 tracks</div></div></div>
+      <div class="album"><div class="cover" style="background:linear-gradient(135deg,hsl(140 50% 30%) 0%,hsl(40 60% 30%) 100%)"></div><div class="info"><div class="num">N°03 · 2025</div><div class="title">Cassette for a Stranger</div><div class="meta">Ailani · 5 tracks</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-cols cols-2">
+  <section class="panel">
+    <header><span class="hash">/chat</span> --penelope<span class="status">1 msg</span></header>
+    <div class="body">
+      <div class="chat">
+        <div class="msg you"><span class="who">You · 14:22</span>approve brief half-light-hours, then start layer 5.</div>
+        <div class="msg"><span class="who">Penelope · 14:22</span>Approved. Drafting the Spotify package…</div>
+        <div class="input">type a message…</div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <header><span class="hash">/layouts</span> --picker<span class="status">spectrum (active)</span></header>
+    <div class="body">
+      <div class="layouts">
+        <div class="layout"><div class="glyph"><span></span><span></span><span></span><span></span><span></span></div>studio</div>
+        <div class="layout active"><div class="glyph"><span></span><span></span><span></span><span></span><span></span></div>spectrum</div>
+        <div class="layout"><div class="glyph"><span></span><span></span><span></span><span></span><span></span></div>wave</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer><code>album-studio · template 6 · spectrum · full-bleed FFT</code></footer>
+
+</div>
+</body>
+</html>

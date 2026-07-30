@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "albumSlug": "maren-sol-untitled",
+  "submittedAt": "2026-07-28T14:41:15.942Z",
+  "intakeFormVersion": "2026-07-28",
+  "answers": {
+    "M01_concept": {
+      "value": "An album about the half-light hour — that 30-minute window between dusk and full dark when the world feels liminal."
+    },
+    "M02_scope": {
+      "value": "album"
+    },
+    "M03_genre": {
+      "value": "dream-folk"
+    },
+    "M04_references": {
+      "artists": [
+        {
+          "name": "Grouper"
+        },
+        {
+          "name": "Adrianne Lenker"
+        },
+        {
+          "name": "Aldous Harding"
+        }
+      ]
+    },
+    "M05_vocal": {
+      "approach": "solo",
+      "character": "low, breathy, close-mic'd"
+    },
+    "M06_language": {
+      "languages": [
+        "English"
+      ]
+    },
+    "M07_runtime": {
+      "value": "standard"
+    },
+    "M08_artist": {
+      "value": "Maren Sol"
+    },
+    "R09_title": {
+      "value": ""
+    },
+    "R10_tracklist": {
+      "tracks": []
+    },
+    "R11_motif": {
+      "value": ""
+    },
+    "R12_production": {
+      "value": ""
+    },
+    "R13_lyricalSource": {
+      "value": ""
+    },
+    "R14_distribution": {
+      "value": ""
+    },
+    "E15_arc": {
+      "value": ""
+    },
+    "E16_influences": {
+      "value": ""
+    },
+    "E17_coverArt": {
+      "value": ""
+    },
+    "E18_anchor": {
+      "value": ""
+    },
+    "E19_pressScope": {
+      "value": ""
+    },
+    "E20_musicVideos": {
+      "value": ""
+    },
+    "E21_deadline": {
+      "value": ""
+    }
+  },
+  "skipped": [
+    "R09_title",
+    "R10_tracklist",
+    "R11_motif",
+    "R12_production",
+    "R13_lyricalSource",
+    "R14_distribution",
+    "E15_arc",
+    "E16_influences",
+    "E17_coverArt",
+    "E18_anchor",
+    "E19_pressScope",
+    "E20_musicVideos",
+    "E21_deadline"
+  ]
+}

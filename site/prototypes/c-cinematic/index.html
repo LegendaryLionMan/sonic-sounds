@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>album-studio · prototype C · cinematic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:          hsl(40 14% 92%);
+      --ink-soft:     hsl(40 8% 70%);
+      --ink-muted:    hsl(40 4% 50%);
+      --accent:       hsl(28 76% 60%);
+      --amber:        hsl(36 70% 50%);
+      --rule:         hsl(40 8% 24%);
+      --serif:        'Cormorant Garamond', 'Iowan Old Style', serif;
+      --sans:         'Inter', system-ui, sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{background:#000}
+    body{margin:0;font-family:var(--sans);color:var(--ink);font-weight:300;font-size:16px;line-height:1.7;
+      background:radial-gradient(ellipse at top,hsl(220 30% 8%),#000 60%) fixed}
+    .wrap{max-width:74rem;margin:0 auto;padding:0 1.5rem}
+
+    /* HERO — full-bleed, video-tile treatment */
+    .hero{position:relative;min-height:88vh;display:flex;flex-direction:column;justify-content:flex-end;
+      padding:4rem 0 3rem;overflow:hidden}
+    .hero::before{content:"";position:absolute;inset:0;z-index:0;
+      background:
+        linear-gradient(180deg,transparent 30%,hsl(0 0% 4%) 95%),
+        /* a faux "video tile" — moving gradient + film grain */
+        radial-gradient(circle at 20% 40%,hsl(28 60% 40% / .4) 0%,transparent 35%),
+        radial-gradient(circle at 80% 70%,hsl(190 60% 30% / .35) 0%,transparent 40%),
+        radial-gradient(circle at 50% 90%,hsl(0 50% 25% / .5) 0%,transparent 50%),
+        linear-gradient(45deg,#0a0a0a 0%,#1a1410 100%);
+      animation:breathe 12s ease-in-out infinite alternate}
+    .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+      background-image:repeating-linear-gradient(0deg,hsl(0 0% 100% / .02) 0 1px,transparent 1px 3px)}
+    @keyframes breathe{0%{transform:scale(1)}100%{transform:scale(1.04)}}
+    .hero .inner{position:relative;z-index:2;max-width:50rem}
+    .hero .epigraph{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2.2vw,2rem);
+      line-height:1.35;color:var(--ink-soft);margin:0 0 1rem;text-align:right;max-width:30rem;margin-left:auto;margin-right:0}
+    .hero .epigraph::before{content:"\201C";display:block;font-size:3.5rem;line-height:0;color:var(--accent);margin-bottom:-.5rem}
+    .hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(3.5rem,8vw,7rem);line-height:.92;
+      letter-spacing:-.04em;margin:0 0 .5rem;text-shadow:0 4px 30px hsl(0 0% 0% / .5)}
+    .hero h1 em{font-style:italic;color:var(--accent)}
+    .hero .subhead{font-family:var(--serif);font-size:clamp(1.2rem,1.7vw,1.5rem);font-style:italic;
+      color:var(--ink-soft);margin:0 0 2rem;max-width:36ch}
+    .hero .cta{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 1.5rem;
+      background:linear-gradient(135deg,hsl(28 76% 50%) 0%,hsl(8 70% 40%) 100%);
+      color:hsl(40 30% 8%);font-family:var(--sans);font-weight:400;font-size:1rem;letter-spacing:.04em;
+      text-decoration:none;border:none;cursor:pointer;border-radius:2px;
+      box-shadow:0 0 30px hsl(28 76% 60% / .35)}
+
+    /* CHAPTER — every panel is a "chapter" with a numbered title */
+    .chapter{padding:7rem 0 5rem;border-top:1px solid var(--rule);position:relative}
+    .chapter .ch-num{font-family:var(--serif);font-style:italic;font-size:1.4rem;color:var(--amber);margin:0 0 .5rem;
+      display:flex;align-items:center;gap:1rem}
+    .chapter .ch-num::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--amber),transparent 30%)}
+    .chapter .ch-title{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,5vw,4rem);
+      line-height:1;letter-spacing:-.02em;margin:0 0 1rem;max-width:18ch}
+    .chapter .ch-lede{font-family:var(--serif);font-style:italic;font-size:1.3rem;color:var(--ink-soft);
+      max-width:52ch;line-height:1.5;margin:0 0 3rem}
+
+    /* VOICES — actors on a stage */
+    .voices{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule)}
+    .voice{position:relative;padding:2rem 1.5rem;background:linear-gradient(180deg,hsl(40 4% 8%) 0%,hsl(0 0% 5%) 100%);
+      border-right:1px solid var(--rule);aspect-ratio:1/1;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+    .voice:last-child{border-right:0}
+    .voice::before{content:"";position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 40%,currentColor 0%,transparent 50%);opacity:.45;transition:opacity .3s}
+    .voice:hover::before{opacity:.7}
+    .voice[data-v=1]{color:hsl(28 60% 40%)}
+    .voice[data-v=2]{color:hsl(190 60% 30%)}
+    .voice[data-v=3]{color:hsl(45 60% 45%)}
+    .voice[data-v=4]{color:hsl(330 60% 40%)}
+    .voice[data-v=5]{color:hsl(265 60% 40%)}
+    .voice[data-v=6]{color:hsl(15 70% 50%)}
+    .voice .inner{position:relative;z-index:2}
+    .voice .label{font-family:var(--serif);font-style:italic;font-size:.9rem;color:var(--ink-muted);
+      text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
+    .voice .name{font-family:var(--serif);font-weight:400;font-size:1.6rem;color:var(--ink);margin:.25rem 0;line-height:1.1}
+    .voice .desc{font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--ink-soft);line-height:1.4;max-width:20ch}
+    .voice .play{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;
+      font-family:var(--sans);font-size:.85rem;color:var(--amber);text-decoration:none;text-transform:uppercase;letter-spacing:.1em;
+      padding-bottom:.4rem;border-bottom:1px solid hsl(28 76% 60% / .4)}
+    .voice .play::before{content:"▷  play 30s";font-family:var(--serif);font-style:italic}
+    @media (max-width:980px){.voices{grid-template-columns:repeat(2,1fr)}.voice{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}}
+    @media (max-width:560px){.voices{grid-template-columns:1fr}.voice{border-right:0}}
+
+    /* INTAKE PREVIEW — storyboard */
+    .storyboard{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule)}
+    .storyboard .panel-intake{aspect-ratio:3/4;padding:1.25rem;background:linear-gradient(180deg,hsl(40 4% 8%) 0%,hsl(0 0% 6%) 100%);
+      border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;justify-content:space-between}
+    .storyboard .panel-intake:nth-child(4n){border-right:0}
+    .panel-intake .num{font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--amber)}
+    .panel-intake .q{font-family:var(--serif);font-style:italic;font-size:1.1rem;line-height:1.4;color:var(--ink)}
+    .panel-intake .hint{font-size:.78rem;color:var(--ink-muted);font-family:var(--sans)}
+    @media (max-width:980px){.storyboard{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.storyboard{grid-template-columns:1fr}}
+
+    /* DASHBOARD PREVIEW — 12 cinematic frames */
+    .frames{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--rule)}
+    .frame{aspect-ratio:4/3;padding:.75rem;background:hsl(0 0% 5%);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+      font-family:var(--serif);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+    .frame .num{font-style:italic;color:var(--ink-muted);font-size:.78rem}
+    .frame .label{font-size:1rem;color:var(--ink);line-height:1.2}
+    .frame .badge{position:absolute;top:.5rem;right:.5rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;
+      padding:.1rem .4rem;border-radius:1px;font-family:var(--sans)}
+    .frame.d{background:linear-gradient(135deg,hsl(140 30% 12%) 0%,hsl(0 0% 5%) 100%)}
+    .frame.d .badge{background:var(--amber);color:hsl(0 0% 5%)}
+    .frame.i{background:linear-gradient(135deg,hsl(28 30% 12%) 0%,hsl(0 0% 5%) 100%)}
+    .frame.i .badge{background:hsl(8 70% 50%);color:hsl(0 0% 5%)}
+    .frame.b{background:linear-gradient(135deg,hsl(0 30% 12%) 0%,hsl(0 0% 5%) 100%)}
+    .frame.b .badge{background:hsl(0 80% 50%);color:hsl(0 0% 5%)}
+
+    /* COLLECTION — gallery cards */
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+    .album-cover{aspect-ratio:1/1;background:linear-gradient(135deg,hsl(28 60% 40%) 0%,hsl(190 60% 30%) 100%);
+      position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem;
+      font-family:var(--serif);color:var(--ink);overflow:hidden}
+    .album-cover::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,hsl(0 0% 0% / .7))}
+    .album-cover .inner{position:relative;z-index:2}
+    .album-cover .num{font-style:italic;color:hsl(40 14% 92% / .7);font-size:.9rem;letter-spacing:.1em}
+    .album-cover .title{font-size:1.6rem;font-weight:400;line-height:1.1;margin:.25rem 0 .5rem}
+    .album-cover .meta{font-style:italic;font-size:1rem;color:var(--ink-soft)}
+    .album-cover .play-btn{position:absolute;bottom:1.5rem;right:1.5rem;width:3rem;height:3rem;border-radius:50%;
+      background:hsl(40 14% 92%);color:hsl(0 0% 5%);display:flex;align-items:center;justify-content:center;
+      font-size:1rem;cursor:pointer;z-index:3}
+    @media (max-width:980px){.gallery{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.gallery{grid-template-columns:1fr}}
+
+    /* CHAT */
+    .chat-stage{background:linear-gradient(180deg,hsl(220 8% 6%) 0%,hsl(0 0% 4%) 100%);
+      padding:3rem;border:1px solid var(--rule)}
+    .chat-stage .msg{margin-bottom:2rem}
+    .chat-stage .msg .who{display:block;font-family:var(--serif);font-style:italic;color:var(--ink-muted);
+      font-size:.9rem;margin-bottom:.4rem;letter-spacing:.05em}
+    .chat-stage .msg p{font-family:var(--serif);font-style:italic;font-size:1.3rem;line-height:1.5;color:var(--ink);margin:0;max-width:42ch}
+    .chat-stage .msg.you p{font-style:normal;color:var(--amber)}
+    .chat-stage .input{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--rule);
+      display:flex;align-items:center;justify-content:space-between;
+      font-family:var(--serif);font-style:italic;color:var(--ink-muted);font-size:1rem}
+
+    /* LAYOUTS — three films */
+    .films{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .film{padding:2rem 1.5rem;background:linear-gradient(180deg,hsl(0 0% 6%) 0%,hsl(220 8% 5%) 100%);
+      border:1px solid var(--rule);cursor:pointer;transition:border-color .3s,transform .3s}
+    .film.active{border-color:var(--accent);box-shadow:0 0 40px hsl(28 76% 60% / .15)}
+    .film .lbl{font-family:var(--serif);font-style:italic;color:var(--ink-muted);font-size:.85rem;
+      text-transform:uppercase;letter-spacing:.1em}
+    .film .nm{font-family:var(--serif);font-size:2rem;font-weight:400;margin:.3rem 0 .5rem;color:var(--ink)}
+    .film .dots{display:grid;grid-template-columns:repeat(6,1fr);gap:.25rem;margin-top:1rem}
+    .film .dots span{aspect-ratio:1;border:1px solid var(--rule)}
+    .film .dots span.on{background:var(--accent);border-color:var(--accent)}
+    @media (max-width:980px){.films{grid-template-columns:1fr}}
+
+    /* FOOTER */
+    .credits{padding:6rem 0 3rem;border-top:1px solid var(--rule);margin-top:5rem;
+      font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--ink-muted);text-align:center}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============== HERO ============== -->
+  <header class="hero">
+    <div class="inner">
+      <p class="epigraph">some albums get made; others get made of you.</p>
+      <h1>The album<br><em>you haven't made</em><br>yet.</h1>
+      <p class="subhead">An interview. A voice. A twelve-stage pipeline. A record.</p>
+      <a class="cta" href="#voices">▷  Begin</a>
+    </div>
+  </header>
+
+  <!-- ============== CHAPTER 1 — VOICES ============== -->
+  <section class="chapter" id="voices">
+    <p class="ch-num">Chapter I</p>
+    <h2 class="ch-title">Six voices in a room.</h2>
+    <p class="ch-lede">Press play on any voice. Each is a real model, pre-staged and ready to sing your album.</p>
+    <div class="voices">
+      <article class="voice" data-v="1"><div class="inner"><div class="label">V·01</div><div class="name">Marielle</div><div class="desc">Low, breathy, close-mic'd. A whisper that wants to be heard.</div><a class="play" href="#play"></a></div></article>
+      <article class="voice" data-v="2"><div class="inner"><div class="label">V·02</div><div class="name">Joaquín</div><div class="desc">Warm baritone, slight rasp. For the narrative ballad.</div><a class="play" href="#play"></a></div></article>
+      <article class="voice" data-v="3"><div class="inner"><div class="label">V·03</div><div class="name">Ailani</div><div class="desc">Bright mezzo. Folk-pop, vintage ribbon compressor.</div><a class="play" href="#play"></a></div></article>
+      <article class="voice" data-v="4"><div class="inner"><div class="label">V·04</div><div class="name">Rumi</div><div class="desc">Androgynous alto, slight reverb tail. Bedroom-pop crooner.</div><a class="play" href="#play"></a></div></article>
+      <article class="voice" data-v="5"><div class="inner"><div class="label">V·05</div><div class="name">Theo</div><div class="desc">Spoken word, dry. The narrator — for the in-between tracks.</div><a class="play" href="#play"></a></div></article>
+      <article class="voice" data-v="6"><div class="inner"><div class="label">V·06</div><div class="name">Ensemble</div><div class="desc">Six voices in close harmony. For the cinematic scope.</div><a class="play" href="#play"></a></div></article>
+    </div>
+  </section>
+
+  <!-- ============== CHAPTER 2 — INTAKE ============== -->
+  <section class="chapter" id="intake">
+    <p class="ch-num">Chapter II</p>
+    <h2 class="ch-title">Twenty-one questions.</h2>
+    <p class="ch-lede">Not a form — the first chapter of an editor's interview. Eight are mandatory; the rest have defaults ready.</p>
+    <div class="storyboard" aria-label="Intake storyboard preview">
+      <article class="panel-intake">
+        <div class="num">M·01 — about</div>
+        <div class="q">What is this album <em>about</em>?</div>
+        <div class="hint">the emotional or narrative heart, not genre</div>
+      </article>
+      <article class="panel-intake">
+        <div class="num">M·02 — scope</div>
+        <div class="q">What scope?</div>
+        <div class="hint">single / EP / album / double-feature / concept</div>
+      </article>
+      <article class="panel-intake">
+        <div class="num">M·03 — genre</div>
+        <div class="q">What genre family?</div>
+        <div class="hint">one primary, frames the whole work</div>
+      </article>
+      <article class="panel-intake">
+        <div class="num">M·04 — references</div>
+        <div class="q">Artists whose sound you want to channel.</div>
+        <div class="hint">1 to 3, artists you want to sound like</div>
+      </article>
+    </div>
+    <p style="margin-top:2rem;font-family:var(--serif);font-style:italic;color:var(--ink-muted);font-size:1rem;text-align:center">
+      …plus seventeen more. Most have sensible defaults so you can skip them.
+    </p>
+  </section>
+
+  <!-- ============== CHAPTER 3 — PIPELINE ============== -->
+  <section class="chapter" id="pipeline">
+    <p class="ch-num">Chapter III</p>
+    <h2 class="ch-title">Twelve stages from concept to cassette.</h2>
+    <p class="ch-lede">Each layer carries a status. The pipeline reads a single file on disk — your dashboard is in sync with what you've actually done.</p>
+    <div class="frames" aria-label="12-stage pipeline preview">
+      <div class="frame d"><span class="num">01</span><span class="label">Artist brand</span><span class="badge">DONE</span></div>
+      <div class="frame i"><span class="num">02</span><span class="label">Tracklist + lyrics</span><span class="badge">NOW</span></div>
+      <div class="frame"><span class="num">03</span><span class="label">Music tracks</span></div>
+      <div class="frame"><span class="num">04</span><span class="label">Cover + posters</span></div>
+      <div class="frame"><span class="num">05</span><span class="label">Spotify package</span></div>
+      <div class="frame b"><span class="num">06</span><span class="label">ID3 metadata</span><span class="badge">BLOCKED</span></div>
+      <div class="frame"><span class="num">07</span><span class="label">Social rollout</span></div>
+      <div class="frame"><span class="num">08</span><span class="label">Tour + merch</span></div>
+      <div class="frame"><span class="num">09</span><span class="label">Video concepts</span></div>
+      <div class="frame"><span class="num">10</span><span class="label">Podcast interview</span></div>
+      <div class="frame"><span class="num">11</span><span class="label">Press kit</span></div>
+      <div class="frame"><span class="num">12</span><span class="label">LRC synced lyrics</span></div>
+    </div>
+  </section>
+
+  <!-- ============== CHAPTER 4 — COLLECTION ============== -->
+  <section class="chapter" id="collection">
+    <p class="ch-num">Chapter IV</p>
+    <h2 class="ch-title">The shelf.</h2>
+    <p class="ch-lede">Three records and counting. Each one remembers its twelve stages; each one can be played in full.</p>
+    <div class="gallery">
+      <article class="album-cover" style="background:linear-gradient(135deg,hsl(28 60% 40%) 0%,hsl(190 60% 30%) 100%)">
+        <div class="inner">
+          <div class="num">N°01 · 2026</div>
+          <div class="title">Half-Light Hours</div>
+          <div class="meta">Maren Sol · 9 tracks · dream-folk</div>
+        </div>
+        <button class="play-btn">▷</button>
+      </article>
+      <article class="album-cover" style="background:linear-gradient(135deg,hsl(220 50% 30%) 0%,hsl(280 40% 30%) 100%)">
+        <div class="inner">
+          <div class="num">N°02 · 2026</div>
+          <div class="title">Before the Storm</div>
+          <div class="meta">Joaquín Yáñez · 7 tracks · narrative ballad</div>
+        </div>
+        <button class="play-btn">▷</button>
+      </article>
+      <article class="album-cover" style="background:linear-gradient(135deg,hsl(140 40% 28%) 0%,hsl(40 60% 38%) 100%)">
+        <div class="inner">
+          <div class="num">N°03 · 2025</div>
+          <div class="title">Cassette for a Stranger</div>
+          <div class="meta">Ailani Park · 5 tracks · folk-pop</div>
+        </div>
+        <button class="play-btn">▷</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============== CHAPTER 5 — CHAT ============== -->
+  <section class="chapter" id="chat">
+    <p class="ch-num">Chapter V</p>
+    <h2 class="ch-title">Still a chat when you want one.</h2>
+    <p class="ch-lede">Penelope's conversational agent drives the pipeline. The chat and the panels share the same state — work in either, the other keeps up.</p>
+    <div class="chat-stage" aria-label="Chat panel preview">
+      <div class="msg you"><span class="who">You · 14:22</span><p>approve brief half-light-hours, then start layer 5.</p></div>
+      <div class="msg"><span class="who">Penelope · 14:22</span><p>Approved. Drafting the Spotify package from the manifest I pulled from the build skill — back when it's ready.</p></div>
+      <div class="input">
+        <span>type a message — or press ⌘K to open the command bar</span>
+        <span style="font-family:var(--sans)">penelope ◐</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CHAPTER 6 — LAYOUTS ============== -->
+  <section class="chapter" id="layouts">
+    <p class="ch-num">Chapter VI</p>
+    <h2 class="ch-title">Three projections of the same record.</h2>
+    <p class="ch-lede">Same data, three lenses. Pick the one that matches how you want to read your work tonight.</p>
+    <div class="films" aria-label="Layout picker preview">
+      <article class="film">
+        <div class="lbl">01 · editorial</div>
+        <div class="nm">magazine</div>
+        <div class="dots"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </article>
+      <article class="film active">
+        <div class="lbl">02 · studio</div>
+        <div class="nm">cinema</div>
+        <div class="dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+      </article>
+      <article class="film">
+        <div class="lbl">03 · cinematic</div>
+        <div class="nm">darkroom</div>
+        <div class="dots"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </article>
+    </div>
+  </section>
+
+  <footer class="credits">PENELOPE × album-studio · prototype C · cinematic</footer>
+
+</div>
+</body>
+</html>
