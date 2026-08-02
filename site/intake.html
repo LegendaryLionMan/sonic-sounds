@@ -622,7 +622,7 @@
 
     const STORAGE_PREFIX = 'album-studio.intake.';
     const DEBOUNCE_MS = 800;
-    const INTAKE_FORM_VERSION = '2026-07-28';
+    const INTAKE_FORM_VERSION = '2026-08-02-shapeB-r2';
     const TRACKLIST_MAX = 12;
 
     const slugify = (s) => (s || '')
@@ -845,7 +845,7 @@
       skipIfEmpty('E21_deadline', answers.E21_deadline);
 
       return {
-        schemaVersion: '1.0',
+        schemaVersion: '2.1',
         albumSlug,
         submittedAt: today,
         intakeFormVersion: INTAKE_FORM_VERSION,

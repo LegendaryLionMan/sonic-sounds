@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://album-studio.local/schemas/intake.json",
+  "title": "album-studio intake brief",
+  "description": "Form payload exported by site/intake.html. Read by the music-album-planning-questionnaire skill to write a CONCEPT-BRIEF.md.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "albumSlug",
+    "submittedAt",
+    "answers"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.1"
+    },
+    "albumSlug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,40}$",
+      "description": "URL-safe album identifier, derived from artist name + date (e.g. 'maren-sol-half-light-hours-2026-06-25')"
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of form export"
+    },
+    "intakeFormVersion": {
+      "const": "2026-08-02-shapeB-r2"
+    },
+    "answers": {
+      "type": "object",
+      "description": "Map of M·01..E·21 question IDs to answer objects",
+      "properties": {
+        "M01_concept": {
+          "$ref": "#/$defs/answerText"
+        },
+        "M02_scope": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "single",
+            "ep",
+            "album",
+            "double-feature",
+            "concept-piece"
+          ]
+        },
+        "M03_genre": {
+          "$ref": "#/$defs/answerText"
+        },
+        "M04_references": {
+          "$ref": "#/$defs/answerRefs"
+        },
+        "M05_vocal": {
+          "$ref": "#/$defs/answerVocal"
+        },
+        "M06_language": {
+          "$ref": "#/$defs/answerLanguages"
+        },
+        "M07_runtime": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "radio-edit",
+            "standard",
+            "extended",
+            "immersive"
+          ]
+        },
+        "M08_bandName": {
+          "title": "Band name",
+          "description": "The performing band's name. Filled ONLY when the release is by a band (a group of people credited under one name). Leave EMPTY if the release is by a solo artist whose name is the public identity (e.g. 'Maren Sol' has no band name — that goes in M08_artistName instead). Optional.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08a (replaced M08c triple-choice per Shape B)",
+          "x-optional": true,
+          "x-optional-when": "Release is NOT a band (i.e. solo artist)",
+          "x-prompt": "If this release is by a band (a group of people), put the band name here. If it's a solo artist, leave this blank."
+        },
+        "M08_artistName": {
+          "title": "Public-facing artist name",
+          "description": "The artist name shown to listeners. ALWAYS FILLED — every release has at least one artist name. For a solo release, this is the solo artist's name. For a band release, this is either (a) the front person's name if they're separately credited, or (b) the same as M08_bandName if the band is the only public identity.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08b (replaced M08c triple-choice per Shape B)",
+          "x-required": true,
+          "x-prompt": "For a solo release: your artist name (e.g. 'Maren Sol'). For a band release: the front person's name OR the same as M08_bandName if the band is the only public identity."
+        },
+        "M08_creditLine": {
+          "title": "Credit line (optional)",
+          "description": "Free-form 'presented as...' / 'a side project of...' / 'performing name of...' line that goes on the release. Optional. Used by ID3 album artist field when M08_bandName and M08_artistName are both filled and you want a third name in the credits.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08c (replaced M08c triple-choice per Shape B — now an OPTIONAL text, not an enum)",
+          "x-optional": true
+        },
+        "R09_title": {
+          "$ref": "#/$defs/answerText"
+        },
+        "R10_tracklist": {
+          "$ref": "#/$defs/answerTracklist"
+        },
+        "R11_motif": {
+          "$ref": "#/$defs/answerText"
+        },
+        "R12_production": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "stripped",
+            "full-band",
+            "electronic",
+            "cinematic",
+            "hybrid"
+          ]
+        },
+        "R13_lyricalSource": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "user-writes",
+            "agent-writes",
+            "co-write"
+          ]
+        },
+        "R14_distribution": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "just-for-me",
+            "routenote-free",
+            "full-dsp",
+            "physical-and-dsp"
+          ]
+        },
+        "E15_arc": {
+          "$ref": "#/$defs/answerText"
+        },
+        "E16_influences": {
+          "$ref": "#/$defs/answerText"
+        },
+        "E17_coverArt": {
+          "$ref": "#/$defs/answerText"
+        },
+        "E18_anchor": {
+          "$ref": "#/$defs/answerText"
+        },
+        "E19_pressScope": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "music-only",
+            "music-press",
+            "music-press-social",
+            "everything"
+          ]
+        },
+        "E20_musicVideos": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "0",
+            "1-2",
+            "3-5"
+          ]
+        },
+        "E21_deadline": {
+          "$ref": "#/$defs/answerDate"
+        },
+        "R15_loudnessTarget": {
+          "title": "Mastering loudness target",
+          "description": "Streaming/integrator target. Sets the master stage on finalize. Default: spotify (-14 LUFS).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "spotify",
+            "apple-music",
+            "youtube",
+            "broadcast",
+            "cd-master",
+            "vinyl-master",
+            "custom"
+          ],
+          "x-default": "spotify",
+          "x-prompt": "Where will this album mostly be played? This sets the master loudness.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-02 §1.R15 (was QUESTIONNAIRE-V2-DRAFT.md R15)"
+        },
+        "R16_sequencePacing": {
+          "title": "Album sequence & pacing",
+          "description": "Inter-track gap policy. Default: standard-pause (3-4s).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "continuous-flow",
+            "short-pause",
+            "standard-pause",
+            "long-pause",
+            "concept-pause"
+          ],
+          "x-default": "standard-pause",
+          "x-prompt": "How much silence between tracks? Affects gapless playback vs mixtape feel.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-02 §1.R16"
+        }
+      },
+      "additionalProperties": false
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Map of question IDs to true if the user accepted an agent default instead of answering",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "List of question IDs the user chose not to answer (Recommended or Extra tier only)",
+      "items": {
+        "type": "string",
+        "pattern": "^[RE][0-9]{2}_"
+      }
+    }
+  },
+  "$defs": {
+    "answerText": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerSelect": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerRefs": {
+      "type": "object",
+      "required": [
+        "artists"
+      ],
+      "properties": {
+        "artists": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "compAlbum": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerVocal": {
+      "type": "object",
+      "required": [
+        "approach"
+      ],
+      "properties": {
+        "approach": {
+          "type": "string",
+          "enum": [
+            "solo",
+            "duet",
+            "choir",
+            "spoken-word",
+            "instrumental"
+          ]
+        },
+        "character": {
+          "type": "string",
+          "description": "Free-text voice character description"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerLanguages": {
+      "type": "object",
+      "required": [
+        "languages"
+      ],
+      "properties": {
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerTracklist": {
+      "type": "object",
+      "required": [
+        "tracks"
+      ],
+      "properties": {
+        "tracks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "index",
+              "title"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "theme": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerDate": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "date"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "_meta": {
+    "v2_0_changes_2026_08_02": {
+      "summary": "v2.0 bump: R15 (loudness target) + R16 (sequence pacing) + M08c_artistKind (real/fictional/alter-ego/pseudonym). SUPERSEDED by v2.1 — see below.",
+      "fields_added": ["R15_loudnessTarget", "R16_sequencePacing", "M08c_artistKind"],
+      "defaults": {
+        "R15_loudnessTarget": "spotify",
+        "R16_sequencePacing": "standard-pause",
+        "M08c_artistKind": "fictional-character"
+      },
+      "bump_reason": "Schema v1.0 → v2.0 / form 2026-07-28 → 2026-08-02",
+      "source_doc": "planning/META-DECISIONS-2026-08-02.md §5 (deltas 2, 3, 4)",
+      "status": "SUPERSEDED"
+    },
+    "v2_1_changes_2026_08_02_shapeB": {
+      "summary": "v2.1 bump: removed M08c_artistKind (4-option enum: real-self / fictional-character / alter-ego / collaborative-pseudonym) and old M08_artist single-text field. New shape: M08_bandName (optional text, optional-when M08_artistName filled) + M08_artistName (optional text, optional-when M08_bandName filled) + M08_creditLine (optional text, optional). Per user direction 2026-08-02: 'you can have the band name but you can also have the artist name that is presented to the public, or both, that can happen as well. however, i dont want multiple artist names (fictional, real, alterego, etc).' User picked Shape B (M08_bandName + M08_artistName + optional credit line) over Shape A (free text) and Shape C (member roster). REVISION r2 (2026-08-02 same session): clarified M08_artistName is required (x-required: true) and M08_bandName is optional (x-optional: true). Per user direction: artist name is always present, band name is only filled for band releases (Maren Sol pattern = artist name only). Annotation-only revision, no field-shape changes — no schema major bump per Q45.",
+      "fields_removed": ["M08c_artistKind", "M08_artist"],
+      "fields_added": ["M08_bandName", "M08_artistName", "M08_creditLine"],
+      "defaults": {
+        "M08_bandName": null,
+        "M08_artistName": null,
+        "M08_creditLine": null
+      },
+      "fields_kept": ["R15_loudnessTarget", "R16_sequencePacing"],
+      "bump_reason": "Schema v2.0 → v2.1 / form 2026-08-02 → 2026-08-02-shapeB (Q45: removing a Mandatory enum counts as a major bump)",
+      "source_doc": "planning/META-DECISIONS-2026-08-02.md §6 (user pivot during M08 walkthrough, 2026-08-02)",
+      "status": "CURRENT"
+    },
+    "additions_pending": [
+      "R17_explicitRating",
+      "R18_coWriter",
+      "R19_sampleCover",
+      "E22_timeline",
+      "E23_sessionPersona",
+      "E24_audience",
+      "E25_physicalRelease"
+    ]
+  }
+}
