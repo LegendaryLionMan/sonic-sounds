@@ -152,3 +152,4 @@ Press inquiries responded to within 48 hours. Album available for streaming revi
 - **Mastering:** Self-mastered
 - **Recording:** Spring 2026, Pacifica CA
 - **Format:** 256 kbps / 44100 Hz / stereo MP3 (Spotify-ready)
+- **Audio description:** The album is mixed loud and compressed for streaming (similar to 90s grunge production). Production is dry, with each instrument sitting in its own pocket. The vocal sits forward in the mix and is the album's emotional anchor. No 24-bit / 96 kHz audiophile flag — this record is intentionally loud and raw.
