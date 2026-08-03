@@ -96,14 +96,17 @@ The album has a coherent spine:
 
 | Path | What |
 |---|---|
-| `~/Music/Twenty-Two/music/*.mp3` | 12 generated tracks |
-| `~/OneDrive/Albums/Twenty-Two/music/*.mp3` | OneDrive mirror |
-| `~/Music/Twenty-Two/lyrics/*.md` | 12 lyrics with structure tags |
-| `~/Music/Twenty-Two/prompts/*.md` | Exact prompts sent + generation result per track |
+| `~/OneDrive/Hermes/albums/twenty-two/music/*.mp3` | 12 generated tracks (CANONICAL ALBUM MIRROR) |
+| `~/Music/Twenty-Two/music/*.mp3` | Local working copy (edit here) |
+| `~/OneDrive/Hermes/albums/twenty-two/lyrics/*.md` | 12 lyrics with structure tags |
+| `~/OneDrive/Hermes/albums/twenty-two/scripts/prompts/*.md` | Exact prompts sent + generation result per track |
+| `~/OneDrive/Hermes/albums/twenty-two/README.md` | Album delivery package README |
 | `~/Documents/Projects/album-studio/concept-briefs/twenty-two.md` | Album concept brief |
 | `~/Documents/Projects/album-studio/intake-data/schema.json` | Locked schema (v2.1) |
 | `~/Documents/Projects/album-studio/planning/META-DECISIONS-2026-08-02.md` | All 16 field decisions + v1→v2 rethink history |
 | `~/Documents/Projects/album-studio/planning/QUESTIONNAIRE-WALKTHROUGH-2026-07-29.md` | r2 walkthrough doc |
+
+**Convention fix:** original mirror was at `~/OneDrive/Albums/Twenty-Two/` — wrong. Maren Sol (Half-Light-Hours) uses `~/OneDrive/Hermes/albums/<kebab-case>/`. Fixed 2026-08-03 by moving everything to the canonical location.
 
 ---
 
