@@ -31,6 +31,73 @@
       "type": "object",
       "description": "Map of M·01..E·21 question IDs to answer objects",
       "properties": {
+        "M09_sonicDNA": {
+          "title": "Sonic DNA (locked at brief approval)",
+          "description": "The frozen-at-approval snapshot of the album's sonic direction. The build skill MUST hold against this on every regen. Any deviation requires explicit user re-approval (the sonic-drift guard). Derived from M03_genre + M05_vocal + R12_production + M07_runtime at brief-approval time. Read-only after approval — to change, re-open the brief.",
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "object",
+              "description": "The locked sonic fingerprint. Each field here is the exact text used in the build pipeline's --vocals / --genre / --mood / --instruments / --tempo / --bpm / --key / --references flags.",
+              "required": [
+                "genre",
+                "vocals",
+                "mood",
+                "instruments",
+                "references",
+                "tempoProfile",
+                "lockedAt"
+              ],
+              "properties": {
+                "genre": {
+                  "type": "string",
+                  "description": "Locked --genre flag value (e.g. 'hard rock', 'dream-folk', 'jazz fusion')"
+                },
+                "vocals": {
+                  "type": "string",
+                  "description": "Locked --vocals flag value (e.g. 'Axl Rose-style raw high tenor, ...')"
+                },
+                "mood": {
+                  "type": "string",
+                  "description": "Locked --mood flag value (comma-separated descriptors)"
+                },
+                "instruments": {
+                  "type": "string",
+                  "description": "Locked --instruments flag value"
+                },
+                "references": {
+                  "type": "string",
+                  "description": "Locked --references flag value (the comp artists list)"
+                },
+                "tempoProfile": {
+                  "type": "string",
+                  "description": "Locked tempo profile (BPM range + key signature shape)"
+                },
+                "lockedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO 8601 UTC timestamp when the brief was approved"
+                }
+              }
+            },
+            "isDefault": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "x-tier": "Mandatory",
+          "x-derived": true,
+          "x-derived-from": [
+            "M03_genre",
+            "M05_vocal",
+            "R12_production",
+            "M07_runtime"
+          ],
+          "x-locked": "Locked 2026-08-03 §1 (album-studio V2 hardening — Twenty-Two retro lesson)"
+        },
         "M01_concept": {
           "$ref": "#/$defs/answerText"
         },
@@ -129,36 +196,73 @@
           ]
         },
         "E15_arc": {
-          "$ref": "#/$defs/answerText"
+          "title": "Emotional arc across tracks",
+          "description": "Shape of the listening experience across all 12 tracks. Free-form text — describe the emotional journey.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What's the emotional arc? E.g. 'quiet start, builds to chaos, resolves to silence' or 'constant summer warmth then sudden autumn in track 8'.",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
         },
         "E16_influences": {
-          "$ref": "#/$defs/answerText"
+          "title": "Non-music influences",
+          "description": "Books, films, places, seasons, weather, people — anything NOT music that shaped this album. (M04 is the music-only version.)",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Other than music references (covered in M04). What's a film, book, place, season, etc. that shaped this?",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; V2-DRAFT §2 clarified non-overlap with M04)"
         },
         "E17_coverArt": {
-          "$ref": "#/$defs/answerText"
+          "title": "Cover art direction",
+          "description": "What the cover should evoke. Single text field. For richer briefs, use the cover-art generation script directly with your own palette/mood/composition prompt.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What feeling should the cover evoke? (Colors, mood, focal point, typography, composition — free-form description.)",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; V2-DRAFT §2 proposed split but kept single-field for backwards compat — use generation skill directly for finer control)"
         },
         "E18_anchor": {
-          "$ref": "#/$defs/answerText"
+          "title": "Physical anchor",
+          "description": "The ONE object, image, or sensation the listener should remember after the album ends.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What's the ONE thing the listener should remember after the album ends? E.g. 'the smell of a candle going out', 'the sound of a van on a freeway at night'.",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
         },
         "E19_pressScope": {
+          "title": "Press / rollout scope",
+          "description": "What press + marketing you want. Skipped entirely for just-for-me albums (R14 == just-for-me).",
           "$ref": "#/$defs/answerSelect",
           "enum": [
             "music-only",
-            "music-press",
-            "music-press-social",
+            "music-plus-press-kit",
+            "music-plus-press-and-social",
             "everything"
-          ]
+          ],
+          "x-default": "music-only",
+          "x-prompt": "How much press + marketing? (Music only / + press kit / + press + social / full rollout)",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution != 'just-for-me'",
+          "x-hide-when": "R14_distribution == 'just-for-me'",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; added x-show-when from V2-DRAFT §4)"
         },
         "E20_musicVideos": {
-          "$ref": "#/$defs/answerSelect",
-          "enum": [
-            "0",
-            "1-2",
-            "3-5"
-          ]
+          "title": "Music videos",
+          "description": "How many music videos to generate. 0 = audio only. Each video costs ~1 weekly video-gen quota slot.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "x-default": 0,
+          "x-prompt": "How many music videos? 0 = audio only. 1-2 = manageable. 3-5 = full visual rollout.",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution != 'just-for-me'",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
         },
         "E21_deadline": {
-          "$ref": "#/$defs/answerDate"
+          "title": "Single release deadline",
+          "description": "Hard deadline for when the album needs to be done. Different from E22 (timeline). E21 = ONE date.",
+          "$ref": "#/$defs/answerDate",
+          "x-prompt": "When does this album need to ship? (ISO date, single value.)",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
         },
         "R15_loudnessTarget": {
           "title": "Mastering loudness target",
@@ -193,6 +297,112 @@
           "x-prompt": "How much silence between tracks? Affects gapless playback vs mixtape feel.",
           "x-tier": "Recommended",
           "x-locked": "Locked 2026-08-02 §1.R16"
+        },
+        "R17_explicitRating": {
+          "title": "Explicit content rating",
+          "description": "Will this album have explicit lyrics? Affects Spotify/Apple Music metadata, YouTube content ID flags, distribution approval.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "clean",
+            "explicit-tagged",
+            "parental-advisory"
+          ],
+          "x-default": "clean",
+          "x-prompt": "Will this album have explicit lyrics? Affects radio playability + DSP tagging.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R17)"
+        },
+        "R18_coWriter": {
+          "title": "Co-writer / producer credits",
+          "description": "Anyone else to credit? Affects royalty splits + DSP metadata. Default: just you (or just the front person).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "solo",
+            "co-producer",
+            "co-lyricist",
+            "feature-vocalist",
+            "full-band-credits"
+          ],
+          "x-default": "solo",
+          "x-prompt": "Anyone else to credit? (e.g. co-producer, lyricist, feature vocalist). Default: just you.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R18)"
+        },
+        "R19_sampleCover": {
+          "title": "Sample / cover usage",
+          "description": "Does the album use any samples or covers? AI music from text prompts is generally 'original' but covers and samples need clearance.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "original-only",
+            "samples-cleared",
+            "samples-pending",
+            "covers-included"
+          ],
+          "x-default": "original-only",
+          "x-prompt": "Does the album use any samples or covers? Affects clearance + DSP rules.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R19)"
+        },
+        "E22_timeline": {
+          "title": "Album timeline / sequencing",
+          "description": "Rough milestone timeline (different from E21 single-deadline). Lets the studio's session manager pace work.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Rough timeline — when do you want each milestone? E.g. lyrics done by Aug 15, music by Sep 1, artwork by Sep 15, release Oct 1.",
+          "x-tier": "Extra",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E22)"
+        },
+        "E23_sessionPersona": {
+          "title": "Recording session persona",
+          "description": "Whose story is this? Most albums have a consistent POV. Pick one or say 'varies'.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "first-person-singular",
+            "first-person-plural",
+            "second-person",
+            "third-person-omniscient",
+            "third-person-limited",
+            "character-voice",
+            "varies"
+          ],
+          "x-default": "first-person-singular",
+          "x-prompt": "Whose story is this? Most albums have a consistent POV. Pick one or say 'varies'.",
+          "x-tier": "Extra",
+          "x-show-when": "R13_lyricalSource in ['agent-writes', 'co-write']",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E23)"
+        },
+        "E24_audience": {
+          "title": "Listener / target audience",
+          "description": "Who is this album FOR? Affects press kit, marketing copy, lyrics_optimizer register.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Who is this album FOR? (e.g. 'people who feel stuck in a 9-5', 'myself in 5 years').",
+          "x-tier": "Extra",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E24)"
+        },
+        "E25_physicalRelease": {
+          "title": "Physical release intent",
+          "description": "Any physical format? Cassettes are surprisingly popular in indie scenes. CDs never went away. Vinyl is back.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "cd",
+              "vinyl-lp",
+              "vinyl-7in",
+              "cassette",
+              "usb-mini",
+              "merch-bundle",
+              "limited-edition-print"
+            ]
+          },
+          "x-default": [
+            "none"
+          ],
+          "x-prompt": "Any physical format? Cassettes are surprisingly popular in indie scenes. CDs never went away. Vinyl is back.",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution in ['physical-and-dsp', 'physical-only']",
+          "x-hide-when": "R14_distribution == 'just-for-me'",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E25)"
         }
       },
       "additionalProperties": false,
@@ -615,16 +825,51 @@
       ],
       "bump_reason": "Schema v2.0 → v2.1 / form 2026-08-02 → 2026-08-02-shapeB (Q45: removing a Mandatory enum counts as a major bump)",
       "source_doc": "planning/META-DECISIONS-2026-08-02.md §6 (user pivot during M08 walkthrough, 2026-08-02)",
-      "status": "CURRENT"
+      "status": "SUPERSEDED"
     },
-    "additions_pending": [
-      "R17_explicitRating",
-      "R18_coWriter",
-      "R19_sampleCover",
-      "E22_timeline",
-      "E23_sessionPersona",
-      "E24_audience",
-      "E25_physicalRelease"
-    ]
-  }
+    "v2_2_changes_2026_08_03_v2hardening": {
+      "summary": "v2.2 bump: added M09_sonicDNA (mandatory, frozen-at-approval guard) + R17-R19 (loudness already done in v2.0/v2.1; this round adds explicit/co-writer/sample-cover) + E22-E25 (timeline/session-persona/audience/physical-release). The M09 field is the studio's response to the Twenty-Two sonic-drift incident — it makes the build skill hold against an immutable brief, not silently mutate the answer.",
+      "fields_added": [
+        "M09_sonicDNA",
+        "R17_explicitRating",
+        "R18_coWriter",
+        "R19_sampleCover",
+        "E22_timeline",
+        "E23_sessionPersona",
+        "E24_audience",
+        "E25_physicalRelease"
+      ],
+      "fields_removed": [],
+      "fields_kept": [
+        "M01-M08",
+        "R09-R16",
+        "M08_bandName",
+        "M08_artistName",
+        "M08_creditLine",
+        "R15_loudnessTarget",
+        "R16_sequencePacing"
+      ],
+      "defaults": {
+        "M09_sonicDNA": null,
+        "R17_explicitRating": "clean",
+        "R18_coWriter": "solo",
+        "R19_sampleCover": "original-only",
+        "E22_timeline": null,
+        "E23_sessionPersona": "first-person-singular",
+        "E24_audience": null,
+        "E25_physicalRelease": [
+          "none"
+        ]
+      },
+      "bump_reason": "Schema v2.1 → v2.2 / form 2026-08-02-shapeB → 2026-08-03-v2hardening (V2-DRAFT additions + Twenty-Two retro lessons locked in)",
+      "source_doc": "planning/QUESTIONNAIRE-V2-DRAFT.md §1 + planning/2026-08-03/twenty-two-as-exercise-retro.md",
+      "status": "CURRENT",
+      "top_level_version": {
+        "schemaVersion": "v2.2",
+        "intakeFormVersion": "2026-08-03-v2hardening"
+      }
+    }
+  },
+  "schemaVersion": "v2.2",
+  "intakeFormVersion": "2026-08-03-v2hardening"
 }

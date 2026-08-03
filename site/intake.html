@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>album-studio — intake · 21 questions for the album you haven't made yet</title>
-  <meta name="description" content="The front door for a new album project. 21 questions, three tiers, auto-save, JSON export.">
+  <title>album-studio — intake · 26 questions for the album you haven't made yet</title>
+  <meta name="description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -324,7 +324,7 @@
   <main>
     <header class="masthead">
       <div class="eyebrow">album-studio · intake</div>
-      <h1>21 questions for the album you haven't made yet</h1>
+      <h1>26 questions for the album you haven't made yet</h1>
       <p class="subtitle">Start at the heart, not the genre. Skip nothing in the mandatory tier.</p>
       <div class="saved-label" id="savedLabel" aria-live="polite">
         <span class="dot"></span>
@@ -342,8 +342,8 @@
       <!-- ====================== MANDATORY ====================== -->
       <section aria-label="Mandatory questions">
         <div class="tier-band" data-tier="M">
-          <h2>MANDATORY · 8 questions · gate: all 8 to export</h2>
-          <span class="resolved" id="mandatoryResolved">resolved 0 of 8</span>
+          <h2>MANDATORY · 9 questions · gate: all 9 to export</h2>
+          <span class="resolved" id="mandatoryResolved">resolved 0 of 9</span>
         </div>
 
         <!-- M·01 album concept -->
@@ -453,8 +453,8 @@
       <!-- ====================== RECOMMENDED ====================== -->
       <section aria-label="Recommended questions">
         <div class="tier-band" data-tier="R">
-          <h2>RECOMMENDED · 6 questions · strong defaults applied if you skip</h2>
-          <span class="resolved" id="recommendedResolved">resolved 0 of 6</span>
+          <h2>RECOMMENDED · 10 questions · strong defaults applied if you skip</h2>
+          <span class="resolved" id="recommendedResolved">resolved 0 of 10</span>
         </div>
 
         <!-- R·09 title -->
@@ -526,8 +526,8 @@
       <!-- ====================== EXTRA ====================== -->
       <section aria-label="Extra questions">
         <div class="tier-band" data-tier="E">
-          <h2>EXTRA · 7 questions · pure opt-in</h2>
-          <span class="resolved" id="extraResolved">resolved 0 of 7</span>
+          <h2>EXTRA · 11 questions · pure opt-in</h2>
+          <span class="resolved" id="extraResolved">resolved 0 of 11</span>
         </div>
 
         <!-- E·15 arc -->
@@ -595,7 +595,7 @@
 
       <div class="cta-bar">
         <button type="submit" class="button" id="generateBtn" aria-disabled="true" disabled>
-          Generate CONCEPT-BRIEF · 8/8 mandatory required
+          Generate CONCEPT-BRIEF · 9/9 mandatory required
         </button>
       </div>
     </form>
@@ -622,7 +622,7 @@
 
     const STORAGE_PREFIX = 'album-studio.intake.';
     const DEBOUNCE_MS = 800;
-    const INTAKE_FORM_VERSION = '2026-08-02-shapeB-r2';
+    const INTAKE_FORM_VERSION = '2026-08-03-v2hardening';
     const TRACKLIST_MAX = 12;
 
     const slugify = (s) => (s || '')
@@ -693,7 +693,10 @@
       '[data-qid="M05_vocal"] select',
       '[data-qid="M06_language"] input',
       '[data-qid="M07_runtime"] select',
-      '[data-qid="M08_artist"] input',
+      // M08 split v2.1: artistName is the required one
+      '[data-qid="M08_artistName"] input',
+      // M09 NEW v2.2: sonic DNA lock — derived from M03/M05/R12/M07, computed at approval
+      '[data-qid="M09_sonicDNA"] input',
     ];
     const recommendedSelectors = [
       '[data-qid="R09_title"] input',
@@ -703,6 +706,12 @@
       '[data-qid="R14_distribution"] select',
       // R10 counts as 1 question: it resolves if any track row is filled
       '[data-qid="R10_tracklist"] input',
+      // R15-R19 NEW v2.2: mastering + credits + samples
+      '[data-qid="R15_loudnessTarget"] select',
+      '[data-qid="R16_sequencePacing"] select',
+      '[data-qid="R17_explicitRating"] select',
+      '[data-qid="R18_coWriter"] select',
+      '[data-qid="R19_sampleCover"] select',
     ];
     const extraSelectors = [
       '[data-qid="E15_arc"] textarea',
@@ -712,6 +721,11 @@
       '[data-qid="E19_pressScope"] select',
       '[data-qid="E20_musicVideos"] select',
       '[data-qid="E21_deadline"] input',
+      // E22-E25 NEW v2.2: timeline / persona / audience / physical
+      '[data-qid="E22_timeline"] textarea',
+      '[data-qid="E23_sessionPersona"] select',
+      '[data-qid="E24_audience"] textarea',
+      '[data-qid="E25_physicalRelease"] select',
     ];
 
     const isFilled = (sel) => {
@@ -731,16 +745,16 @@
       let m = 0; mandatorySelectors.forEach(s => { if (isFilled(s)) m++; });
       let r = 0; recommendedSelectors.forEach(s => { if (isFilled(s)) r++; });
       let e = 0; extraSelectors.forEach(s => { if (isFilled(s)) e++; });
-      mandatoryResolvedEl.textContent = `resolved ${m} of 8`;
-      recommendedResolvedEl.textContent = `resolved ${r} of 6`;
-      extraResolvedEl.textContent = `resolved ${e} of 7`;
-      const ready = m === 8;
+      mandatoryResolvedEl.textContent = `resolved ${m} of 9`;
+      recommendedResolvedEl.textContent = `resolved ${r} of 10`;
+      extraResolvedEl.textContent = `resolved ${e} of 11`;
+      const ready = m === 9;
       generateBtn.disabled = !ready;
       generateBtn.setAttribute('aria-disabled', String(!ready));
       generateBtn.dataset.state = ready ? 'ready' : 'pending';
       generateBtn.textContent = ready
-        ? `Generate CONCEPT-BRIEF · ${m}/8 mandatory ✓`
-        : `Generate CONCEPT-BRIEF · ${m}/8 mandatory required`;
+        ? `Generate CONCEPT-BRIEF · ${m}/9 mandatory ✓`
+        : `Generate CONCEPT-BRIEF · ${m}/9 mandatory required`;
     };
     form.addEventListener('input', refreshGate);
 
@@ -845,7 +859,7 @@
       skipIfEmpty('E21_deadline', answers.E21_deadline);
 
       return {
-        schemaVersion: '2.1',
+        schemaVersion: '2.2',
         albumSlug,
         submittedAt: today,
         intakeFormVersion: INTAKE_FORM_VERSION,

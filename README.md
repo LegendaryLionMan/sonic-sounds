@@ -7,6 +7,8 @@
 **Project type:** evolving the existing album-creation skill stack with a
 project workspace (intake form + dashboard), not a standalone app.
 
+**Schema version:** v2.2 (2026-08-03) — see `intake-data/schema.json`.
+
 ---
 
 ## What's in this project
@@ -16,19 +18,52 @@ album-studio/
 ├── README.md                      ← this file
 ├── DESIGN.md                      ← visual identity tokens (palette, type, motif)
 ├── site/
-│   ├── intake.html                ← 21-topic intake form (the front door)
+│   ├── intake.html                ← 26-topic intake form (the front door)
 │   └── dashboard.html             ← 12-layer pipeline status board
 ├── intake-data/
-│   ├── schema.json                ← JSON Schema for the exported brief
+│   ├── schema.json                ← JSON Schema for the exported brief (v2.2)
 │   └── <slug>.json                ← per-album exported briefs (one per project)
 ├── concept-briefs/
 │   └── <slug>/CONCEPT-BRIEF.md    ← the handoff to full-album-release-package
 ├── music/
 │   └── <slug>/{lyrics,music,...}  ← output of full-album-release-package
+├── scripts/
+│   ├── lyrics-to-lrc.py           ← lyrics/*.md → lyrics-lrc/*.lrc
+│   ├── tag-album.py               ← ID3v2.3 embed (cover + lyrics + tags)
+│   ├── generation-manifest.py     ← per-track manifest writer (NEW v2.2)
+│   └── check-sonic-drift.py       ← build-time guard against M09_sonicDNA drift (NEW v2.2)
 └── .meta/
     ├── state.json                 ← dashboard reads this (12 layers, statuses)
     └── sections-3-and-4.md        ← intake + dashboard UX specs (planning archive)
 ```
+
+---
+
+## 🛡 The sonic-DNA guard (v2.2)
+
+Schema v2.2 introduces **M09_sonicDNA** — a frozen-at-approval snapshot of the
+album's sonic direction (vocal style, genre, mood, instruments, references,
+tempo profile). The build skill MUST hold against this on every regen.
+
+**Why:** the Twenty-Two build (2026-08-03) showed the failure mode clearly —
+the schema locked "90s grunge with Scott Weiland vocals" but a re-gen silently
+switched to "hard rock with Axl Rose vocals." The schema and the artifact
+DRIFTED without anyone noticing until the user pushed back.
+
+**How it works:**
+
+1. When the brief is approved, the agent fills `M09_sonicDNA.value` in the
+   intake JSON with the locked flags.
+2. After every `mmx music generate` call, `scripts/generation-manifest.py`
+   writes `music/<slug>.generation-manifest.json` with the exact params used.
+3. Before any regen, `scripts/check-sonic-drift.py` compares the proposed
+   params against the locked M09_sonicDNA and exits non-zero if drift is
+   detected.
+4. The build halts unless the user explicitly approves drift with
+   `--allow-drift-fields`.
+
+This is the studio's defense against silent sonic pivots. See
+`planning/2026-08-03/twenty-two-as-exercise-retro.md` for the full post-mortem.
 
 ---
 
@@ -86,6 +121,8 @@ Both gates halt the pipeline. The dashboard updates the relevant layer to
 | `site/dashboard.html` (the status board) | `full-album-release-package` (the 12 layers) |
 | `.meta/state.json` | the build skill's running state |
 | `music/<slug>/{lyrics,music,...}` | the build skill's output |
+| `music/<slug>.generation-manifest.json` | per-track build manifest (NEW v2.2) |
+| `scripts/check-sonic-drift.py` | M09_sonicDNA regen guard (NEW v2.2) |
 
 The site is **not** a replacement for the agent — it's a **surface** that
 makes the skill workflow visible and inspectable. The agent still does

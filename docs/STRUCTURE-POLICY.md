@@ -1,6 +1,6 @@
 # album-studio Structure Policy
 
-**Status:** Locked 2026-08-01 (cleanup pass 1)
+**Status:** Locked 2026-08-01 (cleanup pass 1); v2.2 hardening 2026-08-03 (scripts/, M09_sonicDNA, generation-manifest.json)
 **Owner:** Penelope + user
 
 This document is the **authoritative layout rule** for the album-studio project. New
@@ -118,6 +118,48 @@ cd "$PROJ" && find . -type f -not -path "./.git/*" -not -path "./.od-skills/*" \
     && mkdir -p "$(dirname "$ONE/$f")" && cp "$PROJ/$f" "$ONE/$f"
 done
 ```
+
+### R8. Canonical scripts live in `scripts/` (NEW v2.2).
+
+As of v2.2, all canonical Python helpers live at `scripts/`. Per-album
+prompt mirrors live at `scripts/prompts/<slug>.md` (one file per track).
+
+| Script | Purpose | Per-album inputs | Per-album outputs |
+|---|---|---|---|
+| `lyrics-to-lrc.py` | Lyrics → LRC synced lyrics | `<album>/lyrics/*.md`, `<album>/music/*.mp3` | `<album>/lyrics-lrc/*.lrc` |
+| `tag-album.py` | ID3v2.3 metadata + cover art | `<album>/music/*.mp3`, `<album>/cover-art/*.jpg` | (mutates MP3s in place) |
+| `generation-manifest.py` | Per-track build manifest (NEW v2.2) | `<album>/music/*.mp3`, `<album>/scripts/prompts/*.md` | `<album>/music/*.generation-manifest.json` |
+| `check-sonic-drift.py` | Build-time drift guard (NEW v2.2) | intake JSON's M09_sonicDNA, manifests | exit 0/1/2 |
+
+**Contract:** every `mmx music generate` call MUST be followed by
+`scripts/generation-manifest.py`. Every regen MUST be preceded by
+`scripts/check-sonic-drift.py`. These are not optional — they're the
+studio's defense against silent sonic pivots (see `planning/2026-08-03/
+twenty-two-as-exercise-retro.md` for the failure mode they prevent).
+
+### R9. Per-track generation manifests live in `<album>/music/` (NEW v2.2).
+
+Each generated MP3 has a sibling `.generation-manifest.json` capturing
+exactly what `mmx music generate` was called with. Format and field
+documentation: see `scripts/generation-manifest.py` docstring.
+
+```
+<album>/music/
+├── 01-razor.mp3
+├── 01-razor.generation-manifest.json   ← sibling to every MP3
+├── 02-summer-of-19.mp3
+├── 02-summer-of-19.generation-manifest.json
+└── ...
+```
+
+**Why sibling, not separate dir:** the manifest is metadata FOR the MP3.
+Same-name sibling is the standard "sidecar" pattern (LRC files, .srt
+subtitles, .vtt tracks, .json presets). Keeping them in the music/
+folder makes the per-track pair obvious in `ls` and prevents manifest
+orphans (a manifest without its MP3, or vice versa).
+
+**Manifest schema version:** independent of intake-data/schema.json.
+Bump `manifest_version` in the script when adding fields.
 
 ---
 

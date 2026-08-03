@@ -154,6 +154,40 @@ lyrics-optimizer = true   # generate throwaway lyrics so we don't need real song
 | R16 | ✅ locked | sequence pacing = **standard-pause** (3-4s between tracks, per the schema). The vignettes are loose but independent — each track a standalone memory fragment, so a small breath between tracks lets each memory settle. Continuous-flow (bleeds) would suggest the album is a single piece — wrong for vignettes. Short-pause too tight for the emotional weight. Long-pause feels like a compilation. Concept-pause would be excess for an album that's already 12 distinct vignettes. Standard-pause matches the M07 3:00-3:30 runtime envelope. Default = the schema's default value. Agent pick under user 'you decide the rest' directive. Schema example `examples[0].values` updated 2026-08-02 ~20:49 UTC. |
 ---
 
+
+
+## §2.5 — v2.2 hardening (2026-08-03)
+
+**Status:** ✅ v2.2 schema bump complete. The V2-DRAFT additions (R17-R19, E22-E25) and the Twenty-Two retro lessons (M09_sonicDNA + manifest + drift-guard) are now locked in. Future walks against this schema will see all 26 topics (9 mandatory + 10 recommended + 11 extra = 30 fields).
+
+**What's new in v2.2 (vs v2.1):**
+
+- **M09_sonicDNA** (NEW mandatory) — frozen-at-approval snapshot of the
+  album's sonic direction. Captures the exact --vocals / --genre / --mood /
+  --instruments / --references / --bpm / --key flags. The build skill holds
+  against this on every regen via `scripts/check-sonic-drift.py`.
+- **R17_explicitRating** (NEW recommended) — clean / explicit-tagged /
+  parental-advisory. Affects DSP tagging.
+- **R18_coWriter** (NEW recommended) — solo / co-producer / co-lyricist /
+  feature-vocalist / full-band-credits. Affects royalty splits.
+- **R19_sampleCover** (NEW recommended) — original-only / samples-cleared /
+  samples-pending / covers-included. Affects clearance.
+- **E22_timeline** (NEW extra) — milestone timeline (different from E21
+  single deadline).
+- **E23_sessionPersona** (NEW extra) — first-person-singular/plural/
+  second/third-person/character-voice/varied. Shown when R13 in
+  {agent-writes, co-write}.
+- **E24_audience** (NEW extra) — who the album is for.
+- **E25_physicalRelease** (NEW extra) — cd / vinyl-lp / vinyl-7in / cassette
+  / usb-mini / merch-bundle / limited-edition-print. Shown when R14 in
+  {physical-and-dsp, physical-only}.
+- **E15-E21** — placeholder stubs filled with proper prompts/descriptions
+  (was `{"$ref": "#/$defs/answerText"}` with no content).
+
+**The twenty-two-was-an-exercise retro** lives at
+`planning/2026-08-03/twenty-two-as-exercise-retro.md`. Read that doc to
+understand WHY these fields exist and what failure modes they prevent.
+
 ## §3 — Standing context
 
 User direction: "we never did [the questionnaire walkthrough]" — so we are
