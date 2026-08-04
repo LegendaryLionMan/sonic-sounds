@@ -1,0 +1,52 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "v2-01-razor",
+  "track_index": 1,
+  "generated_at": "2026-08-04T10:49:07Z",
+  "model": "music-2.6",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": "2026-08-04T12:30:00Z",
+  "prompt": {
+    "body": "Sludgy stoner metal. Drop-A tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks. The riff is one slow drop-A palm-muted chord progression that sits and grinds for 90 seconds before anything changes. Drummer is primal — kick drum on every beat, snare hits irregular, no four-on-the-floor, no fills, just pure weight. The vocalist is Ozzy Osbourne — distant, guttural, low-mid register, not a high register scream. The voice sits in the mix like a ghost. Brent Hinds-style lead guitar appears in the bridge — dissonant, slid-up, not a pentatonic solo, more like a sound effect. The song is 3:00 of pure weight. No chorus hook. No upbeat sections. No dynamics — just slow, brutal, unrelenting. Think Mastodon 'Blood and Thunder' or Converge 'Axe to Fall' — slow sludge with a vocalist who sounds like he's trying to crawl out of a grave. The verses are spoken-screamed, not sung. The drums are massive, recorded in a concrete room. No reverb on the vocals. The guitars are detuned, low, compressed. The song gets heavier as it goes. No over-driven vocals — the vocal takes the same compressor as the guitars. The whole thing is a single sustained wave of metal. No rock conventions. No radio-friendly structure. Just metal. Pure metal.",
+    "chars": 1249,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\01-razor.md"
+  },
+  "flags": {
+    "prompt": "Sludgy stoner metal. Drop-A tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks...",
+    "vocals": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, spoken-screamed not sung, no reverb, same compression as guitars",
+    "genre": "Mastodon-style sludgy stoner metal",
+    "mood": "brutal, slow, sludgy, unrelenting, suffocating, primal",
+    "instruments": "7-string guitars through Mesa Boogie Triple Rectifier stacks, drop-A tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor, deep tom fills, dissonant lead guitar in bridge",
+    "tempo": "slow",
+    "bpm": 92,
+    "key": "A minor (drop-A)",
+    "structure": "intro-verse-verse-bridge-verse-outro (no chorus)",
+    "references": "Mastodon Leviathan, Converge Axe to Fall, Black Sabbath Master of Reality, High on Fire Snakes for the Divine",
+    "model": "music-2.6",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\01-razor.md",
+  "lyrics_chars": 647,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\01-razor.mp3",
+    "md5": "24f4f60a8e8df99f19ab4c2c3d1c68e4",
+    "size_bytes": 5827617,
+    "duration_seconds": 170.659,
+    "bitrate_bps": 273181,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  },
+  "sonic_dna_at_time_of_gen": {
+    "genre": "Mastodon-style sludgy stoner metal",
+    "vocals": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, spoken-screamed not sung, no reverb, same compression as guitars",
+    "mood": "brutal, slow, sludgy, unrelenting, suffocating, primal",
+    "instruments": "7-string guitars through Mesa Boogie Triple Rectifier stacks, drop-A tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor, deep tom fills, dissonant lead guitar in bridge",
+    "references": "Mastodon Leviathan, Converge Axe to Fall, Black Sabbath Master of Reality, High on Fire Snakes for the Divine",
+    "tempoProfile": "92-110 BPM, slow mid-tempo",
+    "lockedAt": "2026-08-04T12:30:00Z",
+    "lockedBy": "agent (post-drift correction)"
+  },
+  "_notes": "Manifest flags updated 2026-08-04 to match M09_sonicDNA lock after the schema was brought in line with the actual Mastodon metal build. The MP3 itself was generated with the original Mastodon prompt (verified), not the post-hoc corrected flags."
+}

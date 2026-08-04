@@ -48,10 +48,20 @@ def parse_lyrics_md(path):
 
 
 def slug_to_title(slug):
-    """Convert '01-razor' or '05-twenty-two' to title."""
-    if slug == "05-twenty-two":
+    """Convert '01-razor' or 'v2-01-razor' to title.
+
+    Handles:
+      '01-razor'              -> 'Razor'
+      'v2-01-razor'           -> 'Razor'
+      'v2-05-twenty-two'      -> 'Twenty-Two'  (special case)
+      '12-standing-still'     -> 'Standing Still'
+    """
+    import re
+    # Strip 'vN-' version prefix (e.g. 'v2-', 'v3-')
+    cleaned = re.sub(r"^v\d+-", "", slug)
+    if cleaned == "05-twenty-two":
         return "Twenty-Two"
-    track_num, track_title = slug.split("-", 1)
+    _, track_title = cleaned.split("-", 1)
     return track_title.replace("-", " ").title()
 
 
@@ -61,7 +71,12 @@ def tag_track(mp3_path, lyrics_path, artist, album, year, genre, cover_path=None
         return ["ERROR: mutagen not installed"]
 
     slug = mp3_path.stem
-    track_num = int(slug.split("-")[0])
+    # Handle 'v2-NN-name' prefix; extract the track number from the part after 'vN-'
+    # Examples: '01-razor' → 01, 'v2-01-razor' → 01, 'v3-12-standing-still' → 12
+    import re
+    cleaned = re.sub(r'^v\d+-', '', slug)  # strip 'v2-' prefix
+    m = re.match(r"(\d+)", cleaned)
+    track_num = int(m.group(1)) if m else 0
     title = slug_to_title(slug)
 
     # Load + create ID3
