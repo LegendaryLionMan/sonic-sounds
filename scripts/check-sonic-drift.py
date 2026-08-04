@@ -375,10 +375,16 @@ def main():
         if reports:
             drift_per_track[slug] = reports
             total_drift += len(reports)
-            print(f"  ❌ {slug}: {len(reports)} drift(s)")
+            high = [r for r in reports if r["severity"] == "high"]
+            non_high = [r for r in reports if r["severity"] != "high"]
+            print(f"  ❌ {slug}: {len(reports)} drift(s) ({len(high)} high, {len(non_high)} low)")
             for r in reports:
-                if r["severity"] == "high":
-                    print(f"      • {r['field']} ({r['severity']})")
+                if r["severity"] == "high" or args.verbose:
+                    cv = r["current_value"]
+                    bv = r["baseline_value"]
+                    shown = str(cv)[:80] if cv is not None else "(empty)"
+                    base = str(bv)[:80] if bv is not None else "(empty)"
+                    print(f"      • {r['field']} ({r['severity']}): baseline={base!r}, current={shown!r}")
         else:
             print(f"  ✅ {slug}: in lock")
 

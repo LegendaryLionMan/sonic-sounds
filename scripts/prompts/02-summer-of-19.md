@@ -1,31 +1,32 @@
-# 02 — Summer Of 19
+# 02 — Summer of 19
 
-**Length:** 3:00-3:30
-**BPM:** 138
-**Key:** D minor
-**Genre:** 90s hard rock
-**Vocal:** Axl Rose-style raw high tenor
-**Mood:** reckless, sharp, real
+**Length:** 3:00
+**BPM:** 95
+**Key:** D minor (drop-D)
+**Genre:** Mastodon-style sludgy stoner metal
+**Vocal:** Ozzy Osbourne distant growl + Brent Hinds primal scream
+**Mood:** sludgy, brutal, doomed
 
 ## Prompt (sent to --prompt)
+
 ```
-90s hard rock, D minor at 138 BPM. The song is about a single summer that ruined everything — the summer the singer turned 19. Slash's Les Paul, palm-muted chug, no open chords, all root-fifth-octave shapes. The vocalist is Axl Rose circa Use Your Illusion — high tenor that wails on sustained vowels and screams the chorus hook. The drummer plays a half-time backbeat on the verse with the kick on 1 and 3, then opens up to double-kick eighths on the chorus. Cowbell on 2 and 4 throughout. The song opens with a 4-bar drum fill, drops into a palm-muted riff in D minor (D, C, G, F pattern), and builds to a gang-shout chorus with three-part vocal harmony and dual-guitar octave. The bridge is a Slash-style pentatonic solo with two long bends and a tremolo-bar pull-up at the end. No ballad section, no piano, no acoustic. The lyrics are about lost youth, drugs, stolen cars, the last good night before the world closed in. Think GnR 'Nightrain' or Skid Row 'Youth Gone Wild' — the song has the same heat, the same recklessness, the same sense that the singer knows he's burning out and doesn't care. Production: dry, 1991, the Les Paul is the lead voice. FIRE.
+Sludgy stoner metal. Drop-D tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks. The riff is one slow drop-D palm-muted chord progression that sits and grinds for 90 seconds before anything changes. The vocalist is Ozzy Osbourne — distant, guttural, low-mid register. Brent Hinds-style lead guitar in the bridge — dissonant, slid-up, not a pentatonic solo. The song is 3:00 of pure weight. No chorus hook. No upbeat sections. No dynamics — just slow, brutal, unrelenting. The verses are spoken-screamed, not sung. The drums are massive, recorded in a concrete room. No reverb on the vocals. The song gets heavier as it goes. Think Mastodon 'Blood and Thunder' or Converge 'Axe to Fall' — slow sludge with a vocalist who sounds like he's trying to crawl out of a grave. The whole thing is a single sustained wave of metal. No rock conventions. No radio-friendly structure. Just metal. Pure metal.
 ```
 
 ## Other flags
 
-- `--prompt` 90s hard rock, D minor at 138 BPM. The song is about a singl...
-- `--vocals` Axl Rose wail, scream on chorus, breathy verse, wailing on held notes
-- `--genre` 90s hard rock
-- `--mood` aggressive, swaggering, explosive
-- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
-- `--tempo` fast
-- `--bpm` 138
+- `--prompt` Sludgy stoner metal. Drop-D tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks...
+- `--vocals` Ozzy Osbourne distant guttural growl, low-mid register, primal, ghost-in-the-mix vocal presence
+- `--genre` metal
+- `--mood` brutal, slow, sludgy, unrelenting, suffocating, primal
+- `--instruments` 7-string guitars through Mesa Boogie Triple Rectifier, drop-D tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor, deep tom fills
+- `--tempo` slow
+- `--bpm` 95
 - `--key` D minor
-- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
-- `--model` music-3.0
+- `--use-case` album 90s sludge track, second track, sets the doom tone
+- `--structure` intro-verse-verse-bridge-verse-outro (no chorus)
+- `--references` Mastodon Leviathan, Converge Axe to Fall, Black Sabbath Master of Reality, High on Fire Snakes for the Divine
+- `--model` music-2.6
 - `--sample-rate` 44100
 - `--bitrate` 256000
 - `--format` mp3

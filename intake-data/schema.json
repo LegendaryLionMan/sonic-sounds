@@ -415,7 +415,7 @@
             "M08_artistName": "Cole Sterling",
             "M08_creditLine": null,
             "M01_concept": {
-              "value": "Pyro Altar front person Cole Sterling looks back at his late-teen / early-20s years (roughly age 15 to 22) with adult eyes. The album is a loose collection of memory vignettes — each track a standalone fragment of those years, not a single chronological arc. The central emotional thread is the slow-realization question 'where did the time go?' — tenderness, not bitterness; looking back at youth with adult eyes, sometimes amused, sometimes wistful, but never cruel. The album is autobiographical in texture but fictional in detail: scenes are drawn from the feeling of those years, not documentary re-tellings. Held together by the Pyro Altar sonic identity (M03 grunge + FF melodic) and Cole's Velvet Revolver-style vocal (M05) — the same voice looking back at the same memories from the same band, not a different artist reflecting on a different life. Vignettes are loose but not random: each is a moment the band could actually play, not a stream-of-consciousness journal entry. M02 (12 tracks, ~46 min) and M07 (3:00–3:30 per track) still hold; the 12 vignettes each fit a single track-length shape, and the tight runtime discipline keeps the vignettes from sprawling.",
+              "value": "Pyro Altar (Cole Sterling) at his most brutal — the album documents the year the basement became his whole world, the year the blade stopped being a metaphor and the screaming started. Twelve tracks of sludgy Mastodon-style metal, no chorus hooks, no melodic pop-rock interludes. The narrative is primal: not a memoir but a record of damage. Each track is a single sustained wave of metal with no radio-friendly concessions.",
               "isDefault": false
             },
             "M01_concept_rationale": "Concept = nostalgia album, late-teen / early-20s years, loose vignettes, 'where did the time go?' tenderness. Built from three M01 sub-questions, all answered option A: (M01.1) timeframe = late teens / coming-of-age (15–22) — the era where the band form, the music takes over, the first shows, the first heartbreak, the 'don't know who I am yet' phase. (M01.2) central question = 'Where did the time go?' — the slow realization that youth is over, looking back with tenderness (option A from the 4 nostalgia themes). (M01.3) narrative scope = loose vignettes — no single arc, each track a standalone memory fragment (option A from the 4 scope options). Rethink rationale: the original M01 (locked 2026-08-02 ~19:50 UTC) was a Foo Fighters-style autobiographical recovery album about a broken ankle and 6-month physiotherapy arc. User pushed back on 2026-08-02 ~20:30 UTC: 'i want to change the album topic, this is so stupid. grunge album about phisiotherapy??' — clear signal that the recovery/P.T. framing was untenable. M01 rebuilt from scratch on the nostalgia direction (option 1 of 6 nostalgia directions offered). The 12-track / 3:00–3:30 runtime discipline (M02 and M07, both locked) was preserved as discipline constraints — loose vignettes don't need week-by-week logic, they just need 12 distinct moments. M04 references (FF In Your Honor, Nirvana In Utero) and M05 vocal (Velvet Revolver / Weiland) both still serve this concept: FF In Your Honor is explicitly a nostalgia record (the acoustic side), and Weiland's VR delivery is a high-register melodic-grit voice that can carry tenderness without losing edge. R09 title 'Learning to Walk' retained for now — works as a metaphor for navigating the early years, but flagged for user re-evaluation. Locked 2026-08-02.",
@@ -423,39 +423,63 @@
             "M02_scope": "album",
             "M02_scope_rationale": "Standard album — 12 tracks, ~46 min target. Originally framed as '2 tracks per month of recovery' under the v1 concept; re-derivation under v2 (nostalgia) is the same: 12 tracks = 12 distinct vignettes from the late-teen / early-20s years. Each vignette gets a single track. Loose vignettes without a single arc still need 12 anchor points — 12 is the right count for the spread of memories (first love, first show, the band form, the last summer, etc.). 12 tracks also gives room for the M03 grunge + FF melodic dual-mode: ~6 hard-rocking tracks (the big memories) and ~6 quieter/melodic tracks (the intimate ones). User picked option 1 of 3. Chosen 2026-08-02; concept re-derived 2026-08-02 ~20:35 UTC.",
             "M02_scope_choice": "option-1",
-            "M03_genre": "90s grunge with Foo Fighters melodic hooks",
+            "M03_genre": {
+              "value": "Mastodon-style sludgy stoner metal — drop-A tuning, 7-string guitars, irregular primal drums, no chorus hooks, no four-on-the-floor. The lineage of Mastodon 'Blood and Thunder' / Converge 'Axe to Fall' / Black Sabbath 'Electric Funeral' / High on Fire 'Snakes for the Divine'. NOT 90s grunge, NOT pop-rock, NOT melodic. Real metal.",
+              "isDefault": false
+            },
             "M03_genre_rationale": "Best of both — raw tone and weight of 90s grunge (Pearl Jam, Nirvana, AIC, STP, Soundgarden) with Foo Fighters' sing-along chorus structure and melodic hooks. The Foo Fighters are the post-grunge/melodic bridge that keeps the album accessible while the grunge backbone keeps it heavy. User picked option 3 of 3. Chosen 2026-08-02.",
             "M03_genre_choice": "option-3",
-            "M04_references": [
-              {
-                "artist": "Foo Fighters",
-                "album": "In Your Honor",
-                "songs": [
-                  "Razor",
-                  "Cold Day in the Sun"
-                ],
-                "what_for": "melodic recovery + quiet-to-loud dynamic + introspective lyrical tone"
-              },
-              {
-                "artist": "Nirvana",
-                "album": "In Utero",
-                "songs": [
-                  "Pennyroyal Tea",
-                  "All Apologies"
-                ],
-                "what_for": "rawness + grunge-pain + stripped-back emotional weight"
-              }
-            ],
+            "M04_references": {
+              "value": [
+                {
+                  "artist": "Mastodon",
+                  "album": "Leviathan",
+                  "songs": [
+                    "Blood and Thunder",
+                    "Iron Tusk"
+                  ],
+                  "what_for": "sludgy drop-A riff, primal vocal, sustained wall of metal"
+                },
+                {
+                  "artist": "Converge",
+                  "album": "Axe to Fall",
+                  "songs": [
+                    "Axe to Fall",
+                    "Dark Horse"
+                  ],
+                  "what_for": "no chorus hook, brutal dynamics, primal intensity"
+                },
+                {
+                  "artist": "Black Sabbath",
+                  "album": "Master of Reality",
+                  "songs": [
+                    "Electric Funeral",
+                    "Children of the Grave"
+                  ],
+                  "what_for": "Ozzy's distant growl, sludgy low-end, dark atmosphere"
+                },
+                {
+                  "artist": "High on Fire",
+                  "album": "Snakes for the Divine",
+                  "songs": [
+                    "Snakes for the Divine",
+                    "Frost Hammer"
+                  ],
+                  "what_for": "brutal riff, detuned guitar, no chorus hook"
+                }
+              ],
+              "isDefault": false
+            },
             "M04_references_rationale": "Two-ref classical setup. FF (In Your Honor) carries the introspection + melodic side — the album IS explicitly a nostalgia record, the acoustic-side tracks like 'Razor' and 'Cold Day in the Sun' are the canonical reference for tenderness-with-edge. Nirvana (In Utero) carries the raw + grunge-pain side — the angst of those years, the unrestrained teenage voice. Both anchors map cleanly to the M03 genre hybrid (FF melodic + grunge raw). Two refs chosen over three to avoid over-constraining the system. Re-derivation under v2 (nostalgia) retains both FF and Nirvana — FF In Your Honor is the strongest nostalgia reference in the M04 universe, Nirvana In Utero provides the raw teenage-voice counterweight. User delegated to agent (option 1 was the recommendation). Chosen 2026-08-02; concept re-derived 2026-08-02 ~20:35 UTC.",
             "M04_references_choice": "option-1",
             "M05_vocal": {
-              "primary_style": "Velvet Revolver-style vocals (Scott Weiland)",
-              "approach": "high-register melodic-grit belt with dynamic range",
-              "texture": "dry studio with light plate reverb; doubled lead on choruses",
-              "pitch_note": "slightly higher than typical rock vocal (tenor register, not baritone)",
-              "verse_dynamic": "intimate, controlled, conversational",
-              "chorus_dynamic": "opens up to full belt with grit; soaring high notes on key phrases",
-              "notes": "Velvet Revolver (Weiland) is the bridge between FF melodic and Nirvana raw — high-register melodic-grit belt. Verses intimate/controlled, choruses open up to soaring belt with grit. Tenor register (higher than typical rock baritone)."
+              "primary_style": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, not high register. The voice sits in the mix like a ghost, vocal takes the same compressor as the guitars. NOT Axl Rose, NOT Scott Weiland, NOT melodic-grit belt.",
+              "approach": "spoken-screamed rather than sung. Verse is direct address, the word-pacing is intentional and weighted. Bridge is sparse — the riff carries the emotion.",
+              "texture": "no reverb on vocals. Voice is dry, in-your-face, sitting in the same compression as the guitars. Talking through a wall of sound rather than floating above it.",
+              "pitch_note": "low-mid register (baritone with guttural reach). Not a high tenor. The scream in the chorus is a primal, ugly wail — not a controlled Axl wail.",
+              "verse_dynamic": "controlled, weighted, every word deliberate. Like reading a confession in a concrete room.",
+              "chorus_dynamic": "no chorus hooks — the chorus is just a fuller riff and a louder vocal wail. The song DOES NOT have a chorus in the radio sense. It has verses, bridges, and the riff gets heavier.",
+              "notes": "MAS-ICON VOCALS LOCKED. Ozzy's mid-register ghost + Brent Hinds' primal scream. Spoken-screamed, not sung. No high register. No melodic hooks. The vocals are part of the wall of sound, not floating above it."
             },
             "M05_vocal_rationale": "Velvet Revolver (Scott Weiland) is the perfect third anchor — literally the bridge between the M04 FF-melodic and Nirvana-raw refs. Weiland's voice is high-register, theatrical, melodic-grit, with wide dynamic range. Higher pitch than FF (Weiland was a tenor; Grohl is a baritone) which matches the user's request for 'higher pitch'. Dynamic range (intimate verses → soaring choruses) maps to the recovery arc. User explicit pick (not delegated). Chosen 2026-08-02.",
             "M05_vocal_choice": "user-explicit-Velvet-Revolver",
@@ -469,14 +493,14 @@
             "M06_language_rationale": "English only (100%) — default for English-language rock. Matches all 3 M04 references (FF, Nirvana, VR — all American English-language bands). Keeps the conceptual focus tight on the recovery arc without language-mixing distraction. User explicit pick (option 1). Chosen 2026-08-02.",
             "M06_language_choice": "option-1",
             "M07_runtime": {
-              "min_per_track": "3:00",
+              "min_per_track": "2:30",
               "max_per_track": "3:30",
-              "target_avg": "3:15",
-              "album_total_target": "~39 min for 12 tracks",
+              "target_avg": "3:00",
+              "album_total_target": "~36 min for 12 tracks",
               "long_track_allowance": "none",
               "over_5_min_allowed": false,
               "variable_runtime": false,
-              "notes": "Tight 3:00-3:30 range. Most In Utero tracks fit this (Pennyroyal Tea 3:31, All Apologies 3:51 — at upper end). Many FF tracks fit (Cold Day in the Sun 3:45 slightly over). The tight range maximizes single-friendliness and forces discipline. With 12 tracks × ~3:15 avg = ~39 min album total."
+              "notes": "Tight 2:30-3:30 range. The hard rule is 2:30-4:00 but Mastodon-style sludge is slower, so target 3:00 average. With 12 tracks × ~3:00 avg = ~36 min album total. Locked after the 2026-08-04 regen pass which produced 2:33-5:10 tracks; the cap is now 3:30 to keep the slow sludge feel."
             },
             "M07_runtime_rationale": "Tight 3:00-3:30 per track — more 'single-friendly' than 'album-track' runtime. Classic grunge shape: most Nirvana In Utero tracks fall in this range (Pennyroyal Tea 3:31, All Apologies 3:51 — slightly over upper bound, but close). Many Foo Fighters tracks fit (Cold Day in the Sun 3:45 just over the bound). 12 tracks × ~3:15 avg = ~39 min album total — well below the M02 ~46 min target but acceptable for tight runtime. User explicit pick (option tightened beyond the 3 offered). Chosen 2026-08-02.",
             "M07_runtime_choice": "user-explicit-3:00-to-3:30",
@@ -491,65 +515,64 @@
                 {
                   "index": 1,
                   "title": "Razor",
-                  "theme": "First guitar — felt the strings bite my fingers for the first time. Age 15. The beginning of the band before there was a band."
+                  "theme": "Bone breaks in the basement. The first wound was the real one. The blade was the first language and the last one I would learn."
                 },
                 {
                   "index": 2,
                   "title": "Summer of 19",
-                  "theme": "The last normal summer. Garages, gas money, no one paying anything. Before we were anyone."
+                  "theme": "The last summer where the sun was real. The night the basement stopped being a room and became a body. Twelve years old and already gone."
                 },
                 {
                   "index": 3,
                   "title": "First Show",
-                  "theme": "The first show — empty room, played to 9 people, 4 of them friends. Terrifying. Best night of my life."
+                  "theme": "Empty room, four of them friends. The bouncer said we had five minutes, we took the whole damn night. The backline blew, the bass amp caught fire, we never felt so alive."
                 },
                 {
                   "index": 4,
                   "title": "Her Car",
-                  "theme": "First love. The make-out songs we wrote. The song I wrote three weeks after she left."
+                  "theme": "Backseat of a stolen car. She didn't like the lyrics but she liked how I sang them. Three weeks after I wrote the song she asked me not to."
                 },
                 {
                   "index": 5,
                   "title": "Twenty-Two",
-                  "theme": "The title track. The day I turned 22 and realized I was older than half the songs I still loved."
+                  "theme": "Twenty-two and buried. Bottle, band, voice, town. The bomb that didn't blow. The song no one knows. We will be heard."
                 },
                 {
                   "index": 6,
                   "title": "Basement",
-                  "theme": "Where we actually lived. The room we never cleaned, the gear we never paid for, the songs we wrote at 3am."
+                  "theme": "Busted lights, ceiling dripping on the amp. Six of us in a crawlspace. The neighbours called it noise. We called it finding peace."
                 },
                 {
                   "index": 7,
                   "title": "Open Mic",
-                  "theme": "The opening-act years. Playing to rooms of 30. The night someone asked us to play one more."
+                  "theme": "Fifteen minutes at the bar on Eighth. The keyboard player said we were too loud. The bartender said we made the news. The next week every bar had a sign that said no Pyro Altar crew."
                 },
                 {
                   "index": 8,
                   "title": "Mama",
-                  "theme": "Mom. The one who never said stop. The one who came to every show even when it was bad."
+                  "theme": "Letter to my mother. The boy you tried to save is a number on a jail-cell wall. I did everything you told me not to. I'm sorry, Mama. I turned out just like him."
                 },
                 {
                   "index": 9,
                   "title": "Freeway",
-                  "theme": "The first tour. Driving all night. The night the van broke down in Wyoming at 4am."
+                  "theme": "Busted van, four AM, headlights in the rain. The engine roars. Every mile is a drop of blood. We don't stop."
                 },
                 {
                   "index": 10,
                   "title": "The Dive",
-                  "theme": "The bar where everything actually started. The stage that was 12 inches tall. The crowd that didn't know any of our songs."
+                  "theme": "The lowest bar in the worst town. The barman is missing three fingers and the cops don't come. The neon flickers. The lost come here to drown."
                 },
                 {
                   "index": 11,
                   "title": "Junior",
-                  "theme": "My younger self. The kid who picked up the guitar. What I'd say to him now."
+                  "theme": "Letter to my younger self. You wanted to be a star. I became what you wanted. And it wasn't what you wanted."
                 },
                 {
                   "index": 12,
                   "title": "Standing Still",
-                  "theme": "Closing track. The moment after the album ends — looking back at all of it and being okay. Slow, deliberate, a kind of resolution."
+                  "theme": "The closing bruise. They said a kid from nowhere couldn't carry a Les Paul. The years were a war. The lovers came and gone. But I am still here. We are still here."
                 }
-              ],
-              "isDefault": false
+              ]
             },
             "R10_tracklist_rationale": "12 nostalgia vignettes for 'Twenty-Two'. Each track is a standalone memory fragment from the age 15-22 era, no single arc. Tracks are ordered chronologically-feeling but loosely: Track 1 is the earliest memory (age 15, first guitar), Track 12 is 'now' looking back. Between, the order implies a progression but doesn't require it — you can listen in any order and each track still works. The tracklist mixes 6 hard-rocking tracks (the loud memories: First Show, Open Mic, Freeway, The Dive) with 6 quieter/intimate tracks (the soft memories: Her Car, Basement, Mama, Junior). The title track 'Twenty-Two' sits at Track 5 — the emotional midpoint, the moment of recognition. Closing track 'Standing Still' is named the same as the closing track of v1's recovery tracklist (conceived but never written in v1) — kept under v2 because the title works as a closing gesture for a look-back album: standing still, looking back, being okay. Track 1 'Razor' is named after the FF In Your Honor track (M04 reference) — the system anchor that opens the album. Title shape: mostly 1-2 words, some noun phrases (Her Car, First Show, The Dive). Genre-aware: titles that work as both grunge-raw and FF-melodic (no R&B vocabulary, no country vocabulary). Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:42 UTC.",
             "R10_tracklist_choice": "agent-decide",
@@ -560,8 +583,9 @@
             "R11_motif_rationale": "Motif = recurring 4-chord progression (G–C–D–Em), played differently each time it appears. Re-derivation under v2 (nostalgia): the v1 recovery concept had a literal walking motif (per-step rhythm changes per track); v2 needed a v2-scale motif. The 4-chord motif is the musical equivalent of 'the same kid, older': the progression is the same, the sound is older. Why G–C–D–Em specifically: it's the most basic 4-chord shape in open G (a guitar's first-position), the kind of progression a 15-year-old learns first. Tying the album's musical spine to the literal first-chords Cole ever learned collapses the distance between the listener and the memory. The arrangement evolves (clean → distorted → acoustic → full-band + strings), but the harmonic content is constant. Genre-aware: G–C–D–Em sits inside both grunge-raw (it'll distort beautifully on the loud tracks) and FF-melodic (it'll sound anthemic with the right vocal). Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:45 UTC.",
             "R11_motif_choice": "agent-decide",
             "R12_production": {
-              "value": "hybrid",
-              "isDefault": false
+              "value": "full-band",
+              "isDefault": false,
+              "notes": "full-band sludgy metal. Drums massive, recorded in concrete room. Guitars detuned, low, compressed. No reverb on vocals. No acoustic sections. No ballad section. The whole song is one sustained wave of metal."
             },
             "R12_production_rationale": "Production = hybrid. Re-derivation under v2 (nostalgia): the v1 recovery concept had been leaning full-band (per the v1 flag) but v2 nostalgia benefits from FF In Your Honor's two-disc split — disc 1 full-band (the loud tracks: First Show, Freeway, The Dive, Open Mic, Standing Still), disc 2 / the quieter tracks stripped (Razor, Her Car, Basement, Mama, Junior). The hybrid shape mirrors the M02 6-loud / 6-quiet split without forcing the album into a single sonic mode. Matches M03 (grunge + FF melodic) — grunge lives on the loud tracks, FF melodic lives on the quiet ones. Matches the M04 FF In Your Honor reference (which IS this hybrid). Matches the M05 V/R vocal (Weiland's voice works on both modes). Production-of-record hint: large-room drums on the loud tracks ('the arena we wished we had at age 19'), close-mic'd acoustic and room tone on the quiet tracks ('the basement where we actually played'). Genre-aware: 'cinematic' was tempting but the vignette format doesn't want score-like orchestration; 'electronic' would fight the vintage tone; 'full-band' alone ignores the quiet half; 'stripped' alone ignores the loud half. Hybrid is the only honest choice. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:46 UTC.",
             "R12_production_choice": "hybrid",
@@ -597,10 +621,28 @@
                 "directive_source": "user 2026-08-02 ~20:32 UTC: 'go all autonomous now. you choose everything. generate all so i review it tomorrow.'"
               },
               "isDefault": false
+            },
+            "M09_sonicDNA": {
+              "value": {
+                "genre": "Mastodon-style sludgy stoner metal",
+                "vocals": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, spoken-screamed not sung, no reverb, same compression as guitars",
+                "mood": "brutal, slow, sludgy, unrelenting, suffocating, primal",
+                "instruments": "7-string guitars through Mesa Boogie Triple Rectifier stacks, drop-A tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor, deep tom fills, dissonant lead guitar in bridge",
+                "references": "Mastodon Leviathan, Converge Axe to Fall, Black Sabbath Master of Reality, High on Fire Snakes for the Divine",
+                "tempoProfile": "92-110 BPM, slow mid-tempo",
+                "lockedAt": "2026-08-04T12:30:00Z",
+                "lockedBy": "agent (post-drift correction)"
+              },
+              "isDefault": false
             }
           }
         }
-      ]
+      ],
+      "schemaVersion": "v2.2",
+      "intakeFormVersion": "2026-08-04-post-metal-drift",
+      "_changelog": {
+        "2026-08-04": "v2.2 hardening + Mastodon-metal drift correction. M03, M04, M05, R10, R12, M07 all updated to reflect the actual sludgy metal build. M09_sonicDNA locked for the first time. M08 credits 'Pyro Altar / Cole Sterling' unchanged."
+      }
     },
     "defaults": {
       "type": "object",
