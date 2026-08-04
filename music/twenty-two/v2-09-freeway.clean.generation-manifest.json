@@ -1,0 +1,40 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "v2-09-freeway.clean",
+  "track_index": null,
+  "generated_at": "2026-08-04T18:23:51Z",
+  "model": "music-2.6",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "Heavy metal with late-80s hard rock edge. Two electric guitars playing tight harmony lines, one with thick midrange crunch and the other with searing high-gain lead. Dual guitar harmonies in the verses, harmonized leads in the chorus. Marshall-stack tone, big bottom-end, midrange bite. NOT sludge, NOT palm-muted, NOT drop-tuned — E standard tuning. Think 1987 Sunset Strip but heavier. The vocalist is a metal screamer — high-register harsh guttural scream, aggressive, throat-tearing, alternating with guttural growl on the verses. No clean singing, no melodic voice — only screaming and growling. Drums are intense and complex: double-kick blast beats, off-time snare hits, irregular polyrhythms, complex tom fills, syncopated kick patterns. The drums are twice as busy as typical metal — every beat has a fill, every measure has a polyrhythm. No four-on-the-floor, no simple beats. The song is 3:00 of relentless forward motion. Verse: dual guitar harmonies with screaming vocals. Chorus: harmonized high-gain leads with full screaming. Bridge: blast-beat breakdown with dissonant double lead. The whole thing is dense, intricate, and brutally aggressive.",
+    "chars": 1160,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\v2-09-freeway.clean.md"
+  },
+  "flags": {
+    "vocals": "metal screamer, high-register harsh guttural scream, throat-tearing, alternating with guttural growl on verses",
+    "genre": "heavy metal",
+    "mood": "aggressive, relentless, intricate, brutal",
+    "instruments": "dual electric guitars with harmony lines, midrange crunch + high-gain lead, Marshall-stack tone, complex polyrhythmic drums with double-kick blast beats",
+    "tempo": "fast",
+    "bpm": 145,
+    "key": "E minor (E standard tuning, NOT drop)",
+    "structure": "verse-chorus-verse-chorus-bridge-final-chorus",
+    "references": "late 80s hard rock, modern thrash, complex drum polyrhythms",
+    "model": "music-2.6",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\v2-09-freeway.clean.md",
+  "lyrics_chars": 550,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\v2-09-freeway.clean.mp3",
+    "md5": "e6b4a4ba2c08bde3e21bf866c3e7f707",
+    "size_bytes": 3551741,
+    "duration_seconds": 99.606,
+    "bitrate_bps": 285262,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

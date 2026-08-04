@@ -59,6 +59,8 @@ def slug_to_title(slug):
     import re
     # Strip 'vN-' version prefix (e.g. 'v2-', 'v3-')
     cleaned = re.sub(r"^v\d+-", "", slug)
+    # Strip iteration suffixes like '.clean', '.padded', '.v2'
+    cleaned = re.sub(r"\.(clean|padded|v\d+)$", "", cleaned)
     if cleaned == "05-twenty-two":
         return "Twenty-Two"
     _, track_title = cleaned.split("-", 1)
