@@ -37,5 +37,5 @@
     "sample_rate_hz": 44100,
     "channels": 2
   },
-  "_notes": "Generated with --model music-3.0 (the default, what we use going forward). The previous v2-09-freeway.clean.mp3 was music-2.6 (1:39 duration, too short). This is the music-3.0 version (3:49) which has proper song structure and matches the user's direction (screamer + dual guitar + complex drums)."
+  "_notes": "Regenerated 2026-08-04 as GNR 1987 Sunset Strip hard rock (was Mastodon-style metal). All other fields preserved from prior manifest."
 }
