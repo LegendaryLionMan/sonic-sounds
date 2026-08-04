@@ -1,31 +1,32 @@
 # 01 — Razor
 
-**Length:** 3:00-3:30
-**BPM:** 142
-**Key:** E minor
-**Genre:** 90s hard rock
-**Vocal:** Axl Rose-style raw high tenor
-**Mood:** reckless, sharp, real
+**Length:** 3:00
+**BPM:** 92
+**Key:** A minor (drop-A)
+**Genre:** Mastodon-style sludgy stoner metal
+**Vocal:** Ozzy Osbourne distant growl + Brent Hinds primal scream
+**Mood:** brutal, slow, no chorus hook
 
 ## Prompt (sent to --prompt)
+
 ```
-90s hard rock, NOT modern, NOT pop-rock, NOT radio-friendly, NOT metalcore. Slash's Les Paul through a Marshall JCM800 stack. The guitar tone is fat, snarling, slightly under-tuned, palm-muted chug on the low E. The singer is Axl Rose circa 1991 — a high tenor that screams on the chorus, wails on held notes, and yelps on the attack. He has range; he is not a one-note screamer. The drummer is Matt Sorum-style — double-kick eighths on the verse, half-time backbeat on the chorus with a cowbell on 2 and 4. The bass is thick, palm-muted root notes. The song opens with a single Les Paul harmonic squeal, drops into a palm-muted verse riff, explodes into a gang-shout chorus with dual-guitar harmony. Slash-style pentatonic solo over the bridge with screaming bends and a dive-bomb. No keyboards, no piano, no acoustic, no ballad section. The tempo is 142 BPM, the key is E minor, drop-D tuning on the rhythm guitar. Production: 1991 Sunset Strip, dry room, big drums, the Les Paul sits forward in the mix. Think Skid Row 'Slave to the Grind' or Mötley Crüe 'Dr. Feelgood' — not a stadium rock anthem, not a pop-rock chorus. FIRE.
+Sludgy stoner metal. Drop-A tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks. The riff is one slow drop-A palm-muted chord progression that sits and grinds for 90 seconds before anything changes. Drummer is primal — kick drum on every beat, snare hits irregular, no four-on-the-floor, no fills, just pure weight. The vocalist is Ozzy Osbourne — distant, guttural, low-mid register, not a high register scream. The voice sits in the mix like a ghost. Brent Hinds-style lead guitar appears in the bridge — dissonant, slid-up, not a pentatonic solo, more like a sound effect. The song is 3:00 of pure weight. No chorus hook. No upbeat sections. No dynamics — just slow, brutal, unrelenting. Think Mastodon 'Blood and Thunder' or Converge 'Axe to Fall' — slow sludge with a vocalist who sounds like he's trying to crawl out of a grave. The verses are spoken-screamed, not sung. The drums are massive, recorded in a concrete room. No reverb on the vocals. The guitars are detuned, low, compressed. The song gets heavier as it goes. No over-driven vocals — the vocal takes the same compressor as the guitars. The whole thing is a single sustained wave of metal. No rock conventions. No radio-friendly structure. Just metal. Pure metal.
 ```
 
 ## Other flags
 
-- `--prompt` 90s hard rock, NOT modern, NOT pop-rock, NOT radio-friendly,...
-- `--vocals` Axl Rose raw high tenor, screaming on chorus, wailing on held notes, yelping on attack
-- `--genre` 90s hard rock
-- `--mood` aggressive, swaggering, explosive
-- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
-- `--tempo` fast
-- `--bpm` 142
-- `--key` E minor
-- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
-- `--model` music-3.0
+- `--prompt` Sludgy stoner metal. Drop-A tuning. 7-string guitars through Mesa Boogie Triple Rectifier stacks...
+- `--vocals` Ozzy Osbourne distant guttural growl, low-mid register, primal, ghost-in-the-mix vocal presence
+- `--genre` metal
+- `--mood` brutal, slow, sludgy, unrelenting, suffocating
+- `--instruments` 7-string guitars through Mesa Boogie Triple Rectifier, drop-A tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor
+- `--tempo` slow
+- `--bpm` 92
+- `--key` A minor (drop-A)
+- `--use-case` album opening, sets the brutal tone, instrumental weight
+- `--structure` intro-verse-verse-bridge-verse-outro (no chorus)
+- `--references` Mastodon 'Blood and Thunder', Converge 'Axe to Fall', Black Sabbath 'Electric Funeral', High on Fire 'Snakes for the Divine'
+- `--model` music-2.6
 - `--sample-rate` 44100
 - `--bitrate` 256000
 - `--format` mp3
