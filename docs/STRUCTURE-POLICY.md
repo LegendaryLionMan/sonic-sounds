@@ -287,3 +287,31 @@ Run this every quarter or after any major session:
 1. Edit this file.
 2. Run the mirror byte-verify loop to update the OneDrive copy.
 3. Note the change in the plan v3.2 changelog or its successor.
+### R10a. NEVER write album artifacts to `~/Music/` (HARD RULE 2026-08-04, user mandate).
+
+> User mandate: "NEVER USE AGAIN /Music and move everything you have there or even delete!!!!"
+> (4-exclamation rage, after I wrote v2-09 GNR to `~/Music/Twenty-Two/` instead of canonical.)
+
+The `~/Music/` path is NOT a place to write album artifacts. The local working copy might be
+useful for in-progress generation, but the FINAL write target is canonical. Every `mmx music
+generate --out <FILE>` MUST use `~/OneDrive/Hermes/albums/{slug}/music/{slug}.mp3` as the
+output path.
+
+**The 3-way mirror (R7) is canonical ↔ project repo (git) ↔ project mirror (R7 backup).**
+The canonical is the source of truth; the project repo and project mirror are downstream.
+
+**The canonical write sequence for a new track:**
+1. Write prompt to `~/Documents/Projects/album-studio/scripts/prompts/{slug}.md`
+2. Write lyrics to `~/OneDrive/Hermes/albums/{slug}/lyrics/{slug}.md`
+3. `mmx music generate --out ~/OneDrive/Hermes/albums/{slug}/music/{slug}.mp3`
+4. Mirror to project repo (step 1 + step 3 are git-tracked) AND project mirror (R7)
+
+**Enforcement:**
+- Pre-commit hook at `~/Documents/Projects/album-studio/.git/hooks/pre-commit` blocks
+  old-model markers in any staged prompt file (see R11).
+- Before any album write, ALWAYS first `ls` the parent folder to confirm the path. If
+  `~/Music/` is in the path, STOP — that's the wrong folder.
+
+**If you discover files in `~/Music/{slug}/`:** they are LEFTOVER FROM A VIOLATION.
+Move them to `~/OneDrive/Hermes/albums/{slug}/` (or delete if the user confirms) and
+update the 3-way mirror to match.
