@@ -93,6 +93,35 @@ except ImportError:
     HAVE_MUTAGEN = False
 
 
+# === OLD-MODEL GUARD (added 2026-08-04, user mandate) =========================
+# User rule (2026-08-04): "never use the old model. find the way to use the new one."
+# music-3.0 is the default + only acceptable model. Older models produce
+# thin, short, less detailed audio. Block at manifest-write time so old
+# tracks can never enter the build pipeline.
+ALLOWED_MODELS = {"music-3.0"}
+BLOCKED_MODELS = {"music-2.6", "music-2.6-free", "music-2.5", "music-2.5+",
+                  "music-2.0", "music-1.0", "music-1.5"}
+
+
+def check_model_allowed(model_name: str, source: str) -> None:
+    """Exit 2 with a clear error if model is not in ALLOWED_MODELS.
+
+    source: human-readable description of where the model string came from
+    (e.g. 'prompt file', 'flags', 'manifest top-level') for debugging.
+    """
+    if model_name in BLOCKED_MODELS:
+        print(f"[ERROR] BLOCKED model '{model_name}' found in {source}.", file=sys.stderr)
+        print(f"[ERROR] User mandate (2026-08-04): NEVER use {model_name}.", file=sys.stderr)
+        print(f"[ERROR] Only music-3.0 is allowed. If you don't pass --model,", file=sys.stderr)
+        print(f"[ERROR] mmx defaults to music-3.0 — just omit the flag entirely.", file=sys.stderr)
+        print(f"[ERROR] To regenerate this track: re-run mmx music generate WITHOUT --model music-2.6", file=sys.stderr)
+        sys.exit(2)
+    if model_name and model_name not in ALLOWED_MODELS:
+        print(f"[ERROR] Unknown model '{model_name}' in {source}.", file=sys.stderr)
+        print(f"[ERROR] Allowed models: {sorted(ALLOWED_MODELS)}", file=sys.stderr)
+        sys.exit(2)
+
+
 def md5_file(p: Path) -> str:
     """Compute MD5 of a file."""
     h = hashlib.md5()
@@ -295,6 +324,15 @@ def build_manifest(album_dir: Path, slug: str, schema_version: str,
 
     # Sonic DNA reference
     sonic_dna_locked_at = sonic_dna.get("value", {}).get("lockedAt") if sonic_dna else None
+
+    # === OLD-MODEL GUARD: validate the model BEFORE writing the manifest ===
+    # Check 3 sources: top-level metadata, flags block, default fallback
+    model_from_meta = parsed["metadata"].get("model", "music-3.0")
+    model_from_flags = parsed["flags"].get("model", "music-3.0")
+    if model_from_meta:
+        check_model_allowed(model_from_meta, "prompt metadata header")
+    if model_from_flags:
+        check_model_allowed(model_from_flags, "prompt --model flag")
 
     manifest = {
         "manifest_version": "1.0",
