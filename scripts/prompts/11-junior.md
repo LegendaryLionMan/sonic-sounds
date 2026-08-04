@@ -1,24 +1,32 @@
-# 11-junior
+# 11 — Junior
 
-**BPM:** 128
-**Key:** C major
-**Genre:** hard rock
+**Length:** 3:00-3:30
+**BPM:** 132
+**Key:** C minor
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock song in C major at 128 BPM, addressing the younger self. Open with a single power chord, sustain, then a riff into the verse. The verse is a mid-tempo groove — two guitars in harmony, palm-muted root, the bass holding the low C, the drummer playing a half-time backbeat with cowbell on the 2 and 4. Vocals: Axl Rose-style raw tenor, sincere, delivering the song with the wisdom of someone who has been through it all, melodic but with a gruff edge. Pre-chorus builds with a rising-chord progression and a snare roll. The chorus is melodic and heavy — gang vocals on the second phrase, dual-guitar harmony, big tom-tom fills. Bridge is a guitar solo: emotional, slow-bending, a letter to the younger self. Final chorus is the most sincere moment of the album — gang vocals, cowbell, full-band. Outro: a single power chord, fade to feedback. Production: 1987 stadium. Pure melodic hard rock. No piano. No soft. The letter to the kid.
+90s hard rock at 132 BPM in C minor. The song is the singer talking to his younger self. Slash's Les Paul, but played with a clean tone on the verse and overdriven on the chorus. The vocalist is Axl Rose circa 1991 — restrained in the verse, wailing on the held notes, screaming on the chorus. The drummer is half-time backbeat on the verse (somber, regretful) and opens up to a full double-kick backbeat on the chorus. The bass is thick, walking, almost gospel. The chorus is a gang shout but with conflicting emotions — the singer is sorry and not sorry at the same time. Slash-style solo with one long slow bend. No piano, no synth, no ballad-section piano. The lyrics are a letter to the singer's younger self — 'You wanted to be a star, you wanted to be on stage, you wanted every girl to know your name, you wrote your first song in a spiral notebook, you thought the world would listen.' The chorus is the confession: 'I became what you wanted and it's not what you wanted.' Think GnR 'Estranged' or Skid Row 'Quicksand Jesus' — long-form 90s hard rock ballad but NOT a ballad, with the chorus exploding into a gang shout of conflicted identity. Production: dry, the Les Paul is the lead voice, the drums are huge. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw tenor, sincere, gruff-edged, melodic with wisdom, gang vocals on chorus
-- `--genre` hard rock
-- `--mood` sincere, melodic-aggressive, reflective, masculine
-- `--instruments` dual electric guitars in harmony, palm-muted root, half-time backbeat, cowbell, gang vocals, emotional solo
-- `--tempo` moderate
-- `--bpm` 128
-- `--key` C major
-- `--use-case` album reflective song, melodic hard rock letter to younger self
+- `--prompt` 90s hard rock at 132 BPM in C minor. The song is the singer ...
+- `--vocals` Axl Rose restrained verse, wail on held notes, scream on chorus, confessional
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
+- `--tempo` fast
+- `--bpm` 132
+- `--key` C minor
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Sweet Child O' Mine, Skid Row I Remember You, Def Leppard Photograph
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

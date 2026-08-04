@@ -1,0 +1,41 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "03-first-show",
+  "track_index": 3,
+  "generated_at": "2026-08-04T08:19:26Z",
+  "model": "music-3.0",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "90s hard rock at 152 BPM in A minor. The fastest track on the album. The song is about a first gig that nobody saw, and the band discovering they were real anyway. Slash's Les Paul through a Marshall stack, palm-muted open-A chug, the rhythm is relentless. The vocalist is Axl Rose circa 1988 — pre-fame rawness, no polish, just a kid screaming into a mic. The drummer is pure adrenaline — double-kick on the verse too, not just the chorus, driving the song forward at 152. The cowbell is constant, on every beat, like a fist on a table. The chorus is a gang shout with three-part vocal harmony. The solo is a Slash-style pentatonic run with a dive-bomb at the end. The lyrics are about an amateur show, nine people, four of them friends, the bouncer, the cops, the bar next door — small-town rock and roll, before anyone cared. Think GnR 'Mr. Brownstone' or Skid Row 'Big Guns' — fast, brutal, no pretense. Production: dry, the amps are too loud for the room, the drummer is hitting too hard, the singer is screaming. FIRE.",
+    "chars": 1024,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\03-first-show.md"
+  },
+  "flags": {
+    "prompt": "90s hard rock at 152 BPM in A minor. The fastest track on th...",
+    "vocals": "Axl Rose raw scream, pre-fame rawness, no polish, screaming into a mic",
+    "genre": "90s hard rock",
+    "mood": "aggressive, swaggering, explosive",
+    "instruments": "Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts",
+    "tempo": "fast",
+    "bpm": 152,
+    "key": "A minor",
+    "structure": "intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro",
+    "references": "Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood",
+    "model": "music-3.0",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\03-first-show.md",
+  "lyrics_chars": 1183,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\03-first-show.mp3",
+    "md5": "56e0f5ec0fc91fb167b34c9553c5d69d",
+    "size_bytes": 7565148,
+    "duration_seconds": 236.383,
+    "bitrate_bps": 256029,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

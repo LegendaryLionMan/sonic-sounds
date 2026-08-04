@@ -1,24 +1,32 @@
-# 02-summer-of-19
+# 02 — Summer Of 19
 
-**BPM:** 130
-**Key:** A major
-**Genre:** hard rock
+**Length:** 3:00-3:30
+**BPM:** 138
+**Key:** D minor
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock cruise song in A major at 130 BPM, swaggering and confident. Open with a fast open-E chord strum, two guitars in harmony, then the drummer hits a chicken-skin backbeat with hi-hat sixteenths. Vocals: Axl Rose-style confident tenor, swaggering, slightly lip-curled, melodic but with grit. The verse is a mid-tempo strut — palm-muted low-E on the root, chiming high-E ringing out, cowbell on the 2 and 4. Pre-chorus builds with a quick pull-off riff and a snare build-up. Chorus hits with full-band gang-shout, dual-guitar harmony, melodic anthem. Bridge is a guitar-solo duel — two guitars trading pentatonic licks, dive-bombs, pinch harmonics. Outro audience shout chorus. Production: 1988 Sunset Strip, gang shouts, huge drums, no piano. Pure adrenaline. The last easy summer before everything broke.
+90s hard rock, D minor at 138 BPM. The song is about a single summer that ruined everything — the summer the singer turned 19. Slash's Les Paul, palm-muted chug, no open chords, all root-fifth-octave shapes. The vocalist is Axl Rose circa Use Your Illusion — high tenor that wails on sustained vowels and screams the chorus hook. The drummer plays a half-time backbeat on the verse with the kick on 1 and 3, then opens up to double-kick eighths on the chorus. Cowbell on 2 and 4 throughout. The song opens with a 4-bar drum fill, drops into a palm-muted riff in D minor (D, C, G, F pattern), and builds to a gang-shout chorus with three-part vocal harmony and dual-guitar octave. The bridge is a Slash-style pentatonic solo with two long bends and a tremolo-bar pull-up at the end. No ballad section, no piano, no acoustic. The lyrics are about lost youth, drugs, stolen cars, the last good night before the world closed in. Think GnR 'Nightrain' or Skid Row 'Youth Gone Wild' — the song has the same heat, the same recklessness, the same sense that the singer knows he's burning out and doesn't care. Production: dry, 1991, the Les Paul is the lead voice. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style confident tenor, swaggering, lip-curled, melodic with grit, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` swaggering, confident, sunburnt, cruising
-- `--instruments` dual electric guitars, palm-muted chug, hi-hat sixteenths, cowbell, double-kick on transitions, gang shouts
+- `--prompt` 90s hard rock, D minor at 138 BPM. The song is about a singl...
+- `--vocals` Axl Rose wail, scream on chorus, breathy verse, wailing on held notes
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
 - `--tempo` fast
-- `--bpm` 130
-- `--key` A major
-- `--use-case` album cruiser, hard rock memory song
+- `--bpm` 138
+- `--key` D minor
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Paradise City, Mötley Crüe Kickstart My Heart, Def Leppard Pour Some Sugar on Me
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

@@ -1,24 +1,32 @@
-# 01-razor
+# 01 — Razor
 
-**BPM:** 145
+**Length:** 3:00-3:30
+**BPM:** 142
 **Key:** E minor
-**Genre:** hard rock
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock opener in E minor at 145 BPM, raw and aggressive. The song erupts from a single power chord — two overdriven Marshall-stack guitars in tight unison, palm-muted chug, then a thunderous double-kick snare-roll into the first verse. Vocals: an Axl Rose-style raw tenor with a high piercing scream, rasp-edged, masculine, wailing on the sustained notes. The verse is a swaggering sprint — stop-time riff, cowbell, slap-back echo. Pre-chorus builds with a whammy-bar dive-bomb and runaway snare fills. The chorus explodes with dual-guitar harmony, melodic but heavy, anthemic gang-shouts in the back. Bridge is a Slash-style pentatonic solo: searing, screaming bends, dive-bombs, feedback. Outro is a wall of guitars, double-kick crash, sustained wail. Production: massive, huge drums, 1987 Sunset Strip sound. No piano. No acoustic. No soft. Pure fire.
+90s hard rock, NOT modern, NOT pop-rock, NOT radio-friendly, NOT metalcore. Slash's Les Paul through a Marshall JCM800 stack. The guitar tone is fat, snarling, slightly under-tuned, palm-muted chug on the low E. The singer is Axl Rose circa 1991 — a high tenor that screams on the chorus, wails on held notes, and yelps on the attack. He has range; he is not a one-note screamer. The drummer is Matt Sorum-style — double-kick eighths on the verse, half-time backbeat on the chorus with a cowbell on 2 and 4. The bass is thick, palm-muted root notes. The song opens with a single Les Paul harmonic squeal, drops into a palm-muted verse riff, explodes into a gang-shout chorus with dual-guitar harmony. Slash-style pentatonic solo over the bridge with screaming bends and a dive-bomb. No keyboards, no piano, no acoustic, no ballad section. The tempo is 142 BPM, the key is E minor, drop-D tuning on the rhythm guitar. Production: 1991 Sunset Strip, dry room, big drums, the Les Paul sits forward in the mix. Think Skid Row 'Slave to the Grind' or Mötley Crüe 'Dr. Feelgood' — not a stadium rock anthem, not a pop-rock chorus. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw high tenor, piercing scream on choruses, masculine rasp, wailing on sustained notes, slight yelp on attack
-- `--genre` hard rock
-- `--mood` aggressive, swaggering, explosive, incendiary
-- `--instruments` dual electric guitars through Marshall stacks, palm-muted chug, powerful double-kick drums, cowbell, slap-back echo, feedback
+- `--prompt` 90s hard rock, NOT modern, NOT pop-rock, NOT radio-friendly,...
+- `--vocals` Axl Rose raw high tenor, screaming on chorus, wailing on held notes, yelping on attack
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
 - `--tempo` fast
-- `--bpm` 145
+- `--bpm` 142
 - `--key` E minor
-- `--use-case` album-opening hard rock anthem, lead single
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Shout at the Devil
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

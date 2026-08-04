@@ -1,0 +1,41 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "08-mama",
+  "track_index": 8,
+  "generated_at": "2026-08-04T08:19:26Z",
+  "model": "music-3.0",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "90s hard rock at 128 BPM in F minor. The slowest, most emotional track on the album. Slash's Les Paul, but played with a clean tone on the verse and overdriven on the chorus. The vocalist is Axl Rose circa 1991 — restrained in the verse, wailing on the held notes, screaming on the chorus. The drummer is half-time backbeat on the verse (somber, regretful) and opens up to a full double-kick backbeat on the chorus. The bass is thick, walking, almost gospel. The chorus is a gang shout but with conflicting emotions — the singer loves his mother and hates himself. Slash-style solo with one long slow bend and a scream at the end. No piano, no synth, no ballad-section piano. The lyrics are a letter to the singer's mother — 'I'm a monster, I'm the boy you tried to save, I'm a number on a jail-cell wall, I'm a stranger with your eyes and your blood.' Think GnR 'Coma' or Skid Row 'I Remember You' — long-form 90s hard rock ballad but NOT a ballad, with the chorus exploding into a gang shout of conflicted love. The song is guilty, desperate, the letter home from a son who knows he broke his mother's heart. Production: dry, the Les Paul is the lead voice, the drums are huge. FIRE.",
+    "chars": 1185,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\08-mama.md"
+  },
+  "flags": {
+    "prompt": "90s hard rock at 128 BPM in F minor. The slowest, most emoti...",
+    "vocals": "Axl Rose restrained verse, wail on held notes, scream on chorus, conflicted emotion",
+    "genre": "90s hard rock",
+    "mood": "aggressive, swaggering, explosive",
+    "instruments": "Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts",
+    "tempo": "fast",
+    "bpm": 128,
+    "key": "F minor",
+    "structure": "intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro",
+    "references": "Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood",
+    "model": "music-3.0",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\08-mama.md",
+  "lyrics_chars": 1012,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\08-mama.mp3",
+    "md5": "d13c88be13c6bd25173e94250234e640",
+    "size_bytes": 8523110,
+    "duration_seconds": 266.32,
+    "bitrate_bps": 256026,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

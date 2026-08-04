@@ -1,24 +1,32 @@
-# 05-twenty-two
+# 05 — Twenty Two
 
-**BPM:** 138
+**Length:** 3:00-3:30
+**BPM:** 132
 **Key:** G minor
-**Genre:** hard rock
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock anthem in G minor at 138 BPM, the title track. Open with a single massive open G chord, distortion, sustain ringing, then a Steiner-filter synth-bass drop into the verse. The verse is a melodic hard-rock tension builder — two guitars in harmony, palm-muted root, the drummer doing a quarter-note snare pattern with hi-hat eighths. Vocals: Axl Rose-style raw tenor, delivering the realization that the kid is gone, melodic but with a rage at the bottom. Pre-chorus builds with a minor-pentatonic riff climbing up the neck, double-kick snare roll. The chorus is the album's melodic peak — gang-shout harmonies, dual-guitar harmony, the whole band wailing. Bridge is a Slash-style solo: emotional, slow-bending, building to a sustained high note. Final chorus is the biggest moment of the album — full-band, gang vocals, cowbell. Outro: open G chord ring-out, feedback, crowd noise. Production: stadium. Sunset Strip. Pure melodic hard rock. No piano. No soft. The realization in 4 minutes.
+90s hard rock at 132 BPM in G minor. The title track. Slash's Les Paul, palm-muted chug on the low G, the rhythm is relentless. The vocalist is Axl Rose circa Use Your Illusion II — the high scream on the chorus, the wail on the held notes. The drummer is half-time backbeat on the verse, double-kick on the chorus, cowbell on 2 and 4. The bass is thick, palm-muted, root notes. The song opens with a single massive G minor chord on a Les Paul, sustain ringing, then a Steiner-filter synth-bass drop into the verse. The lyrics are about being twenty-two and feeling buried — in a bottle, a band, a voice, a dead town. The chorus is a scream of defiance: 'I will be heard.' Slash-style solo with screaming bends and pinch harmonics. Think GnR 'Estranged' or Skid Row 'Quicksand Jesus' — long-form 90s hard rock ballad but NOT a ballad, with the chorus exploding into a gang shout. The solo is emotional, slow-bending, building to a sustained high note. Production: 1991, the Les Paul is the lead voice, the drums are huge. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw tenor, melodic with rage, gang-shout harmonies on chorus, sustained wails on held notes
-- `--genre` hard rock
-- `--mood` anthemic, incandescent, melodic-aggressive, cathartic
-- `--instruments` dual electric guitars in harmony, palm-muted root, double-kick, snare roll, cowbell, gang shouts, sustained feedback
+- `--prompt` 90s hard rock at 132 BPM in G minor. The title track. Slash'...
+- `--vocals` Axl Rose scream on chorus, wail on held notes, melodic-grit belt
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
 - `--tempo` fast
-- `--bpm` 138
+- `--bpm` 132
 - `--key` G minor
-- `--use-case` album title track, melodic hard rock anthem
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Sweet Child O' Mine, Skid Row I Remember You, Def Leppard Photograph
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

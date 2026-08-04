@@ -1,24 +1,32 @@
-# 09-freeway
+# 09 — Freeway
 
+**Length:** 3:00-3:30
 **BPM:** 152
 **Key:** E minor
-**Genre:** hard rock
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock song in E minor at 152 BPM, the first tour, the freeway, the van. Open with a single open-E chord, then a double-kick count-in, then a runaway riff — two guitars in unison, palm-muted tremolo picking, rapid hi-hat, the drummer playing 16th-note snare. The verse is a words-pouring-out storytelling rush — Axl Rose-style raw tenor wailing at the top of his range, the lyrics tumbling out, the van breaking down in Wyoming at 4 AM. Pre-chorus explodes with a chord stab and a snare roll. The chorus is melodic aggression — gang-shout, dual-guitar harmony, cowbell, the highest-energy moment of the album. Bridge is a Slash-style solo: minor pentatonic, screaming bends, dive-bombs, a half-step kicker. Final chorus: full-band + gang vocals + double-kick. Outro: cowbell, double-kick, sustained wail. Production: 1987 tour van. Pure adrenaline. The first tour.
+90s hard rock at 152 BPM in E minor. The song is about the band's first tour in a busted van. Slash's Les Paul, palm-muted chug, fast and relentless. The vocalist is Axl Rose circa 1988 — pre-fame rawness, screaming over the engine noise, no polish, just adrenaline. The drummer is relentless — double-kick throughout, the song is a 3-minute assault that doesn't let up. The bass is thick, distorted, palm-muted root notes. The chorus is a gang shout with three-part vocal harmony and dual-guitar octave. Slash-style solo with fast pentatonic runs and a dive-bomb. The lyrics are about a van on the freeway at 4 AM, a busted axle, a busted tank, a crying passenger, a driver with a cigarette, twenty miles to a city that doesn't know them. Think GnR 'Reckless Life' or Skid Row 'In a Broken Dream' — fast, relentless, the open road at 4 AM. The song is motion, motion, motion. Production: raw, the Les Paul is overdriven, the drummer is hitting too hard. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw tenor, wailing at top of range, storytelling rush, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` road-rash, exhausted, ecstatic, breaking-down
-- `--instruments` dual electric guitars in unison, palm-muted tremolo, 16th-note snare, double-kick, rapid hi-hat, cowbell, gang shouts
-- `--tempo` very fast
+- `--prompt` 90s hard rock at 152 BPM in E minor. The song is about the b...
+- `--vocals` Axl Rose scream on chorus, wail on held notes, pre-fame rawness
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
+- `--tempo` fast
 - `--bpm` 152
 - `--key` E minor
-- `--use-case` album fast anthem, first tour song
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Nightrain, Mötley Crüe Wild Side, Skid Row Quicksand Jesus
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

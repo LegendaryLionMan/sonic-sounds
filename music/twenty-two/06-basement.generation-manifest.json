@@ -1,0 +1,41 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "06-basement",
+  "track_index": 6,
+  "generated_at": "2026-08-04T08:19:26Z",
+  "model": "music-3.0",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "90s hard rock at 145 BPM in D minor. The song is about the rehearsal space where the band was born. Slash's Les Paul, palm-muted chug, fast and aggressive. The vocalist is Axl Rose circa 1987 — pre-fame rawness, screaming into a basement mic, the reverb is just the room itself. The drummer is relentless — double-kick throughout, no half-time, no breath, the song is a 3-minute assault. The bass is thick, distorted, palm-muted root notes. The chorus is a gang shout with three-part vocal harmony and dual-guitar octave. Slash-style solo with fast pentatonic runs and a dive-bomb. The lyrics are about a basement with busted lights, ceiling dripping on the amp, a landlord who wants them out, cops coming once a week. Think GnR 'Out ta Get Me' or Skid Row 'Monkey Business' — fast, feral, claustrophobic. The song is the origin story, the band in a basement before anyone knew them. Production: raw, the Les Paul is overdriven, the drummer is hitting too hard. FIRE.",
+    "chars": 967,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\06-basement.md"
+  },
+  "flags": {
+    "prompt": "90s hard rock at 145 BPM in D minor. The song is about the r...",
+    "vocals": "Axl Rose raw scream, pre-fame rawness, screaming into a basement mic",
+    "genre": "90s hard rock",
+    "mood": "aggressive, swaggering, explosive",
+    "instruments": "Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts",
+    "tempo": "fast",
+    "bpm": 145,
+    "key": "D minor",
+    "structure": "intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro",
+    "references": "Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood",
+    "model": "music-3.0",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\06-basement.md",
+  "lyrics_chars": 1112,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\06-basement.mp3",
+    "md5": "cfec6b4311cba74627f07497fa686e19",
+    "size_bytes": 6531954,
+    "duration_seconds": 204.096,
+    "bitrate_bps": 256034,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

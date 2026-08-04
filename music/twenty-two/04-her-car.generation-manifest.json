@@ -1,0 +1,41 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "04-her-car",
+  "track_index": 4,
+  "generated_at": "2026-08-04T08:19:26Z",
+  "model": "music-3.0",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "90s hard rock at 128 BPM in B minor. The song is about an affair in a '97 Civic. Slash's Les Paul, but played clean with just enough grit — the slowest, most sensual track on the album. The vocalist is Axl Rose circa 1991 — breathy in the verse, wailing on the held notes, screaming on the chorus. The drummer plays a half-time backbeat with brushes on the verse (sleazy, late-night) and opens up to a full double-kick backbeat on the chorus. The bass is fat, walking, almost R&B. The chorus is a gang-shout but lower-register, slinkier. Slash-style solo with one long slow bend and a mournful pull-up at the end. No piano, no synth, no ballad-section piano. The lyrics are about a Marine's girlfriend, a tape deck that ate the singer's best mixes, the lights of the city, the room underwater. Think Whitesnake 'Here I Go Again' or GnR 'Patience' — but darker, more desperate. The song is sensual and doomed. The singer knows he's destroying her and he does it anyway. Production: dry, late-night, the bass is the lead voice. FIRE.",
+    "chars": 1031,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\04-her-car.md"
+  },
+  "flags": {
+    "prompt": "90s hard rock at 128 BPM in B minor. The song is about an af...",
+    "vocals": "Axl Rose wail, breathy verse, screaming on chorus, sensual and masculine",
+    "genre": "90s hard rock",
+    "mood": "aggressive, swaggering, explosive",
+    "instruments": "Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts",
+    "tempo": "fast",
+    "bpm": 128,
+    "key": "B minor",
+    "structure": "intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro",
+    "references": "Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood",
+    "model": "music-3.0",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\04-her-car.md",
+  "lyrics_chars": 1149,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\04-her-car.mp3",
+    "md5": "f1674da4dbf73ae36eddb423217050c2",
+    "size_bytes": 7025146,
+    "duration_seconds": 219.508,
+    "bitrate_bps": 256032,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

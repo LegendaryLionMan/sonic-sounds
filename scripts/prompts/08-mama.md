@@ -1,24 +1,32 @@
-# 08-mama
+# 08 — Mama
 
-**BPM:** 125
-**Key:** F major
-**Genre:** hard rock
+**Length:** 3:00-3:30
+**BPM:** 128
+**Key:** F minor
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock song in F major at 125 BPM, melodic but heavy, dedicated to the mother who never said stop. Open with a single clean electric guitar arpeggio, then a heavy power chord into the verse. The verse is a mid-tempo groove — two guitars (one clean, one overdriven), bass walking, drums on a half-time backbeat, cowbell on the 2 and 4. Vocals: Axl Rose-style raw tenor, sincere, delivering the song with restraint, building into a wail by the chorus. Pre-chorus builds with a rising-chord progression and a snare roll. The chorus is melodic and heavy — gang vocals on the second phrase, dual-guitar harmony, big tom-tom fills. Bridge is a guitar solo: emotional, slow-bending, a tribute in guitar notes. Final chorus is the most sincere moment of the album — gang vocals, cowbell, full-band. Outro: a single power chord, fade to feedback. Production: 1987 stadium. Pure melodic hard rock. No piano. No soft. The mother who never said stop.
+90s hard rock at 128 BPM in F minor. The slowest, most emotional track on the album. Slash's Les Paul, but played with a clean tone on the verse and overdriven on the chorus. The vocalist is Axl Rose circa 1991 — restrained in the verse, wailing on the held notes, screaming on the chorus. The drummer is half-time backbeat on the verse (somber, regretful) and opens up to a full double-kick backbeat on the chorus. The bass is thick, walking, almost gospel. The chorus is a gang shout but with conflicting emotions — the singer loves his mother and hates himself. Slash-style solo with one long slow bend and a scream at the end. No piano, no synth, no ballad-section piano. The lyrics are a letter to the singer's mother — 'I'm a monster, I'm the boy you tried to save, I'm a number on a jail-cell wall, I'm a stranger with your eyes and your blood.' Think GnR 'Coma' or Skid Row 'I Remember You' — long-form 90s hard rock ballad but NOT a ballad, with the chorus exploding into a gang shout of conflicted love. The song is guilty, desperate, the letter home from a son who knows he broke his mother's heart. Production: dry, the Les Paul is the lead voice, the drums are huge. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw tenor, sincere, restrained in verse, wailing by chorus, emotional and masculine, gang vocals on chorus
-- `--genre` hard rock
-- `--mood` sincere, melodic-aggressive, tribute, emotional
-- `--instruments` dual electric guitars (clean + overdriven), walking bass, half-time drums, cowbell, gang vocals, emotional solo
-- `--tempo` moderate
-- `--bpm` 125
-- `--key` F major
-- `--use-case` album tribute song, melodic hard rock ballad to mother (but loud, not soft)
+- `--prompt` 90s hard rock at 128 BPM in F minor. The slowest, most emoti...
+- `--vocals` Axl Rose restrained verse, wail on held notes, scream on chorus, conflicted emotion
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
+- `--tempo` fast
+- `--bpm` 128
+- `--key` F minor
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Patience (loud version), Skid Row I Remember You, Def Leppard Love Bites (loud version)
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`

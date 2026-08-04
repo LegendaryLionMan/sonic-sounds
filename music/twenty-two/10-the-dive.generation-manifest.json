@@ -1,0 +1,41 @@
+{
+  "manifest_version": "1.0",
+  "track_slug": "10-the-dive",
+  "track_index": 10,
+  "generated_at": "2026-08-04T08:19:26Z",
+  "model": "music-3.0",
+  "schema_version": "v2.2",
+  "sonic_dna_locked_at": null,
+  "prompt": {
+    "body": "90s hard rock at 138 BPM in F# minor. The song is about the lowest bar in the worst town. Slash's Les Paul, palm-muted chug with a swagger — not as fast as the open-mic songs, but with attitude. The vocalist is Axl Rose circa 1988 — swaggering, leering, a sneer in his voice. The drummer is half-time backbeat on the verse, double-kick on the chorus, cowbell on 2 and 4. The bass is thick, walking, almost sleazy. The chorus is a gang shout with three-part vocal harmony. Slash-style solo with a bluesy pentatonic run and a long slow bend. The lyrics are about a bar at the end of the line, a barman missing three fingers, a jukebox broken, toilets worse, cops don't come, 2 AM, a bottle of beer, a woman with a black eye. Think GnR 'Patience' (the slow version) or Mötley Crüe 'On With the Show' — the song has the same seedy glamour, the same sense of being at the bottom of the world. Production: dry, the Les Paul is the lead voice, the bass is sleazy. FIRE.",
+    "chars": 962,
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\10-the-dive.md"
+  },
+  "flags": {
+    "prompt": "90s hard rock at 138 BPM in F# minor. The song is about the ...",
+    "vocals": "Axl Rose swagger, leering, sneer in voice, scream on chorus",
+    "genre": "90s hard rock",
+    "mood": "aggressive, swaggering, explosive",
+    "instruments": "Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts",
+    "tempo": "fast",
+    "bpm": 138,
+    "key": "F# minor",
+    "structure": "intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro",
+    "references": "Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood",
+    "model": "music-3.0",
+    "bitrate": "256000",
+    "format": "mp3",
+    "stream": ""
+  },
+  "lyrics_source": "C:\\Users\\lion_\\Music\\Twenty-Two\\lyrics\\10-the-dive.md",
+  "lyrics_chars": 1126,
+  "output": {
+    "file": "C:\\Users\\lion_\\Music\\Twenty-Two\\music\\10-the-dive.mp3",
+    "md5": "ee1437ed69533e21f01e8a876f890f57",
+    "size_bytes": 9920766,
+    "duration_seconds": 309.996,
+    "bitrate_bps": 256022,
+    "sample_rate_hz": 44100,
+    "channels": 2
+  }
+}

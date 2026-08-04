@@ -1,24 +1,32 @@
-# 06-basement
+# 06 — Basement
 
-**BPM:** 142
+**Length:** 3:00-3:30
+**BPM:** 145
 **Key:** D minor
-**Genre:** hard rock
+**Genre:** 90s hard rock
+**Vocal:** Axl Rose-style raw high tenor
+**Mood:** reckless, sharp, real
 
 ## Prompt (sent to --prompt)
-
 ```
-Hard rock song in D minor at 142 BPM, the basement where the band lived and rehearsed. Open with feedback, then a single dropped-D power chord into the verse. The verse is a tight, propulsive groove — two guitars palm-muted in unison, the bass holding the low D, the drummer playing a 16th-note snare pattern with double-kick on the chorus hits. Vocals: Axl Rose-style raw tenor, delivering the song with confidence, swagger, the band is finally getting good. Pre-chorus is a build-up chord progression (D5-C5-G5-F5) with a snare roll and a single guitar wail. The chorus is melodic but heavy — gang-shout, dual-guitar harmony, cowbell, the most fun chorus on the album. Bridge is a guitar solo: tight pentatonic runs, machine-gun picking, a whammy dive into the final chorus. Final chorus: full-band + gang vocals + an extra-adrenalized drum fill. Outro: a single power chord, sustain, feedback. Production: rehearsal-room raw, but mixed huge. Pure adrenaline. The basement where the band lived.
+90s hard rock at 145 BPM in D minor. The song is about the rehearsal space where the band was born. Slash's Les Paul, palm-muted chug, fast and aggressive. The vocalist is Axl Rose circa 1987 — pre-fame rawness, screaming into a basement mic, the reverb is just the room itself. The drummer is relentless — double-kick throughout, no half-time, no breath, the song is a 3-minute assault. The bass is thick, distorted, palm-muted root notes. The chorus is a gang shout with three-part vocal harmony and dual-guitar octave. Slash-style solo with fast pentatonic runs and a dive-bomb. The lyrics are about a basement with busted lights, ceiling dripping on the amp, a landlord who wants them out, cops coming once a week. Think GnR 'Out ta Get Me' or Skid Row 'Monkey Business' — fast, feral, claustrophobic. The song is the origin story, the band in a basement before anyone knew them. Production: raw, the Les Paul is overdriven, the drummer is hitting too hard. FIRE.
 ```
 
 ## Other flags
 
-- `--vocals` Axl Rose-style raw tenor, confident, swaggering, melodic with grit, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` tight, propulsive, garage-band-of-brothers, raw
-- `--instruments` dual electric guitars in dropped-D, palm-muted unison, 16th-note snare, double-kick on chorus, cowbell, gang shouts
+- `--prompt` 90s hard rock at 145 BPM in D minor. The song is about the r...
+- `--vocals` Axl Rose raw scream, pre-fame rawness, screaming into a basement mic
+- `--genre` 90s hard rock
+- `--mood` aggressive, swaggering, explosive
+- `--instruments` Slash Les Paul through Marshall JCM800 stack, palm-muted chug, double-kick drums, cowbell, slap-back echo, gang shouts
 - `--tempo` fast
-- `--bpm` 142
+- `--bpm` 145
 - `--key` D minor
-- `--use-case` album propulsive anthem, basement rehearsal song
+- `--use-case` album hard rock track, 90s Sunset Strip, real Les Paul, real Axl scream
 - `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses You're Crazy, Mötley Crüe On With the Show, Def Leppard Rock of Ages
+- `--references` Guns N' Roses Appetite for Destruction, Skid Row Slave to the Grind, Mötley Crüe Dr. Feelgood
+- `--model` music-3.0
+- `--sample-rate` 44100
+- `--bitrate` 256000
+- `--format` mp3
+- `--stream`
