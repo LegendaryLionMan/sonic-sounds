@@ -1,24 +1,32 @@
-# 05-twenty-two
+# 05 — Twenty-Too
 
-**BPM:** 138
+**Length:** 2:30-3:00
+**BPM:** 132
 **Key:** G minor
-**Genre:** hard rock
+**Vocal:** Axl scream, wail
+**Mood:** cathartic, furious
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock anthem in G minor at 138 BPM, the title track. Open with a single massive open G chord, distortion, sustain ringing, then a Steiner-filter synth-bass drop into the verse. The verse is a melodic hard-rock tension builder — two guitars in harmony, palm-muted root, the drummer doing a quarter-note snare pattern with hi-hat eighths. Vocals: Axl Rose-style raw tenor, delivering the realization that the kid is gone, melodic but with a rage at the bottom. Pre-chorus builds with a minor-pentatonic riff climbing up the neck, double-kick snare roll. The chorus is the album's melodic peak — gang-shout harmonies, dual-guitar harmony, the whole band wailing. Bridge is a Slash-style solo: emotional, slow-bending, building to a sustained high note. Final chorus is the biggest moment of the album — full-band, gang vocals, cowbell. Outro: open G chord ring-out, feedback, crowd noise. Production: stadium. Sunset Strip. Pure melodic hard rock. No piano. No soft. The realization in 4 minutes.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style raw tenor, melodic with rage, gang-shout harmonies on chorus, sustained wails on held notes
-- `--genre` hard rock
-- `--mood` anthemic, incandescent, melodic-aggressive, cathartic
-- `--instruments` dual electric guitars in harmony, palm-muted root, double-kick, snare roll, cowbell, gang shouts, sustained feedback
-- `--tempo` fast
-- `--bpm` 138
-- `--key` G minor
-- `--use-case` album title track, melodic hard rock anthem
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Sweet Child O' Mine, Skid Row I Remember You, Def Leppard Photograph
+[Intro]
+Single G chord, feedback
+[Verse 1]
+Twenty-two and buried in a bottle and a girl
+Twenty-two and buried in a band that can't get off the curb
+Twenty-two and buried in a voice that nobody hears
+Twenty-two and buried in a town that's been dead for years
+[Chorus]
+Twenty-two, twenty-two, I'm a bomb that didn't blow
+Twenty-two, twenty-two, I'm a seed that didn't grow
+Twenty-two, twenty-two, I'm a song that no one knows
+But I will, I will, I will be heard
+[Verse 2]
+Twenty-two and bleeding from a fight I can't recall
+Twenty-two and bleeding from a love that was never there at all
+Twenty-two and bleeding from the music in my head
+Twenty-two and bleeding, but the worst of me is dead
+[Chorus]
+Twenty-two, twenty-two, I'm a bomb that didn't blow
+Twenty-two, twenty-two, I'm a seed that didn't grow
+Twenty-two, twenty-two, I'm a song that no one knows
+But I will, I will, I will be heard
+[Outro]
+Crash

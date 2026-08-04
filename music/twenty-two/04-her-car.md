@@ -1,24 +1,32 @@
-# 04-her-car
+# 04 — Her Car
 
-**BPM:** 120
+**Length:** 2:30-3:00
+**BPM:** 128
 **Key:** B minor
-**Genre:** hard rock
+**Vocal:** Axl wail, breath
+**Mood:** sensual, doomed
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock song in B minor at 120 BPM, slow-burn sleaze, sensual but loud. Open with a single electric guitar figure — heavy reverb, tremolo bar, slowly bending into the verse. The verse is a slinking groove — two guitars, one palm-muted, one with a clean shimmer, the bass guitar walking down, the drums on a half-time backbeat, cowbell on the 2 and 4. Vocals: Axl Rose-style sensual tenor, breathy at the start, building into a wail by the chorus. The pre-chorus builds with a rising-chord progression and a snare roll. The chorus is a melodic sleaze-rock anthem — dual-guitar harmony, gang-vocal on the bridge phrase, big tom-tom fills. Bridge is a guitar solo: slow, slinky, bent notes, wah-wah, a single long held bend resolving into the chorus. Outro: one guitar strumming the open chord, fade to feedback. Production: 1987 Sunset Strip after-party. Loud, not soft.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style sensual tenor, breathy at start, wailing by chorus, sensual and masculine, gang-vocal echoes
-- `--genre` hard rock
-- `--mood` sleazy, sensual, slow-burn, after-hours
-- `--instruments` dual electric guitars (palm-muted + clean shimmer), tremolo bar, walking bass, half-time drums, cowbell, wah-wah solo
-- `--tempo` moderate
-- `--bpm` 120
-- `--key` B minor
-- `--use-case` album sleaze-rock song, mid-tempo groove
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Patience (loud version), Aerosmith Last Child, Mötley Crüe Too Fast for Love
+[Intro]
+Tremolo, slow burn
+[Verse 1]
+Her car was a '97 Civic with a tape deck that ate my best mixes
+We'd park at the reservoir where the lights from the city made everything soft
+She didn't like the lyrics but she liked how I sang them
+She said my voice made her feel like the room was underwater
+[Chorus]
+Her car, her car, the only place I felt
+Her car, her car, the hand on my belt
+Her car, her car, the song she'd hum when I was gone
+Three weeks after, three weeks after, I wrote the song she asked me not to
+[Verse 2]
+She had a boyfriend in the Marines, a ring on her finger
+She'd text me at 2 AM, said meet me where the bridge goes under
+I knew what I was doing, I knew what it would cost
+The night she cried in the passenger seat, I knew that she was lost
+[Chorus]
+Her car, her car, the only place I felt
+Her car, her car, the hand on my belt
+Her car, her car, the song she'd hum when I was gone
+Three weeks after, three weeks after, I wrote the song she asked me not to
+[Outro]
+Decay

@@ -1,24 +1,32 @@
-# 12-standing-still
+# 12 — Standing Still
 
-**BPM:** 144
+**Length:** 2:30-3:00
+**BPM:** 140
 **Key:** A major
-**Genre:** hard rock
+**Vocal:** Axl scream, wail
+**Mood:** defiant, triumphant
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock album closer in A major at 144 BPM, the look-back resolution. Open with a single massive open A chord, distortion, sustain ringing, then a Steiner-filter synth-bass drop into the verse. The verse is a melodic hard-rock tension builder — two guitars in harmony, palm-muted root, the drummer doing a quarter-note snare pattern with hi-hat eighths. Vocals: Axl Rose-style raw tenor, delivering the song with the catharsis of someone who has survived the whole journey, melodic but with victory at the bottom. Pre-chorus builds with a major-pentatonic riff climbing up the neck, double-kick snare roll. The chorus is the album's biggest moment — gang-shout harmonies, dual-guitar harmony, the whole band wailing. Bridge is a Slash-style solo: emotional, slow-bending, building to a sustained high note. Final chorus is the peak of the album — full-band, gang vocals, cowbell, audience singing along. Outro: open A chord ring-out, feedback, audience applause. Production: stadium. Sunset Strip. Pure melodic hard rock. No piano. No soft. The closer. The victory lap.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style raw tenor, cathartic, melodic with victory, gang-shout harmonies on chorus, sustained wails on held notes
-- `--genre` hard rock
-- `--mood` anthemic, cathartic, melodic-aggressive, victorious
-- `--instruments` dual electric guitars in harmony, palm-muted root, double-kick, snare roll, cowbell, gang shouts, sustained feedback
-- `--tempo` fast
-- `--bpm` 144
-- `--key` A major
-- `--use-case` album-closing hard rock anthem, look-back resolution
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Paradise City, Def Leppard Pour Some Sugar on Me, Mötley Crüe Kickstart My Heart
+[Intro]
+Clean guitar, single chord, builds
+[Verse 1]
+They said I'd never make it, said I'd burn out by twenty-five
+They said the band would break, the van would die, the songs wouldn't survive
+They said a kid from nowhere couldn't carry a Les Paul
+They said a thousand things, and every one of them was wrong
+[Chorus]
+Standing still, standing still, every scar a flag I fly
+Standing still, standing still, every night a reason why
+Standing still, standing still, every scream a battle cry
+We are still here, we are still here, we are still here
+[Verse 2]
+The years have been a war, the lovers have come and gone
+The stages have grown bigger, the crowds have come along
+I lost my brother to the bottle, I lost my voice to the road
+But I am still singing, I am still screaming, I am still alone
+[Chorus]
+Standing still, standing still, every scar a flag I fly
+Standing still, standing still, every night a reason why
+Standing still, standing still, every scream a battle cry
+We are still here, we are still here, we are still here
+[Outro]
+Crowd noise, feedback, crash

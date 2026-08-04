@@ -1,24 +1,32 @@
-# 06-basement
+# 06 — Basement
 
-**BPM:** 142
+**Length:** 2:30-3:00
+**BPM:** 145
 **Key:** D minor
-**Genre:** hard rock
+**Vocal:** Axl raw, screaming
+**Mood:** claustrophobic, feral
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock song in D minor at 142 BPM, the basement where the band lived and rehearsed. Open with feedback, then a single dropped-D power chord into the verse. The verse is a tight, propulsive groove — two guitars palm-muted in unison, the bass holding the low D, the drummer playing a 16th-note snare pattern with double-kick on the chorus hits. Vocals: Axl Rose-style raw tenor, delivering the song with confidence, swagger, the band is finally getting good. Pre-chorus is a build-up chord progression (D5-C5-G5-F5) with a snare roll and a single guitar wail. The chorus is melodic but heavy — gang-shout, dual-guitar harmony, cowbell, the most fun chorus on the album. Bridge is a guitar solo: tight pentatonic runs, machine-gun picking, a whammy dive into the final chorus. Final chorus: full-band + gang vocals + an extra-adrenalized drum fill. Outro: a single power chord, sustain, feedback. Production: rehearsal-room raw, but mixed huge. Pure adrenaline. The basement where the band lived.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style raw tenor, confident, swaggering, melodic with grit, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` tight, propulsive, garage-band-of-brothers, raw
-- `--instruments` dual electric guitars in dropped-D, palm-muted unison, 16th-note snare, double-kick on chorus, cowbell, gang shouts
-- `--tempo` fast
-- `--bpm` 142
-- `--key` D minor
-- `--use-case` album propulsive anthem, basement rehearsal song
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses You're Crazy, Mötley Crüe On With the Show, Def Leppard Rock of Ages
+[Intro]
+Single riff, raw
+[Verse 1]
+Basement with the busted lights, ceiling dripping on my amp
+Six of us in a crawlspace, smell of sweat and canned heat
+The landlord said we couldn't stay, the cops came once a week
+The neighbours called it noise, we called it finding peace
+[Chorus]
+Basement, basement, where the thunder learned to scream
+Basement, basement, where the kids invented the dream
+Basement, basement, every nightmare we could feed
+We were the basement, we were the basement
+[Verse 2]
+Mickey had a drumkit that his sister threw down the stairs
+Tommy played a bass that had a broken string for years
+I had a Les Paul that my uncle left when he died
+Three chords and a Marshall, that was all the pride I had
+[Chorus]
+Basement, basement, where the thunder learned to scream
+Basement, basement, where the kids invented the dream
+Basement, basement, every nightmare we could feed
+We were the basement, we were the basement
+[Outro]
+Feedback

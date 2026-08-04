@@ -1,24 +1,32 @@
-# 10-the-dive
+# 10 — The Dive
 
-**BPM:** 140
+**Length:** 2:30-3:00
+**BPM:** 138
 **Key:** F# minor
-**Genre:** hard rock
+**Vocal:** Axl scream, swagger
+**Mood:** depraved, swaggering
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock song in F# minor at 140 BPM, the dive bar where everything started. Open with a single open F# power chord, sustain, then a fast riff into the verse. The verse is a swaggering groove — two guitars in unison, palm-muted root, the bass walking down, the drummer playing a half-time backbeat with double-kick on the chorus. Vocals: Axl Rose-style raw tenor, swaggering, delivering the song with the confidence of a band that just found their sound. Pre-chorus builds with a rising-chord progression and a snare roll. The chorus is melodic aggression — gang-shout, dual-guitar harmony, cowbell, the most anthemic chorus on the album. Bridge is a Slash-style solo: bluesy pentatonic, slow bends, screaming vibrato, a moment of triumph in the middle of the chaos. Final chorus is the biggest singalong of the album. Outro: cowbell, double-kick, sustained wail. Production: 1987 dive bar. Raw, real, loud. The dive bar where everything started.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style raw tenor, swaggering, confident, melodic with grit, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` swaggering, dive-bar, triumphant, raw
-- `--instruments` dual electric guitars in unison, palm-muted root, half-time backbeat, double-kick, cowbell, gang shouts, bluesy solo
-- `--tempo` fast
-- `--bpm` 140
-- `--key` F# minor
-- `--use-case` album dive-bar anthem, swaggering song
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Welcome to the Jungle, Mötley Crüe Same Ol' Situation, Skid Row Quicksand Jesus
+[Intro]
+Single riff, swagger
+[Verse 1]
+The Dive is the bar at the end of the line, the last one before the highway
+The barman is missing three fingers and he doesn't give a damn what you say
+The jukebox is broken, the toilets are worse, the cops don't come in here
+It's 2 AM and the only thing that's open is a bottle of beer
+[Chorus]
+The Dive, The Dive, the lowest bar in town
+The Dive, The Dive, where the lost come to drown
+The Dive, The Dive, last call and lights down
+We are the Dive, we are the Dive
+[Verse 2]
+She came in with a black eye and a leather jacket
+Said her man was outside with a gun, said she needed a place to sit
+I bought her a whiskey, told her to stay as long as she needed
+The barman wiped the counter, said honey, you're among the heathens
+[Chorus]
+The Dive, The Dive, the lowest bar in town
+The Dive, The Dive, where the lost come to drown
+The Dive, The Dive, last call and lights down
+We are the Dive, we are the Dive
+[Outro]
+Crash

@@ -1,6 +1,6 @@
 # album-studio Structure Policy
 
-**Status:** Locked 2026-08-01 (cleanup pass 1); v2.2 hardening 2026-08-03 (scripts/, M09_sonicDNA, generation-manifest.json)
+**Status:** Locked 2026-08-01 (cleanup pass 1); v2.2 hardening 2026-08-03 (scripts/, M09_sonicDNA, generation-manifest.json); **2026-08-04 R7+R10 patch to clarify album canonical path**
 **Owner:** Penelope + user
 
 This document is the **authoritative layout rule** for the album-studio project. New
@@ -102,11 +102,15 @@ The `.gitignore` blocks `__pycache__/`, `.od-skills/`, `.placeholder` files,
 `*.pyc`, OS junk. If you find yourself wanting to commit a file that the
 `.gitignore` is blocking, ask "is this a build artifact?" — if yes, don't commit it.
 
-### R7. Mirrors are byte-verified.
+### R7. Project mirror is byte-verified (NOT the album canonical).
 
-`~/OneDrive/Hermes/Agents/planning/album-studio/` is the cross-device mirror.
-It must byte-match the project for any source file. After any write to the project,
-run the mirror loop:
+`~/OneDrive/Hermes/Agents/planning/album-studio/` is the **project mirror** —
+a byte-verified backup of this repo (the album-studio dev project). It must
+byte-match the project for any source file. **It is NOT the album canonical.**
+
+The **album canonical** is the user's playback/distribution folder, separate
+from the dev project. See R10 for the album canonical rule. After any write
+to the project source files, run the mirror loop:
 
 ```bash
 PROJ='C:\Users\lion_\Documents\Projects\album-studio'
@@ -157,6 +161,53 @@ Same-name sibling is the standard "sidecar" pattern (LRC files, .srt
 subtitles, .vtt tracks, .json presets). Keeping them in the music/
 folder makes the per-track pair obvious in `ls` and prevents manifest
 orphans (a manifest without its MP3, or vice versa).
+
+### R10. ALBUM CANONICAL lives at `~/OneDrive/Hermes/albums/{slug}/` (NEW 2026-08-04).
+
+**This is the user's playback/distribution folder. It is the canonical
+home of the actual album artifacts (MP3s, lyrics, cover art, posters,
+merch, scripts, planning notes).** NOT the project repo, NOT the project
+mirror.
+
+**Pattern:**
+
+```
+C:\Users\lion_\OneDrive\Hermes\albums\{slug}/
+├── README.md                           ← album overview (Pyro Altar/Twenty-Two, etc.)
+├── music/                              ← MP3s (with ID3v2.3 tags + cover art)
+├── lyrics/                             ← lyrics .md
+├── lyrics-lrc/                         ← synced lyrics .lrc
+├── cover-art/                          ← cover variants (square, hero, etc.)
+├── posters/                            ← promotional posters
+├── merch/                              ← merch designs + tour plan
+├── press/                              ← press kit, podcast, distribution
+├── spotify/                            ← Spotify preparation
+├── social/                             ← social assets
+├── videos/                             ← music videos, reels
+├── scripts/                            ← ALBUM-SPECIFIC helpers (lyrics-to-lrc, tag-album, prompts/)
+└── planning/                           ← ALBUM-LEVEL planning notes (sessions, retros)
+```
+
+**When the dev project builds a new track, the artifact goes to BOTH:**
+
+1. The **project repo**: `~/Documents/Projects/album-studio/music/{slug}/{file}`
+   (tracked in git for version history)
+2. The **album canonical**: `~/OneDrive/Hermes/albums/{slug}/{file}`
+   (where the user actually listens, distributes, edits)
+
+**Common mistake (avoided as of 2026-08-04):** writing to the project mirror
+(`~/OneDrive/Hermes/Agents/planning/album-studio/`) thinking it was the album
+canonical. The mirror is a backup of the dev repo, NOT the album folder.
+
+**Three-way verification on every change:**
+
+| Location | Role | What lives here |
+|---|---|---|
+| `~/Music/Twenty-Two/` | Local working copy | the latest generated files |
+| `~/OneDrive/Hermes/albums/twenty-two/` | **ALBUM canonical** | the album artifacts |
+| `~/Documents/Projects/album-studio/` | Project repo (git) | the dev source |
+
+Always byte-verify all three with `md5sum` after writing.
 
 **Manifest schema version:** independent of intake-data/schema.json.
 Bump `manifest_version` in the script when adding fields.

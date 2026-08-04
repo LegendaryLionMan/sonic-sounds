@@ -1,24 +1,32 @@
-# 07-open-mic
+# 07 — Open Mic
 
+**Length:** 2:30-3:00
 **BPM:** 148
 **Key:** A minor
-**Genre:** hard rock
+**Vocal:** Axl scream, raw
+**Mood:** reckless, hungry
 
-## Prompt (sent to --prompt)
-
-```
-Hard rock song in A minor at 148 BPM, the opening-act years. Open with a fast palm-muted riff on the low-A, two guitars in unison, then a frenetic hi-hat build-up into the verse. The verse is a rapid-fire storytelling rush — Axl Rose-style raw tenor wailing, the lyrics tumbling out, the drummer playing a half-time backbeat with double-kick on the bridge. Pre-chorus builds with a rising-riff and a snare roll. The chorus is melodic aggression — gang-shout harmonies, dual-guitar harmony at the top of the riff, cowbell, the kids are losing their minds. Bridge is a Slash-style solo: bluesy pentatonic, slow bends, screaming vibrato, a moment of reflection in the middle of the chaos. Final chorus is the biggest singalong of the album. Outro: cowbell, double-kick, sustained wail. Production: 1987 dive bar, raw, real, loud. Pure adrenaline.
-```
-
-## Other flags
-
-- `--vocals` Axl Rose-style raw tenor, rapid-fire wailing, storytelling rush, gang-shout harmonies on chorus
-- `--genre` hard rock
-- `--mood` frenetic, raw, dive-bar, real
-- `--instruments` dual electric guitars palm-muted in unison, double-kick, frenetic hi-hat, cowbell, gang shouts, bluesy solo
-- `--tempo` very fast
-- `--bpm` 148
-- `--key` A minor
-- `--use-case` album frenetic anthem, opening-act years song
-- `--structure` intro-verse1-prechorus1-chorus1-verse2-prechorus2-chorus2-bridge-solo-chorus3-outro
-- `--references` Guns N' Roses Out ta Get Me, Skid Row Monkey Business, Mötley Crüe Live Wire
+[Intro]
+Feedback, single chord
+[Verse 1]
+Open mic at the bar on Eighth, fifteen minutes to make them remember
+Three covers and a half-written song, my hands were shaking like a leaf
+The barman poured me whiskey, said don't mess up the jukebox
+I opened with a scream and a chord and the room started to lose it
+[Chorus]
+Open mic, open mic, the night I made them shut up
+Open mic, open mic, the night I earned the gut
+Open mic, open mic, every amp and every plug
+We were the open mic, we were the open mic
+[Verse 2]
+Some guy with a keyboard said I was too loud, I told him to leave
+Some girl with a notepad said we were nothing, I told her to read
+The barman cut us off at twelve, said boys you made the news
+The next week every bar on Eighth had a sign that said no GnR crew
+[Chorus]
+Open mic, open mic, the night I made them shut up
+Open mic, open mic, the night I earned the gut
+Open mic, open mic, every amp and every plug
+We were the open mic, we were the open mic
+[Outro]
+Feedback
