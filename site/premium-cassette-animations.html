@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>album-studio · cassette-mesh · animations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Major+Mono+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a14;
+  --ink: #fafafa;
+  --ink-soft: rgba(255,255,255,.7);
+  --ink-muted: rgba(255,255,255,.4);
+  --magenta: #f25cb0;
+  --cyan: #2dd8f0;
+  --amber: #f5c142;
+  --violet: #b94af5;
+  --tape: #f0c53c;
+  --rule: rgba(255,255,255,.08);
+  --sans: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Major Mono Display', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  background-image: radial-gradient(ellipse at top, hsl(330 80% 30% / .05) 0%, transparent 50%);
+  padding: 32px;
+  min-height: 100vh;
+}
+.wrap { max-width: 2560px; margin: 0 auto; display: grid; gap: 32px; padding: 32px; }
+
+/* TOPBAR */
+.topbar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+  background: rgba(0,0,0,.4); backdrop-filter: blur(20px);
+  border: 1px solid var(--rule); border-radius: 14px;
+}
+.crumb { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); letter-spacing: .06em; }
+.crumb b { color: var(--ink); font-weight: 600; }
+.grow { flex: 1; }
+.pill { display: inline-flex; gap: 8px; align-items: center;
+  background: rgba(245,193,66,.08); border: 1px solid rgba(245,193,66,.3);
+  padding: 8px 14px; border-radius: 999px; font-size: 11px; font-family: var(--mono);
+  color: var(--amber); letter-spacing: .14em; text-transform: uppercase; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+/* HEADING */
+.heading { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--magenta); }
+.heading h1 { font-family: var(--display); font-size: 56px; font-weight: normal; color: var(--ink); letter-spacing: .01em; }
+.heading p { font-size: 17px; color: var(--ink-soft); max-width: 64ch; margin-top: 8px; }
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+.card {
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,.02);
+  display: flex;
+  flex-direction: column;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.card-head .hash { color: var(--magenta); }
+.card-head .name { font-weight: 600; color: var(--ink); }
+.card-head .status { margin-left: auto; padding: 3px 9px; border-radius: 999px; background: rgba(330,90,60,.15); color: var(--magenta); text-transform: uppercase; font-size: 10px; letter-spacing: .1em; }
+.card-body { padding: 48px 32px; min-height: 360px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.2); }
+.card-meta { padding: 12px 22px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; color: var(--ink-muted); letter-spacing: .04em; }
+
+/* === 1. MESH DRIFT === */
+.mesh {
+  width: 320px; height: 180px;
+  border-radius: 8px;
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 30%, var(--magenta) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, var(--cyan) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, var(--amber) 0%, transparent 60%),
+    radial-gradient(circle at 70% 20%, var(--violet) 0%, transparent 50%),
+    #000;
+  filter: saturate(1.2) blur(2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.1);
+  animation: mesh-drift 12s linear infinite;
+}
+.mesh::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 60% 30%, var(--cyan) 0%, transparent 40%),
+    radial-gradient(circle at 30% 70%, var(--violet) 0%, transparent 40%);
+  filter: blur(4px);
+  animation: blob-orbit 4s ease-in-out infinite alternate;
+}
+.mesh::after {
+  content: 'HALF-LIGHT HOURS';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.95);
+  letter-spacing: .18em; font-weight: 600; text-align: center;
+  text-shadow: 0 0 4px rgba(0,0,0,.8), 0 1px 2px rgba(0,0,0,.6); z-index: 2;
+}
+@keyframes mesh-drift {
+  0% { filter: saturate(1.2) blur(2px) hue-rotate(0deg); }
+  100% { filter: saturate(1.2) blur(2px) hue-rotate(360deg); }
+}
+@keyframes blob-orbit {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(60deg) scale(1.2); }
+}
+
+/* === 2. REEL SPIN === */
+.reel-stage {
+  width: 320px;
+  height: 280px;
+  background: linear-gradient(135deg, var(--tape) 0%, #d4a83a 50%, var(--tape) 100%);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.2);
+  position: relative;
+}
+.reel {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a1a1c 0%, #1a1a1c 22%, #444 22.5%, #666 50%, #1a1a1c 50.5%, #1a1a1c 100%);
+  position: relative;
+  animation: spin 4s linear infinite;
+}
+.reel::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.3);
+}
+.reel::after {
+  content: '';
+  position: absolute; inset: 30%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, transparent 0 20deg, rgba(0,0,0,.3) 20deg 25deg);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* === 3. TYPEWRITER === */
+.typewriter-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.typewriter {
+  font-family: var(--display);
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: .08em;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid var(--magenta);
+  width: 16ch;
+  animation: typing 4s steps(16) infinite, blink 0.5s step-end infinite;
+}
+@keyframes typing {
+  0%, 90%, 100% { width: 16ch; }
+  40%, 70% { width: 0; }
+}
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+.typewriter-cursor {
+  display: inline-block;
+  width: 12px;
+  height: 32px;
+  background: var(--magenta);
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+/* === 4. PULSE GLOW === */
+.mesh-glow {
+  width: 220px;
+  height: 220px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--magenta), var(--cyan));
+  box-shadow: 0 0 40px var(--magenta), 0 0 80px var(--cyan);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--magenta), 0 0 40px var(--cyan);
+  }
+  50% {
+    box-shadow: 0 0 60px var(--magenta), 0 0 100px var(--cyan);
+  }
+}
+
+footer code {
+  display: block;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 20px 0 0;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / cassette-mesh · animations</b></span>
+  <span class="pill"><span class="dot"></span> 4 PRIMITIVES</span>
+  <span class="grow"></span>
+  <span class="pill">SIDE A · DOLBY</span>
+</nav>
+
+<header class="heading">
+  <p class="eyebrow">/motion · cassette-mesh primitives</p>
+  <h1>the aurora, in motion</h1>
+  <p>Four CSS animation primitives that power the cassette-mesh experience — the mesh drift, the reel spin, the typewriter label, the pulse glow. Every deck, every sticker, every dashboard uses these.</p>
+</header>
+
+<main class="grid">
+
+  <section class="card">
+    <header class="card-head">
+      <span class="hash">/01</span>
+      <span class="name">MESH DRIFT</span>
+      <span class="status">12s · linear · infinite</span>
+    </header>
+    <div class="card-body">
+      <div class="mesh"></div>
+    </div>
+    <div class="card-meta">multi-layered radial-gradient · filter: hue-rotate · 0deg → 360deg</div>
+  </section>
+
+  <section class="card">
+    <header class="card-head">
+      <span class="hash">/02</span>
+      <span class="name">REEL SPIN</span>
+      <span class="status">4s · linear · infinite</span>
+    </header>
+    <div class="card-body">
+      <div class="reel-stage">
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+    </div>
+    <div class="card-meta">conic-gradient spokes · transform: rotate · play hover to see</div>
+  </section>
+
+  <section class="card">
+    <header class="card-head">
+      <span class="hash">/03</span>
+      <span class="name">TYPEWRITER LABEL</span>
+      <span class="status">4s · steps(16) · infinite</span>
+    </header>
+    <div class="card-body">
+      <div class="typewriter-wrap">
+        <div class="typewriter">HALF-LIGHT HOURS</div>
+      </div>
+    </div>
+    <div class="card-meta">Major Mono Display · animation: typing · border-right cursor blink</div>
+  </section>
+
+  <section class="card">
+    <header class="card-head">
+      <span class="hash">/04</span>
+      <span class="name">PULSE GLOW</span>
+      <span class="status">2s · ease-in-out · infinite</span>
+    </header>
+    <div class="card-body">
+      <div class="mesh-glow"></div>
+    </div>
+    <div class="card-meta">box-shadow blur 20px → 60px · alternating · magenta+cyan</div>
+  </section>
+
+</main>
+
+<footer><code>album-studio · template 14 · cassette-mesh · the label is the aurora</code></footer>
+</div>
+</body>
+</html>
