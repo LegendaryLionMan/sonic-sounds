@@ -48,3 +48,18 @@ The cassette-mesh is the TOP-most rectangle on every page, so visually the user 
 4. Delete the old `album-studio/design-system` token set (the new `album-studio/cassette-mesh` set is the one to use).
 
 Alternatively, the user can also accept the layered state — visually it looks correct because cassette-mesh is on top.
+
+
+## Update — 15:59 UTC (post-cleanup)
+
+Found that `rect.remove()` actually DOES work in Penpot v2.16 plugin API. Setters for `x/y/parentIndex/fills` are silently ignored, but `.remove()` is a real method. Also `.detach()`.
+
+Final state per page (after full cleanup):
+- **01 Design System:** 1 rectangle: `01-design-system-cassette-mesh-v3` (2880×6228)
+- **02 Components:** 1 rectangle: `02-components-cassette-mesh-v3` (2880×6178)
+- **03 Intake:** 1 rectangle: `03-intake-cassette-mesh-v3` (2880×8026)
+- **04 Dashboard:** 1 rectangle: `04-dashboard-cassette-mesh-v3` (2880×3082)
+- **05 Cover Exploration:** 1 rectangle: `05-cover-exploration-cassette-mesh-v4` (2880×3082)
+- **06 Motif Library:** 1 rectangle: `06-motif-library-cassette-mesh-v3` (2880×3610)
+
+All rectangles match the editorial zine dimensions underneath. Visible on screen = cassette-mesh style. No leftover Editorial Zine bleeding through.
