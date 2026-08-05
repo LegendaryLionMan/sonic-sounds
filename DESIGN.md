@@ -1,190 +1,282 @@
 # DESIGN.md — album-studio
 
-> The visual identity for the album-studio project: an HTML front door for
-> the music-album-planning-questionnaire and full-album-release-package skills.
+> The visual identity for the album-studio project: an HTML front door for the music-album-planning-questionnaire and the full-album-release-package skills.
 >
-> Direction locked: **Editorial / zine** — warm paper, big serif, indie-press feel.
-> Inherits from the Half-Light Hours / Maren Sol visual world.
+> Direction locked: **Mixtape '85** — light cream cassette shells with color-banded labels, real photography, vintage worn, dark background to make the colored labels POP.
+>
+> Two design alternatives also exist (cassette-mesh aurora, premium cassette-mesh) but Mixtape '85 is the locked direction as of 2026-08-05.
 
 ---
 
-## 1. Why this direction
+## 1. Visual brief — Mixtape '85
 
-Albums are narrative artifacts. The site that fronts the album-creation pipeline
-should feel like **an editor's desk** — not a SaaS dashboard, not a form-builder.
+The aesthetic is **80s / early-90s home-recorded mixtape culture**. Informed by the user's 6 reference images (saved to `assets/references/`):
+
+- **Light cream / white plastic cassette shells** (not dark, not CGI)
+- **Saturated color-banded labels** (red `#e83a3a`, yellow `#f0c53c`, cyan `#2dd8f0`, green `#4caf50`, blue `#2962ff`, magenta `#f25cb0`, orange `#ff7b00`) as full-bleed panels
+- **Hand-applied sticker aesthetic** — small mono track numbers, handwritten titles
+- **Visible wear, scratches, dust, fingerprints** — vintage patina, not pristine
+- **Cassette IS the chassis** — the artifact itself is the visual, not chrome around it
+- **Dark background** (`#0a0a0f`) so the colored labels POP
 
 References that informed this direction:
-- **Half-Light Hours** album packaging (2026-06-25): warm paper, half-lit window motif
-- **Sufjan Stevens / Carrie & Lowell** zine-era press kit
-- **Bon Iver 22, A Million** minimal editorial typography
-- **Editorial design system** (Open Design `od://design-systems/editorial`)
+- Indie record store photography (Dylan / Stones / Springsteen wall of tapes)
+- 80s mixtape culture (handwritten tracklists, color-banded labels)
+- FWRK Studios `MOCKUP` cassette PSD template (red+yellow flag stripe, light grey shell)
+- A24 film photography (chiaroscuro, 35mm grain)
 
 What it is NOT:
-- Not a SaaS dashboard (no Tailwind-style card grids)
-- Not a Spotify-clone (no green/black gradients)
-- Not a music-tech VC landing page (no neon, no animated meshes)
+- Not Editorial Zine (no serif on warm paper)
+- Not dark-on-dark cassette-mesh (no neon space aesthetic)
+- Not a SaaS dashboard (no card grids)
 
 ---
 
 ## 2. Color palette
 
-Derived from Half-Light Hours artwork, anchored in warm paper + ink.
+### Primary (token + use)
 
 | Token | Hex | Use |
 |---|---|---|
-| `--paper` | `#F4EFE6` | Primary background — warm off-white |
-| `--ink` | `#1B1714` | Primary text — near-black warm |
-| `--ink-soft` | `#3D3530` | Secondary text |
-| `--rule` | `#C9BFAE` | Hairlines, dividers, borders |
-| `--accent` | `#B8503A` | One accent only — warm terracotta red (covers CTA, status critical, motif emphasis) |
-| `--accent-soft` | `#D9846F` | Hover states, accent wash |
-| `--highlight` | `#E8D9A8` | Pinned/highlighted content (mandatory-tier tags) |
-| `--status-done` | `#4A6B47` | Status: done / approved (muted forest, not bright green) |
-| `--status-active` | `#B8503A` | Status: in-progress (same as accent — intentional, in-progress is the signal) |
-| `--status-blocked` | `#7A1F1F` | Status: blocked (deep oxblood) |
+| `--bg` | `#0a0a0f` | Primary canvas — near-black, makes colored labels POP |
+| `--bg-soft` | `#14141a` | Card backgrounds, topbar |
+| `--bg-card` | `#ffffff` | Cassette shell base (NOT a card — the SHELL is cream) |
+| `--shell` | `#f5f1e8` | Cassette cream shell color |
+| `--shell-shadow` | `#d4cfb8` | Cassette shell shadow / yellowing |
+| `--ink` | `#fafafa` | Primary text on dark |
+| `--ink-soft` | `rgba(255,255,255,.7)` | Secondary text |
+| `--ink-muted` | `rgba(255,255,255,.4)` | Metadata, timestamps |
+| `--ink-dark` | `#0a0a0f` | Text on cream cassette labels |
 
-**Rule:** only ONE accent color in any single view. No gradients. No drop shadows on flat surfaces (only on raised cards).
+### Color bands (the cassette label palette)
+
+| Token | Hex | Real cassette brand analogue |
+|---|---|---|
+| `--red` | `#e83a3a` | Maxell, TDK SA |
+| `--yellow` | `#f0c53c` | TDK D, Philips |
+| `--cyan` | `#2dd8f0` | Sony, BASF Chrome |
+| `--blue` | `#2962ff` | Sony HF, JVC |
+| `--green` | `#4caf50` | TDK AD, Realistic |
+| `--magenta` | `#f25cb0` | Memorex, hard-to-find |
+| `--violet` | `#b94af5` | Memorex, rare |
+| `--amber` | `#ff7b00` | BASF, ferric oxide |
+| `--pink` | `#ff5b8a` | Memorex pastels |
+
+**Rule:** color bands are full-bleed cassette labels. Use one band per cassette. Side A and Side B can have different bands.
+
+### Status colors (used in pipeline grid)
+
+| Token | Hex | Use |
+|---|---|---|
+| `--status-done` | `#4caf50` (green) | Layer complete |
+| `--status-active` | `#2dd8f0` (cyan) | Layer in progress |
+| `--status-blocked` | `#e83a3a` (red) | Layer blocked |
+
+### Aurora (the label drift — kept from cassette-mesh for the hero cassette)
+
+| Token | Hex | Use |
+|---|---|---|
+| `--aurora-magenta` | `#f25cb0` | Label gradient top |
+| `--aurora-cyan` | `#2dd8f0` | Label gradient middle |
+| `--aurora-amber` | `#ff7b00` | Label gradient bottom |
 
 ---
 
 ## 3. Typography
 
-Three families, all serif, all on the warm-paper background.
+### Four families
 
 | Token | Family | Use |
 |---|---|---|
-| `--serif-display` | `"Cormorant Garamond", "EB Garamond", Georgia, serif` | Hero headings, section titles (weight 500, italic for "phase" indicators) |
-| `--serif-body` | `"Lora", "Source Serif Pro", Georgia, serif` | Body copy, questions, lyrics excerpts (weight 400, line-height 1.7) |
-| `--sans-mono` | `"JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace` | Metadata, filenames, status badges, the "NN" track numbers (weight 400, letter-spacing 0.02em) |
+| `--display` | `"Bebas Neue", "Oswald", sans-serif` | Hero headlines, cassette titles (weight 400, uppercase, letter-spacing 0.04em) |
+| `--sans` | `"Inter", system-ui, sans-serif` | Body copy, descriptions, UI chrome |
+| `--mono` | `"JetBrains Mono", "SF Mono", monospace` | Timestamps, cassette specs (C-90, 192KHZ), metadata, eyebrows |
+| `--hand` | `"Caveat", "Kalam", cursive` | Handwritten tracklist notes, vocal descriptions |
 
-**Type scale (modular, ratio 1.333 — perfect fourth):**
+**Why Bebas Neue:** heavy condensed sans = 80s/90s editorial + record-store aesthetic. Major Mono Display ships as the fallback for the "cassette-mesh" alternative but is replaced here.
 
-| Token | rem | Use |
+**Why Caveat:** the handwritten layer is the mixtape authenticity. Real cassettes had tracklists written by hand. Caveat captures that.
+
+### Type scale (modular, ratio 1.333)
+
+| Token | Size | Use |
 |---|---|---|
-| `--fs-xs` | 0.75rem (12px) | Metadata, footnotes, mono labels |
-| `--fs-sm` | 0.875rem (14px) | Secondary text, helper |
-| `--fs-base` | 1.0625rem (17px) | Body — slightly larger than browser default for editorial feel |
-| `--fs-md` | 1.25rem (20px) | Lead paragraphs |
-| `--fs-lg` | 1.75rem (28px) | Sub-headings |
-| `--fs-xl` | 2.75rem (44px) | Section titles |
-| `--fs-2xl` | 4.25rem (68px) | Page hero |
-| `--fs-3xl` | 6.5rem (104px) | Display — only on the intake hero and dashboard header |
+| `--fs-xs` | 12px | Mono eyebrows, metadata |
+| `--fs-sm` | 14px | Body small |
+| `--fs-base` | 15px | Body default |
+| `--fs-md` | 18px | Lead paragraphs |
+| `--fs-lg` | 24px | Section headings |
+| `--fs-xl` | 36px | Section titles |
+| `--fs-2xl` | 56px | Page hero (display) |
+| `--fs-3xl` | 84px | Hero spectacle (display) |
 
-**Rules:**
-- Body text NEVER goes below `--fs-base`.
-- Italic only for `--serif-display` (the editorial convention).
-- ALL CAPS only on `--sans-mono` labels and metadata, with `letter-spacing: 0.08em`.
-- No bold; we lean on weight + size contrast.
+### Type rules
+
+- All headlines in `--display` are UPPERCASE with letter-spacing 0.04em
+- Eyebrows always mono, ALL CAPS, letter-spacing 0.22em, 11px
+- Mono specs (C-90, 192KHZ, 24BIT) live in `--fs-xs` with letter-spacing 0.14em
+- Handwritten notes in `--hand` are italic by default
+- Body text ratio: 6:1 minimum contrast on dark
 
 ---
 
 ## 4. Layout grid
 
-Editorial zines use a **12-column grid with an asymmetric content rail**. We mimic that:
+### Page structure
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ masthead (full bleed, hairline border-bottom)      │
+│ topbar (full bleed, backdrop-blur)                  │
+│ album-studio · /mixtape '85 · ⌘K         [SIDE A · C-90]│
 ├─────────────────────────────────────────────────────┤
 │                                                     │
+│  hero (96px padding)                                │
 │  ┌──────────┐ ┌─────────────────────────────────┐   │
-│  │ col 1-4  │ │ col 5-12                        │   │
-│  │ (meta)   │ │ (content)                       │   │
-│  │          │ │                                 │   │
-│  │ y-axis   │ │ x-axis reading flow             │   │
-│  │ labels:  │ │                                 │   │
-│  │ ────     │ │                                 │   │
-│  │ ALBUM    │ │                                 │   │
-│  │ STATUS   │ │                                 │   │
-│  │ ────     │ │                                 │   │
-│  │ LAYER 03 │ │                                 │   │
-│  │ IN-REV   │ │                                 │   │
+│  │ col 1-3  │ │ col 4-12 (hero cassette)         │   │
+│  │ (eyebrow,│ │                                 │   │
+│  │  lede,   │ │                                 │   │
+│  │  CTAs)   │ │                                 │   │
 │  └──────────┘ └─────────────────────────────────┘   │
 │                                                     │
+├─────────────────────────────────────────────────────┤
+│ section (96px gap)                                  │
+│  /section-name · eyebrow                            │
+│  SECTION HEADLINE (display, uppercase)              │
+│  ─── section underline (4px gradient) ───           │
+│  [content grid]                                     │
+├─────────────────────────────────────────────────────┤
+│ footer (mono, 11px, /ALBUM-STUDIO · TEMPLATE 14B)  │
 └─────────────────────────────────────────────────────┘
 ```
 
-- **Page max width:** 1180px (sits comfortably inside 1440px desktop)
-- **Page margin:** clamp(24px, 4vw, 64px) — paper-like edge breathing
-- **Section gap:** 96px (loose, editorial)
+### Numbers
+
+- **Page max width:** 2880px (Penpot source-of-truth; live HTML at 1440px)
+- **Page margin:** 64px (chassis), 48px (mobile)
+- **Section gap:** 56px
 - **Within-section gap:** 24px
-- **Hairlines:** 1px `--rule`, never thicker
+- **Card padding:** 32px
+- **Cassette-card aspect ratio:** 1:1 (square covers)
+- **Hero cassette aspect ratio:** 16:9 (widescreen hero)
 
-**Mobile breakpoint:** at <768px viewport, the left "meta column" collapses to top of section as a chip row.
+### Responsive
 
----
+- **Mobile <768px:** topbar collapses to icon-only; hero stacks vertically; grid columns 1
+- **Tablet 768-1440px:** 4-col grid; hero cassette 60% width
+- **Desktop >1440px:** 6-col grid; hero cassette 60% width, lede 40%
 
-## 5. Motif
-
-The motif is a **half-lit window** — same one as Half-Light Hours.
-
-Why keep the same motif across the studio and the album it produces:
-- Consistency: the studio and the album feel like one artifact
-- Recall: anyone who's seen Half-Light Hours recognizes the studio
-- Proven: the motif already worked for a release, it's not invented for this site
-
-**Motif usage on the site:**
-- Subtle SVG corner mark in the masthead (a single 1px-line rectangle with a diagonal half-light gradient inside)
-- A thin horizontal hairline with a small terracotta dot at the right edge — visual punctuation between sections
-- A footer motif: the studio name in display serif, half-italicized
-
-**What it is NOT:** not a watermark on every page, not a hero illustration. Subtle presence, not loud.
+**The hero is ALWAYS 60/40 split — cassette dominant, lede supportive.** Never the other way around.
 
 ---
 
-## 6. Components
+## 5. Components
 
-Reusable building blocks. Same DNA across both pages.
+### Cassette cover (the primary content unit)
 
-### Card
-- 1px `--rule` border, no border-radius (editorial zines don't round)
-- `--paper` background (no white cards on warm paper — they feel wrong)
-- 32px padding
-- Optional: thin terracotta dot in top-right when status is "blocked" or "needs-review"
+```
+┌─────────────────────┐
+│ ▣ A · CHOSEN         │  ← tag (top-left, 10px mono, opaque pill)
+│                     │
+│    [real photo]     │  ← full-bleed cassette photograph
+│                     │
+│                     │
+│ 01 · HALF-LIGHT HRS │  ← bottom band, display caps, color-band label
+└─────────────────────┘
+```
 
-### Status badge
-- `--sans-mono`, `--fs-xs`, ALL CAPS
-- Three states:
-  - `TODO` — `--ink-soft` text, `--rule` border
-  - `IN-PROGRESS` — `--accent` text, `--accent` border
-  - `DONE` — `--status-done` text, `--status-done` border
-  - `BLOCKED` — `--status-blocked` text, `--status-blocked` border
+- Aspect ratio 1:1
+- Image: real AI-generated cassette photograph
+- Tag: top-left, pill-shaped, `rgba(0,0,0,.7)` background, `padding: 6px 12px`
+- Color band: bottom 0, full-width, `padding: 16px`, `font-family: var(--display)`, `font-size: 18px`, letter-spacing 0.08em, uppercase
+- Color band bg: token from cassette label palette (--red / --yellow / etc.)
+- Color band text: black on light bands (yellow/cyan), white on dark bands (red/blue/violet)
 
-### Question row (intake)
-- Number on the left in `--sans-mono` (e.g. `M·03`)
-- Tier tag (mandatory / recommended / extra) on the right
-- Question text in `--serif-display`, italic
-- Free-text input or select below, full-width within the content rail
+### Topbar
 
-### Layer card (dashboard)
-- Layer number + name in `--serif-display`
-- Status badge in top-right
-- One-line summary in `--serif-body`
-- Footer with: last-updated timestamp, "open layer →" link
+```
+album-studio / mixtape '85 · design system    [▷ SIDE A · C-90]    [▷ PRESS PLAY] [⌘K]
+```
 
-### Hairline divider
-- 1px `--rule`, with optional terracotta dot at right edge
+- Full bleed, `padding: 16px 22px`
+- Background: `rgba(0,0,0,.4)` with `backdrop-filter: blur(20px)`
+- Left: crumb (mono, 13px)
+- Center: status pill (mono, 11px, ALL CAPS, with dot indicator)
+- Right: action buttons (mono, 12px, glass-pill)
+
+### Cassette label band (the primary accent)
+
+Each variant uses one color band as its identity. The cover gallery shows 4 covers, each with a different band. The user picks one. The chosen band becomes the album's identity color.
+
+### Pipeline cell (12-layer)
+
+- Default: `rgba(255,255,255,.02)` background, 1px `var(--rule)` border
+- Done: linear-gradient(135deg, `rgba(255,123,0,.15)`, `rgba(242,92,176,.15)`), border `rgba(255,123,0,.4)`, label `var(--amber)`
+- Active: linear-gradient(135deg, `rgba(45,216,240,.18)`, `rgba(185,74,245,.18)`), border `rgba(45,216,240,.45)`, label `var(--cyan)`
+- Blocked: `rgba(255,255,255,.05)`, border `var(--rule-strong)`, label `var(--ink-soft)`
+
+### Voice card
+
+- 3-column grid: portrait (96px circular) | info | play button
+- Portrait: full-bleed real photo, 96px circle
+- Name: `var(--display)`, 18px, uppercase
+- Description: `var(--hand)`, 16px, italic
+- Play button: 48px circle, `rgba(255,255,255,.04)` background, `▷` glyph
+
+### Album card
+
+- Top: aspect-ratio 1:1 cover image
+- Bottom: 3-line metadata (number mono, title display, meta mono)
+
+### Status pill
+
+- `display: inline-flex; gap: 8px; align-items: center;`
+- Padding `8px 14px`, border-radius `999px`
+- Mono 11px, ALL CAPS, letter-spacing 0.14em
+- Yellow tint (`rgba(240,197,60,.08)` border, `rgba(240,197,60,.3)` background)
+- Color: `var(--yellow)`
+- With dot indicator (6px circle, `box-shadow: 0 0 8px var(--yellow)`)
+
+---
+
+## 6. Motif
+
+The cassette itself is the motif. Specifically:
+
+- The **cassette tape** (real object, color-banded label) is the only repeated visual element
+- The **wall of tapes** (multiple cassettes arranged together) is the visual for "many albums"
+- The **stacked tapes** is the visual for "this studio's history"
+- The **handheld cassette** is the visual for "personal connection"
+
+**What it is NOT:** not a half-lit window (that was editorial zine), not a neon aurora (that was cassette-mesh), not a hand-drawn cassette icon (too generic).
 
 ---
 
 ## 7. Motion
 
-Restraint. Editorial sites feel expensive because they don't move much.
+Restraint. Cassettes are physical objects, not animated ones.
 
 - **Default:** static
-- **On hover (links):** 1px underline shifts to terracotta, 120ms ease-out
-- **On hover (cards):** border color shifts to `--accent`, no transform
-- **On form submit:** the page fades in confirmation over 240ms ease-out
-- **Never:** parallax, scroll-driven transforms, animated gradients
+- **Hero cassette:** subtle 3s rotate via `animation: hero-float 3s ease-in-out infinite` (rotate -2deg → 2deg)
+- **Color band:** subtle 4s hue drift via `filter: hue-rotate()` (alternate direction)
+- **On hover (cards):** scale 1 → 1.02, 200ms ease-out
+- **On hover (buttons):** translate-y 0 → 2px, 180ms ease-out
+
+**The 4 CSS animation primitives** are documented separately at `site/premium-cassette-animations.html` and rendered as animated GIFs in `assets/premium-animations/`:
+1. Mesh drift (12s linear hue-rotate)
+2. Reel spin (4s linear rotate)
+3. Typewriter (4s steps(16) typing)
+4. Pulse glow (2s ease-in-out box-shadow)
 
 ---
 
 ## 8. Accessibility
 
-- Body text contrast ratio: `--ink` on `--paper` = 13.6:1 (AAA)
-- All interactive elements: 2px solid `--accent` focus ring, offset 2px
+- Body text: `--ink` on `--bg` = 16.5:1 (AAA)
+- Cassette label bands: tested per WCAG AA on each band color
+- Cassette tag pills: tested contrast on dark
+- All interactive elements: 2px solid `var(--yellow)` focus ring, offset 2px
 - Skip-to-content link as first focusable element
-- Form labels always associated with inputs (no placeholder-as-label)
+- Cassette labels: alway image + alt text, alt text uses the album title
 - Status conveyed via text + icon (not color alone)
 
 ---
@@ -193,15 +285,34 @@ Restraint. Editorial sites feel expensive because they don't move much.
 
 | File | Token consumers |
 |---|---|
-| `site/intake.html` | All tokens (palette, type, layout, motif, components, motion) |
-| `site/dashboard.html` | All tokens |
+| `assets/premium-mixtape85-design-system.png` | All tokens (palette, type, layout, components) |
+| `site/premium-cassette-animations.html` | All tokens + animation primitives |
+| `assets/premium-animations/01-mesh-drift.gif` | Mesh drift primitive |
+| `assets/premium-animations/02-reel-spin.gif` | Reel spin primitive |
+| `assets/premium-animations/03-typewriter.gif` | Typewriter primitive |
+| `assets/premium-animations/04-pulse-glow.gif` | Pulse glow primitive |
+| `assets/premium-mockup-01-design-system.png` | Premium cassette-mesh variant |
+| `assets/premium-mockup-04-dashboard.png` | Premium cassette-mesh variant |
+| `references/ref-01..06` | 6 user reference images |
 | `README.md` | References this file for visual rules |
 
 ---
 
-## 10. What this DESIGN.md is NOT
+## 10. Legacy designs (kept for reference, NOT active)
+
+These designs exist in Penpot but are NOT the active direction:
+
+- **Original cassette-mesh (6 pages):** 01 Design System, 02 Components, 03 Intake, 04 Dashboard, 05 Cover Exploration, 06 Motif Library. Aurora-mesh on dark, Major Mono Display headlines. Locked as a **secondary alternative** in case the user wants to revert.
+- **Premium cassette-mesh (2 pages):** Premium 01 Design System, Premium 04 Dashboard. Same vocabulary as cassette-mesh but with real AI-generated photography. Locked as a tertiary alternative.
+- **Editorial Zine (frozen 2026-07-28):** cream paper, serif typography, draftable layouts. GONE — the user explicitly rejected it on 2026-08-05.
+
+**Active direction: Mixtape '85. Do not resurrect unless the user explicitly asks.**
+
+---
+
+## 11. What this DESIGN.md is NOT
 
 - Not a Figma file (we ship code, not design specs in PDFs)
 - Not a per-page wireframe (the layout grid covers structure)
 - Not a content doc (the intake + dashboard UX specs live elsewhere)
-
+- Not an "everything is editable" doc — the locked colors and type scale are locked
