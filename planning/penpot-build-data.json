@@ -1,0 +1,132 @@
+{
+  "layers": [
+    {
+      "id": "L01",
+      "name": "Brief",
+      "desc": "Concept, scope, genre, references, vocal, language, runtime, artist"
+    },
+    {
+      "id": "L02",
+      "name": "Lyrics Drafts",
+      "desc": "First pass on lyrics for all 12 tracks"
+    },
+    {
+      "id": "L03",
+      "name": "Lyrics Finalize",
+      "desc": "Final lyrics locked, ready for vocal"
+    },
+    {
+      "id": "L04",
+      "name": "Vocal Recordings",
+      "desc": "All 12 tracks sung, with Whisper transcription check"
+    },
+    {
+      "id": "L05",
+      "name": "Instrumental Tracks",
+      "desc": "All 12 tracks generated with music-3.0, validated"
+    },
+    {
+      "id": "L06",
+      "name": "Cover Art",
+      "desc": "Cover variant chosen, mastered to 3000x3000"
+    },
+    {
+      "id": "L07",
+      "name": "Cassette Sticker",
+      "desc": "J-card front + back, side A/B tracklist"
+    },
+    {
+      "id": "L08",
+      "name": "Press Pack",
+      "desc": "Bio, one-liner, Q&A, podcast script"
+    },
+    {
+      "id": "L09",
+      "name": "Merch Assets",
+      "desc": "T-shirt, vinyl sleeve, poster, sticker pack"
+    },
+    {
+      "id": "L10",
+      "name": "Video Storyboards",
+      "desc": "Music videos storyboarded + generated"
+    },
+    {
+      "id": "L11",
+      "name": "Social Bundle",
+      "desc": "Instagram, TikTok, Twitter posts"
+    },
+    {
+      "id": "L12",
+      "name": "Distribute",
+      "desc": "Spotify, Apple Music, Bandcamp, SoundCloud"
+    }
+  ],
+  "mandatory_questions": [
+    {
+      "id": "M01",
+      "title": "Album concept",
+      "subtitle": "the core idea",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M02",
+      "title": "Project scope",
+      "subtitle": "album / EP / single",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M03",
+      "title": "Genre direction",
+      "subtitle": "primary genres",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M04",
+      "title": "Reference artists",
+      "subtitle": "1–3 artists to model",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M05",
+      "title": "Vocal approach",
+      "subtitle": "voice type & style",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M06",
+      "title": "Languages",
+      "subtitle": "which languages",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M07",
+      "title": "Runtime target",
+      "subtitle": "per-track length",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M08",
+      "title": "Artist identity",
+      "subtitle": "band, name, credits",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M09",
+      "title": "Sonic DNA",
+      "subtitle": "the locked direction",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M10",
+      "title": "Track count",
+      "subtitle": "12 tracks standard",
+      "tier": "MANDATORY"
+    },
+    {
+      "id": "M11",
+      "title": "Recording budget",
+      "subtitle": "time + money envelope",
+      "tier": "MANDATORY"
+    }
+  ]
+}

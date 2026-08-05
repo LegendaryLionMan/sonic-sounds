@@ -1,0 +1,299 @@
+[
+  {
+    "id": "M01_concept",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 1,
+    "slug": "concept",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M02_scope",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 2,
+    "slug": "scope",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M03_genre",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 3,
+    "slug": "genre",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M04_references",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 4,
+    "slug": "references",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M05_vocal",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 5,
+    "slug": "vocal",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M06_language",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 6,
+    "slug": "language",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M07_runtime",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 7,
+    "slug": "runtime",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "M08_bandName",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 8,
+    "slug": "bandName",
+    "title": "Band name",
+    "description": "The performing band's name. Filled ONLY when the release is by a band (a group of people credited under one name). Leave EMPTY if the release is by a solo artist whose name is the public identity (e.g. 'Maren Sol' has no band name — that goes in M08_artistName instead). Optional."
+  },
+  {
+    "id": "M08_artistName",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 8,
+    "slug": "artistName",
+    "title": "Public-facing artist name",
+    "description": "The artist name shown to listeners. ALWAYS FILLED — every release has at least one artist name. For a solo release, this is the solo artist's name. For a band release, this is either (a) the front person's name if they're separately credited, or (b) the same as M08_bandName if the band is the only public identity."
+  },
+  {
+    "id": "M08_creditLine",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 8,
+    "slug": "creditLine",
+    "title": "Credit line (optional)",
+    "description": "Free-form 'presented as...' / 'a side project of...' / 'performing name of...' line that goes on the release. Optional. Used by ID3 album artist field when M08_bandName and M08_artistName are both filled and you want a third name in the credits."
+  },
+  {
+    "id": "M09_sonicDNA",
+    "prefix": "M",
+    "tier": "MANDATORY",
+    "num": 9,
+    "slug": "sonicDNA",
+    "title": "Sonic DNA (locked at brief approval)",
+    "description": "The frozen-at-approval snapshot of the album's sonic direction. The build skill MUST hold against this on every regen. Any deviation requires explicit user re-approval (the sonic-drift guard). Derived from M03_genre + M05_vocal + R12_production + M07_runtime at brief-approval time. Read-only after approval — to change, re-open the brief."
+  },
+  {
+    "id": "R09_title",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 9,
+    "slug": "title",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R10_tracklist",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 10,
+    "slug": "tracklist",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R11_motif",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 11,
+    "slug": "motif",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R12_production",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 12,
+    "slug": "production",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R13_lyricalSource",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 13,
+    "slug": "lyricalSource",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R14_distribution",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 14,
+    "slug": "distribution",
+    "title": "",
+    "description": ""
+  },
+  {
+    "id": "R15_loudnessTarget",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 15,
+    "slug": "loudnessTarget",
+    "title": "Mastering loudness target",
+    "description": "Streaming/integrator target. Sets the master stage on finalize. Default: spotify (-14 LUFS)."
+  },
+  {
+    "id": "R16_sequencePacing",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 16,
+    "slug": "sequencePacing",
+    "title": "Album sequence & pacing",
+    "description": "Inter-track gap policy. Default: standard-pause (3-4s)."
+  },
+  {
+    "id": "R17_explicitRating",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 17,
+    "slug": "explicitRating",
+    "title": "Explicit content rating",
+    "description": "Will this album have explicit lyrics? Affects Spotify/Apple Music metadata, YouTube content ID flags, distribution approval."
+  },
+  {
+    "id": "R18_coWriter",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 18,
+    "slug": "coWriter",
+    "title": "Co-writer / producer credits",
+    "description": "Anyone else to credit? Affects royalty splits + DSP metadata. Default: just you (or just the front person)."
+  },
+  {
+    "id": "R19_sampleCover",
+    "prefix": "R",
+    "tier": "RECOMMENDED",
+    "num": 19,
+    "slug": "sampleCover",
+    "title": "Sample / cover usage",
+    "description": "Does the album use any samples or covers? AI music from text prompts is generally 'original' but covers and samples need clearance."
+  },
+  {
+    "id": "E15_arc",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 15,
+    "slug": "arc",
+    "title": "Emotional arc across tracks",
+    "description": "Shape of the listening experience across all 12 tracks. Free-form text — describe the emotional journey."
+  },
+  {
+    "id": "E16_influences",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 16,
+    "slug": "influences",
+    "title": "Non-music influences",
+    "description": "Books, films, places, seasons, weather, people — anything NOT music that shaped this album. (M04 is the music-only version.)"
+  },
+  {
+    "id": "E17_coverArt",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 17,
+    "slug": "coverArt",
+    "title": "Cover art direction",
+    "description": "What the cover should evoke. Single text field. For richer briefs, use the cover-art generation script directly with your own palette/mood/composition prompt."
+  },
+  {
+    "id": "E18_anchor",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 18,
+    "slug": "anchor",
+    "title": "Physical anchor",
+    "description": "The ONE object, image, or sensation the listener should remember after the album ends."
+  },
+  {
+    "id": "E19_pressScope",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 19,
+    "slug": "pressScope",
+    "title": "Press / rollout scope",
+    "description": "What press + marketing you want. Skipped entirely for just-for-me albums (R14 == just-for-me)."
+  },
+  {
+    "id": "E20_musicVideos",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 20,
+    "slug": "musicVideos",
+    "title": "Music videos",
+    "description": "How many music videos to generate. 0 = audio only. Each video costs ~1 weekly video-gen quota slot."
+  },
+  {
+    "id": "E21_deadline",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 21,
+    "slug": "deadline",
+    "title": "Single release deadline",
+    "description": "Hard deadline for when the album needs to be done. Different from E22 (timeline). E21 = ONE date."
+  },
+  {
+    "id": "E22_timeline",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 22,
+    "slug": "timeline",
+    "title": "Album timeline / sequencing",
+    "description": "Rough milestone timeline (different from E21 single-deadline). Lets the studio's session manager pace work."
+  },
+  {
+    "id": "E23_sessionPersona",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 23,
+    "slug": "sessionPersona",
+    "title": "Recording session persona",
+    "description": "Whose story is this? Most albums have a consistent POV. Pick one or say 'varies'."
+  },
+  {
+    "id": "E24_audience",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 24,
+    "slug": "audience",
+    "title": "Listener / target audience",
+    "description": "Who is this album FOR? Affects press kit, marketing copy, lyrics_optimizer register."
+  },
+  {
+    "id": "E25_physicalRelease",
+    "prefix": "E",
+    "tier": "EXTRA",
+    "num": 25,
+    "slug": "physicalRelease",
+    "title": "Physical release intent",
+    "description": "Any physical format? Cassettes are surprisingly popular in indie scenes. CDs never went away. Vinyl is back."
+  }
+]

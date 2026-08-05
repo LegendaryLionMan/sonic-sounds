@@ -1,0 +1,62 @@
+[
+  {
+    "id": "L01",
+    "name": "Brief",
+    "desc": "Concept, scope, genre, references, vocal, language, runtime, artist"
+  },
+  {
+    "id": "L02",
+    "name": "Lyrics Drafts",
+    "desc": "First pass on lyrics for all 12 tracks"
+  },
+  {
+    "id": "L03",
+    "name": "Lyrics Finalize",
+    "desc": "Final lyrics locked, ready for vocal"
+  },
+  {
+    "id": "L04",
+    "name": "Vocal Recordings",
+    "desc": "All 12 tracks sung, with Whisper transcription check"
+  },
+  {
+    "id": "L05",
+    "name": "Instrumental Tracks",
+    "desc": "All 12 tracks generated with music-3.0, validated"
+  },
+  {
+    "id": "L06",
+    "name": "Cover Art",
+    "desc": "Cover variant chosen, mastered to 3000x3000"
+  },
+  {
+    "id": "L07",
+    "name": "Cassette Sticker",
+    "desc": "J-card front + back, side A/B tracklist"
+  },
+  {
+    "id": "L08",
+    "name": "Press Pack",
+    "desc": "Bio, one-liner, Q&A, podcast script"
+  },
+  {
+    "id": "L09",
+    "name": "Merch Assets",
+    "desc": "T-shirt, vinyl sleeve, poster, sticker pack"
+  },
+  {
+    "id": "L10",
+    "name": "Video Storyboards",
+    "desc": "Music videos storyboarded + generated"
+  },
+  {
+    "id": "L11",
+    "name": "Social Bundle",
+    "desc": "Instagram, TikTok, Twitter posts"
+  },
+  {
+    "id": "L12",
+    "name": "Distribute",
+    "desc": "Spotify, Apple Music, Bandcamp, SoundCloud"
+  }
+]

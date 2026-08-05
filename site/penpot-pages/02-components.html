@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>02 — Components</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F4EFE6;
+  --ink: #1B1714;
+  --ink-soft: #3D3530;
+  --rule: #C9BFAE;
+  --accent: #B8503A;
+  --accent-soft: #D9846F;
+  --highlight: #E8D9A8;
+  --status-done: #4A6B47;
+  --status-active: #B8503A;
+  --status-blocked: #7A1F1F;
+  --serif-display: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --serif-body: 'Lora', 'Source Serif Pro', Georgia, serif;
+  --sans-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.25rem;
+  --fs-lg: 1.75rem;
+  --fs-xl: 2.75rem;
+  --fs-2xl: 4.25rem;
+  --fs-3xl: 6.5rem;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif-body);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  width: 1440px;
+  min-height: 1024px;
+  padding: clamp(24px, 4vw, 64px);
+  position: relative;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+}
+
+.masthead .left {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  letter-spacing: 0.02em;
+}
+
+.masthead .right {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hairline {
+  border-top: 1px solid var(--rule);
+  position: relative;
+  margin: 32px 0;
+}
+
+.hairline .dot {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+h1.display {
+  font-family: var(--serif-display);
+  font-size: var(--fs-3xl);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+h2.section {
+  font-family: var(--serif-display);
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+h3.sub {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.mono {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mono-tag {
+  display: inline-block;
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+
+.mono-tag.mandatory { border-color: var(--accent); color: var(--accent); }
+.mono-tag.recommended { border-color: var(--ink-soft); color: var(--ink-soft); }
+.mono-tag.extra { border-color: var(--rule); color: var(--ink-soft); }
+.mono-tag.todo { color: var(--ink-soft); border-color: var(--rule); }
+.mono-tag.in-progress { color: var(--accent); border-color: var(--accent); }
+.mono-tag.done { color: var(--status-done); border-color: var(--status-done); }
+.mono-tag.blocked { color: var(--status-blocked); border-color: var(--status-blocked); }
+
+.meta-row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.meta-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  min-width: 64px;
+}
+
+.meta-row .label {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.card {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 32px;
+  position: relative;
+}
+
+.card .status-dot {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.card.blocked .status-dot { background: var(--accent); }
+.card.done .status-dot { background: var(--status-done); }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 48px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--rule);
+}
+
+.swatch-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.swatch-name {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swatch-hex {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}
+
+.type-sample {
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: baseline;
+}
+
+.motif {
+  display: inline-block;
+  width: 32px;
+  height: 24px;
+  position: relative;
+}
+
+.motif svg {
+  display: block;
+}
+
+.question-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr auto;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+
+.question-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.question-row .text {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.question-row .input {
+  border: 1px solid var(--rule);
+  height: 36px;
+  background: var(--paper);
+}
+
+.layer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-card .layer-num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layer-card .layer-name {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+
+.layer-card .layer-desc {
+  font-family: var(--serif-body);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.layer-card .layer-meta {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: auto;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <span class="left">album-studio</span>
+    <span class="right">02 / COMPONENTS</span>
+  </div>
+
+  <h1 class="display" style="margin-bottom: 16px;">Components</h1>
+  <p class="mono" style="margin-bottom: 64px;">REUSABLE BUILDING BLOCKS · SAME DNA ACROSS PAGES</p>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Card</h2>
+  <p style="margin-bottom: 24px; max-width: 600px; color: var(--ink-soft);">1px rule border · no border-radius · paper background · 32px padding · optional terracotta dot for blocked/needs-review status.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">DEFAULT</div>
+      <h3 class="sub" style="margin-bottom: 0;">The studio and the album</h3>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 16px;">FEEL LIKE ONE ARTIFACT</div>
+    </div>
+    <div class="card blocked">
+      <div class="status-dot"></div>
+      <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">BLOCKED</div>
+      <h3 class="sub" style="margin-bottom: 0;">Vocal recordings</h3>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 16px;">NEEDS REVIEW</div>
+    </div>
+    <div class="card done">
+      <div class="status-dot"></div>
+      <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">DONE</div>
+      <h3 class="sub" style="margin-bottom: 0;">Cover art variant</h3>
+      <div class="mono" style="color: var(--status-done); margin-top: 16px;">APPROVED</div>
+    </div>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Status badge</h2>
+  <p style="margin-bottom: 24px; color: var(--ink-soft);">Sans-mono · 12px · ALL CAPS · 4 states.</p>
+
+  <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px;">
+    <span class="mono-tag todo">TODO</span>
+    <span class="mono-tag in-progress">IN-PROGRESS</span>
+    <span class="mono-tag done">DONE</span>
+    <span class="mono-tag blocked">BLOCKED</span>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Question row</h2>
+  <p style="margin-bottom: 24px; color: var(--ink-soft);">Number on the left (mono) · tier tag on the right · question text in display italic · free-text input below.</p>
+
+  <div class="question-row">
+    <div class="num">M · 01</div>
+    <div>
+      <div class="text">Album concept</div>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 8px;">THE CORE IDEA · ONE SENTENCE</div>
+    </div>
+    <span class="mono-tag mandatory">MANDATORY</span>
+  </div>
+
+  <div class="question-row">
+    <div class="num">M · 02</div>
+    <div>
+      <div class="text">Project scope</div>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 8px;">ALBUM · EP · SINGLE</div>
+    </div>
+    <span class="mono-tag mandatory">MANDATORY</span>
+  </div>
+
+  <div class="question-row">
+    <div class="num">R · 09</div>
+    <div>
+      <div class="text">Album title</div>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 8px;">PUBLIC-FACING NAME</div>
+    </div>
+    <span class="mono-tag recommended">RECOMMENDED</span>
+  </div>
+
+  <div class="question-row">
+    <div class="num">E · 17</div>
+    <div>
+      <div class="text">Cover art direction</div>
+      <div class="mono" style="color: var(--ink-soft); margin-top: 8px;">WHAT THE COVER SHOULD EVOKE</div>
+    </div>
+    <span class="mono-tag extra">EXTRA</span>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Layer card (dashboard)</h2>
+
+  <div class="grid-4">
+    <div class="card layer-card">
+      <div class="layer-num">L · 01</div>
+      <div class="layer-name">Brief</div>
+      <div class="layer-desc">Concept, scope, genre, references, vocal, language, runtime, artist</div>
+      <div class="layer-meta">2 DAYS AGO</div>
+    </div>
+
+    <div class="card layer-card">
+      <div class="layer-num">L · 02</div>
+      <div class="layer-name">Lyrics drafts</div>
+      <div class="layer-desc">First pass on lyrics for all 12 tracks</div>
+      <div class="layer-meta">IN-PROGRESS</div>
+    </div>
+
+    <div class="card layer-card">
+      <div class="layer-num">L · 03</div>
+      <div class="layer-name">Lyrics finalize</div>
+      <div class="layer-desc">Final lyrics locked, ready for vocal</div>
+      <div class="layer-meta">TODO</div>
+    </div>
+
+    <div class="card layer-card">
+      <div class="layer-num">L · 04</div>
+      <div class="layer-name">Vocal recordings</div>
+      <div class="layer-desc">All 12 tracks sung, Whisper transcription check</div>
+      <div class="layer-meta">TODO</div>
+    </div>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Hairline divider</h2>
+
+  <div style="margin-bottom: 16px;">
+    <div class="hairline"><span class="dot"></span></div>
+    <p class="mono" style="color: var(--ink-soft);">WITH TERRACOTTA DOT</p>
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <div class="hairline"></div>
+    <p class="mono" style="color: var(--ink-soft);">PLAIN</p>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Motif — half-lit window</h2>
+  <p style="margin-bottom: 24px; color: var(--ink-soft);">1px-line rectangle with diagonal half-light gradient · subtle presence, not loud.</p>
+
+  <div style="display: flex; gap: 48px; align-items: center; margin-bottom: 32px;">
+    <div class="motif">
+      <svg width="32" height="24" viewBox="0 0 32 24" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="30" height="22" fill="none" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="1" y1="12" x2="31" y2="12" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="16" y1="1" x2="16" y2="23" stroke="#C9BFAE" stroke-width="1"/>
+        <rect x="1" y="1" width="15" height="11" fill="#E8D9A8" opacity="0.6"/>
+        <rect x="17" y="13" width="14" height="10" fill="#B8503A" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="mono" style="color: var(--ink-soft);">SMALL · MASTHEAD CORNER</div>
+  </div>
+
+  <div style="display: flex; gap: 48px; align-items: center; margin-bottom: 32px;">
+    <div class="motif" style="width: 96px; height: 72px;">
+      <svg width="96" height="72" viewBox="0 0 96 72" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="94" height="70" fill="none" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="1" y1="36" x2="95" y2="36" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="48" y1="1" x2="48" y2="71" stroke="#C9BFAE" stroke-width="1"/>
+        <rect x="1" y="1" width="47" height="35" fill="#E8D9A8" opacity="0.5"/>
+        <rect x="49" y="37" width="46" height="34" fill="#B8503A" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="mono" style="color: var(--ink-soft);">MEDIUM · SECTION HEADER</div>
+  </div>
+
+  <div style="display: flex; gap: 48px; align-items: center;">
+    <div class="motif" style="width: 192px; height: 144px;">
+      <svg width="192" height="144" viewBox="0 0 192 144" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="190" height="142" fill="none" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="1" y1="72" x2="191" y2="72" stroke="#C9BFAE" stroke-width="1"/>
+        <line x1="96" y1="1" x2="96" y2="143" stroke="#C9BFAE" stroke-width="1"/>
+        <rect x="1" y="1" width="95" height="71" fill="#E8D9A8" opacity="0.5"/>
+        <rect x="97" y="73" width="94" height="70" fill="#B8503A" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="mono" style="color: var(--ink-soft);">LARGE · FOOTER</div>
+  </div>
+</div>
+</body>
+</html>
