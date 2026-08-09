@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>album-studio · albums</title>
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/ux-states.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / albums</b></span>
+  <span class="pill"><span class="dot"></span> 1 ACTIVE · 0 QUEUED · 0 DONE</span>
+  <span class="grow"></span>
+  <button class="command">⌘K</button>
+</nav>
+
+<main class="shell-page">
+  <section class="hero-band">
+    <p class="eyebrow">/albums · all sessions</p>
+    <h1>in progress</h1>
+    <p class="hand">Max 3 active sessions. 12h idle auto-pause. Everything tracked via the daemon.</p>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/active · 1</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">running</h2>
+    <div class="shell-grid">
+      <article class="session-card">
+        <div class="meta">
+          <p class="eyebrow">LAYER 03 / 12 · LYRICS FINALIZE</p>
+          <span class="album-title">Half-Light Hours</span>
+          <span class="artist">Maren Sol</span>
+          <span class="badge active">ACTIVE</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="/studio.html">▷ Open</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/queued · 0</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">waiting</h2>
+    <div class="card">
+      <p class="hand">No queued sessions. Start a new album from intake.</p>
+    </div>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/done · 0</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">complete</h2>
+    <div class="card">
+      <p class="hand">No finalized albums yet. The done album gets archived + indexed for the next session.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
+  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
+  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
+  <span class="grow"></span>
+  <span>1 active · 0 queued · 0 done</span>
+</footer>
+</body>
+</html>

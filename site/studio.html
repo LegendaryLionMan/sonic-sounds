@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>album-studio · studio</title>
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/ux-states.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="topbar">
+  <span class="crumb">album-studio<b> / studio · half-light hours</b></span>
+  <span class="pill"><span class="dot"></span> 03 · HALF-LIGHT HOURS · MMX-IN-1034</span>
+  <span class="grow"></span>
+  <button class="command yellow">▷ PRESS PLAY</button>
+  <button class="command">⌘K</button>
+</nav>
+
+<main class="shell-page">
+  <section class="hero-band">
+    <p class="eyebrow">/now-playing · track 03 of 10</p>
+    <h1>half-light hours</h1>
+    <p class="hand">Layer 03 of 12 · Lyrics finalize. The tape is rolling.</p>
+    <div class="hero-meta-stacked">
+      <div class="card"><span class="eyebrow">LAST ACTIVITY</span><span>2 minutes ago</span></div>
+      <div class="card"><span class="eyebrow">RUNTIME</span><span>37:14</span></div>
+      <div class="card"><span class="eyebrow">PHASE</span><span>Lyrics finalize · 80%</span></div>
+    </div>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/pipeline · 12-layer</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">the build</h2>
+    <div class="pipeline-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+      <div class="card"><span class="badge done">01</span> Brief</div>
+      <div class="card"><span class="badge done">02</span> Lyrics Drafts</div>
+      <div class="card"><span class="badge active">03</span> Lyrics Finalize</div>
+      <div class="card"><span class="badge">04</span> Vocal Recordings</div>
+      <div class="card"><span class="badge">05</span> Instrumental</div>
+      <div class="card"><span class="badge">06</span> Cover Art</div>
+    </div>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/chat · pending</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">chat</h2>
+    <div class="card">
+      <p class="hand">Empty for now. The daemon will land events here as the pipeline progresses.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
+  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
+  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
+  <span class="grow"></span>
+  <span>Layer 03 · Lyrics finalize</span>
+</footer>
+</body>
+</html>
