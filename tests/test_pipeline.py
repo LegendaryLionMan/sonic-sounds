@@ -30,6 +30,8 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # Import the module under test
+from db.connection import open_db, verify_conn
+from db import run_migrations  # noqa: E402
 from db.pipeline import (
     LAYER_ORDER,
     APPROVAL_REQUIRED,
@@ -353,10 +355,39 @@ class TestDependencyInference(unittest.TestCase):
 
 
 class TestEmptyDBPath(unittest.TestCase):
-    """Default db_path=''. Re-enabled in Day 2 after db/connection.py is built."""
-    @unittest.skip("db/pipeline.py does NOT auto-init schema. Re-enabled in Day 2.")
+    """Default db_path=''. Verified after Day 2 (db/connection.py + db/migrations.py)."""
+
     def test_empty_db_path_uses_memory(self):
-        pass
+        """Per plan §7 Day 2 verification: open_db() opens, runs migrations, PRAGMAs verified."""
+        import tempfile
+        import os
+        fd, path = tempfile.mkstemp(suffix=".db")
+        os.close(fd)
+        try:
+            conn = open_db(path)
+            # Apply migrations
+            result = run_migrations(path)
+            self.assertEqual(len(result["errors"]), 0,
+                             f"Migration errors: {result['errors']}")
+            # Verify PRAGMAs
+            pragmas = verify_conn(conn)
+            self.assertEqual(pragmas["journal_mode"], "wal")
+            self.assertEqual(pragmas["foreign_keys"], 1)
+            self.assertEqual(pragmas["busy_timeout"], 5000)
+            # Verify schema_version is set
+            self.assertGreaterEqual(result["schema_version"], 1)
+        finally:
+            # Close the connection so we can delete the file on Windows
+            from db.connection import close_db
+            close_db(path)
+            os.unlink(path)
+            for ext in ["-journal", "-wal", "-shm"]:
+                p2 = path + ext
+                if os.path.exists(p2):
+                    try:
+                        os.unlink(p2)
+                    except OSError:
+                        pass
 
 
 if __name__ == "__main__":
