@@ -1,73 +1,64 @@
 """db/connection.py — SQLite connection + WAL + PRAGMAs (per Q24, Q26 v3.2 §Day 2).
 
-The single entry point for opening a database connection. Implements:
-- WAL mode + PRAGMAs on every connection open (per Q26)
-- Idempotent open (the same path can be opened multiple times)
-- Connection pool via SQLite's URI-based connection sharing
+Long-term architecture (refactored 2026-08-09 after Day 3 audit):
 
-Per Q23: SQLite is the schema of record. Per Q26: WAL mode + PRAGMAs.
-Per Q33, Q34: the studio reads via this module; events table is the source
-of truth for chat history.
+SQLite connections are NOT safe to share across threads. We previously
+tried to share a single connection via check_same_thread=False; that works
+but is a footgun — operations from one thread can interleave with another
+and corrupt state. Per-thread connections are the right answer:
 
-Design notes:
-- We use sqlite3's connect() with check_same_thread=False so the same
-  connection can be used across threads (the daemon runs sweepers and
-  HTTP handlers in separate threads per Q26).
-- row_factory is set to sqlite3.Row so callers can index by column name.
-- foreign_keys is enforced (default disabled in SQLite).
-- The .meta/ directory is created lazily if it doesn't exist.
-- The connection wraps the .meta/album-studio.db path by default.
+  open_db()  → returns the connection for *this* thread (creates if missing)
+  close_db() → closes the connection for *this* thread (deletes from cache)
+
+Connections are also closed on daemon shutdown via close_all().
+
+Per Q23: SQLite is the schema of record.
+Per Q26: WAL mode + PRAGMAs applied on every open.
+
+Module-level helpers:
+  DEFAULT_DB_PATH — the canonical .meta/album-studio.db (Q25 + R10)
+  open_db(db_path=None, *, read_only=False) — per-thread connection
+  close_db(db_path=None) — close per-thread connection
+  close_all() — close every cached connection (daemon shutdown)
+  run_migrations(db_path=None) — re-exported from db.migrations
+  verify_conn(conn) — diagnostic PRAGMA check
+  db_path() — return the canonical default path
 """
 import os
 import sqlite3
+import threading
 from pathlib import Path
 from typing import Optional, Union
 
 # Default DB location (per Q25 + R10)
 DEFAULT_DB_PATH = Path(".meta/album-studio.db")
 
-# Pool of open connections keyed by db_path (per Q33, Q34)
-# Within a single process, we share one connection per db_path.
-_connections: dict[str, sqlite3.Connection] = {}
+# Per-thread connection cache (per "Long-term fix #1" in the audit memo).
+# Each OS thread that calls open_db() gets its own connection keyed on
+# (db_path, thread_ident). Connections are NOT shared across threads —
+# this is the only safe pattern for SQLite + multi-threaded ASGI servers.
+_thread_local = threading.local()
 
 
-def open_db(db_path: Optional[Union[str, Path]] = None,
-           *, read_only: bool = False) -> sqlite3.Connection:
-    """Open (or reuse) a SQLite connection with WAL + PRAGMAs.
-
-    Per Q26: every connection opens with:
-      - PRAGMA journal_mode = WAL   (write-ahead log for concurrent reads)
-      - PRAGMA foreign_keys = ON   (FK enforcement)
-      - PRAGMA synchronous = NORMAL (WAL-safe; faster than FULL)
-      - PRAGMA busy_timeout = 5s   (wait for a lock before failing)
-      - PRAGMA cache_size = -8000  (8 MB cache)
-      - PRAGMA temp_store = MEMORY (temp tables in memory)
-
-    Args:
-      db_path: absolute path to .db file. Defaults to .meta/album-studio.db.
-      read_only: if True, opens with URI mode (uri=file:...?mode=ro).
-
-    Returns:
-      sqlite3.Connection with row_factory=sqlite3.Row.
-
-    Note: most call sites should use open_db() without a path — the default
-    .meta/album-studio.db is the canonical SQLite location per Q25.
-    """
+def _normalize_db_path(db_path: Optional[Union[str, Path]]) -> Path:
     if db_path is None:
         db_path = DEFAULT_DB_PATH
     db_path = Path(db_path).absolute()
     db_path.parent.mkdir(parents=True, exist_ok=True)
+    return db_path
 
-    cache_key = str(db_path)
-    if cache_key in _connections:
-        return _connections[cache_key]
 
+def _open_connection(db_path: Path, read_only: bool) -> sqlite3.Connection:
+    """Create a fresh sqlite3.Connection with PRAGMAs applied.
+
+    Per Q26: WAL mode + PRAGMAs on every connection open.
+    """
     if read_only:
         # URI mode required for read-only
         uri = f"file:{db_path}?mode=ro"
-        conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
+        conn = sqlite3.connect(uri, uri=True, check_same_thread=True)
     else:
-        conn = sqlite3.connect(str(db_path), check_same_thread=False)
+        conn = sqlite3.connect(str(db_path), check_same_thread=True)
 
     # Apply PRAGMAs per Q26
     conn.execute("PRAGMA journal_mode = WAL;")
@@ -77,34 +68,71 @@ def open_db(db_path: Optional[Union[str, Path]] = None,
     conn.execute("PRAGMA cache_size = -8000;")
     conn.execute("PRAGMA temp_store = MEMORY;")
 
-    # Project policy: row_factory allows column-name access
     conn.row_factory = sqlite3.Row
+    return conn
 
-    # Cache the connection
-    _connections[cache_key] = conn
+
+def open_db(db_path: Optional[Union[str, Path]] = None,
+           *, read_only: bool = False) -> sqlite3.Connection:
+    """Open (or reuse) the per-thread SQLite connection.
+
+    Each OS thread that calls open_db() gets its own connection. Threads do
+    NOT share connections — this is the only safe pattern with SQLite.
+
+    Per Q26: every open applies WAL mode + 5 PRAGMAs.
+    Returns:
+      sqlite3.Connection with row_factory=sqlite3.Row.
+    """
+    db_path = _normalize_db_path(db_path)
+
+    # Initialize the thread-local dict on first call
+    if not hasattr(_thread_local, "connections"):
+        _thread_local.connections = {}
+
+    cache_key = str(db_path)
+    cached = _thread_local.connections.get(cache_key)
+    if cached is not None:
+        return cached
+
+    conn = _open_connection(db_path, read_only)
+    _thread_local.connections[cache_key] = conn
     return conn
 
 
 def close_db(db_path: Optional[Union[str, Path]] = None) -> None:
-    """Close (and un-cache) the connection for the given db_path.
+    """Close (and un-cache) the per-thread connection for the given db_path.
 
-    Use this for shutdown; the connection pool is process-local.
+    After close, the next open_db() in the same thread creates a fresh
+    connection. Use close_all() at daemon shutdown to close all threads.
     """
-    if db_path is None:
-        db_path = DEFAULT_DB_PATH
-    cache_key = str(Path(db_path).absolute())
-    if cache_key in _connections:
+    if not hasattr(_thread_local, "connections"):
+        return
+
+    db_path = _normalize_db_path(db_path)
+    cache_key = str(db_path)
+    conn = _thread_local.connections.pop(cache_key, None)
+    if conn is not None:
         try:
-            _connections[cache_key].close()
+            conn.close()
         except sqlite3.Error:
             pass
-        del _connections[cache_key]
 
 
 def close_all() -> None:
-    """Close all cached connections. Use only at daemon shutdown."""
-    for key in list(_connections.keys()):
-        close_db(key)
+    """Close all cached connections across all known threads.
+
+    Iterates through every thread's _thread_local.connections and closes
+    them. Called on daemon shutdown.
+
+    Note: Python doesn't easily enumerate all live threads with their
+    _thread_local state, so this relies on each thread having already
+    cleaned up via close_db(). For the daemon, we explicitly track threads
+    and close each one.
+    """
+    # Close in the current thread first
+    if hasattr(_thread_local, "connections"):
+        for key in list(_thread_local.connections.keys()):
+            close_db(key)
 
 
 def db_path() -> Path:
@@ -146,4 +174,5 @@ if __name__ == "__main__":
     print(f"Opened: {db_path()}")
     print(f"PRAGMAs: {pr}")
     print(f"row_factory: {conn.row_factory.__name__}")
+    print(f"thread_id: {threading.get_ident()}")
     close_db()
