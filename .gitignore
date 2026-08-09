@@ -42,3 +42,7 @@ desktop.ini
 .env.local
 *.key
 *.pem
+# Build artifacts (Phase 0.A test seed)
+build/*.db
+build/*.db-journal
+build/*.db-wal
