@@ -109,6 +109,11 @@ class TestCli(unittest.TestCase):
             target = "chat-test"
         else:
             target = albums[0]["id"]
+        # Complete any existing active sessions first (max-3 guard)
+        from db.sessions import list_sessions, complete_session
+        existing = list_sessions(status="active", album_id=target, db_path=None)
+        for sess in existing[:2]:
+            complete_session(sess["id"])
         s = open_session(target)
         result = subprocess.run(
             [sys.executable, "-m", "cli", "chat",
