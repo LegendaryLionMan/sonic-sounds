@@ -206,3 +206,21 @@ User direction (recap-test reflex, 2026-07-29): literal quote first, then contex
 2. **One question per turn** by default — batched when they make sense together.
 3. **Load skills before starting** (`music-album-planning-questionnaire`), patch them at every use.
 4. **Source-of-truth verification:** verify every claim against live tool output (CLI `--help`, official docs llms-full.txt, schema files) before stating it as fact.
+
+
+---
+
+## §5 — Phase 0.Q completion status (verified 2026-08-05)
+
+Per PLAN-2026-07-28-v3.2 §Phase 0.Q (BEFORE Day 3):
+
+- **Mandatory (M01–M09):** all locked. Schema v2.2 reflects these as `x-tier: Mandatory`.
+- **Recommended, build-driving (R09–R16):** all locked. These directly affect the build pipeline (R10 tracklist, R11 motif, R12 production, R15 loudness, R16 sequence). Schema v2.2 reflects.
+- **Recommended, non-blocking (R17, R18, R19):** defined in schema v2.2 with sensible defaults (clean / solo / original-only). These affect DSP tagging, royalty splits, and clearance but DO NOT block Day 2 schema init. Walked by `defaults` per Q45.
+- **Extra (E22–E25):** defined in schema v2.2 with empty defaults. Affect timeline, persona, audience, and physical release format. DO NOT block.
+
+**Decision:** Phase 0.Q is **DONE** at the v2.2 lock level. R17-R19 + E22-E25 will be walked at the next actual intake session (per R13/R14-conditional visibility in the schema). They are not blocking Day 2 schema init, Day 3 daemon, or Day 6 build runner.
+
+**Status:** ✅ Phase 0.Q complete (v2.2 schema-level lock; full per-topic walk scheduled at next intake).
+
+**Note for next session:** when starting an actual album intake, run through R17/R18/R19 + E22-E25 even if defaults apply. The walkthrough exists to surface decisions, not just to lock defaults.
