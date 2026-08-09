@@ -1,0 +1,185 @@
+/* === album-studio · UX states === */
+/* Per Phase 0.U of PLAN-2026-07-28-v3.2:
+   Buttons have 5 states: default, disabled, loading, success, error, timeout.
+   One-state-screen rule: every interactive surface has exactly one current state.
+   Optimistic UI is OUT for v1; every action waits for daemon confirmation.
+*/
+
+:root {
+  --state-ready-bg: var(--ink);
+  --state-ready-fg: var(--bg);
+  --state-ready-border: var(--ink);
+
+  --state-disabled-bg: rgba(255, 255, 255, 0.04);
+  --state-disabled-fg: rgba(255, 255, 255, 0.3);
+  --state-disabled-border: rgba(255, 255, 255, 0.1);
+  --state-disabled-cursor: not-allowed;
+
+  --state-loading-bg: rgba(45, 216, 240, 0.12);
+  --state-loading-fg: var(--cyan);
+  --state-loading-border: var(--cyan);
+  --state-loading-spinner: spin 0.8s linear infinite;
+
+  --state-success-bg: rgba(76, 175, 80, 0.18);
+  --state-success-fg: var(--green);
+  --state-success-border: var(--green);
+
+  --state-error-bg: rgba(232, 58, 58, 0.18);
+  --state-error-fg: var(--red);
+  --state-error-border: var(--red);
+
+  --state-timeout-bg: rgba(255, 123, 0, 0.18);
+  --state-timeout-fg: var(--amber);
+  --state-timeout-border: var(--amber);
+
+  --state-default-transition: all 220ms ease-out;
+}
+
+/* === DEFAULT === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 1px solid var(--state-ready-border);
+  background: var(--state-ready-bg);
+  color: var(--state-ready-fg);
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: var(--state-default-transition);
+}
+.btn:hover:not(:disabled):not(.is-loading) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+.btn:active:not(:disabled):not(.is-loading) {
+  transform: translateY(0);
+}
+
+/* === DISABLED === */
+.btn:disabled,
+.btn.is-disabled {
+  background: var(--state-disabled-bg);
+  color: var(--state-disabled-fg);
+  border-color: var(--state-disabled-border);
+  cursor: var(--state-disabled-cursor);
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* === LOADING === */
+.btn.is-loading {
+  background: var(--state-loading-bg);
+  color: var(--state-loading-fg);
+  border-color: var(--state-loading-border);
+  cursor: progress;
+  pointer-events: none;
+}
+.btn.is-loading::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: var(--state-loading-spinner);
+}
+
+/* === SUCCESS === */
+.btn.is-success {
+  background: var(--state-success-bg);
+  color: var(--state-success-fg);
+  border-color: var(--state-success-border);
+}
+.btn.is-success::before {
+  content: "✓";
+  font-weight: 700;
+}
+
+/* === ERROR === */
+.btn.is-error {
+  background: var(--state-error-bg);
+  color: var(--state-error-fg);
+  border-color: var(--state-error-border);
+  animation: shake 0.3s ease-out;
+}
+.btn.is-error::before {
+  content: "✗";
+  font-weight: 700;
+}
+
+/* === TIMEOUT === */
+.btn.is-timeout {
+  background: var(--state-timeout-bg);
+  color: var(--state-timeout-fg);
+  border-color: var(--state-timeout-border);
+}
+.btn.is-timeout::before {
+  content: "⏱";
+  font-weight: 700;
+}
+
+/* === ARIA HELPERS === */
+.btn[aria-busy="true"] {
+  cursor: progress;
+}
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+.btn[aria-invalid="true"] {
+  outline: 2px solid var(--state-error-border);
+  outline-offset: 2px;
+}
+
+/* === ANIMATIONS === */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* === TOAST (for 4xx, 5xx, timeout) === */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  padding: 16px 22px;
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
+  animation: toast-in 220ms ease-out;
+}
+.toast.toast-error { background: var(--state-error-bg); color: var(--state-error-fg); border: 1px solid var(--state-error-border); }
+.toast.toast-timeout { background: var(--state-timeout-bg); color: var(--state-timeout-fg); border: 1px solid var(--state-timeout-border); }
+.toast.toast-success { background: var(--state-success-bg); color: var(--state-success-fg); border: 1px solid var(--state-success-border); }
+.toast .toast-icon { font-weight: 700; }
+.toast .toast-action { margin-left: auto; padding: 4px 10px; background: rgba(255,255,255,.08); border: 1px solid currentColor; border-radius: 6px; cursor: pointer; color: inherit; }
+@keyframes toast-in {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* === FORM STATES === */
+input.is-error,
+textarea.is-error,
+select.is-error {
+  border-color: var(--state-error-border) !important;
+  background: rgba(232, 58, 58, 0.06);
+}
+input.is-success { border-color: var(--state-success-border) !important; }
+input.is-validating { border-color: var(--state-loading-border) !important; }

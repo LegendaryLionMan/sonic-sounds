@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "description": "Album-studio build pipeline dependencies. Each day depends on the completion of prior days.",
+  "days": [
+    { "day": 1, "name": "tokens + components + app shell", "depends_on": [] },
+    { "day": 2, "name": "SQL schema + db.py + connection pool + CLI surface", "depends_on": [1] },
+    { "day": 3, "name": "HTTP daemon (serve.py + http_router.py)", "depends_on": [2] },
+    { "day": 4, "name": "album + session handlers + albums.html", "depends_on": [3] },
+    { "day": 5, "name": "studio shell + chat panel + events integration", "depends_on": [3, 4] },
+    { "day": 6, "name": "build runner + lock + queue (Part 1)", "depends_on": [2] },
+    { "day": 7, "name": "build runner + queue (Part 2: HTTP endpoint integration)", "depends_on": [6] },
+    { "day": 8, "name": "sweepers (idle pause, WAL, quota, mirror, log rotation)", "depends_on": [3] },
+    { "day": 9, "name": "intake form + brief export + schema validation", "depends_on": [3, 4] },
+    { "day": 10, "name": "library + dashboard polish + smite timeline", "depends_on": [5, 7] },
+    { "day": 11, "name": "master-stage work (audio mastering extension)", "depends_on": [10] },
+    { "day": 12, "name": "playwright e2e suite + finalize", "depends_on": [11] }
+  ]
+}
