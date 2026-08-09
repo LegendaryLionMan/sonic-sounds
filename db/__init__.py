@@ -1,0 +1,1 @@
+"""album-studio database package."""
