@@ -89,6 +89,24 @@ async def _run_in_thread(fn, *args, **kwargs):
     return await asyncio.to_thread(fn, *args, **kwargs)
 
 
+def _build_runner_loaded() -> bool:
+    """Day 6 build runner is wired and importable."""
+    try:
+        import build.runner  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+def _sweepers_loaded() -> bool:
+    """Day 8 sweepers module is importable."""
+    try:
+        import sweepers  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
 def register_routes(app: Quart) -> None:
     """Register all Day 3 routes on the Quart app."""
 
@@ -104,8 +122,8 @@ def register_routes(app: Quart) -> None:
                 "http": "ok",
                 "static": "ok",
                 "audio": "ok (range support)",
-                "build_runner": "not yet (Day 6)",
-                "sweepers": "not yet (Day 8)",
+                "build_runner": "ok" if _build_runner_loaded() else "not yet (Day 6)",
+                "sweepers": "ok" if _sweepers_loaded() else "not yet (Day 8)",
             },
             "counts": status,
         }
@@ -224,6 +242,9 @@ class Daemon:
         self.lock_path = lock_path or DEFAULT_LOCK
         self.log_path = log_path or DEFAULT_LOG
         self.lock = SingletonLock(self.lock_path)
+        # Day 8: sweeper thread lifecycle
+        self._sweeper_threads: list = []
+        self._sweeper_stop = None
 
     def setup_logging(self) -> None:
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -247,6 +268,31 @@ class Daemon:
     def install_signal_handlers(self) -> None:
         install_signal_handlers()
         _log.info(f"installed signal handlers for {DEFAULT_SHUTDOWN_SIGNALS}")
+
+    def start_sweepers(self) -> None:
+        """Start Day 8 sweeper threads (idle_pause, wal_checkpoint, quota,
+        mirror, log_rotate). Each runs in its own daemon thread so a
+        broken sweeper can't crash the daemon. Stops on stop_sweepers().
+        """
+        try:
+            from sweepers import start_all as sweepers_start
+        except Exception as e:
+            _log.warning(f"sweepers module unavailable, skipping: {e}")
+            return
+        self._sweeper_threads, self._sweeper_stop = sweepers_start()
+
+    def stop_sweepers(self) -> None:
+        """Signal all sweeper threads to exit and join them."""
+        if not self._sweeper_threads or self._sweeper_stop is None:
+            return
+        try:
+            from sweepers import stop_all as sweepers_stop
+        except Exception as e:
+            _log.warning(f"sweepers stop unavailable: {e}")
+            return
+        sweepers_stop(self._sweeper_threads, self._sweeper_stop, timeout=5.0)
+        self._sweeper_threads = []
+        self._sweeper_stop = None
 
     def run_migrations(self) -> None:
         # Local import so per-test tempdb isolation is honored.
@@ -272,6 +318,9 @@ class Daemon:
             lock_acquired = True
             self.run_migrations()
             self.install_signal_handlers()
+            # Day 8: start sweepers BEFORE the HTTP server so health
+            # checks can see them as "ok" from the very first request.
+            self.start_sweepers()
 
             app = create_app()
             _log.info(f"starting on {self.host}:{self.port}")
@@ -297,6 +346,11 @@ class Daemon:
                     self.lock.release()
                 except Exception as e:
                     _log.warning(f"lock release failed during shutdown: {e}")
+            # Day 8: stop sweeper threads before closing db conn
+            try:
+                self.stop_sweepers()
+            except Exception as e:
+                _log.warning(f"sweeper shutdown failed: {e}")
             try:
                 from db.connection import close_db as _close_db
                 _close_db()

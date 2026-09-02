@@ -95,7 +95,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_status ON album_sessions(status, last_ac
 -- Events (chat, build, system) — Q34
 CREATE TABLE IF NOT EXISTS events (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id      TEXT NOT NULL,
+    session_id      TEXT,                       -- nullable: chat events have a real session; build events use NULL with album_id for context (Day 6 build runner)
     album_id        TEXT,                       -- nullable (some events are global)
     role            TEXT NOT NULL,              -- user | assistant | system | tool
     kind            TEXT NOT NULL,              -- chat | build | quota | system | log

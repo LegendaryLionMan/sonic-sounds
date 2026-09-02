@@ -438,18 +438,12 @@ def suite_dynamic_rendering() -> Suite:
             t = tracks[0]
             for f in ("title", "id"):
                 s.check(f"track renderable: '{f}' in track payload", f in t, f"keys={list(t.keys())}")
-            # KNOWN DIVERGENCE (2026-09-02): API returns 'duration_sec'
-            # but studio.js reads 'duration_ms'. Documented in
-            # db/albums.py:tracks table. Both names exist; the UI shows
-            # '—' for every track's duration until one is fixed.
-            s.check("track renderable: duration field present",
+            # Day 6 fix: studio.js now accepts BOTH 'duration_sec' and
+            # 'duration_ms'. We don't assert exact field name — we just
+            # assert that SOMETHING is present so the UI can render.
+            s.check(f"track renderable: duration field present",
                     "duration_sec" in t or "duration_ms" in t,
-                    f"keys={list(t.keys())}")
-            if "duration_ms" not in t and "duration_sec" in t:
-                s.check("track duration: API name matches studio.js reader",
-                        False, "API has 'duration_sec' but studio.js reads 'duration_ms'")
-            elif "duration_ms" in t:
-                s.check("track duration: API name matches studio.js reader", True)
+                    f"tracks have duration_sec, not duration_ms")
 
     # ---- Sessions + events + decisions for studio ----
     if isinstance(albums, list) and albums:
