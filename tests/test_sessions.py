@@ -29,7 +29,15 @@ def _fresh_db():
 
 
 def _cleanup(path):
-    close_db(path)
+    """Close all cached connections and delete the test db.
+
+    Uses close_all() (not close_db(path)) because tests may have
+    cached conns to OTHER paths from previous operations in the same
+    test. Leaving those open leaks file handles across the test suite
+    on Windows (each leaked conn holds a WAL/SHM file lock).
+    """
+    from db.connection import close_all
+    close_all()
     for ext in ["", "-journal", "-wal", "-shm"]:
         p = Path(path + ext)
         if p.exists():
@@ -228,6 +236,47 @@ class TestIdleSweeper(unittest.TestCase):
         # Don't backdate — should be < 12h old
         paused = pause_idle_sessions(db_path=self.db)
         self.assertEqual(len(paused), 0)
+
+    def test_pause_idle_uses_parameterized_sql(self):
+        """Regression: pause_idle_sessions used to build SQL with an
+        f-string interpolating IDLE_THRESHOLD_HOURS. Now uses ? params
+        so the SQL text is constant.
+        """
+        import inspect
+        import re
+        from db import sessions as sessions_mod
+        src = inspect.getsource(sessions_mod.pause_idle_sessions)
+        # Extract every triple-quoted string literal (the SQL templates).
+        sql_blocks = re.findall(r'''"""(.*?)"""''', src, re.DOTALL)
+        # The constant IDLE_THRESHOLD_HOURS may legitimately appear in an
+        # f-string when computing the parameter value, but never inside
+        # the SQL text itself.
+        for sql in sql_blocks:
+            self.assertNotIn(
+                "{IDLE_THRESHOLD_HOURS", sql,
+                f"SQL must not interpolate IDLE_THRESHOLD_HOURS: {sql!r}",
+            )
+            self.assertNotIn(
+                "{cutoff}", sql,
+                f"SQL must not interpolate cutoff: {sql!r}",
+            )
+        # Must use ? for the cutoff interval
+        self.assertTrue(
+            any("datetime('now', ?)" in sql for sql in sql_blocks),
+            "pause_idle_sessions must pass cutoff as ? parameter to SQLite",
+        )
+        # Functional regression: the sweeper still pauses old sessions
+        s = open_session("a1", db_path=self.db)
+        conn = open_db(self.db)
+        thirteen_hours_ago = (datetime.now(timezone.utc) -
+                              timedelta(hours=13)).strftime("%Y-%m-%d %H:%M:%S")
+        conn.execute(
+            "UPDATE album_sessions SET last_activity_at = ? WHERE id = ?",
+            (thirteen_hours_ago, s["id"]),
+        )
+        conn.commit()
+        paused = pause_idle_sessions(db_path=self.db)
+        self.assertEqual(len(paused), 1)
 
 
 if __name__ == "__main__":

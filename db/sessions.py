@@ -76,24 +76,40 @@ def open_session(album_id: str,
     (per Q32: cannot have more than 3 active sessions globally).
 
     The session starts with status='active' and last_activity_at=now.
+
+    Race-safety: the count-then-insert sequence is wrapped in an IMMEDIATE
+    transaction so concurrent open_session() calls serialize at the SQLite
+    level. Without this, two threads both seeing active_count=2 would both
+    insert and exceed the limit.
     """
     conn = open_db(db_path)
 
-    # Max-3 active guard (per Q32)
-    active_count = conn.execute(
-        "SELECT COUNT(*) FROM album_sessions WHERE status = 'active'"
-    ).fetchone()[0]
-    if active_count >= MAX_ACTIVE_SESSIONS:
-        return None
+    # Max-3 active guard (per Q32) — wrapped in IMMEDIATE transaction so
+    # concurrent open_session() calls cannot both observe count=2 and
+    # both insert.
+    conn.execute("BEGIN IMMEDIATE;")
+    try:
+        active_count = conn.execute(
+            "SELECT COUNT(*) FROM album_sessions WHERE status = 'active'"
+        ).fetchone()[0]
+        if active_count >= MAX_ACTIVE_SESSIONS:
+            conn.execute("ROLLBACK;")
+            return None
 
-    session_id = str(uuid_lib.uuid4())
-    now = _now_iso()
-    conn.execute("""
-        INSERT INTO album_sessions (id, album_id, status, last_activity_at,
-                                     created_at, closed_at)
-        VALUES (?, ?, 'active', ?, ?, NULL)
-    """, (session_id, album_id, now, now))
-    conn.commit()
+        session_id = str(uuid_lib.uuid4())
+        now = _now_iso()
+        conn.execute("""
+            INSERT INTO album_sessions (id, album_id, status, last_activity_at,
+                                         created_at, closed_at)
+            VALUES (?, ?, 'active', ?, ?, NULL)
+        """, (session_id, album_id, now, now))
+        conn.execute("COMMIT;")
+    except Exception:
+        try:
+            conn.execute("ROLLBACK;")
+        except sqlite3.Error:
+            pass
+        raise
     return get_session(session_id, db_path=db_path)
 
 
@@ -242,24 +258,26 @@ def pause_idle_sessions(album_id: str = None,
         list of paused sessions.
     """
     conn = open_db(db_path)
-    cutoff = f"datetime('now', '-{IDLE_THRESHOLD_HOURS} hours')"
+    # SQL is built with ? parameters for both the cutoff interval (computed
+    # in Python) and the optional album_id, so no f-string interpolation of
+    # values into SQL text — safer than the previous f-string approach.
     if album_id:
-        rows = conn.execute(f"""
+        rows = conn.execute("""
             UPDATE album_sessions
             SET status = 'paused', last_activity_at = last_activity_at
             WHERE status = 'active'
-              AND last_activity_at < {cutoff}
+              AND last_activity_at < datetime('now', ?)
               AND album_id = ?
             RETURNING *
-        """, (album_id,)).fetchall()
+        """, (f"-{IDLE_THRESHOLD_HOURS} hours", album_id)).fetchall()
     else:
-        rows = conn.execute(f"""
+        rows = conn.execute("""
             UPDATE album_sessions
             SET status = 'paused', last_activity_at = last_activity_at
             WHERE status = 'active'
-              AND last_activity_at < {cutoff}
+              AND last_activity_at < datetime('now', ?)
             RETURNING *
-        """).fetchall()
+        """, (f"-{IDLE_THRESHOLD_HOURS} hours",)).fetchall()
     conn.commit()
     return [dict(r) for r in rows]
 

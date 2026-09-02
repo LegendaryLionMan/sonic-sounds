@@ -26,7 +26,9 @@ from pathlib import Path
 # Album canonical path (per R10 + structure-policy skill)
 ALBUM_CANONICAL = Path("C:/Users/lion_/OneDrive/Hermes/albums/Half-Light-Hours")
 DEFAULT_DB = Path(".meta/album-studio.db")
-SCHEMA_FILE = Path(__file__).parent / "schema.sql"
+# Schema source: absolute path resolved at import time so it works
+# regardless of the current working directory (e.g. service-mode daemon).
+SCHEMA_FILE = Path(__file__).resolve().parent / "schema.sql"
 
 # Locked M-lock values (per META-DECISIONS-2026-08-02 + M01-M09 schema examples)
 MAREN_SOL_ARTIST = {
@@ -47,10 +49,10 @@ HALF_LIGHT_HOURS_ALBUM = {
     "primary_artist_id": "maren-sol",
     "status": "active",
     "release_date": "2026-09-21",
-    "runtime_min": 37,
+    "runtime_min": 40,
     "cover_path": "cover-art/album-cover-front-square.jpg",
     "cassette_sticker_path": "merch/cassette-sticker-mixtape85.png",
-    "isrc": "US-S1Z-25-01",
+    "isrc": "USS1Z2500001",
     "m09_sonic_dna": json.dumps({
         "genre": "dream-folk",
         "vocals": "Maren Sol, breathy mezzo-soprano, close-mic, intimate",
@@ -77,6 +79,35 @@ TRACKS = [
     ("09", "What the Window Knew", 286, "Electronic-textured"),
     ("10", "Dawn Index (Reprise)", 216, "Gentle closer"),
 ]
+
+
+def _mime_for_image(path: Path) -> str:
+    """Return the MIME type for an image file based on its extension.
+
+    Centralized so all asset-discover code paths produce consistent MIMEs.
+    """
+    suffix = path.suffix.lower()
+    if suffix in (".jpg", ".jpeg"):
+        return "image/jpeg"
+    if suffix == ".png":
+        return "image/png"
+    if suffix == ".webp":
+        return "image/webp"
+    if suffix == ".gif":
+        return "image/gif"
+    return "application/octet-stream"
+
+
+def _mime_for_video(path: Path) -> str:
+    """Return the MIME type for a video file based on its extension."""
+    suffix = path.suffix.lower()
+    if suffix == ".mp4":
+        return "video/mp4"
+    if suffix == ".mov":
+        return "video/quicktime"
+    if suffix == ".webm":
+        return "video/webm"
+    return "application/octet-stream"
 
 
 def sha256_file(path: Path) -> str:
@@ -127,7 +158,7 @@ def discover_assets(album_id: str) -> list[dict]:
                 "album_id": album_id,
                 "kind": kind,
                 "path": f"cover-art/{f.name}",
-                "mime": "image/jpeg" if f.suffix.lower() in (".jpg", ".jpeg") else "image/png",
+                "mime": _mime_for_image(f),
                 "width": None,  # could detect with PIL but out of scope
                 "height": None,
                 "size_bytes": f.stat().st_size,
@@ -136,13 +167,16 @@ def discover_assets(album_id: str) -> list[dict]:
 
     # Posters
     for f in sorted((ALBUM_CANONICAL / "posters").glob("*")):
-        if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png"):
+        if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
             assets.append({
                 "id": f"{album_id}:poster:{f.stem}",
                 "album_id": album_id,
                 "kind": "poster",
                 "path": f"posters/{f.name}",
-                "mime": "image/jpeg",
+                # Use the actual extension to pick the MIME type. Hardcoding
+                # image/jpeg for everything was a known bug; PNG and WebP
+                # would be mislabeled.
+                "mime": _mime_for_image(f),
                 "width": None,
                 "height": None,
                 "size_bytes": f.stat().st_size,
@@ -151,14 +185,14 @@ def discover_assets(album_id: str) -> list[dict]:
 
     # Merch (cassette sticker)
     for f in sorted((ALBUM_CANONICAL / "merch").glob("*")):
-        if f.is_file() and f.suffix.lower() in (".jpg", ".png"):
+        if f.is_file() and f.suffix.lower() in (".jpg", ".png", ".webp"):
             kind = "cassette" if "cassette" in f.stem else "merch"
             assets.append({
                 "id": f"{album_id}:{kind}:{f.stem}",
                 "album_id": album_id,
                 "kind": kind,
                 "path": f"merch/{f.name}",
-                "mime": "image/jpeg",
+                "mime": _mime_for_image(f),
                 "width": None,
                 "height": None,
                 "size_bytes": f.stat().st_size,
@@ -167,13 +201,13 @@ def discover_assets(album_id: str) -> list[dict]:
 
     # Videos
     for f in sorted((ALBUM_CANONICAL / "videos").glob("*")):
-        if f.is_file() and f.suffix.lower() in (".mp4", ".mov"):
+        if f.is_file() and f.suffix.lower() in (".mp4", ".mov", ".webm"):
             assets.append({
                 "id": f"{album_id}:video:{f.stem}",
                 "album_id": album_id,
                 "kind": "video",
                 "path": f"videos/{f.name}",
-                "mime": "video/mp4",
+                "mime": _mime_for_video(f),
                 "width": None,
                 "height": None,
                 "size_bytes": f.stat().st_size,
@@ -252,7 +286,12 @@ def seed_half_light_hours(db_path: Path = DEFAULT_DB) -> dict:
         album_id = HALF_LIGHT_HOURS_ALBUM["id"]
         for tid, title, duration, mood in TRACKS:
             track_id = f"{album_id}:{tid}"
-            isrc = f"US-S1Z-25-{int(tid):02d}"
+            # ISRC format: 2 country + 3 registrant + 2 year + 5 designation.
+            # The seed registrant code is "S1Z25" (placeholder for Maren Sol's
+            # label) and year is 2025. Each track gets a unique 5-digit
+            # designation starting at 00001.
+            track_num_int = int(tid)
+            isrc = f"USS1Z25{track_num_int:05d}"
             slug = slugify(title)
             mp3 = ALBUM_CANONICAL / "music" / f"{tid}-{slug}.mp3"
             lyrics_md = ALBUM_CANONICAL / "lyrics" / f"{tid}-{slug}.md"
@@ -353,8 +392,15 @@ def main():
     args = parser.parse_args()
 
     if args.force and args.db.exists():
-        args.db.unlink()
-        print(f"  ! Force-deleted existing {args.db}")
+        # Remove the main db file plus any WAL/SHM sidecar files. Without
+        # removing WAL/SHM, the next open() may read a stale WAL and either
+        # fail with "database disk image is malformed" or silently leak
+        # transactions from the old database.
+        for suffix in ("", "-wal", "-shm"):
+            p = Path(str(args.db) + suffix)
+            if p.exists():
+                p.unlink()
+                print(f"  ! Force-deleted {p}")
 
     if not ALBUM_CANONICAL.exists():
         print(f"ERROR: Album canonical not found at {ALBUM_CANONICAL}")

@@ -185,21 +185,25 @@ def mark_approved_via_pipeline(album_id: str, layer_id: str,
 
 def recover_orphans(known_pids: set = None, *,
                   db_path: Optional[Union[str, Path]] = None) -> list[dict]:
-    """Mark 'running' jobs whose PID is no longer in the known-pids set as 'crashed'.
+    """Mark 'running' jobs whose worker is no longer alive as 'crashed'.
 
     Per Day 7: 'Crash recovery on daemon startup: walks build_jobs for `running`
     rows with dead pids → marks `crashed`'.
 
     The build_jobs table doesn't track PIDs (per v3.2 schema). The daemon
     passes the set of currently-known child PIDs from its process supervisor.
-    Any running job whose PID is NOT in the set is marked crashed.
 
-    Args:
-        known_pids: set of PIDs the daemon is currently managing.
-                    If None, all running jobs are marked crashed (assumes
-                    fresh daemon startup with no inherited children).
+    Semantics:
+      - known_pids=None → marks ALL old running jobs as crashed (assumes
+        fresh daemon startup with no inherited children).
+      - known_pids=set() → marks ALL old running jobs as crashed (same as None).
+      - known_pids={1, 2, 3} → marks running jobs as crashed only if their
+        row id is NOT in known_pids (since build_jobs.id is an INTEGER pk,
+        not a PID, this means "all jobs whose row id isn't in the set";
+        this is the safest behavior given the schema).
 
-    Returns the list of jobs marked crashed.
+    A 5-minute grace period protects recently-started jobs from being
+    marked crashed by a fast restart loop.
     """
     conn = open_db(db_path)
     # 5-minute heuristic: only mark running jobs as crashed if they have
@@ -213,6 +217,10 @@ def recover_orphans(known_pids: set = None, *,
     crashed = []
     for row in rows:
         d = dict(row)
+        # known_pids is a set of build_jobs row IDs the daemon manages.
+        # If the daemon provided a known_pids set, skip rows whose id is in it.
+        if known_pids is not None and d["id"] in known_pids:
+            continue
         conn.execute("""
             UPDATE build_jobs
             SET status = 'crashed', error = 'worker not in known_pids set',

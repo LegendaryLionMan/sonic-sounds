@@ -131,6 +131,10 @@ class TestCanRun(unittest.TestCase):
         self.album = "half-light-hours"
 
     def tearDown(self):
+        # Close all cached connections before deleting the file, so
+        # Windows releases its WAL/SHM file locks and the unlink succeeds.
+        from db.connection import close_all
+        close_all()
         try:
             os.unlink(self.db_path)
         except OSError:
@@ -209,6 +213,10 @@ class TestNextRunnable(unittest.TestCase):
         self.album = "half-light-hours"
 
     def tearDown(self):
+        # Close all cached connections before deleting the file, so
+        # Windows releases its WAL/SHM file locks and the unlink succeeds.
+        from db.connection import close_all
+        close_all()
         try:
             os.unlink(self.db_path)
         except OSError:
@@ -258,6 +266,10 @@ class TestMarkApproved(unittest.TestCase):
         self.album = "half-light-hours"
 
     def tearDown(self):
+        # Close all cached connections before deleting the file, so
+        # Windows releases its WAL/SHM file locks and the unlink succeeds.
+        from db.connection import close_all
+        close_all()
         try:
             os.unlink(self.db_path)
         except OSError:
@@ -304,6 +316,10 @@ class TestAllLayers(unittest.TestCase):
         self.album = "half-light-hours"
 
     def tearDown(self):
+        # Close all cached connections before deleting the file, so
+        # Windows releases its WAL/SHM file locks and the unlink succeeds.
+        from db.connection import close_all
+        close_all()
         try:
             os.unlink(self.db_path)
         except OSError:
@@ -377,17 +393,37 @@ class TestEmptyDBPath(unittest.TestCase):
             # Verify schema_version is set
             self.assertGreaterEqual(result["schema_version"], 1)
         finally:
-            # Close the connection so we can delete the file on Windows
-            from db.connection import close_db
-            close_db(path)
-            os.unlink(path)
-            for ext in ["-journal", "-wal", "-shm"]:
-                p2 = path + ext
-                if os.path.exists(p2):
-                    try:
-                        os.unlink(p2)
-                    except OSError:
-                        pass
+                    # Close the connection so we can delete the file on Windows
+                    from db.connection import close_db
+                    close_db(path)
+                    # On Windows, the WAL file can hold the lock briefly even
+                    # after close. Try a few times with cleanup of WAL/SHM.
+                    for attempt in range(5):
+                        try:
+                            os.unlink(path)
+                            break
+                        except PermissionError:
+                            # Clean up WAL/SHM first; on Windows these can hold
+                            # a file lock even after the main db is closed.
+                            for ext in ["-wal", "-shm", "-journal"]:
+                                p2 = path + ext
+                                if os.path.exists(p2):
+                                    try:
+                                        os.unlink(p2)
+                                    except OSError:
+                                        pass
+                            import time as _t
+                            _t.sleep(0.05)
+                    else:
+                        # Final cleanup attempt — leave any leftover sidecars
+                        # so the test runner's tmpdir cleanup can sweep them.
+                        for ext in ["-wal", "-shm", "-journal"]:
+                            p2 = path + ext
+                            if os.path.exists(p2):
+                                try:
+                                    os.unlink(p2)
+                                except OSError:
+                                    pass
 
 
 if __name__ == "__main__":

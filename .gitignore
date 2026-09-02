@@ -1,5 +1,5 @@
 # album-studio .gitignore
-# Last updated: 2026-08-01 (structure cleanup)
+# Last updated: 2026-08-09 (added .meta/ runtime state)
 # Why: prevents re-spread of artifacts; see docs/STRUCTURE-POLICY.md.
 
 # --- Python ---
@@ -42,7 +42,25 @@ desktop.ini
 .env.local
 *.key
 *.pem
-# Build artifacts (Phase 0.A test seed)
+
+# --- Build artifacts (Phase 0.A test seed) ---
 build/*.db
 build/*.db-journal
 build/*.db-wal
+
+# --- Runtime state (machine-specific; rebuilt on first launch) ---
+# .meta/ holds the SQLite database, daemon logs, schema drafts. None of
+# this should be in version control — it varies per-host, per-run.
+.meta/*.db
+.meta/*.db-journal
+.meta/*.db-wal
+.meta/*.db-shm
+.meta/daemon.log
+.meta/daemon.lock
+# Allow the schema migrations + draft files to be tracked (they're code,
+# not runtime state).
+!.meta/migrations/
+!.meta/album-studio-schema-draft.sql
+
+# Test scratch dir (created 2026-08-09 for audit verification)
+scratch/

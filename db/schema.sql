@@ -102,7 +102,15 @@ CREATE TABLE IF NOT EXISTS events (
     content         TEXT,                       -- main text content
     payload_json    TEXT,                       -- structured data (build_args, mmx response, etc)
     created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-    FOREIGN KEY (session_id) REFERENCES album_sessions(id) ON DELETE CASCADE
+    FOREIGN KEY (session_id) REFERENCES album_sessions(id) ON DELETE CASCADE,
+    -- ON DELETE SET NULL is theoretically correct but is never reached
+    -- in practice: when an album is hard-deleted, album_sessions.album_id
+    -- CASCADE deletes the sessions first, which in turn CASCADE-deletes
+    -- events via events.session_id. So the events.album_id SET NULL
+    -- branch is dead code. Kept for documentation: if the cascade chain
+    -- is ever reordered, this ensures orphan album_id never blocks a
+    -- legitimate album DELETE.
+    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_events_session_time ON events(session_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_events_album_time ON events(album_id, created_at);
@@ -205,8 +213,34 @@ CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 -- === Triggers ===
 
 -- Q27: album.status is derived from album_sessions.status (no manual mutation)
-CREATE TRIGGER IF NOT EXISTS trg_album_status_sync
+CREATE TRIGGER IF NOT EXISTS trg_album_status_sync_upd
 AFTER UPDATE OF status ON album_sessions
+FOR EACH ROW
+WHEN NEW.album_id IS NOT NULL
+BEGIN
+    UPDATE albums
+    SET status = CASE
+        WHEN (SELECT COUNT(*) FROM album_sessions
+              WHERE album_id = NEW.album_id AND status = 'done') > 0
+            THEN 'done'
+        WHEN (SELECT COUNT(*) FROM album_sessions
+              WHERE album_id = NEW.album_id AND status = 'active') > 0
+            THEN 'active'
+        WHEN (SELECT COUNT(*) FROM album_sessions
+              WHERE album_id = NEW.album_id AND status = 'paused') > 0
+            THEN 'paused'
+        ELSE 'archived'
+    END,
+    updated_at = datetime('now')
+    WHERE id = NEW.album_id;
+END;
+
+-- Companion trigger: keep album.status in sync on INSERT as well.
+-- Without this, inserting the first session for an album that was
+-- previously 'archived' (or any other status) would leave the album
+-- status stale. Same CASE logic as the UPDATE trigger.
+CREATE TRIGGER IF NOT EXISTS trg_album_status_sync_ins
+AFTER INSERT ON album_sessions
 FOR EACH ROW
 WHEN NEW.album_id IS NOT NULL
 BEGIN

@@ -46,7 +46,6 @@ def create_event(session_id: str, role: str, kind: str, content: str = None,
 
     Returns the inserted event dict.
     """
-    import json
     conn = open_db(db_path)
     payload_json = json.dumps(payload) if payload else None
     cur = conn.execute("""

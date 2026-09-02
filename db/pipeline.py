@@ -115,9 +115,9 @@ def can_run(layer_id: str, album_id: str, db_path: str = "") -> bool:
       1. No build_jobs row exists for (album_id, layer_id) with status
          "done" or "running".
       2. All dependencies in pipeline-deps.json are "done" for this album.
-      3. If the layer is in APPROVAL_REQUIRED: a build_jobs row exists
-         with status "needs_approval" AND approved_at IS NOT NULL.
-         (Otherwise the layer is "todo" or "needs_approval" — not runnable.)
+      3. If the layer is in APPROVAL_REQUIRED: the row is in status
+         'ready' (after mark_approved) OR status 'needs_approval' with
+         approved_at IS NOT NULL.
       4. Not blocked (no row with status "blocked" for this album/layer).
 
     Returns False otherwise. Pure read — does not write.
@@ -134,6 +134,10 @@ def can_run(layer_id: str, album_id: str, db_path: str = "") -> bool:
             status = row.get("status")
             if status in ("done", "running", "blocked"):
                 return False
+            # 'ready' is the post-approval state and is runnable.
+            # 'needs_approval' is runnable if approved_at is set
+            # (older call sites may have stamped approved_at without
+            # transitioning status — both paths are honored).
             if status == "needs_approval" and not row.get("approved_at"):
                 return False
 
@@ -147,7 +151,7 @@ def can_run(layer_id: str, album_id: str, db_path: str = "") -> bool:
             if not dep_row or dep_row["status"] != "done":
                 return False
 
-        # 3. Approval check for needs_approval layers
+        # 3. Approval check for approval-required layers
         if layer_id in APPROVAL_REQUIRED and not row:
             # No job row → not even started → not approvable
             return False
@@ -172,12 +176,14 @@ def next_runnable(album_id: str, db_path: str = "") -> list[str]:
 def mark_approved(layer_id: str, album_id: str, db_path: str = "") -> bool:
     """Mark a layer as approved for the given album.
 
-    Only meaningful for layers in APPROVAL_REQUIRED. Flips the build_jobs
-    row's approved_at to NOW. Returns True on success, False if no row
-    exists or the layer is not approval-gated.
+    Only meaningful for layers in APPROVAL_REQUIRED. Transitions the
+    build_jobs row from 'needs_approval' -> 'ready' (and stamps approved_at).
+    Returns True on success, False if no row exists or the layer is not
+    approval-gated.
 
-    This is the one write in the read-side module — by design, all
-    state-mutating operations live elsewhere (Day 6 build runner).
+    The 'ready' status is now reachable through this code path (it was
+    documented in the schema but unreachable previously). can_run() accepts
+    both 'needs_approval' + approved_at AND 'ready' as runnable states.
     """
     if layer_id not in APPROVAL_REQUIRED:
         return False
@@ -190,7 +196,7 @@ def mark_approved(layer_id: str, album_id: str, db_path: str = "") -> bool:
         if not row:
             return False
         conn.execute(
-            "UPDATE build_jobs SET approved_at = CURRENT_TIMESTAMP, status = 'needs_approval' "
+            "UPDATE build_jobs SET approved_at = CURRENT_TIMESTAMP, status = 'ready' "
             "WHERE album_id = ? AND layer_id = ?",
             (album_id, layer_id)
         )

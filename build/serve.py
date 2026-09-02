@@ -140,7 +140,10 @@ def register_routes(app: Quart) -> None:
                     return {"mp3_path": row["mp3_path"], "duration_sec": row["duration_sec"]}
                 return None
             finally:
-                conn.close()
+                # Use close_db() so the per-thread connection cache is
+                # popped, not just closed. Otherwise the next open_db() in
+                # this thread would return a closed connection from cache.
+                close_db()
 
         track = await _run_in_thread(_lookup)
         if not track or not track.get("mp3_path"):
@@ -234,31 +237,49 @@ class Daemon:
         _log.info(f"migrations applied (schema_version={result['schema_version']})")
 
     def start(self) -> None:
-        """Start the daemon (blocking until shutdown signal)."""
-        self.setup_logging()
-        self.acquire_lock()
-        self.run_migrations()
-        self.install_signal_handlers()
+        """Start the daemon (blocking until shutdown signal).
 
-        app = create_app()
-        _log.info(f"starting on {self.host}:{self.port}")
-
-        import asyncio
-        from hypercorn.config import Config
-        from hypercorn.asyncio import serve as hypercorn_serve
-
-        config = Config()
-        config.bind = [f"{self.host}:{self.port}"]
-        config.graceful_timeout = 2.0
-
+        Setup steps run inside a try block so any failure (lock error,
+        migration error, etc.) releases the lock before sys.exit().
+        Without this, a startup failure would leave the lock file on
+        disk and block subsequent daemon starts until manually cleaned.
+        """
+        lock_acquired = False
         try:
-            asyncio.run(hypercorn_serve(app, config))
-        except KeyboardInterrupt:
-            pass
+            self.setup_logging()
+            self.acquire_lock()
+            lock_acquired = True
+            self.run_migrations()
+            self.install_signal_handlers()
+
+            app = create_app()
+            _log.info(f"starting on {self.host}:{self.port}")
+
+            import asyncio
+            from hypercorn.config import Config
+            from hypercorn.asyncio import serve as hypercorn_serve
+
+            config = Config()
+            config.bind = [f"{self.host}:{self.port}"]
+            config.graceful_timeout = 2.0
+
+            try:
+                asyncio.run(hypercorn_serve(app, config))
+            except KeyboardInterrupt:
+                pass
         finally:
-            _log.info("shutting down")
-            self.lock.release()
-            close_db()
+            # Always release the lock, even if sys.exit(1) was called
+            # by a setup step. The lock file on disk would otherwise
+            # block the next daemon start (Finding #9).
+            if lock_acquired:
+                try:
+                    self.lock.release()
+                except Exception as e:
+                    _log.warning(f"lock release failed during shutdown: {e}")
+            try:
+                close_db()
+            except Exception as e:
+                _log.warning(f"db close failed during shutdown: {e}")
 
 
 # === CLI entry point ===

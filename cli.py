@@ -22,16 +22,13 @@ Usage:
   python -m cli finalize <album-slug>  (Day 11 — placeholder for now)
 """
 import argparse
-import json
-import os
-import sqlite3
 import sys
 from pathlib import Path
 from typing import Optional
 
-from db import open_db, run_migrations, close_db, DEFAULT_DB_PATH
+from db import DEFAULT_DB_PATH
 from db.albums import (
-    list_artists, list_albums, get_album, create_album,
+    list_artists, list_albums, get_album,
     list_tracks, get_artist,
 )
 from db.sessions import (
@@ -39,19 +36,22 @@ from db.sessions import (
     pause_session, resume_session, complete_session,
     count_active_sessions, MAX_ACTIVE_SESSIONS,
 )
-from db.events import create_event, list_events
-from db.build_jobs import queue_job, mark_running, mark_succeeded, mark_failed
+from db.events import create_event
 from db.queries import global_status, format_status_4line
 
 
 def cmd_serve(args) -> int:
-    """Start the daemon. Day 3 will implement this. Day 2: placeholder."""
-    print("serve: Day 3 will implement the HTTP daemon.")
-    print("  - Quart ASGI app on 127.0.0.1:8765")
-    print("  - WAL mode + PRAGMAs applied to .meta/album-studio.db")
-    print("  - ~22 endpoints (health, albums, sessions, events, build, intake)")
-    print("  - Servy/NSSM service registration via sc create")
-    return 0
+    """Start the daemon (Day 3 implementation).
+
+    Delegates to build.serve.main so `python -m cli serve` starts the
+    Quart daemon on the requested port (the placeholder message was
+    Day 2's scaffolding and is no longer accurate now that Day 3 is
+    implemented).
+    """
+    from build.serve import main as serve_main
+    # Forward --port and --host to the daemon
+    sys.argv = ["build.serve", f"--port={args.port}", f"--host={args.host}"]
+    return serve_main()
 
 
 def cmd_status(args) -> int:

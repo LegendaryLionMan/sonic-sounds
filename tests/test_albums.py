@@ -30,8 +30,15 @@ def _fresh_db():
 
 
 def _cleanup(path):
-    """Close connection and delete the test db."""
-    close_db(path)
+    """Close all cached connections and delete the test db.
+
+    Uses close_all() (not close_db(path)) because tests may have
+    cached conns to OTHER paths from previous operations in the same
+    test. Leaving those open leaks file handles across the test suite
+    on Windows (each leaked conn holds a WAL/SHM file lock).
+    """
+    from db.connection import close_all
+    close_all()
     for ext in ["", "-journal", "-wal", "-shm"]:
         p = Path(path + ext)
         if p.exists():
