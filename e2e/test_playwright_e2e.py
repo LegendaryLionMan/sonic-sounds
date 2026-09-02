@@ -185,7 +185,14 @@ def run() -> int:
         # Get a real session id from the daemon
         code, sess = api("POST", "/api/sessions", {"album_id": "half-light-hours"})
         sid = (sess or {}).get("id") if isinstance(sess, dict) else None
+        # Post a build event so the studio can derive layer=03 from the
+        # event stream (this is the same pattern the Day 7 e2e uses).
         if sid:
+            api("POST", "/api/events", {
+                "session_id": sid, "role": "assistant", "kind": "build",
+                "content": "build", "album_id": "half-light-hours",
+                "payload": {"layer": 3, "phase": "lyrics_finalize"},
+            })
             page.context._session_id_for_tests = sid  # used by playwright_studio_checks
             playwright_studio_checks(page, results)
         playwright_albums_checks(page, results)
@@ -197,12 +204,20 @@ def run() -> int:
 
 
 def _report(results: list) -> int:
-    passed = sum(1 for _, ok, _ in results if ok)
+    def _ok(r):
+        return bool(r[1]) if len(r) >= 2 else False
+    passed = sum(1 for r in results if _ok(r))
     total = len(results)
     print(f"\n{'=' * 64}")
     print(f"PLAYWRIGHT E2E: {passed}/{total} passed")
     print(f"{'=' * 64}")
-    for name, ok, detail in results:
+    for r in results:
+        # Normalize to (name, ok, detail) — older code added 2-tuples.
+        if len(r) == 2:
+            name, ok = r
+            detail = ""
+        else:
+            name, ok, detail = r
         mark = "✅" if ok else "❌"
         line = f"  {mark} {name}"
         if not ok and detail:
