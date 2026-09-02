@@ -144,6 +144,9 @@ CREATE TABLE IF NOT EXISTS build_jobs (
     error           TEXT,
     attempts        INTEGER NOT NULL DEFAULT 0,
     last_event_id   INTEGER,                    -- link to events
+    output_path     TEXT,                       -- path to generated artifact (Day 6 build runner)
+    elapsed_sec     REAL,                       -- run duration (Day 6 build runner)
+    exit_code       INTEGER,                    -- subprocess exit code (Day 6 build runner)
     created_at      TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at      TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE (album_id, layer_id),

@@ -73,6 +73,22 @@ APPROVAL_REQUIRED = {
 
 # === Internal helpers ===
 
+def get_layer(layer_id: str) -> dict:
+    """Public lookup of a single layer from pipeline-deps.json.
+
+    Returns the layer dict with all 6 Q29c fields:
+    {id, display_name, depends_on, approval_required, mmx_action, output_table}.
+
+    Raises KeyError if the layer_id is unknown. The runner uses this
+    to discover each layer mmx_action without reading the JSON
+    directly (single source of truth: pipeline.py).
+    """
+    for layer in _load_pipeline_deps():
+        if layer["id"] == layer_id:
+            return layer
+    raise KeyError(f"unknown layer_id: {layer_id!r}")
+
+
 def _load_pipeline_deps() -> list[dict]:
     """Load the 12-layer DAG from pipeline-deps.json (single source of truth)."""
     with open(PIPELINE_DEPS_FILE, encoding="utf-8") as f:

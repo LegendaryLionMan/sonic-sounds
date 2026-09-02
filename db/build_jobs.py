@@ -98,40 +98,57 @@ def mark_running(job_id: int, *,
 
 
 def mark_succeeded(job_id: int,
-                  db_path: Optional[Union[str, Path]] = None) -> Optional[dict]:
-    """Mark a job as 'done' (succeeded).
+                  *,
+                  output_path = None,
+                  elapsed_sec = None,
+                  exit_code: int = 0,
+                  db_path = None) -> Optional[dict]:
+    """Mark a job as 'done' (succeeded) with optional runner metadata.
 
     The state machine is: todo -> running -> done. This function accepts
-    any non-terminal status (todo/running/needs_approval/ready) so that
-    tests can skip the running step. In production, the build runner
-    should set status='running' before running mmx and then call this
-    on success.
+    any non-terminal status so that tests can skip the running step.
+    In production, the build runner should set status='running'
+    before running mmx and then call this on success.
+
+    Args:
+      job_id: build_jobs.id
+      output_path: optional path to generated artifact (Day 6 build runner)
+      elapsed_sec: optional run duration in seconds
+      exit_code: subprocess exit code (default 0 = success)
     """
     conn = open_db(db_path)
     conn.execute("""
         UPDATE build_jobs
-        SET status = 'done', completed_at = datetime('now'),
-            updated_at = datetime('now'), error = NULL
+        SET status = 'done',
+            completed_at = datetime('now'),
+            updated_at = datetime('now'),
+            error = NULL,
+            output_path = COALESCE(?, output_path),
+            elapsed_sec = COALESCE(?, elapsed_sec),
+            exit_code = ?
         WHERE id = ? AND status NOT IN ('done', 'crashed', 'failed', 'blocked')
-    """, (job_id,))
+    """, (output_path, elapsed_sec, exit_code, job_id))
     conn.commit()
     return get_job_by_id(job_id, db_path=db_path)
 
 
-def mark_failed(job_id: int, error: str,
-               db_path: Optional[Union[str, Path]] = None,
-               status: str = "blocked") -> Optional[dict]:
+def mark_failed(job_id: int, error: str, *,
+               exit_code: int = 1,
+               status: str = "blocked",
+               db_path: Optional[Union[str, Path]] = None) -> Optional[dict]:
     """Mark a running job as failed. Default status='blocked' (needs human review).
 
     Pass status='failed' for terminal failure (after attempts >= max_attempts).
+    exit_code records the subprocess rc that caused the failure.
     """
     conn = open_db(db_path)
     conn.execute("""
         UPDATE build_jobs
         SET status = ?, error = ?, updated_at = datetime('now'),
-            attempts = attempts + 1
+            attempts = attempts + 1,
+            exit_code = ?
         WHERE id = ?
-    """, (status, error[:500], job_id))  # cap error msg at 500 chars
+    """, (status, error[:500], exit_code, job_id))
     conn.commit()
     return get_job_by_id(job_id, db_path=db_path)
 
@@ -156,7 +173,7 @@ def get_job_by_id(job_id: int,
 
 
 def list_jobs(*, album_id: str = None, layer_id: str = None,
-             status: str = None,
+             status: str = None, limit: int = None,
              db_path: Optional[Union[str, Path]] = None) -> list[dict]:
     """List jobs, optionally filtered by album_id, layer_id, status."""
     conn = open_db(db_path)
@@ -171,9 +188,10 @@ def list_jobs(*, album_id: str = None, layer_id: str = None,
     where = ""
     if filters:
         where = "WHERE " + " AND ".join(filters)
-    rows = conn.execute(
-        f"SELECT * FROM build_jobs {where} ORDER BY id ASC", values
-    ).fetchall()
+    sql = f"SELECT * FROM build_jobs {where} ORDER BY id ASC"
+    if limit is not None:
+        sql += f" LIMIT {int(limit)}"
+    rows = conn.execute(sql, values).fetchall()
     return [dict(r) for r in rows]
 
 
