@@ -273,7 +273,28 @@ function renderTracks() {
         const secs = t.duration_sec ?? (t.duration_ms ? t.duration_ms / 1000 : null);
         return secs != null ? fmtDuration(secs) : '—';
       })()}</span>
+      <button class="t-play" data-track-id="${esc(t.id)}" data-track-title="${esc(t.title||'')}">▷</button>
     </div>`).join('');
+  // Day 10: wire audio player — click ▶ on a track to load + play it.
+  // The /api/audio/<track_id> endpoint supports HTTP Range so the
+  // <audio> element can scrub without re-downloading the file.
+  $('#track-list .t-play').forEach(btn => {
+    btn.addEventListener('click', () => loadTrack(btn.dataset.trackId, btn.dataset.trackTitle));
+  });
+}
+
+/* Day 10: load + play a track via the range-supported /api/audio endpoint. */
+function loadTrack(trackId, title) {
+  const player = $('#audio-player');
+  const el = $('#audio-el');
+  const meta = $('#audio-meta');
+  if (!player || !el) return;
+  el.src = `/api/audio/${encodeURIComponent(trackId)}`;
+  meta.textContent = `▷ ${title || trackId}`;
+  player.hidden = false;
+  // Play programmatically after the metadata loads (Range request fires
+  // on the first byte-range query when controls are visible).
+  el.play().catch(() => { /* user gesture required for autoplay */ });
 }
 
 /* assets */

@@ -162,6 +162,64 @@ async def archive_album(album_id: str):
 
 
 # ============================================================
+# Day 11: finalize + reopen
+# ============================================================
+
+@albums_bp.route("/api/albums/<album_id>/finalize", methods=["POST"])
+async def finalize_album_endpoint(album_id: str):
+    """Day 11: finalize an album.
+
+    Delegates to scripts.finalize_album.run_finalize(). Body params:
+      target_lufs (default -14 = Spotify) — target integrated loudness
+      true_peak_dbtp (default -1.0) — true-peak ceiling
+      skip_mastering (default false) — skip ffmpeg loudnorm (dry-run)
+      apply_id3 (default true) — write ID3 tags via mutagen
+
+    Returns:
+      200 {ok, lufs_measured, true_peak, mastered_files, id3_applied, album_status}
+      404 if the album doesn't exist
+      500 with error if mastering fails (album_status may still flip
+      to 'done' if the album row write succeeded).
+    """
+    from scripts.finalize_album import run_finalize
+    payload = await request.get_json(silent=True) or {}
+    try:
+        result = await asyncio.to_thread(
+            run_finalize, album_id,
+            target_lufs=float(payload.get("target_lufs", -14.0)),
+            true_peak_dbtp=float(payload.get("true_peak_dbtp", -1.0)),
+            skip_mastering=bool(payload.get("skip_mastering", False)),
+            apply_id3=bool(payload.get("apply_id3", True)),
+        )
+        status_code = 200 if result.get("ok") else 500
+        return jsonify(result), status_code
+    except FileNotFoundError as e:
+        return jsonify({"error": str(e), "ok": False}), 404
+    except Exception as e:
+        _log.exception(f"finalize failed for {album_id}")
+        return jsonify({"error": f"{type(e).__name__}: {e}", "ok": False}), 500
+
+
+@albums_bp.route("/api/albums/<album_id>/reopen", methods=["POST"])
+async def reopen_album_endpoint(album_id: str):
+    """Day 11: reopen a finalized album (status 'done' → 'active').
+
+    Flips the album status back to 'active' so the studio can resume
+    work on it. Does NOT undo mastering (mastered files stay in _master/).
+    """
+    row = await _run(db_albums.get_album, album_id)
+    if not row:
+        return jsonify({"error": "album not found"}), 404
+    if row.get("status") not in ("done", "archived"):
+        return jsonify({
+            "error": f"album is in status {row['status']!r}; reopen only applies to done or archived",
+            "current_status": row["status"],
+        }), 409
+    updated = await _run(db_albums.update_album, album_id, status="active")
+    return jsonify(updated), 200
+
+
+# ============================================================
 # Drilldowns
 # ============================================================
 

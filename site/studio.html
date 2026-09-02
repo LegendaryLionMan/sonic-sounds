@@ -66,6 +66,11 @@
       <div class="track-list" id="track-list">
         <p class="hand empty-line">No tracks yet.</p>
       </div>
+      <!-- Day 10: audio player for selected track (range-supported stream) -->
+      <div class="audio-player" id="audio-player" hidden>
+        <audio id="audio-el" controls preload="none" style="width:100%"></audio>
+        <p class="audio-meta" id="audio-meta"></p>
+      </div>
     </section>
 
     <section class="card-section">
@@ -111,6 +116,6 @@
 <!-- toast container -->
 <div class="toast" id="toast" hidden></div>
 
-<script src="/site/studio.js?v=day7c"></script>
+<script src="/site/studio.js?v=day10"></script>
 </body>
 </html>
