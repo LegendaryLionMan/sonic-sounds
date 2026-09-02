@@ -167,7 +167,13 @@ function renderTracks() {
     <div class="track-row">
       <span class="t-num">${String(i+1).padStart(2,'0')}</span>
       <span class="t-title">${esc(t.title||'(untitled)')}</span>
-      <span class="t-meta">${t.duration_ms ? fmtDuration(t.duration_ms/1000) : '—'}</span>
+      <span class="t-meta">${(() => {
+        // API returns duration_sec (per db/albums.py:tracks). Older
+        // clients may expect duration_ms. Accept either; format as
+        // m:ss either way.
+        const secs = t.duration_sec ?? (t.duration_ms ? t.duration_ms / 1000 : null);
+        return secs != null ? fmtDuration(secs) : '—';
+      })()}</span>
     </div>`).join('');
 }
 
