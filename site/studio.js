@@ -70,7 +70,10 @@ function renderPicker() {
     return;
   }
   const opts = sessions.map(s => {
-    const title = s.album_title || s.album_id || s.id;
+    // Prefer the human album title from the joined album fetch, falling
+    // back to whatever the session payload exposes.
+    const album = currentSessionId === s.id ? currentAlbum : null;
+    const title = (album && album.title) || s.album_title || s.album_id || s.id;
     const phase = PHASES[(s.current_layer||1)-1] || `Layer ${s.current_layer}`;
     const sel_ = s.id === currentSessionId ? 'selected' : '';
     return `<option value="${esc(s.id)}" ${sel_}>${esc(title)} · ${esc(phase)} · ${esc(s.status)}</option>`;
@@ -98,8 +101,15 @@ function renderSidebar() {
     setStatusPill('—', '');
     return;
   }
-  $('#album-title').textContent = session.album_title || session.album_id || session.id;
-  $('#album-artist').textContent = session.album_artist || session.primary_artist_id || '';
+  $('#album-title').textContent = (currentAlbum && currentAlbum.title)
+                                    || session.album_title
+                                    || session.primary_artist_id
+                                    || session.album_id
+                                    || session.id;
+  $('#album-artist').textContent = (currentAlbum && currentAlbum.primary_artist_id)
+                                    || session.album_artist
+                                    || session.primary_artist_id
+                                    || '';
   // layer/phase are owned by renderPipeline() (derived from build events)
   $('#stat-runtime').textContent = fmtMs(session.elapsed_ms || session.current_position_ms);
   $('#stat-idle').textContent = relativeTime(session.updated_at || session.last_activity || session.created_at);
