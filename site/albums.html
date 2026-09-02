@@ -2,67 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>album-studio · albums</title>
-<link rel="stylesheet" href="/css/components.css">
-<link rel="stylesheet" href="/css/ux-states.css">
+<title>album-studio · albums · mixtape '85</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/albums.module.css">
 </head>
 <body>
-<nav class="topbar">
-  <span class="crumb">album-studio<b> / albums</b></span>
-  <span class="pill"><span class="dot"></span> 1 ACTIVE · 0 QUEUED · 0 DONE</span>
-  <span class="grow"></span>
-  <button class="command">⌘K</button>
-</nav>
+<div class="wrap">
 
-<main class="shell-page">
-  <section class="hero-band">
-    <p class="eyebrow">/albums · all sessions</p>
-    <h1>in progress</h1>
-    <p class="hand">Max 3 active sessions. 12h idle auto-pause. Everything tracked via the daemon.</p>
-  </section>
+  <nav class="topbar">
+    <span class="crumb">album-studio<b> / albums</b></span>
+    <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">loading…</span></span>
+    <span class="grow"></span>
+    <button class="cmd" id="new-album-btn">+ NEW ALBUM</button>
+    <button class="cmd">⌘K</button>
+  </nav>
 
-  <section class="shell-page">
-    <p class="eyebrow">/active · 1</p>
-    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">running</h2>
-    <div class="shell-grid">
-      <article class="session-card">
-        <div class="meta">
-          <p class="eyebrow">LAYER 03 / 12 · LYRICS FINALIZE</p>
-          <span class="album-title">Half-Light Hours</span>
-          <span class="artist">Maren Sol</span>
-          <span class="badge active">ACTIVE</span>
-        </div>
-        <div class="actions">
-          <a class="btn" href="/studio.html">▷ Open</a>
-        </div>
-      </article>
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">/albums · mixtape '85 · the cassette is the chassis</p>
+      <h1>albums in progress</h1>
+      <p class="lede">Max 3 active sessions. 12h idle auto-pause. Every build layer tracked via the daemon.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-key">ACTIVE SESSIONS</span>
+        <span class="stat-val" id="stat-active">—</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-key">ALBUMS</span>
+        <span class="stat-val" id="stat-albums">—</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-key">DONE</span>
+        <span class="stat-val" id="stat-done">—</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <header class="section-head">
+      <p class="eyebrow">/active · live sessions</p>
+      <h2>active sessions</h2>
+    </header>
+    <div class="session-grid" id="session-grid">
+      <div class="empty-card"><p class="hand">No active sessions. Open one from an album below.</p></div>
     </div>
   </section>
 
-  <section class="shell-page">
-    <p class="eyebrow">/queued · 0</p>
-    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">waiting</h2>
-    <div class="card">
-      <p class="hand">No queued sessions. Start a new album from intake.</p>
+  <section class="section">
+    <header class="section-head">
+      <p class="eyebrow">/library · all albums</p>
+      <h2>album library</h2>
+    </header>
+    <div class="album-grid" id="album-grid">
+      <div class="empty-card"><p class="hand">No albums yet. The first one sets the tone.</p></div>
     </div>
   </section>
 
-  <section class="shell-page">
-    <p class="eyebrow">/done · 0</p>
-    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">complete</h2>
-    <div class="card">
-      <p class="hand">No finalized albums yet. The done album gets archived + indexed for the next session.</p>
-    </div>
-  </section>
-</main>
+  <footer class="footer">
+    <div class="health"><span class="dot"></span> daemon · <span id="daemon-host">127.0.0.1:8765</span></div>
+    <span class="grow"></span>
+    <span class="foot-meta"><span id="foot-meta-text">—</span></span>
+  </footer>
 
-<footer class="footer">
-  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
-  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
-  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
-  <span class="grow"></span>
-  <span>1 active · 0 queued · 0 done</span>
-</footer>
+</div>
+
+<!-- ============== NEW ALBUM MODAL ============== -->
+<div class="modal-backdrop" id="new-album-modal" hidden>
+  <div class="modal">
+    <header class="modal-head">
+      <p class="eyebrow">/new · create album</p>
+      <h3>new album</h3>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">×</button>
+    </header>
+    <form id="new-album-form" class="modal-body">
+      <label class="field">
+        <span class="field-label">ID <em>· slug, lowercase, no spaces</em></span>
+        <input type="text" name="id" required pattern="[a-z0-9-]+" placeholder="e.g. midnight-room">
+      </label>
+      <label class="field">
+        <span class="field-label">TITLE</span>
+        <input type="text" name="title" required placeholder="e.g. Midnight Room">
+      </label>
+      <label class="field">
+        <span class="field-label">ARTIST ID</span>
+        <input type="text" name="primary_artist_id" required value="maren-sol" placeholder="maren-sol">
+      </label>
+      <label class="field">
+        <span class="field-label">RELEASE DATE <em>· YYYY-MM-DD</em></span>
+        <input type="text" name="release_date" pattern="\d{4}-\d{2}-\d{2}" placeholder="2026-09-21">
+      </label>
+      <label class="field">
+        <span class="field-label">RUNTIME <em>· minutes</em></span>
+        <input type="number" name="runtime_min" min="1" max="200" value="40">
+      </label>
+      <div class="form-error" id="form-error" hidden></div>
+      <div class="modal-actions">
+        <button type="button" class="cta-secondary" id="modal-cancel-btn">Cancel</button>
+        <button type="submit" class="cta-primary">Create album</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============== ALBUM DETAIL DRAWER ============== -->
+<div class="drawer-backdrop" id="album-drawer" hidden>
+  <aside class="drawer">
+    <header class="drawer-head">
+      <p class="eyebrow">/album · <span id="drawer-album-id">—</span></p>
+      <h3 id="drawer-album-title">—</h3>
+      <button class="modal-close" id="drawer-close-btn" aria-label="Close">×</button>
+    </header>
+    <div class="drawer-body">
+      <section class="drawer-section">
+        <p class="eyebrow">/meta</p>
+        <dl class="meta-grid" id="drawer-meta"></dl>
+      </section>
+      <section class="drawer-section">
+        <p class="eyebrow">/sessions · this album</p>
+        <div id="drawer-sessions"><p class="hand empty-line">No sessions for this album.</p></div>
+        <button class="cta-yellow" id="drawer-open-session-btn">+ Open session</button>
+      </section>
+      <section class="drawer-section">
+        <p class="eyebrow">/tracks</p>
+        <div id="drawer-tracks"><p class="hand empty-line">No tracks yet.</p></div>
+      </section>
+      <section class="drawer-section">
+        <p class="eyebrow">/assets</p>
+        <div id="drawer-assets"><p class="hand empty-line">No assets yet.</p></div>
+      </section>
+    </div>
+  </aside>
+</div>
+
+<script src="/site/albums.js"></script>
 </body>
 </html>
