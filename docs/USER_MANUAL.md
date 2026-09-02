@@ -369,6 +369,20 @@ All assets live in the canonical location: `~/OneDrive/Hermes/albums/Half-Light-
 
 ---
 
+## 7.5 Screenshots
+
+Page captures live in [`docs/assets/screenshots/`](assets/screenshots/README.md) (mirrored to `~/OneDrive/Hermes/Agents/planning/album-studio/docs/assets/screenshots/` per R7). The naming convention is:
+
+- `01-studio.png` — Maren Sol's session view
+- `02-albums.png` — Album grid
+- `03-library.png` — Cassette wall
+- `04-intake.png` — Intake form
+- `05-guide.png` — Interactive user guide overlay
+
+To capture a fresh screenshot: open the relevant URL in Chrome, take a screenshot (Win+Shift+S, the Snipping Tool, or your favorite capture tool), and drop the PNG into this folder. The README.md in the folder documents the convention.
+
+---
+
 ## 8. API quick reference
 
 | Method | Path | Purpose |
