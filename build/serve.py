@@ -38,13 +38,24 @@ from quart import Quart, jsonify, send_file, request, abort
 
 # Project imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from db import open_db, run_migrations, close_db, DEFAULT_DB_PATH
+# Note: we intentionally do NOT bind db.* names at module top-level here.
+# When tests delete+reimport db.* modules to reset DEFAULT_DB_PATH for
+# per-class tempdbs, top-level bindings like `from db import open_db`
+# would freeze on the FIRST import's function objects (whose __globals__
+# point at the OLD module instance with the wrong DEFAULT_DB_PATH).
+# Instead we do local imports of db.connection inside each handler/route
+# closure so the call always sees the current sys.modules["db.connection"].
 from db.queries import global_status
 from build.singleton import SingletonLock, SingletonLockError
 from build.signals import (
     install_signal_handlers, is_shutdown_requested,
     request_shutdown, DEFAULT_SHUTDOWN_SIGNALS,
 )
+# Day 4: split handlers into their own modules so each set of routes
+# has a single home (albums vs sessions). The Blueprints are registered
+# via register_routes() below.
+from build.handlers_albums import albums_bp
+from build.handlers_sessions import sessions_bp
 
 _log = logging.getLogger("album_studio.daemon")
 
@@ -129,6 +140,11 @@ def register_routes(app: Quart) -> None:
         Streams the MP3 file with proper Range request handling so audio
         scrubbing works in browsers.
         """
+        # Local import so per-test tempdb isolation (which re-imports db.*
+        # modules) is honored — a top-level `from db import open_db`
+        # would freeze on the FIRST import's function object whose
+        # __globals__ reference the wrong module instance.
+        from db.connection import open_db, close_db
         def _lookup():
             conn = open_db()
             try:
@@ -164,21 +180,13 @@ def register_routes(app: Quart) -> None:
 
         return await send_file(str(target), conditional=True, mimetype="audio/mpeg")
 
-    # === Day 4+ placeholders (will be wired in Day 4-5) ===
-
-    @app.route("/api/albums", methods=["GET"])
-    async def list_albums():
-        """List albums (placeholder, Day 4 will add filters)."""
-        from db.albums import list_albums as db_list_albums
-        result = await _run_in_thread(db_list_albums)
-        return jsonify(result)
-
-    @app.route("/api/sessions", methods=["GET"])
-    async def list_sessions():
-        """List sessions (placeholder, Day 4 will add filters)."""
-        from db.sessions import list_sessions as db_list_sessions
-        result = await _run_in_thread(db_list_sessions)
-        return jsonify(result)
+    # === Day 4: albums + sessions handlers (split into modules) ===
+    # The Blueprints from build/handlers_albums.py and
+    # build/handlers_sessions.py own these route groups. We register
+    # them here so the existing Day 3 architecture (one create_app()
+    # factory, single route table) is preserved.
+    app.register_blueprint(albums_bp)
+    app.register_blueprint(sessions_bp)
 
 
 # === Daemon lifecycle ===
@@ -230,7 +238,9 @@ class Daemon:
         _log.info(f"installed signal handlers for {DEFAULT_SHUTDOWN_SIGNALS}")
 
     def run_migrations(self) -> None:
-        result = run_migrations()
+        # Local import so per-test tempdb isolation is honored.
+        from db import run_migrations as _run_migrations
+        result = _run_migrations()
         if result["errors"]:
             _log.error(f"migration errors: {result['errors']}")
             sys.exit(1)
@@ -277,7 +287,8 @@ class Daemon:
                 except Exception as e:
                     _log.warning(f"lock release failed during shutdown: {e}")
             try:
-                close_db()
+                from db.connection import close_db as _close_db
+                _close_db()
             except Exception as e:
                 _log.warning(f"db close failed during shutdown: {e}")
 

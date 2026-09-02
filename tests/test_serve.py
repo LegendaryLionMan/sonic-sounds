@@ -40,10 +40,15 @@ class TestServe(unittest.IsolatedAsyncioTestCase):
         # Set env BEFORE importing db modules
         os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
 
-        # Drop cached db.* modules so they re-resolve DEFAULT_DB_PATH
-        # with our env var.
+        # Drop cached db.* + build.* modules so they re-resolve DEFAULT_DB_PATH
+        # with our env var. The build.* modules must also be dropped because
+        # they cache top-level `from db.queries import ...` references which
+        # would otherwise pin the OLD db.connection.open_db function whose
+        # registered connections would never be closed by our NEW
+        # module's close_all() (see "tool-path commitment" in MEMORY.md).
         for mod_name in list(sys.modules):
-            if mod_name == "db" or mod_name.startswith("db."):
+            if (mod_name == "db" or mod_name.startswith("db.")
+                    or mod_name.startswith("build.")):
                 del sys.modules[mod_name]
 
         # Now (re-)import run_migrations so DEFAULT_DB_PATH is captured

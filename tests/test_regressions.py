@@ -32,15 +32,16 @@ def _fresh_test_db() -> Path:
     conn.commit()
     conn.close()
     # Reset the per-thread cache so the new path is used.
-    db_conn._thread_local = db_conn.threading.local()
+    db_conn._thread_local.clear()
     return p
 
 
 def _cleanup_thread_cache():
     """Reset all per-thread + cross-thread state after a test."""
     close_all()
-    db_conn._thread_local = db_conn.threading.local()
-    db_conn._thread_registry.clear()
+    import db.connection as dc
+    dc._thread_local.clear()
+    dc._thread_registry.clear()
 
 
 class TestReadOnlyConnection(unittest.TestCase):
@@ -307,7 +308,9 @@ class TestCloseAllAcrossThreads(unittest.TestCase):
         self.db = _fresh_test_db()
 
     def tearDown(self):
-        db_conn._thread_local = db_conn.threading.local()
+        from db.connection import close_all
+        close_all()
+        db_conn._thread_local.clear()
         db_conn._thread_registry.clear()
 
     def test_close_all_closes_connections_from_other_threads(self):
@@ -382,7 +385,7 @@ class TestConnectionCloseOnLookup(unittest.TestCase):
         conn = open_db(self.db)
         conn.close()
         # Cache still has it
-        cache = db_conn._thread_local.connections
+        cache = db_conn._thread_local[threading.get_ident()]
         self.assertEqual(len(cache), 1)
         # Now the fixed pattern
         fresh = open_db(self.db)
@@ -398,7 +401,7 @@ class TestConnectionCloseOnLookup(unittest.TestCase):
 
         # Now apply the fix: close_db() pops the cache
         close_db(self.db)
-        cache = db_conn._thread_local.connections
+        cache = db_conn._thread_local[threading.get_ident()]
         self.assertEqual(len(cache), 0)
         # Next open_db returns a fresh connection
         new_conn = open_db(self.db)
@@ -516,7 +519,7 @@ class TestRegistryNoLeak(unittest.TestCase):
         import db.connection as dc
         from db.connection import close_all
         close_all()
-        dc._thread_local = dc.threading.local()
+        dc._thread_local.clear()
         dc._thread_registry.clear()
         self.db = _fresh_test_db()
 

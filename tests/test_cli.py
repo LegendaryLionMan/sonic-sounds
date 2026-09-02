@@ -45,11 +45,12 @@ class TestCli(unittest.TestCase):
         # the tempdb at import time.
         os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
 
-        # Drop any cached db.* modules so they re-resolve DEFAULT_DB_PATH
+        # Drop any cached db.* + build.* modules so they re-resolve DEFAULT_DB_PATH
         # with our env var. After this block, importing db.* will read
         # ALBUM_STUDIO_DB_PATH from the environment.
         for mod_name in list(sys.modules):
-            if mod_name == "db" or mod_name.startswith("db."):
+            if (mod_name == "db" or mod_name.startswith("db.")
+                    or mod_name.startswith("build.")):
                 del sys.modules[mod_name]
 
         from db import run_migrations
