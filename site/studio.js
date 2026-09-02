@@ -278,7 +278,9 @@ function renderTracks() {
   // Day 10: wire audio player — click ▶ on a track to load + play it.
   // The /api/audio/<track_id> endpoint supports HTTP Range so the
   // <audio> element can scrub without re-downloading the file.
-  $('#track-list .t-play').forEach(btn => {
+  // NOTE: $ = document.querySelector (single Element), so use
+  // document.querySelectorAll for multi-element iteration.
+  document.querySelectorAll('#track-list .t-play').forEach(btn => {
     btn.addEventListener('click', () => loadTrack(btn.dataset.trackId, btn.dataset.trackTitle));
   });
 }

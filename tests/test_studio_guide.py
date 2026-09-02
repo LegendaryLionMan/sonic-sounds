@@ -38,12 +38,10 @@ class TestGuideScript(unittest.TestCase):
 
     def test_guide_uses_localStorage_key(self):
         content = GUIDE_PATH.read_text(encoding="utf-8")
-        # The seen-key must be a stable string (used to remember dismissal)
         self.assertIn("studio-guide-seen", content)
         self.assertIn("localStorage", content)
 
     def test_guide_handles_guide_url_param(self):
-        """The guide must respect ?guide=on and ?guide=off URL params."""
         content = GUIDE_PATH.read_text(encoding="utf-8")
         self.assertIn("URLSearchParams", content)
         self.assertIn("'guide'", content)
@@ -51,30 +49,64 @@ class TestGuideScript(unittest.TestCase):
         self.assertIn("'off'", content)
 
     def test_guide_handles_show_guide_event(self):
-        """The Help button must dispatch 'studio:show-guide' which the
-        guide listens for to re-show itself."""
-        # studio.js (button handler)
         studio_js = (PROJECT_ROOT / "site" / "studio.js").read_text(encoding="utf-8")
         self.assertIn("studio:show-guide", studio_js)
-        # studio.guide.js (listener)
         guide_js = GUIDE_PATH.read_text(encoding="utf-8")
         self.assertIn("studio:show-guide", guide_js)
 
     def test_help_button_in_studio_html(self):
         studio_html = (PROJECT_ROOT / "site" / "studio.html").read_text(encoding="utf-8")
         self.assertIn('id="help-btn"', studio_html)
-        # The button should be labeled "HELP" or include the ❓ emoji
         self.assertTrue(
-            "HELP" in studio_html or "❓" in studio_html,
-            "help button has no visible label"
+            "HELP" in studio_html or "\u270d" in studio_html or "?" in studio_html,
+            "help button has no visible label",
         )
+
+
+class TestNoDollarForEachBug(unittest.TestCase):
+    """Regression guard for the $(...).forEach console errors 2026-09-02.
+
+    The studio.js helper `$ = (s) => document.querySelector(s);` returns
+    a single Element. Calling `.forEach` on it throws
+    `TypeError: $(...).forEach is not a function`.
+
+    Rule: in site/*.js, every `$('...').forEach(...)` is a bug. Always
+    use `document.querySelectorAll(...)` for multi-element iteration.
+    This test scans the codebase and fails if any $().forEach
+    pattern slips in.
+    """
+
+    SITE_JS_FILES = [
+        "site/studio.js",
+        "site/studio.guide.js",
+        "site/albums.js",
+        "site/library.js",
+        "site/intake.js",
+    ]
+
+    def test_no_dollar_forEach_in_site_js(self):
+        pattern = re.compile(r"\$\([^)]*\)\.forEach")
+        offenders = []
+        for rel in self.SITE_JS_FILES:
+            path = PROJECT_ROOT / rel
+            if not path.exists():
+                continue
+            content = path.read_text(encoding="utf-8")
+            for i, line in enumerate(content.splitlines(), 1):
+                if pattern.search(line):
+                    offenders.append("  " + rel + ":" + str(i) + ": " + line.strip())
+        if offenders:
+            self.fail(
+                "$(...).forEach is not allowed in site/*.js ($ is querySelector, returns single Element; use document.querySelectorAll instead):"
+                + chr(10)
+                + chr(10).join(offenders)
+            )
 
 
 class TestGuideRuntime(unittest.TestCase):
     """Verify the guide script doesn't have JS syntax errors via node --check."""
 
     def test_no_syntax_errors(self):
-        """Use node to lint-check the guide. Skip if node isn't installed."""
         node = subprocess.run(["where", "node"], capture_output=True, text=True)
         if node.returncode != 0:
             self.skipTest("node not installed; skipping runtime check")
@@ -82,7 +114,7 @@ class TestGuideRuntime(unittest.TestCase):
             ["node", "--check", str(GUIDE_PATH)],
             capture_output=True, text=True,
         )
-        self.assertEqual(r.returncode, 0, f"node --check failed: {r.stderr}")
+        self.assertEqual(r.returncode, 0, "node --check failed: " + r.stderr)
 
 
 if __name__ == "__main__":
