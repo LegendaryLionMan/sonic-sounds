@@ -9,6 +9,8 @@ __pycache__/
 *.pyd
 .Python
 *.egg-info/
+# Local skill mirror (mirrored to OneDrive, not tracked here)
+/.agents/
 
 # --- Open Design artifacts (rebuildable, ~70 KB per prototype) ---
 .od-skills/
