@@ -178,6 +178,11 @@ class TestFinalizeHandler(unittest.IsolatedAsyncioTestCase):
         _drop_isolation()
         import shutil
         shutil.rmtree(cls.tmpdir, ignore_errors=True)
+        # The HTTP test creates a stray hlh/_master/ in the project root
+        # when the handler runs in CWD. Clean it up.
+        stray = PROJECT_ROOT / "hlh"
+        if stray.exists():
+            shutil.rmtree(stray, ignore_errors=True)
 
     def setUp(self):
         from db.connection import close_all
