@@ -100,9 +100,7 @@ function renderSidebar() {
   }
   $('#album-title').textContent = session.album_title || session.album_id || session.id;
   $('#album-artist').textContent = session.album_artist || session.primary_artist_id || '';
-  const layer = session.current_layer || 1;
-  $('#stat-layer').textContent = String(layer).padStart(2,'0');
-  $('#stat-phase').textContent = (PHASES[layer-1] || `L${layer}`).toUpperCase();
+  // layer/phase are owned by renderPipeline() (derived from build events)
   $('#stat-runtime').textContent = fmtMs(session.elapsed_ms || session.current_position_ms);
   $('#stat-idle').textContent = relativeTime(session.updated_at || session.last_activity || session.created_at);
   $('#meta-session').textContent = session.id;
@@ -125,19 +123,30 @@ function setStatusPill(text, cls) {
 
 /* pipeline */
 function renderPipeline() {
-  const session = sessions.find(s => s.id === currentSessionId);
-  const layer = session ? (session.current_layer || 1) : 0;
+  // Derive current_layer from the most recent build event's payload.
+  // The session row doesn't store layer — layer is a property of the
+  // build event stream. This means closing/reopening a session
+  // preserves layer progress (it's in the events log, not on the row).
+  let layer = 0;
+  for (const e of events) {
+    if (e.kind === "build" && e.payload && typeof e.payload.layer === "number") {
+      layer = Math.max(layer, e.payload.layer);
+    }
+  }
   const cells = PHASES.map((name, i) => {
     const num = i + 1;
     let state = 'upcoming';
-    if (session && num < layer) state = 'done';
-    else if (session && num === layer) state = 'active';
+    if (layer && num < layer) state = 'done';
+    else if (layer && num === layer) state = 'active';
     return `<div class="pipe-cell ${state}">
       <span class="pipe-cell-num">${String(num).padStart(2,'0')}</span>
       <span class="pipe-cell-name">${esc(name)}</span>
     </div>`;
   }).join('');
   $('#pipeline').innerHTML = cells;
+  // Sidebar layer stat also reflects derived value
+  $('#stat-layer').textContent = layer ? String(layer).padStart(2,'0') : '—';
+  $('#stat-phase').textContent = layer ? (PHASES[layer-1] || `L${layer}`).toUpperCase() : '—';
 }
 
 /* tracks */

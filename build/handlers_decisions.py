@@ -138,24 +138,43 @@ async def update_decision(decision_id: int):
 
     All three are optional — supply at least one. locked_at is bumped
     to the current time on any successful update.
+
+    Distinguishing "field omitted" from "field explicitly null":
+    - Field absent from payload → skip (no-op for that field)
+    - Field present with value `null` → treat as "clear this field"
+      (set to NULL in the db)
+    - Field present with non-null value → update to that value
+
     Returns 404 if the decision doesn't exist.
-    Returns 400 if no updatable fields are supplied.
+    Returns 400 if no updatable fields are supplied at all (i.e. the
+    payload was empty or every field was missing).
     """
     payload: Any = await request.get_json(silent=True) or {}
-    answer = payload.get("answer")
-    rationale = payload.get("rationale")
-    source_doc = payload.get("source_doc")
 
-    if answer is None and rationale is None and source_doc is None:
+    # Sentinel distinguishes "key not present" from "key present with null".
+    _MISSING = object()
+    answer = payload.get("answer", _MISSING)
+    rationale = payload.get("rationale", _MISSING)
+    source_doc = payload.get("source_doc", _MISSING)
+
+    has_answer = answer is not _MISSING
+    has_rationale = rationale is not _MISSING
+    has_source_doc = source_doc is not _MISSING
+
+    if not (has_answer or has_rationale or has_source_doc):
         return jsonify({"error": "supply at least one of: answer, rationale, source_doc"}), 400
 
-    row = await _run(
-        db_decisions.update_decision,
-        decision_id,
-        answer=answer,
-        rationale=rationale,
-        source_doc=source_doc,
-    )
+    # db layer accepts None as "set to NULL" (for explicit clears) and
+    # treats absent keys as "don't touch" by passing a sentinel through.
+    kwargs = {}
+    if has_answer:
+        kwargs["answer"] = answer  # may be None (clear) or string (update)
+    if has_rationale:
+        kwargs["rationale"] = rationale
+    if has_source_doc:
+        kwargs["source_doc"] = source_doc
+
+    row = await _run(db_decisions.update_decision, decision_id, **kwargs)
     if not row:
         return jsonify({"error": "decision not found"}), 404
     return jsonify(row)

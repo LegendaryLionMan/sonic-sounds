@@ -47,7 +47,9 @@ def create_event(session_id: str, role: str, kind: str, content: str = None,
     Returns the inserted event dict.
     """
     conn = open_db(db_path)
-    payload_json = json.dumps(payload) if payload else None
+    # `payload is not None` (not `if payload`) — empty dict {} is a
+    # valid payload and must round-trip as {} not None.
+    payload_json = json.dumps(payload) if payload is not None else None
     cur = conn.execute("""
         INSERT INTO events (id, session_id, album_id, role, kind, content, payload_json)
         VALUES (?, ?, ?, ?, ?, ?, ?)

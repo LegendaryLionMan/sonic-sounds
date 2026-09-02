@@ -31,6 +31,12 @@ def _row_to_dict(row) -> Optional[dict]:
     return dict(row) if row else None
 
 
+# Module-level sentinel for update_decision() — distinguishes "key
+# absent from kwargs" from "key present with None". Lives at module
+# scope so the default is a stable identity (not re-created per call).
+_SENTINEL = object()
+
+
 def create_decision(code: str, tier: str, question: str = None,
                    answer: str = None, *,
                    rationale: str = None,
@@ -43,14 +49,21 @@ def create_decision(code: str, tier: str, question: str = None,
     The (album_id, code) pair is intended to be unique per album. We append
     rather than upsert — multiple walks may produce multiple rows for the
     same code (each walk is its own history).
+
+    `locked_at` is set to the current time on create (with subsecond
+    precision so consecutive creates + patches stay strictly ordered) —
+    a fresh decision IS the lock event (otherwise the timestamp would
+    be unknown until the user PATCHes, which they may never do).
     """
+    import time as _time
+    locked_at = _time.strftime("%Y-%m-%d %H:%M:%S", _time.localtime()) + f".{int(_time.time()*1000)%1000:03d}"
     conn = open_db(db_path)
     cur = conn.execute("""
         INSERT INTO decisions (session_id, album_id, code, tier, question,
-                                answer, rationale, source_doc)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                answer, rationale, source_doc, locked_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (session_id, album_id, code, tier, question, answer, rationale,
-          source_doc))
+          source_doc, locked_at))
     inserted_id = cur.lastrowid
     conn.commit()
     return get_decision_by_id(inserted_id, db_path=db_path)
@@ -109,23 +122,49 @@ def list_decisions(*, album_id: str = None,
 
 
 def update_decision(decision_id: int, *,
-                  answer: str = None,
-                  rationale: str = None,
-                  source_doc: str = None,
+                  answer=_SENTINEL,
+                  rationale=_SENTINEL,
+                  source_doc=_SENTINEL,
                   db_path: Optional[Union[str, Path]] = None) -> Optional[dict]:
-    """Update a decision's answer/rationale/source_doc."""
+    """Update a decision's answer/rationale/source_doc.
+
+    Sentinel-based API distinguishes three cases:
+    - Key absent from kwargs → don't touch the field
+    - Key present with non-None value → update to that value
+    - Key present with None → set the field to NULL (explicit clear)
+
+    This matches the handler's three-way semantics (omit = no-op,
+    null = clear, value = update). The default sentinel is module-level
+    so callers can use the function without specifying all three args.
+
+    `locked_at` includes subsecond precision (Python-side) so two
+    consecutive patches in the same wall-clock second produce
+    monotonically-increasing timestamps. Without this, locked_at
+    collisions would silently break audit-trail ordering.
+    """
+    import time as _time
     conn = open_db(db_path)
     fields = []
     values = []
-    if answer is not None:
-        fields.append("answer = ?"); values.append(answer)
-    if rationale is not None:
-        fields.append("rationale = ?"); values.append(rationale)
-    if source_doc is not None:
-        fields.append("source_doc = ?"); values.append(source_doc)
+    if answer is not _SENTINEL:
+        if answer is None:
+            fields.append("answer = NULL")
+        else:
+            fields.append("answer = ?"); values.append(answer)
+    if rationale is not _SENTINEL:
+        if rationale is None:
+            fields.append("rationale = NULL")
+        else:
+            fields.append("rationale = ?"); values.append(rationale)
+    if source_doc is not _SENTINEL:
+        if source_doc is None:
+            fields.append("source_doc = NULL")
+        else:
+            fields.append("source_doc = ?"); values.append(source_doc)
     if not fields:
         return get_decision_by_id(decision_id, db_path=db_path)
-    fields.append("locked_at = datetime('now')")
+    # Subsecond precision: %Y-%m-%d %H:%M:%S.fff (SQLite accepts this).
+    fields.append("locked_at = ?"); values.append(_time.strftime("%Y-%m-%d %H:%M:%S", _time.localtime()) + f".{int(_time.time()*1000)%1000:03d}")
     values.append(decision_id)
     conn.execute(f"UPDATE decisions SET {', '.join(fields)} WHERE id = ?", values)
     conn.commit()
