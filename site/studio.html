@@ -2,61 +2,95 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>album-studio · studio</title>
-<link rel="stylesheet" href="/css/components.css">
-<link rel="stylesheet" href="/css/ux-states.css">
+<title>album-studio · studio · mixtape '85</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/studio.module.css">
 </head>
 <body>
+
 <nav class="topbar">
-  <span class="crumb">album-studio<b> / studio · maren sol · half-light hours</b></span>
-  <span class="pill"><span class="dot"></span> 03 · HALF-LIGHT HOURS · MMX-IN-1034</span>
+  <span class="crumb">album-studio<b> / studio</b></span>
+  <select id="session-picker" class="picker" aria-label="Select session"></select>
+  <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">no session</span></span>
   <span class="grow"></span>
-  <button class="command yellow">▷ PRESS PLAY</button>
-  <button class="command">⌘K</button>
+  <button class="cmd" id="back-btn">← Albums</button>
+  <button class="cmd">⌘K</button>
 </nav>
 
-<main class="shell-page">
-  <section class="hero-band">
-    <p class="eyebrow">/now-playing · track 03 of 10</p>
-    <h1>half-light hours</h1>
-    <p class="hand" style="margin-bottom: 8px;">by <strong style="color: var(--ink); font-family: var(--display); text-transform: uppercase; letter-spacing: 0.04em;">Maren Sol</strong></p>
-    <p class="hand">Layer 03 of 12 · Lyrics finalize. The tape is rolling.</p>
-    <div class="hero-meta-stacked">
-      <div class="card"><span class="eyebrow">LAST ACTIVITY</span><span>2 minutes ago</span></div>
-      <div class="card"><span class="eyebrow">RUNTIME</span><span>37:14</span></div>
-      <div class="card"><span class="eyebrow">PHASE</span><span>Lyrics finalize · 80%</span></div>
-    </div>
-  </section>
+<div class="studio-shell">
 
-  <section class="shell-page">
-    <p class="eyebrow">/pipeline · 12-layer</p>
-    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">the build</h2>
-    <div class="pipeline-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
-      <div class="card"><span class="badge done">01</span> Brief</div>
-      <div class="card"><span class="badge done">02</span> Lyrics Drafts</div>
-      <div class="card"><span class="badge active">03</span> Lyrics Finalize</div>
-      <div class="card"><span class="badge">04</span> Vocal Recordings</div>
-      <div class="card"><span class="badge">05</span> Instrumental</div>
-      <div class="card"><span class="badge">06</span> Cover Art</div>
-    </div>
-  </section>
+  <aside class="sidebar">
+    <p class="eyebrow">/session</p>
+    <h1 id="album-title" class="album-title">—</h1>
+    <p class="hand artist" id="album-artist">—</p>
 
-  <section class="shell-page">
-    <p class="eyebrow">/chat · pending</p>
-    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">chat</h2>
-    <div class="card">
-      <p class="hand">Empty for now. The daemon will land events here as the pipeline progresses.</p>
+    <div class="stat-row">
+      <div class="stat-tile"><span class="stat-key">LAYER</span><span class="stat-val" id="stat-layer">—</span></div>
+      <div class="stat-tile"><span class="stat-key">PHASE</span><span class="stat-val" id="stat-phase">—</span></div>
     </div>
-  </section>
-</main>
+
+    <div class="stat-row">
+      <div class="stat-tile"><span class="stat-key">RUNTIME</span><span class="stat-val" id="stat-runtime">—</span></div>
+      <div class="stat-tile"><span class="stat-key">LAST ACTIVITY</span><span class="stat-val" id="stat-idle">—</span></div>
+    </div>
+
+    <div class="lifecycle">
+      <button class="lifecycle-btn" id="btn-pause">⏸ PAUSE</button>
+      <button class="lifecycle-btn primary" id="btn-resume">▶ RESUME</button>
+      <button class="lifecycle-btn danger" id="btn-complete">✓ COMPLETE</button>
+    </div>
+
+    <div class="meta-list">
+      <div class="meta-row"><span class="mk">SESSION</span><span class="mv" id="meta-session">—</span></div>
+      <div class="meta-row"><span class="mk">ALBUM ID</span><span class="mv" id="meta-album-id">—</span></div>
+      <div class="meta-row"><span class="mk">OPENED</span><span class="mv" id="meta-opened">—</span></div>
+      <div class="meta-row"><span class="mk">UPDATED</span><span class="mv" id="meta-updated">—</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/pipeline · 12-layer build</p>
+        <h2>the build</h2>
+      </header>
+      <div class="pipeline" id="pipeline"></div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/tracks · this album</p>
+        <h2>tracks</h2>
+      </header>
+      <div class="track-list" id="track-list">
+        <p class="hand empty-line">No tracks yet.</p>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/assets · this album</p>
+        <h2>assets</h2>
+      </header>
+      <div class="asset-list" id="asset-list">
+        <p class="hand empty-line">No assets yet.</p>
+      </div>
+    </section>
+
+  </main>
+
+</div>
 
 <footer class="footer">
-  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
-  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
-  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
+  <div class="health"><span class="dot"></span> daemon · <span id="daemon-host">127.0.0.1:8765</span></div>
   <span class="grow"></span>
-  <span>Layer 03 · Lyrics finalize</span>
+  <span class="foot-meta"><span id="foot-meta-text">—</span></span>
 </footer>
+
+<!-- toast container -->
+<div class="toast" id="toast" hidden></div>
+
+<script src="/site/studio.js"></script>
 </body>
 </html>
