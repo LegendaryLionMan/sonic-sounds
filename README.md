@@ -1,180 +1,87 @@
 # album-studio
 
-> An HTML front door for the music-album-planning-questionnaire and
-> full-album-release-package skills. Plan an album, track the 12-layer
-> build pipeline, hand off cleanly to the agent.
+> **Plan an album. Walk it through the 12-layer build pipeline. Ship a final release.**
+> Mixtape '85 era (v3.4) — replaces the cassette-mesh / Editorial Zine era retired 2026-08-05.
 
-**Project type:** evolving the existing album-creation skill stack with a
-project workspace (intake form + dashboard), not a standalone app.
-
-**Schema version:** v2.2 (2026-08-03) — see `intake-data/schema.json`.
+A daemon-driven workspace for music-album creation. The user answers 26 questions in the intake form, the brief locks into the database, and the 12-layer build pipeline executes layer-by-layer via click-to-invoke buttons in the studio.
 
 ---
 
-## What's in this project
+## 🎵 The 30-second tour
+
+1. **Start the daemon:** `python -m build.serve --port 8765`
+2. **Open in Chrome:** http://127.0.0.1:8765/site/studio.html
+3. **See the seeded album:** Maren Sol / "Half-Light Hours" — 10 tracks, dream-folk, 40 min
+4. **Click `[INVOKE]`** on any of the 9 pipeline layers to run it
+5. **Click `[▷]`** next to any track to play the MP3 (streams from OneDrive)
+
+That's it. The daemon runs in the background; 5 sweepers (idle-pause, WAL checkpoint, quota snapshot, OneDrive mirror, log rotate) keep it healthy.
+
+---
+
+## 📚 Documentation
+
+| Doc | For | Description |
+|---|---|---|
+| **[docs/USER_MANUAL.md](docs/USER_MANUAL.md)** | End users | How to use the UI: intake → studio → finalize → reopen, with mermaid UX flow + screenshots |
+| **[docs/TECHNICAL.md](docs/TECHNICAL.md)** | Developers | Architecture, db schema, HTTP layer, build runner, sweepers, frontend data flow, test pyramid |
+| **[docs/STRUCTURE-POLICY.md](docs/STRUCTURE-POLICY.md)** | All | Folder layout, R1-R7 rules, mirror discipline |
+
+## ⚙️ Quick reference
+
+```bash
+# Setup
+python -m db.seed --force             # populate Maren Sol / Half-Light Hours
+python -m build.serve --port 8765    # start daemon (port 8765 = default)
+python -m pytest tests/ build/ -q     # 377 tests
+
+# E2E
+python e2e/run_all.py                # 122/122 headless UX checks
+python e2e/test_playwright_e2e.py    # 16/16 Playwright checks (needs Playwright installed)
+
+# Operational
+python -m scripts.verify_mirror       # md5 verify OneDrive ↔ albums/
+python -m scripts.finalize_album <album_id> --skip-mastering   # dry-run finalize
+```
+
+---
+
+## 🏗 The 12-layer pipeline
+
+Per `pipeline-deps.json`:
 
 ```
-album-studio/
-├── README.md                      ← this file
-├── DESIGN.md                      ← visual identity tokens (palette, type, motif)
-├── site/
-│   ├── intake.html                ← 26-topic intake form (the front door)
-│   └── dashboard.html             ← 12-layer pipeline status board
-├── intake-data/
-│   ├── schema.json                ← JSON Schema for the exported brief (v2.2)
-│   └── <slug>.json                ← per-album exported briefs (one per project)
-├── concept-briefs/
-│   └── <slug>/CONCEPT-BRIEF.md    ← the handoff to full-album-release-package
-├── music/
-│   └── <slug>/{lyrics,music,...}  ← output of full-album-release-package
-├── scripts/
-│   ├── lyrics-to-lrc.py           ← lyrics/*.md → lyrics-lrc/*.lrc
-│   ├── tag-album.py               ← ID3v2.3 embed (cover + lyrics + tags)
-│   ├── generation-manifest.py     ← per-track manifest writer (NEW v2.2)
-│   └── check-sonic-drift.py       ← build-time guard against M09_sonicDNA drift (NEW v2.2)
-└── .meta/
-    ├── state.json                 ← dashboard reads this (12 layers, statuses)
-    └── sections-3-and-4.md        ← intake + dashboard UX specs (planning archive)
+01 brief                    [manual]   02 lyrics_drafts          [music.generate]
+03 lyrics_finalize          [music.generate]   04 vocal_recordings    [music.generate]
+05 instrumental            [music.generate]   06 cover_art           [image.generate]
+07 cassette_sticker        [image.generate]   08 audio_mastering     [manual]
+09 metadata_isrc           [manual]   10 distribution           [manual]
+11 press_kit                [manual]   12 finalize               [manual]
 ```
 
----
-
-## 🛡 The sonic-DNA guard (v2.2)
-
-Schema v2.2 introduces **M09_sonicDNA** — a frozen-at-approval snapshot of the
-album's sonic direction (vocal style, genre, mood, instruments, references,
-tempo profile). The build skill MUST hold against this on every regen.
-
-**Why:** the Twenty-Two build (2026-08-03) showed the failure mode clearly —
-the schema locked "90s grunge with Scott Weiland vocals" but a re-gen silently
-switched to "hard rock with Axl Rose vocals." The schema and the artifact
-DRIFTED without anyone noticing until the user pushed back.
-
-**How it works:**
-
-1. When the brief is approved, the agent fills `M09_sonicDNA.value` in the
-   intake JSON with the locked flags.
-2. After every `mmx music generate` call, `scripts/generation-manifest.py`
-   writes `music/<slug>.generation-manifest.json` with the exact params used.
-3. Before any regen, `scripts/check-sonic-drift.py` compares the proposed
-   params against the locked M09_sonicDNA and exits non-zero if drift is
-   detected.
-4. The build halts unless the user explicitly approves drift with
-   `--allow-drift-fields`.
-
-This is the studio's defense against silent sonic pivots. See
-`planning/2026-08-03/twenty-two-as-exercise-retro.md` for the full post-mortem.
+The studio displays the first 9 layers. The remaining 3 are admin-only.
 
 ---
 
-## How to use it
+## 📊 Status
 
-### 1. Start a new album — open the intake form
-
-Open `site/intake.html` in a browser (double-click or `start site\intake.html` on Windows).
-
-The form is the **21-topic questionnaire** from the existing
-`music-album-planning-questionnaire` skill. Fill the 8 mandatory topics first;
-the export button stays disabled until all 8 are filled.
-
-When you click **Generate CONCEPT-BRIEF**, the form downloads a JSON file
-like `intake-data/<album-slug>.json`.
-
-### 2. Hand the brief to the agent
-
-In a chat with Penelope (me), drop the JSON file path:
-
-> "Approve brief `intake-data/maren-sol-half-light-hours.json`"
-
-I read the JSON, write `concept-briefs/<slug>/CONCEPT-BRIEF.md` from the
-template, and start `full-album-release-package` Layer 1 (Artist brand).
-
-### 3. Watch the pipeline — open the dashboard
-
-Open `site/dashboard.html` in a browser. The page reads `.meta/state.json`
-every 30 seconds and renders the 12 layers with their current status.
-
-The page also shows the **next action** (what you need to do right now to
-keep the pipeline moving).
-
-### 4. Per-layer checkpoints
-
-The build pipeline has two explicit approval gates:
-
-- **STEP 1.5** — Lyrics review (after Layer 2 writes 10 `.md` lyrics files,
-  before Layer 3 generates any audio)
-- **STEP 1.7** — Prompt review (after Layer 3 composes 10 music prompts,
-  before Layer 3 spends any music API quota)
-
-Both gates halt the pipeline. The dashboard updates the relevant layer to
-`blocked` and surfaces the next action.
+- **Tests:** 377 passing + 2 skipped (run with `pytest tests/ build/`)
+- **E2E:** 122/122 headless UX + 16/16 Playwright = 138/138 distinct checks
+- **Daemon subsystems:** 6/6 ok (audio, build_runner, db, http, static, sweepers)
+- **Endpoints:** 30+ HTTP routes (albums, sessions, events, decisions, build, intake, audio, cover)
+- **Sweepers:** 5 daemon threads (idle_pause, wal_checkpoint, quota, mirror, log_rotate)
+- **Frontends:** 6 pages (index, intake, albums, library, studio, dashboard)
+- **Canonical:** `~/OneDrive/Hermes/albums/Half-Light-Hours/` (per R10)
 
 ---
 
-## How the project relates to the existing skills
+## 🔗 Related
 
-| This project | Existing skill |
-|---|---|
-| `site/intake.html` (the form) | `music-album-planning-questionnaire` (the conversation) |
-| `intake-data/<slug>.json` (the export) | the questionnaire's output contract |
-| `concept-briefs/<slug>/CONCEPT-BRIEF.md` | the questionnaire's brief format |
-| `site/dashboard.html` (the status board) | `full-album-release-package` (the 12 layers) |
-| `.meta/state.json` | the build skill's running state |
-| `music/<slug>/{lyrics,music,...}` | the build skill's output |
-| `music/<slug>.generation-manifest.json` | per-track build manifest (NEW v2.2) |
-| `scripts/check-sonic-drift.py` | M09_sonicDNA regen guard (NEW v2.2) |
-
-The site is **not** a replacement for the agent — it's a **surface** that
-makes the skill workflow visible and inspectable. The agent still does
-all the heavy lifting.
+- **Skill:** `music-album-planning-questionnaire` (drives the content; album-studio drives the state)
+- **Skill:** `album-studio-day-ship-pattern` (the workflow this project follows)
+- **Skill:** `album-studio-structure-policy` (folder layout rules)
+- **Memory:** `~1000 lines of operational memory` (msys traps, hermes-venv contamination, bash double-backslash escaping, etc.)
 
 ---
 
-## Visual identity
-
-See `DESIGN.md` for the full token spec:
-
-- Direction: editorial / zine (warm paper, big serif, indie-press)
-- Palette: warm paper `#F4EFE6`, ink `#1B1714`, terracotta accent `#B8503A`
-- Typography: Cormorant Garamond display / Lora body / JetBrains Mono mono
-- Motif: the half-lit window from Half-Light Hours
-- Single accent, no gradients, no rounded corners
-
-Both `site/intake.html` and `site/dashboard.html` consume these tokens
-via CSS custom properties at the top of each file.
-
----
-
-## Project layout & mirrors
-
-**Canonical layout:** see [`docs/STRUCTURE-POLICY.md`](docs/STRUCTURE-POLICY.md).
-That document is the **single source of truth** for where artifacts go. When in
-doubt: load it. When you create a new dir: check it against the policy first.
-When the policy is wrong: edit the policy, then place the artifact.
-
-**Mirror rule:** per the user's standard.
-
-| Source | Mirror |
-|---|---|
-| `~/Documents/Projects/album-studio/` | `~/OneDrive/Hermes/Agents/planning/album-studio/` |
-
-After every change, both copies must `md5sum` byte-match. The mirror loop is
-documented in `docs/STRUCTURE-POLICY.md` § R7.
-
----
-
-## What this project does NOT do
-
-- Not a backend / API. Both pages are pure static HTML + inline CSS/JS.
-- Not a real-time collaboration tool. Updates flow user → agent → state.json.
-- Not a lyrics editor. The agent writes lyrics; the user reviews them.
-- Not a music streaming service. The agent delivers MP3s; the user uploads
-  to distributors.
-- Not a distribution platform. The `album-distribution-launch` skill owns
-  that (DistroKid / RouteNote / etc).
-
----
-
-## License
-
-Personal project. Not for redistribution.
+**Plan v3.4** complete (Days 1-12 all shipped). See [docs/TECHNICAL.md §10](docs/TECHNICAL.md#10-day-by-day-commit-history) for the day-by-day commit history.

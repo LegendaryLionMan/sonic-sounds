@@ -484,6 +484,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btn-resume').addEventListener('click', () => action('resume'));
   $('#btn-complete').addEventListener('click', () => action('complete'));
   $('#back-btn').addEventListener('click', () => { location.href = '/site/albums.html'; });
+  // Day 13: ❓ Help button — re-trigger the interactive user guide
+  $('#help-btn').addEventListener('click', () => {
+    window.dispatchEvent(new Event('studio:show-guide'));
+  });
 
   refresh();
   liveInterval = setInterval(refresh, 15000);
