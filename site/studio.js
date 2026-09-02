@@ -45,7 +45,11 @@ let currentSessionId = null;
 let currentAlbum = null;
 let tracks = [];
 let assets = [];
+let events = [];
+let decisions = [];
 let liveInterval = null;
+let eventsPollInterval = null;
+let eventsCursorId = null;
 
 /* toast */
 let toastTimer = null;
@@ -160,6 +164,71 @@ function renderAssets() {
     </div>`).join('');
 }
 
+/* events (chat log) */
+function renderEvents() {
+  const list = $('#event-list');
+  if (!events.length) { list.innerHTML = '<p class="hand empty-line">No events yet.</p>'; return; }
+  list.innerHTML = events.map(e => `
+    <div class="event-row ${esc(e.role)}">
+      <span class="e-role">${esc(e.role)}</span>
+      <span class="e-kind">${esc(e.kind)}</span>
+      <span class="e-content">${esc(e.content||'')}</span>
+    </div>`).join('');
+}
+
+/* Poll for new events since last seen id. Fast (2s) while session active,
+   slower (30s) otherwise. Updates the on-screen list in-place. */
+async function pollEvents() {
+  if (!currentSessionId) return;
+  try {
+    const url = eventsCursorId
+      ? `/api/sessions/${encodeURIComponent(currentSessionId)}/events?since_id=${eventsCursorId}`
+      : `/api/sessions/${encodeURIComponent(currentSessionId)}/events?limit=100`;
+    const rows = await api(url);
+    if (Array.isArray(rows) && rows.length > 0) {
+      const existing = new Set(events.map(e => e.id));
+      const newOnes = rows.filter(e => !existing.has(e.id));
+      events = events.concat(newOnes);
+      eventsCursorId = Math.max(eventsCursorId || 0, ...rows.map(e => e.id));
+      renderEvents();
+    } else if (rows.length === 0) {
+      // first poll — set cursor
+      eventsCursorId = Math.max(eventsCursorId || 0, ...(events.map(e => e.id)));
+    }
+  } catch (e) {
+    // Polling errors are non-fatal; the next tick will retry.
+    console.warn('event poll failed', e);
+  }
+}
+
+/* decisions (locked choices) */
+function renderDecisions() {
+  const list = $('#decision-list');
+  if (!decisions.length) { list.innerHTML = '<p class="hand empty-line">No decisions yet.</p>'; return; }
+  list.innerHTML = decisions.map(d => {
+    const tier = d.tier || 'recommended';
+    const code = d.code || '';
+    const question = d.question || '';
+    const answer = d.answer || '(no answer)';
+    const rationale = d.rationale ? `<p class="d-rationale">"${esc(d.rationale)}"</p>` : '';
+    const meta = [];
+    if (d.source_doc) meta.push(`<span>DOC: ${esc(d.source_doc)}</span>`);
+    if (d.locked_at) meta.push(`<span>LOCKED ${esc(d.locked_at)}</span>`);
+    const metaRow = meta.length ? `<div class="d-meta">${meta.join('')}</div>` : '';
+    return `
+    <div class="decision-card tier-${esc(tier)}">
+      <div class="d-head">
+        <span class="d-code">${esc(code)}</span>
+        <span class="d-tier tier-badge-${esc(tier)}">${esc(tier)}</span>
+      </div>
+      ${question ? `<p class="d-question">${esc(question)}</p>` : ''}
+      <p class="d-answer">${esc(answer)}</p>
+      ${rationale}
+      ${metaRow}
+    </div>`;
+  }).join('');
+}
+
 /* footer */
 function renderFooter() {
   $('#foot-meta-text').textContent = `${sessions.length} session${sessions.length===1?'':'s'} · 9 layers · mixtape '85`;
@@ -191,18 +260,25 @@ async function refresh() {
     currentSessionId = sessions[0]?.id || null;
   }
   // fetch drilldowns for the selected session's album
-  currentAlbum = null; tracks = []; assets = [];
+  currentAlbum = null; tracks = []; assets = []; events = []; decisions = []; eventsCursorId = null;
   const session = sessions.find(s => s.id === currentSessionId);
   if (session && session.album_id) {
     try {
-      const [alb, trk, ast] = await Promise.all([
+      const [alb, trk, ast, evs, decs] = await Promise.all([
         api(`/api/albums/${encodeURIComponent(session.album_id)}`),
         api(`/api/albums/${encodeURIComponent(session.album_id)}/tracks`).catch(()=>({items:[]})),
         api(`/api/albums/${encodeURIComponent(session.album_id)}/assets`).catch(()=>({items:[]})),
+        api(`/api/sessions/${encodeURIComponent(session.id)}/events?limit=100`).catch(()=>[]),
+        api(`/api/sessions/${encodeURIComponent(session.id)}/decisions`).catch(()=>[]),
       ]);
       currentAlbum = alb.item || alb;
       tracks = trk.items || trk || [];
       assets = ast.items || ast || [];
+      events = Array.isArray(evs) ? evs : (evs.items || []);
+      decisions = Array.isArray(decs) ? decs : (decs.items || []);
+      // Initialize the event cursor at the highest id seen — subsequent
+      // pollEvents() calls will fetch only rows with id > eventsCursorId.
+      eventsCursorId = events.reduce((mx, e) => Math.max(mx, e.id || 0), 0);
     } catch (e) {
       // album-level errors are non-fatal — keep the session card visible
       console.warn('album drilldown failed', e);
@@ -213,6 +289,8 @@ async function refresh() {
   renderPipeline();
   renderTracks();
   renderAssets();
+  renderEvents();
+  renderDecisions();
   renderFooter();
 }
 
@@ -233,5 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   refresh();
   liveInterval = setInterval(refresh, 15000);
+  // Events need faster polling than the rest of the page (15s) —
+  // the chat-log section is the live surface. 2s idle, scales down
+  // when session is paused/done.
+  eventsPollInterval = setInterval(pollEvents, 2000);
   window.addEventListener('focus', refresh);
 });

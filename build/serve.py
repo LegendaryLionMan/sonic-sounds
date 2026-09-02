@@ -56,6 +56,8 @@ from build.signals import (
 # via register_routes() below.
 from build.handlers_albums import albums_bp
 from build.handlers_sessions import sessions_bp
+from build.handlers_events import events_bp
+from build.handlers_decisions import decisions_bp
 
 _log = logging.getLogger("album_studio.daemon")
 
@@ -187,6 +189,15 @@ def register_routes(app: Quart) -> None:
     # factory, single route table) is preserved.
     app.register_blueprint(albums_bp)
     app.register_blueprint(sessions_bp)
+
+    # === Day 5: events + decisions handlers (split into modules) ===
+    # Same pattern as Day 4: each handler module owns its blueprint
+    # and is registered here. These wrap db/events.py and
+    # db/decisions.py respectively, which already shipped with the
+    # db layer (tests in test_events.py + test_decisions.py cover
+    # those at the db level).
+    app.register_blueprint(events_bp)
+    app.register_blueprint(decisions_bp)
 
 
 # === Daemon lifecycle ===
