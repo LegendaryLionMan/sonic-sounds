@@ -171,11 +171,14 @@ def register_routes(app: Quart) -> None:
             conn = open_db()
             try:
                 row = conn.execute(
-                    "SELECT mp3_path, duration_sec FROM tracks WHERE id = ?",
-                    (track_id,)
+                    "SELECT t.mp3_path, t.duration_sec, t.album_id "
+                    "FROM tracks t WHERE t.id = ?",
+                    (track_id,),
                 ).fetchone()
                 if row:
-                    return {"mp3_path": row["mp3_path"], "duration_sec": row["duration_sec"]}
+                    return {"mp3_path": row["mp3_path"],
+                            "duration_sec": row["duration_sec"],
+                            "album_id": row["album_id"]}
                 return None
             finally:
                 # Use close_db() so the per-thread connection cache is
@@ -188,9 +191,20 @@ def register_routes(app: Quart) -> None:
             abort(404)
 
         mp3_rel = track["mp3_path"]
+        # The seed (db/seed.py) stores paths relative to the canonical
+        # album location at ~/OneDrive/Hermes/albums/<album>/. The
+        # audio handler tries local candidates first (so dev iterations
+        # without OneDrive still work), then falls back to the canonical
+        # location (R10). All candidates are resolved as absolute
+        # paths so the conditional=True send_file can do byte-range
+        # requests on the actual file.
+        album_id = track.get("album_id") or ""
+        canonical = Path.home() / "OneDrive" / "Hermes" / "albums" / album_id
         candidates = [
             PROJ_ROOT / mp3_rel,
             PROJ_ROOT / "music" / Path(mp3_rel).name,
+            canonical / mp3_rel,
+            canonical / "music" / Path(mp3_rel).name,
         ]
         target = None
         for c in candidates:

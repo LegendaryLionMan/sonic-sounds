@@ -134,6 +134,83 @@ class TestAudioEndpoint(unittest.IsolatedAsyncioTestCase):
         self.assertIn("bytes 0-99", resp.headers.get("Content-Range", ""))
 
 
+class TestAudioOneDriveFallback(unittest.IsolatedAsyncioTestCase):
+    """Audio handler falls back to ~/OneDrive/Hermes/albums/<album>/
+    when the local file is missing (per R10: canonical album storage
+    lives in OneDrive). This regression test prevents the bug from
+    Days 9-12 where the audio endpoint returned 404 because the
+    audio_range handler only checked PROJ_ROOT / mp3_path, not the
+    OneDrive canonical.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir, cls.tempdb = _isolate_tempdb()
+        from db import migrations, albums as db_albums
+        migrations.bootstrap_initial_migration(cls.tempdb)
+        migrations.run_migrations(cls.tempdb)
+        # Set up an album whose mp3 lives ONLY in the OneDrive canonical,
+        # NOT in the project root's music/ folder. The audio handler
+        # must fall back to OneDrive.
+        db_albums.create_artist("a1", "A", db_path=cls.tempdb)
+        db_albums.create_album("onedrive-album", "OneDrive Album", "a1", db_path=cls.tempdb)
+        # Create the canonical directory under ~/OneDrive/Hermes/albums/
+        # with a fake MP3 file. The handler must find it via the
+        # canonical fallback path.
+        from pathlib import Path
+        import shutil as _shutil
+        cls.canonical_root = Path.home() / "OneDrive" / "Hermes" / "albums" / "onedrive-album"
+        cls.canonical_mp3 = cls.canonical_root / "music" / "01-canonical.mp3"
+        cls.canonical_mp3.parent.mkdir(parents=True, exist_ok=True)
+        cls.canonical_mp3.write_bytes(b"ID3\x04\x00\x00\x00\x00\x00\x00FAKE_MP3_DATA" + b"\x00" * 2048)
+        # Insert the track row with mp3_path that ONLY resolves in OneDrive.
+        # NOTE: we intentionally do NOT create the file in PROJ_ROOT / music/.
+        db_albums.create_track(
+            "onedrive-album", 1, "Canonical Track",
+            mp3_path="music/01-canonical.mp3",
+            db_path=cls.tempdb,
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        _drop_isolation()
+        import shutil
+        shutil.rmtree(cls.tmpdir, ignore_errors=True)
+        # Clean up the OneDrive canonical we created
+        if cls.canonical_mp3.exists():
+            cls.canonical_mp3.unlink()
+        # Remove the empty music/ directory we created
+        music_dir = cls.canonical_root / "music"
+        if music_dir.exists() and not any(music_dir.iterdir()):
+            music_dir.rmdir()
+        # Remove the empty album directory
+        if cls.canonical_root.exists() and not any(cls.canonical_root.iterdir()):
+            cls.canonical_root.rmdir()
+
+    def setUp(self):
+        from db.connection import close_all
+        close_all()
+
+    async def test_audio_resolves_via_onedrive_fallback(self):
+        """The audio handler must find the file in OneDrive canonical
+        when no local file exists. This is the production path for
+        Maren Sol's Half-Light-Hours: tracks are stored in
+        ~/OneDrive/Hermes/albums/half-light-hours/music/."""
+        from build.serve import create_app
+        app = create_app()
+        client = app.test_client()
+        # The track was created with mp3_path = "music/01-canonical.mp3"
+        # so track_id is "onedrive-album:01"
+        resp = await client.get("/api/audio/onedrive-album:01", headers={"Range": "bytes=0-99"})
+        # Without the OneDrive fallback, this would be 404. With it,
+        # we get 206 with the OneDrive file's bytes.
+        self.assertEqual(resp.status_code, 206, f"got {resp.status_code}")
+        body = await resp.get_data()
+        # First 12 bytes should be the ID3 tag we wrote
+        self.assertEqual(body[:3], b"ID3", f"expected ID3 tag, got {body[:3]!r}")
+        self.assertEqual(len(body), 100)
+
+
 class TestLibraryAsset(unittest.TestCase):
     """Smoke check: library.js exists and is non-empty."""
 
