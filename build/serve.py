@@ -58,6 +58,7 @@ from build.handlers_albums import albums_bp
 from build.handlers_sessions import sessions_bp
 from build.handlers_events import events_bp
 from build.handlers_decisions import decisions_bp
+from build.handlers_build import build_bp
 
 _log = logging.getLogger("album_studio.daemon")
 
@@ -216,6 +217,7 @@ def register_routes(app: Quart) -> None:
     # those at the db level).
     app.register_blueprint(events_bp)
     app.register_blueprint(decisions_bp)
+    app.register_blueprint(build_bp)
 
 
 # === Daemon lifecycle ===

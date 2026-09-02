@@ -69,7 +69,10 @@ async def list_events():
     """List events with optional filters.
 
     Query params (all optional):
-      session: filter by session_id (required for sensible pagination)
+      session: filter by session_id (mutually exclusive with album)
+      album:   filter by album_id (includes global events where
+               session_id IS NULL — useful for the studio's [invoke]
+               button which writes global events)
       since: ISO timestamp; return only events created AFTER this
       since_id: integer event id; return only events with id > this
         (preferred for polling because id is monotonic — survives
@@ -78,6 +81,7 @@ async def list_events():
       limit: max rows to return (default 100, hard cap 500)
     """
     session_id = request.args.get("session")
+    album_id = request.args.get("album")
     since_ts = request.args.get("since")
     since_id_raw = request.args.get("since_id")
     kind = request.args.get("kind")
@@ -93,19 +97,33 @@ async def list_events():
         except ValueError:
             return jsonify({"error": "since_id must be an integer"}), 400
 
-    if not session_id:
-        # Without a session filter, the query can be huge — reject to
+    if not session_id and not album_id:
+        # Without a session or album filter, the query can be huge — reject to
         # prevent accidental full-table reads from the studio polling
-        # loop. UI is supposed to scope by ?session=.
-        return jsonify({"error": "session query param is required"}), 400
+        # loop. UI is supposed to scope by ?session= or ?album=.
+        return jsonify({"error": "session or album query param is required"}), 400
 
-    rows = await _run(
-        db_events.list_events,
-        session_id,
-        since_ts=since_ts,
-        kind=kind,
-        limit=limit,
-    )
+    # When ?album= is supplied, we use a dedicated db query that joins
+    # on session_id IS NULL OR session_id matches any session for this
+    # album. For now, simplest path: use album_id directly via the
+    # events db layer (returns all rows where album_id matches,
+    # including global events with session_id NULL).
+    if album_id and not session_id:
+        rows = await _run(
+            db_events.list_events_by_album,
+            album_id,
+            since_ts=since_ts,
+            kind=kind,
+            limit=limit,
+        )
+    else:
+        rows = await _run(
+            db_events.list_events,
+            session_id,
+            since_ts=since_ts,
+            kind=kind,
+            limit=limit,
+        )
     # db_events.list_events doesn't know about since_id (it's a
     # session-row filter, not an id filter); apply the id predicate
     # post-hoc. We do this in the handler because the db layer's

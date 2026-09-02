@@ -125,6 +125,33 @@ def latest_event_id(session_id: str,
     return row["max_id"] if row and row["max_id"] is not None else None
 
 
+def list_events_by_album(album_id: str, *, since_ts: str = None,
+                         kind: str = None, limit: int = 100,
+                         db_path: Optional[Union[str, Path]] = None) -> list[dict]:
+    """List events for an album (any session or global).
+
+    Returns rows where events.album_id = album_id, regardless of
+    session_id. This includes "global" events (session_id IS NULL)
+    written by the build runner (Day 6 / Day 7) — these never belong
+    to a particular session but DO carry the album_id for context.
+
+    Filters: since_ts (string compare against created_at), kind, limit.
+    Sort: id ASC for stable polling.
+    """
+    conn = open_db(db_path)
+    filters = ["album_id = ?"]
+    values: list = [album_id]
+    if since_ts:
+        filters.append("created_at > ?"); values.append(since_ts)
+    if kind:
+        filters.append("kind = ?"); values.append(kind)
+    sql = f"SELECT * FROM events WHERE {' AND '.join(filters)} ORDER BY id ASC"
+    if limit is not None:
+        sql += f" LIMIT {int(limit)}"
+    rows = conn.execute(sql, values).fetchall()
+    return [dict(r) for r in rows]
+
+
 def count_events(session_id: str,
                 *, since_ts: str = None,
                 kind: str = None,

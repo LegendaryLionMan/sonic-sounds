@@ -7,7 +7,12 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
 async function api(path, opts={}) {
-  const r = await fetch(API + path, {headers:{'Accept':'application/json'}, ...opts});
+  // Always send Accept: application/json, and Content-Type when there's a body.
+  const headers = {'Accept': 'application/json'};
+  if (opts.body && !opts.headers) {
+    headers['Content-Type'] = 'application/json';
+  }
+  const r = await fetch(API + path, {headers, ...opts});
   if (!r.ok) { const e = await r.text(); throw new Error(`${r.status}: ${e}`); }
   return r.json();
 }
@@ -50,6 +55,22 @@ let decisions = [];
 let liveInterval = null;
 let eventsPollInterval = null;
 let eventsCursorId = null;
+// Day 7: per-layer job state for the [invoke] button pipeline UI.
+// Keyed by layer number (1..9). Value: {job_id, status, output_path} or null.
+let layerJobs = {};
+// Pipeline-deps layer_id for each phase index 1..9. The studio pipeline
+// shows 9 phases (per PHASES); map them to the canonical layer_ids.
+const PHASE_TO_LAYER_ID = {
+  1: '01_brief',
+  2: '02_lyrics_drafts',
+  3: '03_lyrics_finalize',
+  4: '04_vocal_recordings',
+  5: '05_instrumental',
+  6: '06_cover_art',
+  7: '07_cassette_sticker',
+  8: '08_audio_mastering',
+  9: '09_metadata_isrc',
+};
 
 /* toast */
 let toastTimer = null;
@@ -148,15 +169,93 @@ function renderPipeline() {
     let state = 'upcoming';
     if (layer && num < layer) state = 'done';
     else if (layer && num === layer) state = 'active';
-    return `<div class="pipe-cell ${state}">
+    // Day 7: per-layer [invoke] button state. We can't store job state
+    // in layerJobs forever (page reload loses it), but for a live
+    // session it's good enough. Job status drives button label + class.
+    const job = layerJobs[num];
+    let btnCls = 'pipe-invoke';
+    let btnLabel = 'invoke';
+    let btnDisabled = '';
+    if (job) {
+      const s = job.status;
+      if (s === 'todo' || s === 'needs_approval') {
+        btnLabel = 'queued'; btnCls += ' running';
+      } else if (s === 'running') {
+        btnLabel = 'running…'; btnCls += ' running';
+      } else if (s === 'done' || s === 'succeeded') {
+        btnLabel = '✓ done'; btnCls += ' done';
+        btnDisabled = 'disabled';
+      } else if (s === 'failed' || s === 'crashed' || s === 'blocked') {
+        btnLabel = 'retry'; btnCls += ' failed';
+      }
+    }
+    return `<div class="pipe-cell ${state}" data-layer="${num}">
       <span class="pipe-cell-num">${String(num).padStart(2,'0')}</span>
       <span class="pipe-cell-name">${esc(name)}</span>
+      <button class="${btnCls}" data-layer="${num}" ${btnDisabled}>${esc(btnLabel)}</button>
     </div>`;
   }).join('');
   $('#pipeline').innerHTML = cells;
+  // Wire up click handlers for the [invoke] buttons (Day 7)
+  // NOTE: our $ helper is querySelector (single Element). We need
+  // querySelectorAll to get the NodeList of all buttons.
+  document.querySelectorAll('#pipeline .pipe-invoke').forEach(btn => {
+    btn.addEventListener('click', () => invokeLayer(parseInt(btn.dataset.layer, 10)));
+  });
   // Sidebar layer stat also reflects derived value
   $('#stat-layer').textContent = layer ? String(layer).padStart(2,'0') : '—';
   $('#stat-phase').textContent = layer ? (PHASES[layer-1] || `L${layer}`).toUpperCase() : '—';
+}
+
+/* Day 7: invoke a single layer's build job via POST /api/build/invoke */
+async function invokeLayer(layerNum) {
+  if (!currentAlbum) {
+    toast('no album selected', 'error');
+    return;
+  }
+  const layer_id = PHASE_TO_LAYER_ID[layerNum];
+  if (!layer_id) {
+    toast(`unknown layer number ${layerNum}`, 'error');
+    return;
+  }
+  // Optimistic update — mark as queued so the button disables immediately.
+  layerJobs[layerNum] = { status: 'todo', job_id: null };
+  renderPipeline();
+  toast(`queueing layer ${String(layerNum).padStart(2,'0')}…`);
+  try {
+    const r = await api(`/api/build/invoke`, {
+      method: 'POST',
+      body: JSON.stringify({
+        album_id: currentAlbum.id || currentAlbum.album_id,
+        layer_id,
+        synchronous: true,  // run inline; the daemon's mmx call is fast
+      }),
+    });
+    // r is {job_id, status, output_path, ...} on success
+    if (r && r.job_id) {
+      layerJobs[layerNum] = {
+        status: r.status || 'done',
+        job_id: r.job_id,
+        output_path: r.output_path,
+      };
+      if (r.status === 'done' || r.status === 'succeeded') {
+        toast(`layer ${String(layerNum).padStart(2,'0')} ✓ done`);
+      } else {
+        toast(`layer ${String(layerNum).padStart(2,'0')} ${r.status}: ${r.error || 'see daemon log'}`, 'error');
+      }
+    } else {
+      toast(`invoke failed: no job_id in response`, 'error');
+    }
+  } catch (e) {
+    toast(`invoke failed: ${e.message}`, 'error');
+    // Reset button to default state
+    delete layerJobs[layerNum];
+  }
+  renderPipeline();
+  // Refresh events to pick up any new build_* events written by the runner.
+  // The runner also writes events with album_id but no session_id (global),
+  // which the existing since_id poll won't pick up. Trigger a full refresh.
+  refresh();
 }
 
 /* tracks */
@@ -289,17 +388,23 @@ async function refresh() {
   const session = sessions.find(s => s.id === currentSessionId);
   if (session && session.album_id) {
     try {
-      const [alb, trk, ast, evs, decs] = await Promise.all([
+      const [alb, trk, ast, sessionEvs, albumEvs, decs] = await Promise.all([
         api(`/api/albums/${encodeURIComponent(session.album_id)}`),
         api(`/api/albums/${encodeURIComponent(session.album_id)}/tracks`).catch(()=>({items:[]})),
         api(`/api/albums/${encodeURIComponent(session.album_id)}/assets`).catch(()=>({items:[]})),
         api(`/api/sessions/${encodeURIComponent(session.id)}/events?limit=100`).catch(()=>[]),
+        // Album-scoped events include GLOBAL build events (Day 6/7 runner
+        // writes events with session_id=NULL but album_id=session.album_id).
+        api(`/api/events?album=${encodeURIComponent(session.album_id)}&limit=200`).catch(()=>[]),
         api(`/api/sessions/${encodeURIComponent(session.id)}/decisions`).catch(()=>[]),
       ]);
       currentAlbum = alb.item || alb;
       tracks = trk.items || trk || [];
       assets = ast.items || ast || [];
-      events = Array.isArray(evs) ? evs : (evs.items || []);
+      // Merge session-scoped + album-scoped events. The album query
+      // is a superset (includes session events too, since they share
+      // album_id). Use album-scoped as the canonical source.
+      events = Array.isArray(albumEvs) ? albumEvs : (albumEvs.items || []);
       decisions = Array.isArray(decs) ? decs : (decs.items || []);
       // Initialize the event cursor at the highest id seen — subsequent
       // pollEvents() calls will fetch only rows with id > eventsCursorId.

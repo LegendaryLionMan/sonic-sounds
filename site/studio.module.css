@@ -89,6 +89,27 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .pipe-cell.done .pipe-cell-num{color:var(--green)}
 .pipe-cell.active .pipe-cell-num{color:var(--cyan);font-weight:700}
 
+/* Day 7: [invoke] button on each pipeline cell */
+.pipe-invoke{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:5px 10px;
+  border-radius:6px;
+  border:1px solid var(--cyan);
+  background:transparent;
+  color:var(--cyan);
+  cursor:pointer;
+  transition:all .15s ease;
+  align-self:flex-start;
+}
+.pipe-invoke:hover:not(:disabled){background:var(--cyan);color:var(--bg)}
+.pipe-invoke:disabled{opacity:.35;cursor:not-allowed;border-color:var(--ink-muted);color:var(--ink-muted)}
+.pipe-invoke.running{border-color:var(--yellow);color:var(--yellow);cursor:wait}
+.pipe-invoke.done{background:rgba(76,175,80,.15);border-color:var(--green);color:var(--green)}
+.pipe-invoke.failed{background:rgba(232,58,58,.15);border-color:var(--red);color:var(--red)}
+
 /* --- track list --- */
 .track-list{display:flex;flex-direction:column}
 .track-row{display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--rule)}
