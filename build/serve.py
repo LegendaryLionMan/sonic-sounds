@@ -155,6 +155,48 @@ def register_routes(app: Quart) -> None:
             abort(404)
         return await send_file(str(target))
 
+    # === Day 11+: album cover art handler ===
+    # The seed stores cover_path relative to ~/OneDrive/Hermes/albums/<album>/.
+    # Without this endpoint, the studio's <img> and albums.html cover
+    # art can't resolve (the seed's relative paths don't match the
+    # /site/ static handler). The endpoint falls back to the canonical
+    # OneDrive location per R10.
+    @app.route("/api/albums/<album_id>/cover", methods=["GET"])
+    async def album_cover(album_id: str):
+        from db import albums as db_albums
+        from db.connection import open_db, close_db
+        def _lookup():
+            conn = open_db()
+            try:
+                row = conn.execute(
+                    "SELECT cover_path, cassette_sticker_path FROM albums WHERE id = ?",
+                    (album_id,),
+                ).fetchone()
+                if row:
+                    return {"cover_path": row["cover_path"],
+                            "cassette_sticker_path": row["cassette_sticker_path"]}
+                return None
+            finally:
+                close_db()
+        album = await _run_in_thread(_lookup)
+        if not album or not album.get("cover_path"):
+            abort(404)
+        cover_rel = album["cover_path"]
+        canonical = Path.home() / "OneDrive" / "Hermes" / "albums" / album_id
+        candidates = [
+            PROJ_ROOT / cover_rel,
+            PROJ_ROOT / "cover-art" / Path(cover_rel).name,
+            PROJ_ROOT / "albums" / album_id / cover_rel,
+            canonical / cover_rel,
+            canonical / "cover-art" / Path(cover_rel).name,
+        ]
+        import mimetypes as _m
+        for c in candidates:
+            if c.exists() and c.is_file():
+                mime, _ = _m.guess_type(str(c))
+                return await send_file(str(c), mimetype=mime or "image/jpeg")
+        abort(404)
+
     @app.route("/api/audio/<track_id>", methods=["GET"])
     async def audio_range(track_id: str):
         """Audio handler with HTTP Range support (per Day 3 plan).

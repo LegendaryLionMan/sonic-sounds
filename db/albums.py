@@ -224,6 +224,19 @@ def list_tracks(album_id: str,
     return _rows_to_dicts(rows)
 
 
+def list_tracks_count(album_id: str,
+                    db_path: Optional[Union[str, Path]] = None) -> int:
+    """Count the number of tracks in an album. Used by the library.js
+    cassette wall to render "N tracks" without loading all rows.
+    """
+    conn = open_db(db_path)
+    row = conn.execute(
+        "SELECT COUNT(*) AS n FROM tracks WHERE album_id = ?",
+        (album_id,),
+    ).fetchone()
+    return int(row["n"]) if row else 0
+
+
 def get_track(track_id: str,
              db_path: Optional[Union[str, Path]] = None) -> Optional[dict]:
     """Fetch a track by ID."""

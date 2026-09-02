@@ -309,6 +309,30 @@ function renderAssets() {
     </div>`).join('');
 }
 
+/* Day 11+: cover art — set the <img src> from /api/albums/<id>/cover.
+   Falls back gracefully: if the endpoint 404s, the img src stays empty
+   and the alt text "album cover" is shown. */
+function renderCover() {
+  const img = $('#album-cover');
+  const meta = $('#cover-meta');
+  if (!img) return;
+  if (currentAlbum && currentAlbum.id) {
+    const url = `/api/albums/${encodeURIComponent(currentAlbum.id)}/cover`;
+    img.src = url;
+    img.alt = `${currentAlbum.title || currentAlbum.id} — album cover`;
+    if (meta) {
+      const coverRel = currentAlbum.cover_path || '';
+      const size = currentAlbum.runtime_min ? `${currentAlbum.runtime_min} MIN` : '';
+      meta.textContent = `${currentAlbum.title || currentAlbum.id}  ·  ${size}`.trim();
+      if (coverRel) meta.title = `cover_path: ${coverRel}`;
+    }
+  } else {
+    img.removeAttribute('src');
+    img.alt = 'album cover — no album selected';
+    if (meta) meta.textContent = 'no album selected';
+  }
+}
+
 /* events (chat log) */
 function renderEvents() {
   const list = $('#event-list');
@@ -437,6 +461,7 @@ async function refresh() {
   }
   renderPicker();
   renderSidebar();
+  renderCover();           // Day 11+: album cover art from /api/albums/:id/cover
   renderPipeline();
   renderTracks();
   renderAssets();

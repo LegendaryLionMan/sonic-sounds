@@ -35,11 +35,17 @@
     // Render one card per album
     grid.innerHTML = albums.map(a => {
       const status = (a.status || 'active').toLowerCase();
+      // Cover art: live <img> from /api/albums/:id/cover so the OneDrive
+      // canonical path resolves. Falls back to alt text if 404.
+      const coverUrl = `/api/albums/${encodeURIComponent(a.id)}/cover`;
+      const coverAlt = `${a.title || a.id} — album cover`;
       return `<article class="card shell">
-        <p class="eyebrow">${esc(status.toUpperCase())} · ${esc(a.runtime_min || 0)} MIN</p>
+        <img src="${esc(coverUrl)}" alt="${esc(coverAlt)}"
+             style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; display:block;"
+             loading="lazy" />
+        <p class="eyebrow">${esc(status.toUpperCase())} · ${esc(a.runtime_min || 0)} MIN · ${esc(a.track_count ?? '?')} TRACKS</p>
         <h3>${esc(a.title || a.id)}</h3>
         <p>Album id: <code>${esc(a.id)}</code></p>
-        <p>Tracks: ${esc(a.track_count ?? '?')}</p>
         <a class="btn" href="/site/albums.html?album=${encodeURIComponent(a.id)}">▷ Open</a>
       </article>`;
     }).join('');

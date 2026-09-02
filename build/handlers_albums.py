@@ -86,8 +86,22 @@ def _required_fields(payload: dict, fields: list[str]) -> tuple[bool, str]:
 
 @albums_bp.route("/api/albums", methods=["GET"])
 async def list_albums():
+    """List albums, optionally filtered by status.
+
+    Each row is decorated with track_count (number of tracks in the
+    album) so the library.js cassette wall can render "N tracks" in
+    one round-trip. Backward-compatible — the row still has all the
+    album-level fields.
+    """
     status = request.args.get("status")
     rows = await _run(db_albums.list_albums, status=status)
+    # Decorate with track_count from db.albums.list_tracks_count
+    for r in rows:
+        try:
+            count = await _run(db_albums.list_tracks_count, r["id"])
+        except Exception:
+            count = None
+        r["track_count"] = count
     return jsonify(rows)
 
 

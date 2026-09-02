@@ -90,7 +90,7 @@ function renderAlbums() {
   const sorted = [...albums].sort((a,b) => (STATUS_ORDER[b.status]??0) - (STATUS_ORDER[a.status]??0) || new Date(b.release_date||0) - new Date(a.release_date||0));
   grid.innerHTML = sorted.map(a => {
     const cover = (a.cover_asset_id || a.cover_image_asset_id)
-      ? `<div class="album-cover"><img src="/api/assets/${a.cover_asset_id||a.cover_image_asset_id}/download" onerror="this.parentElement.innerHTML=''"></div>`
+      ? `<div class="album-cover"><img src="/api/albums/${encodeURIComponent(a.id)}/cover" alt="${esc(a.title)}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;" onerror="this.parentElement.innerHTML='<div class=\\'album-cover-placeholder\\' style=\\'display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:20px;color:var(--ink-muted);aspect-ratio:1/1;background:rgba(255,255,255,.04);border-radius:8px;\\'>${esc(a.title.charAt(0))}</div>'"></div>`
       : `<div class="album-cover" style="display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:20px;color:var(--ink-muted);">${a.title.charAt(0)}</div>`;
     return `<div class="album-card" data-id="${esc(a.id)}">
       <div class="album-header">${cover}
