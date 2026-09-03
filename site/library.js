@@ -52,6 +52,26 @@
     // Update header count
     const eyebrow = document.querySelector('.shell-page .eyebrow');
     if (eyebrow) eyebrow.textContent = `/albums · ${albums.length}`;
+
+    // Hour 2: magnetic hover tilt on cassette cards. Cursor position
+    // drives --tilt-x / --tilt-y CSS vars, the transform in CSS reads
+    // them via perspective + rotateX/Y. Subtle (max 6°) so it feels
+    // alive, not nauseating.
+    document.querySelectorAll('.card.shell').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;   // 0..1
+        const y = (e.clientY - rect.top) / rect.height;
+        const tiltX = (x - 0.5) * 6;                     // -3..3 deg
+        const tiltY = (0.5 - y) * 6;                     // -3..3 deg
+        card.style.setProperty('--tilt-x', tiltX + 'deg');
+        card.style.setProperty('--tilt-y', tiltY + 'deg');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--tilt-x', '0deg');
+        card.style.setProperty('--tilt-y', '0deg');
+      });
+    });
   }
 
   document.addEventListener('DOMContentLoaded', render);
