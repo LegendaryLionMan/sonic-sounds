@@ -1,227 +1,238 @@
-# album-studio · UI/UX Improvement Schedule (Omarchy-Inspired)
+# album-studio · UI/UX Improvement Schedule
 
-> **Goal**: 10 UI/UX improvements per iteration, with a web-research + implement + test loop. Each iteration ships one batch of improvements and updates this file with what was researched, built, and what comes next.
+> **Math**: 10 days × 24 hours/day × 10 ideas/hour = **2,400 ideas total**
 >
-> **Mode**: 100% autonomous. Run this loop hourly until all 10 hours are done.
+> **Mode**: 100% autonomous. Each "hour" = one iteration cycle. Each cycle = 10 new ideas shipped.
 >
-> **Started**: 2026-09-03
+> **Started**: 2026-09-03 (Day 1)
+>
+> **Design inspiration**: Omarchy OS v4.0 (Quickshell / theme carousel / event-driven / spring physics / glassmorphism / View Transitions) + 2026 trends (Creative Alive "Micro-Interactions in 2026", Tim Graf 2026, Liquid Glass gallery).
 
 ---
 
-## Loop Protocol (every iteration)
+## Loop Protocol (every iteration = one "hour")
 
-1. **Research**: web search for current design patterns / references
-2. **Ideate**: produce 10 new ideas specific to album-studio
-3. **Pick & Implement**: ship 1-3 of the ideas per iteration (scope-fit)
-4. **Test**: pytest + e2e (4 suites, 185 verifications) — must all pass
-5. **Commit**: incremental commits with `ui(<area>): hour N — <description>`
-6. **Update this file**: mark the idea as ✅ done, add the new idea to the backlog
-7. **Hand off** (end-of-iteration): next session picks up here
+1. **Research**: web search for current design patterns
+2. **Ideate**: produce exactly **10 new ideas**
+3. **Implement all 10**: code + tests in this iteration
+4. **Test**: pytest + 4-suite e2e (185 verifications) — must all pass
+5. **Commit**: per-idea or per-batch commits
+6. **Update this file**: mark ✅ done for each of the 10 ideas
+7. **Hand-off**: next session reads this file, picks up at Hour N+1
 
----
-
-## Iteration 1 (hour 1) — Theme switcher [DONE]
-
-**Research**: Omarchy v4.0 release notes — live theme preview, semantic color tokens, theme carousel UX; also Liquid Glass Design gallery patterns.
-
-**10 ideas generated (hour 1)**:
-1. ✅ **4-theme switcher** (Mixtape '85 / Tokyo Night / Catppuccin / Gruvbox) — done
-2. ✅ Live preview swatch dock (gradient chips) — done
-3. ✅ localStorage persistence — done
-4. ✅ CSS variable overrides for semantic tokens — done
-5. ✅ ARIA radiogroup + radio — done
-6. ✅ `prefers-reduced-motion` — done
-7. ⏳ Filterable theme carousel (Omarchy v4.0 feature) — backlog
-8. ⏳ Theme color picker for accent — backlog
-9. ⏳ Per-theme font-family — backlog
-10. ⏳ Theme-from-wallpaper (extract palette from image) — backlog
+**Never skip. Never truncate. Continue until 2400 ideas are done.**
 
 ---
 
-## Iteration 2 (hour 2) — Cassette wall animations [DONE]
+## Progress Tracker
 
-**Research**: Omarchy's deliberate-beat, uncorrelated-periods background; CSS animation patterns.
-
-**10 ideas generated (hour 2)**:
-1. ✅ **Drifting background** (radial gradients, 15s/13s uncorrelated) — done
-2. ✅ **Magnetic hover tilt** (cursor → --tilt-x/y CSS vars, max 6°) — done
-3. ✅ Vinyl shine ring on hover (conic gradient spin) — done
-4. ✅ Card entrance stagger (80ms apart, 6 children) — done
-5. ✅ Topbar entrance animation — done
-6. ✅ `prefers-reduced-motion` — done
-7. ⏳ Scroll-driven parallax on album cover — backlog
-8. ⏳ Filter pills (active / paused / done) with stagger — backlog
-9. ⏳ Track list reveal animation — backlog
-10. ⏳ "Add new album" CTA with pulse animation — backlog
-
----
-
-## Iteration 3 (hour 3) — Spring-physics + 2026 motion patterns [IN PROGRESS]
-
-**Research** (web search "music player UI 2026 design patterns glassmorphism micro-interactions"):
-- Creative Alive "Micro-Interactions in 2026": Spring physics on every tactile control. Haptic-style visual feedback. Scroll-linked timelines. Choreographed state transitions.
-- Tim Graf 2026: Glassmorphism vs Neumorphism guide. Parallax depth.
-- Liquid Glass gallery: Audio player cards with liquid-glass effects.
-
-**10 ideas generated (hour 3)**:
-1. 🚧 **Spring-physics button press** (cubic-bezier(.34, 1.56, .64, 1) for bouncy; CSS tokens --spring-bouncy/--spring-soft/--spring-snappy) — IN PROGRESS, file created
-2. ⏳ Haptic 120ms scale-down-and-back on INVOKE/▷/PAUSE — backlog
-3. ⏳ Status pill with state-transition color morph — backlog
-4. ⏳ Decision cards with staggered reveal (elastic overshoot from right) — backlog
-5. ⏳ Modal/drawer with spring-soft slide-in — backlog
-6. ⏳ Audio progress bar with elastic snap — backlog
-7. ⏳ Album cover 3D hover with shimmer reflection — backlog
-8. ⏳ Scroll-linked parallax on topbar (`@scroll-timeline`) — backlog
-9. ⏳ View Transitions API for page navigation (cross-page morph) — backlog
-10. ⏳ Track play button with reactive fill animation — backlog
-
----
-
-## Iteration 4 (hour 4) — Audio waveform visualization [TODO]
-
-**Research plan**: Canvas-based waveform rendering. Web Audio API's `AnalyserNode` for real-time FFT. Dribbble references.
-
-**10 ideas to generate** (placeholder):
-1. ⏳ Live canvas waveform during MP3 playback
-2. ⏳ Static waveform pre-render from MP3 header (no JS audio decode)
-3. ⏳ Color-shifted waveform tied to accent
-4. ⏳ Click-to-seek with waveform scrubbing
-5. ⏳ Hover-to-preview track position
-6. ⏳ Volume slider with haptic snap
-7. ⏳ EQ visualization (3-band)
-8. ⏳ Track progress ring (radial)
-9. ⏳ Lyrics sync animation
-10. ⏳ BPM detection + tempo display
-
----
-
-## Iteration 5 (hour 5) — Command palette (super+K) [TODO]
-
-**Research plan**: Omarchy v4.0 command palette (filterable, nested, JSONC-extensible). Raycast's UI.
-
-**10 ideas to generate**:
-1. ⏳ Command palette overlay (super+K)
-2. ⏳ Search albums/sessions/tracks/decisions
-3. ⏳ Fuzzy match scoring
-4. ⏳ Recent commands history
-5. ⏳ Keyboard-only navigation
-6. ⏳ Action shortcuts (build → invoke, pause/resume)
-7. ⏳ Theme switch from palette
-8. ⏳ Help palette (?)
-9. ⏳ Filter pills (albums only / sessions only)
-10. ⏳ Custom command registration via data attr
-
----
-
-## Iteration 6 (hour 6) — Glassmorphism modals + drawers [TODO]
-
-**Research plan**: Liquid Glass gallery (backdrop-filter, layered depth).
-
-**10 ideas to generate**:
-1. ⏳ Modal with backdrop-filter blur
-2. ⏳ Drawer with parallax depth
-3. ⏳ Album cover with glass reflection overlay
-4. ⏳ Status pill with glass background
-5. ⏳ Tooltip with glass surface
-6. ⏳ Confirm dialog with spring entrance
-7. ⏳ Sidebar with frosted glass
-8. ⏳ Toast with glass surface
-9. ⏳ Audio player controls with glass
-10. ⏳ Decision-card hover with glass reflection
-
----
-
-## Iteration 7 (hour 7) — Hover micro-interactions on every card [TODO]
-
-**Research plan**: Haptic-style visual feedback, scale-on-hover, ripple effects.
-
-**10 ideas to generate**:
-1. ⏳ Album card lift on hover (already have)
-2. ⏳ Track row hover with play button reveal
-3. ⏳ Decision card hover with edit button reveal
-4. ⏳ Event row hover with timestamp highlight
-5. ⏳ Pipeline cell hover with phase tooltip
-6. ⏳ Asset card hover with preview expand
-7. ⏳ Modal/drawer close button hover
-8. ⏳ Status pill hover with quick-action menu
-9. ⏳ Footer meta hover with detail expand
-10. ⏳ Toast hover with dismiss button
-
----
-
-## Iteration 8 (hour 8) — Toast system with progress bar [TODO]
-
-**Research plan**: OSD-style ephemeral feedback. Animated progress.
-
-**10 ideas to generate**:
-1. ⏳ Replace static toast with animated slide-in
-2. ⏳ Toast with progress bar (build_started → running → done)
-3. ⏳ Toast stack with auto-dismiss
-4. ⏳ Toast with action button (Undo)
-5. ⏳ Toast with semantic colors (success/error/info)
-6. ⏳ Toast with custom icon (per kind)
-7. ⏳ Toast with sticky mode (until clicked)
-8. ⏳ Toast with hover-to-pause
-9. ⏳ Toast queue (FIFO)
-10. ⏳ Toast with sound (optional toggle)
-
----
-
-## Iteration 9 (hour 9) — Page transitions + skeleton loaders [TODO]
-
-**Research plan**: View Transitions API. Skeleton loaders for perceived performance.
-
-**10 ideas to generate**:
-1. ⏳ Page cross-fade via View Transitions API
-2. ⏳ Skeleton loader for album cards (during fetch)
-3. ⏳ Skeleton loader for track list
-4. ⏳ Skeleton loader for pipeline
-5. ⏳ Skeleton shimmer animation
-6. ⏳ Smooth height transitions on content load
-7. ⏳ Lazy-render album covers with blur-up
-8. ⏳ Skeleton → real-content crossfade
-9. ⏳ Progress bar for long operations
-10. ⏳ Inline loading states (button → spinner)
-
----
-
-## Iteration 10 (hour 10) — Animated build pipeline + keyboard shortcuts [TODO]
-
-**Research plan**: Sequential cell light-up animation. Keyboard shortcuts overlay (`?`).
-
-**10 ideas to generate**:
-1. ⏳ Pipeline cells light up sequentially on invoke
-2. ⏳ Layer 01 → 02 → 03 → ... cascade animation
-3. ⏳ Keyboard shortcuts overlay (`?` opens help)
-4. ⏳ Shortcut discoverability (chip on hover)
-5. ⏳ Cmd+K palette (already in iteration 5)
-6. ⏳ Cmd+1..9 jump to pipeline layer
-7. ⏳ Cmd+/ search
-8. ⏳ Esc dismiss modals
-9. ⏳ Arrow keys navigate track list
-10. ⏳ Spacebar play/pause
-
----
-
-## Status
-
-| Hour | Status | Commits | Tests added |
+| Day | Hours done | Ideas done | Cumulative |
 |---|---|---|---|
-| 1 | ✅ done | `1d98f21` | 27 |
-| 2 | ✅ done | (pending) | 8 |
-| 3 | 🚧 in progress | (pending) | TBD |
-| 4-10 | ⏳ TODO | — | — |
+| 1 | 3 of 24 | 3 of 240 | 3 / 2400 |
+| 2 | 0 | 0 | 3 |
+| 3 | 0 | 0 | 3 |
+| 4 | 0 | 0 | 3 |
+| 5 | 0 | 0 | 3 |
+| 6 | 0 | 0 | 3 |
+| 7 | 0 | 0 | 3 |
+| 8 | 0 | 0 | 3 |
+| 9 | 0 | 0 | 3 |
+| 10 | 0 | 0 | 3 |
 
-**Current test count**: 404 pytest + 2 skipped; 185 e2e verifications across 4 suites (UX contract 122 + Day 13-14 surfaces 47 + Playwright 16 + JS lint).
+**Target**: 2,400 ideas by Day 10, Hour 24.
+
+---
+
+## Day 1 (2026-09-03)
+
+### Hour 1 — Theme system (DONE: 6 of 10)
+1. ✅ 4-theme switcher (Mixtape '85 / Tokyo Night / Catppuccin / Gruvbox)
+2. ✅ Live preview swatch dock
+3. ✅ localStorage theme persistence
+4. ✅ CSS variable overrides for semantic tokens
+5. ✅ ARIA radiogroup + radio
+6. ✅ `prefers-reduced-motion` honored
+7. ⏳ TODO Hour 2 backlog: Filterable theme carousel
+8. ⏳ TODO Hour 2 backlog: Theme accent color picker
+9. ⏳ TODO Hour 2 backlog: Per-theme font-family
+10. ✅ Drifting cassette-wall background
+
+### Hour 2 — Cassette wall animations (DONE: 1 of 10)
+1. ✅ Drifting background (15s/13s uncorrelated)
+2-10. ⏳ TODO (covered in later hours)
+
+### Hour 3 — Spring physics + 2026 motion (IN PROGRESS: 0 of 10)
+1-10. ⏳ TODO
+
+### Hours 4-24 of Day 1 — TODO (220 backlog slots, see Hour 24 below)
+
+---
+
+## Day 2 (TODO) — 240 ideas
+
+### Hour 1 — Spring-physics completion
+### Hour 2 — Haptic-style press feedback
+### Hour 3 — Status pill state transitions
+### Hour 4 — Decision cards staggered reveal
+### Hour 5 — Modal/drawer spring entrance
+### Hour 6 — Audio progress elastic snap
+### Hour 7 — Album cover 3D shimmer
+### Hour 8 — Scroll-timeline topbar
+### Hour 9 — View Transitions page morph
+### Hour 10 — Track play button reactive fill
+### Hour 11-24 — TODO (140 more ideas)
+
+---
+
+## Day 3 (TODO) — 240 ideas
+
+### Hour 1 — Live canvas waveform
+### Hour 2 — Static waveform pre-render
+### Hour 3 — Color-shifted waveform
+### Hour 4 — Click-to-seek waveform
+### Hour 5 — Hover-to-preview track position
+### Hour 6 — Volume slider haptic snap
+### Hour 7 — EQ 3-band visualization
+### Hour 8 — Track progress ring
+### Hour 9 — Lyrics sync animation
+### Hour 10 — BPM detection + tempo display
+### Hour 11-24 — TODO
+
+---
+
+## Day 4 (TODO) — 240 ideas — Command palette (super+K)
+
+### Hour 1 — Palette overlay opens on Cmd+K
+### Hour 2 — Cross-resource search (albums/sessions/tracks/decisions)
+### Hour 3 — Fuzzy match scoring
+### Hour 4 — Recent commands history
+### Hour 5 — Keyboard-only navigation
+### Hour 6 — Action shortcuts (build, pause, navigate)
+### Hour 7 — Theme switch from palette
+### Hour 8 — Help palette (:?)
+### Hour 9 — Filter pills
+### Hour 10 — Custom command registration via data-command
+### Hour 11-24 — TODO
+
+---
+
+## Day 5 (TODO) — 240 ideas — Glassmorphism
+
+### Hour 1 — Modal with backdrop-filter blur
+### Hour 2 — Drawer parallax depth
+### Hour 3 — Album cover glass reflection
+### Hour 4 — Status pill glass background
+### Hour 5 — Tooltip glass surface
+### Hour 6 — Confirm dialog spring + glass
+### Hour 7 — Sidebar frosted glass
+### Hour 8 — Toast glass surface
+### Hour 9 — Audio player controls glass
+### Hour 10 — Decision-card hover glass reflection
+### Hour 11-24 — TODO
+
+---
+
+## Day 6 (TODO) — 240 ideas — Hover micro-interactions
+
+### Hour 1 — Track row hover with play button reveal
+### Hour 2 — Decision card hover with edit button
+### Hour 3 — Event row hover with timestamp highlight
+### Hour 4 — Pipeline cell hover with phase tooltip
+### Hour 5 — Asset card hover with preview expand
+### Hour 6 — Modal close button hover (X rotates 90°)
+### Hour 7 — Status pill hover with quick-action menu
+### Hour 8 — Footer meta hover with detail expand
+### Hour 9 — Toast hover with dismiss button
+### Hour 10 — Album card hover with quick-play
+### Hour 11-24 — TODO
+
+---
+
+## Day 7 (TODO) — 240 ideas — Toast system
+
+### Hour 1 — Slide-in toast animation
+### Hour 2 — Toast progress bar
+### Hour 3 — Toast stack auto-dismiss
+### Hour 4 — Toast with Undo action
+### Hour 5 — Toast semantic colors
+### Hour 6 — Toast custom icons
+### Hour 7 — Toast sticky mode
+### Hour 8 — Toast hover-to-pause
+### Hour 9 — Toast queue FIFO
+### Hour 10 — Toast with sound
+### Hour 11-24 — TODO
+
+---
+
+## Day 8 (TODO) — 240 ideas — Page transitions + skeletons
+
+### Hour 1 — View Transitions API cross-fade
+### Hour 2 — Album card skeleton
+### Hour 3 — Track list skeleton
+### Hour 4 — Pipeline skeleton
+### Hour 5 — Skeleton shimmer
+### Hour 6 — Smooth height transitions
+### Hour 7 — Lazy cover blur-up
+### Hour 8 — Skeleton → real crossfade
+### Hour 9 — Long-op progress bar
+### Hour 10 — Inline loading states
+### Hour 11-24 — TODO
+
+---
+
+## Day 9 (TODO) — 240 ideas — Animated pipeline + keyboard shortcuts
+
+### Hour 1 — Pipeline cells cascade light-up
+### Hour 2 — Layer transitions progress ring
+### Hour 3 — Shortcuts overlay (? opens)
+### Hour 4 — Shortcut discoverability chips
+### Hour 5 — Cmd+K palette (overlap with Day 4)
+### Hour 6 — Cmd+1..9 jump to layer
+### Hour 7 — Cmd+/ search
+### Hour 8 — Esc dismiss stacking
+### Hour 9 — Arrow keys navigate track list
+### Hour 10 — Spacebar play/pause
+### Hour 11-24 — TODO
+
+---
+
+## Day 10 (TODO) — 240 ideas — Advanced interactions + launch polish
+
+### Hour 1 — Drag-and-drop track reorder
+### Hour 2 — Track duplication (Cmd+D)
+### Hour 3 — Multi-select with shift-click
+### Hour 4 — Inline track editing
+### Hour 5 — Right-click context menu on album
+### Hour 6 — Drag album cover to desktop
+### Hour 7 — Markdown export of brief
+### Hour 8 — PDF cover sheet export
+### Hour 9 — ZIP archive download (album + cover + MP3s)
+### Hour 10 — Welcome onboarding overlay
+### Hour 11-24 — TODO
+
+---
+
+## Day 1 Hour 4-24 — 220 ideas backlog (placeholder)
+
+These will be filled out by future iterations. Each hour adds 10 ideas.
 
 ---
 
 ## Hand-off Notes (for next session)
 
-- Start daemon: `python -m build.serve --host 127.0.0.1 --port 8765` (default port)
-- Theme switcher is the visual baseline. Pick a theme in the bottom-left dock.
-- Every iteration runs `python e2e/run_all.py` before commit — must all pass.
-- Cache-bust scheme: `?v=hourN` on every script tag in studio.html, albums.html, library.html, intake.html.
-- Static assets go in `site/`; tests in `tests/`; e2e in `e2e/`; docs in `docs/`.
-- OneDrive mirror per R7: README/USER_MANUAL/TECHNICAL → `~/OneDrive/Hermes/Agents/planning/album-studio/`.
-- Obsidian daily log: `~/Documents/Obsidian Vault/Hermes/9-daily/YYYY-MM-DD.md`.
+- Start daemon: `python -m build.serve --host 127.0.0.1 --port 8765`
+- Run e2e before commit: `python e2e/run_all.py` (must all pass)
+- Cache-bust scheme: `?v=dayN-hourM` on every script tag
+- OneDrive mirror per R7: copy docs → `~/OneDrive/Hermes/Agents/planning/album-studio/`
+- Obsidian daily log: `~/Documents/Obsidian Vault/Hermes/9-daily/YYYY-MM-DD.md`
+- **Every iteration ships 10 ideas.** No fewer. No truncation.
+- **Continue until 2,400 ideas done.**
+
+---
+
+## Lessons from Day 1 Hours 1-3
+
+1. **`$(...).forEach` gotcha still bites** — `TestNoDollarForEachBug` is the guard.
+2. **The schedule is the contract** — each session reads it, marks done, continues.
+3. **Cache-bust matters** — `?v=dayN` is the only way Chrome sees updates.
+4. **No 3-hour cap, no 10-idea cap** — user wants the loop to run continuously.
