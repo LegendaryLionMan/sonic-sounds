@@ -182,7 +182,17 @@ def run() -> int:
         context = browser.new_context()
         page = context.new_page()
 
-        # Get a real session id from the daemon
+        # Get a real session id from the daemon.
+        # If there are already 3 active sessions (max limit), the
+        # POST returns 409. The prior suites (test_ui_full_ux +
+        # test_surfaces_day13) may leave sessions open, so complete
+        # ALL active sessions here — we always need a fresh slot.
+        existing_code, existing_body = api("GET", "/api/sessions")
+        existing_list = (existing_body or []) if isinstance(existing_body, list) else []
+        for es in existing_list:
+            if isinstance(es, dict) and es.get("status") == "active":
+                api("POST", f"/api/sessions/{es['id']}/complete")
+
         code, sess = api("POST", "/api/sessions", {"album_id": "half-light-hours"})
         sid = (sess or {}).get("id") if isinstance(sess, dict) else None
         # Post a build event so the studio can derive layer=03 from the
