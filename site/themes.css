@@ -1,0 +1,125 @@
+/* site/themes.css · 4 themes for album-studio
+ *
+ * Each theme is a :root[data-theme="name"] block that overrides the
+ * semantic CSS variables defined in site/studio.module.css. The
+ * default (no data-theme attribute or data-theme="mixtape85") is the
+ * existing Mixtape '85 look. Other themes:
+ *
+ *   - tokyonight:   Omarchy's default (deep blue, cyan accents)
+ *   - catppuccin:  soft pastel (popular community theme)
+ *   - gruvbox:     warm retro (amber/red on dark)
+ *   - mixtape85:   album-studio default (yellow + cyan on near-black)
+ *
+ * Themes are loaded by /site/themes.js which sets
+ * document.documentElement.dataset.theme.
+ */
+
+:root[data-theme="mixtape85"] {
+  --bg: #0a0a0f;
+  --bg-soft: #14141a;
+  --bg-elevated: #1a1a22;
+  --ink: #fafafa;
+  --ink-soft: rgba(255,255,255,.7);
+  --ink-muted: rgba(255,255,255,.4);
+  --accent: #f0c53c;          /* Mixtape yellow */
+  --accent-2: #2dd8f0;        /* Mixtape cyan */
+  --rule: rgba(255,255,255,.08);
+  --rule-strong: rgba(255,255,255,.18);
+}
+
+:root[data-theme="tokyonight"] {
+  --bg: #1a1b26;            /* Tokyo Night "Storm" bg */
+  --bg-soft: #24283b;
+  --bg-elevated: #2f3349;
+  --ink: #c0caf5;
+  --ink-soft: #9aa5ce;
+  --ink-muted: #565f89;
+  --accent: #7aa2f7;          /* Tokyo Night blue */
+  --accent-2: #bb9af7;        /* Tokyo Night purple */
+  --rule: rgba(192,202,245,.08);
+  --rule-strong: rgba(192,202,245,.18);
+}
+
+:root[data-theme="catppuccin"] {
+  --bg: #1e1e2e;            /* Catppuccin Mocha bg */
+  --bg-soft: #313244;
+  --bg-elevated: #45475a;
+  --ink: #cdd6f4;
+  --ink-soft: #bac2de;
+  --ink-muted: #6c7086;
+  --accent: #cba6f7;          /* Catppuccin Mauve */
+  --accent-2: #94e2d5;        /* Catppuccin Teal */
+  --rule: rgba(205,214,244,.08);
+  --rule-strong: rgba(205,214,244,.18);
+}
+
+:root[data-theme="gruvbox"] {
+  --bg: #282828;            /* Gruvbox Dark bg0 */
+  --bg-soft: #3c3836;
+  --bg-elevated: #504945;
+  --ink: #ebdbb2;
+  --ink-soft: #bdae93;
+  --ink-muted: #7c6f64;
+  --accent: #fabd2f;          /* Gruvbox yellow */
+  --accent-2: #fe8019;        /* Gruvbox orange */
+  --rule: rgba(235,219,178,.08);
+  --rule-strong: rgba(235,219,178,.18);
+}
+
+/* Theme-aware inheritance — every element that uses these vars
+ * (already wired in studio.module.css) transitions smoothly. */
+html { transition: background-color .25s ease, color .25s ease; }
+body { transition: background-color .25s ease; }
+
+/* Theme switcher widget (rendered by themes.js) */
+.theme-switcher {
+  position: fixed; bottom: 24px; left: 24px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 6px; border-radius: 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-strong);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: 0 4px 32px rgba(0,0,0,.4);
+  animation: theme-switcher-enter .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes theme-switcher-enter {
+  from { opacity: 0; transform: translateY(20px) scale(.9); }
+  to   { opacity: 1; transform: none; }
+}
+
+.theme-swatch {
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer; transition: all .18s ease;
+  position: relative;
+  background: var(--bg-elevated);
+}
+.theme-swatch:hover { transform: scale(1.15); }
+.theme-swatch.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Per-theme swatch previews (small chips) */
+.theme-swatch[data-theme="mixtape85"] { background: linear-gradient(135deg, #f0c53c 0%, #2dd8f0 100%); }
+.theme-swatch[data-theme="tokyonight"] { background: linear-gradient(135deg, #1a1b26 0%, #7aa2f7 100%); }
+.theme-swatch[data-theme="catppuccin"]  { background: linear-gradient(135deg, #cba6f7 0%, #94e2d5 100%); }
+.theme-swatch[data-theme="gruvbox"]    { background: linear-gradient(135deg, #fabd2f 0%, #fe8019 100%); }
+
+.theme-swatch .label {
+  position: absolute; left: 36px; top: 50%; transform: translateY(-50%);
+  background: var(--bg-elevated); color: var(--ink); padding: 4px 10px;
+  border-radius: 6px; font: 11px/1 var(--mono); white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+  border: 1px solid var(--rule-strong);
+}
+.theme-swatch:hover .label { opacity: 1; }
+
+/* Hide the switcher in print mode */
+@media print { .theme-switcher { display: none; } }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html, body, .theme-switcher, .theme-swatch { transition: none !important; animation: none !important; }
+}

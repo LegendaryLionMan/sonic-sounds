@@ -16,6 +16,7 @@ existing runner still works.
 """
 from __future__ import annotations
 
+import re
 import urllib.error
 import urllib.request
 
@@ -210,6 +211,68 @@ def suite_track_count(base: str) -> Suite:
     return s
 
 
+def suite_theme_switcher(base: str) -> Suite:
+    """Day 15 (hour 1): theme switcher assets + wiring.
+
+    The Omarchy-inspired theme switcher is a small floating dock
+    in the bottom-left of every page. Each page must load
+    /site/themes.css + /site/themes.js. The 4 themes must each
+    have a :root[data-theme="..."] block in themes.css.
+    """
+    s = Suite("Theme switcher (Day 15 hour 1)")
+    for asset, kind in [("/site/themes.css", "text/css"),
+                        ("/site/themes.js", "javascript")]:
+        try:
+            with urllib.request.urlopen(f"{base}{asset}", timeout=5) as r:
+                body = r.read().decode()
+                s.check(f"GET {asset} → 200",
+                        r.status == 200, f"got {r.status}")
+                ct = r.headers.get("Content-Type", "")
+                s.check(f"{asset} Content-Type is {kind}",
+                        kind in ct, f"got {ct!r}")
+        except Exception as e:
+            s.check(f"{asset} reachable", False, str(e))
+
+    # themes.css must define all 4 themes
+    try:
+        with urllib.request.urlopen(f"{base}/site/themes.css", timeout=5) as r:
+            css = r.read().decode()
+        for theme in ("mixtape85", "tokyonight", "catppuccin", "gruvbox"):
+            # Each theme block must contain the 4 key semantic vars.
+            # Use a forgiving pattern that handles whitespace + comments
+            # (we strip line comments before matching).
+            css_nocomments = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+            block_match = re.search(
+                rf':root\[data-theme="{theme}"\]\s*\{{([^}}]+)\}}',
+                css_nocomments, re.DOTALL,
+            )
+            if not block_match:
+                s.check(f"theme '{theme}' has CSS block", False,
+                        "no :root[data-theme=...] block found")
+                continue
+            block = block_match.group(1)
+            for var in ("--bg", "--bg-soft", "--ink", "--accent"):
+                s.check(f"theme '{theme}' defines {var}",
+                        var in block,
+                        f"missing {var} (block len={len(block)})")
+    except Exception as e:
+        s.check("themes.css readable", False, str(e))
+
+    # Every page must load both assets
+    for page in ("/site/studio.html", "/site/albums.html", "/site/library.html"):
+        try:
+            with urllib.request.urlopen(f"{base}{page}", timeout=5) as r:
+                html = r.read().decode()
+            s.check(f"{page} loads themes.css",
+                    "/site/themes.css" in html, "missing link")
+            s.check(f"{page} loads themes.js",
+                    "/site/themes.js" in html, "missing script")
+        except Exception as e:
+            s.check(f"{page} reachable", False, str(e))
+
+    return s
+
+
 def run_all(base: str) -> int:
     """Run all 4 day-13/14 suites; return 0 if all pass, 1 otherwise."""
     suites = [
@@ -217,6 +280,7 @@ def run_all(base: str) -> int:
         suite_audio_streaming(base),
         suite_guide_overlay(base),
         suite_track_count(base),
+        suite_theme_switcher(base),
     ]
     total_pass = total_fail = 0
     all_ok = True
