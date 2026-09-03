@@ -65,8 +65,8 @@ The studio displays the first 9 layers. The remaining 3 are admin-only.
 
 ## 📊 Status
 
-- **Tests:** 377 passing + 2 skipped (run with `pytest tests/ build/`)
-- **E2E:** 122/122 headless UX + 16/16 Playwright = 138/138 distinct checks
+- **Tests:** 385 passing + 2 skipped (run with `pytest tests/ build/`)
+- **E2E:** 122 headless UX + 21 Day 13-14 surfaces + 16 Playwright + JS lint guard = **159 distinct verifications** across 4 suites (`python e2e/run_all.py`)
 - **Daemon subsystems:** 6/6 ok (audio, build_runner, db, http, static, sweepers)
 - **Endpoints:** 30+ HTTP routes (albums, sessions, events, decisions, build, intake, audio, cover)
 - **Sweepers:** 5 daemon threads (idle_pause, wal_checkpoint, quota, mirror, log_rotate)
@@ -84,4 +84,4 @@ The studio displays the first 9 layers. The remaining 3 are admin-only.
 
 ---
 
-**Plan v3.4** complete (Days 1-12 all shipped). See [docs/TECHNICAL.md §10](docs/TECHNICAL.md#10-day-by-day-commit-history) for the day-by-day commit history.
+**Plan v3.4** complete (Days 1-12 all shipped) **plus Days 13-14 polish** (cover art, audio OneDrive fallback, interactive user guide, console-error regression guard). See [docs/TECHNICAL.md §10](docs/TECHNICAL.md#10-day-by-day-commit-history) for the day-by-day commit history.

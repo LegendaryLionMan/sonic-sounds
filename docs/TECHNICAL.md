@@ -370,7 +370,7 @@ build/test_serve.py             # build.serve handler tests
 build/test_singleton.py
 ```
 
-Total: **377 passing + 2 skipped** (the skipped are async-lock edge cases documented in the code).
+Total: **385 passing + 2 skipped** (the skipped are async-lock edge cases documented in the code). The 4-suite e2e runner (`python e2e/run_all.py`) adds another 159 verifications across UX contract, Day 13-14 surfaces, Playwright, and the JS lint guard.
 
 ### 8.2 Test isolation pattern
 
@@ -429,8 +429,15 @@ class TestX(unittest.IsolatedAsyncioTestCase):
 | 12 | `35484a6` | mirror verification + Playwright e2e + 9 tests |
 | (polish) | `2990a5e` | Playwright build event + defensive `_report` |
 | (polish) | `4c13118` | cleanup stray `hlh/` in teardown |
+| 13 | `3e9acb2` | cover art endpoint + interactive guide overlay + README + USER_MANUAL + TECHNICAL (Day 13 docs sweep) |
+| (polish) | `0d1d2c8` | docs/assets/screenshots/ directory + README |
+| (polish) | `3cc2797` | USER_MANUAL §7.5 Screenshots section |
 | (audio) | `443a036` | audio handler OneDrive fallback |
 | (UI) | `493f186` | cover art renders + track_count |
+| (guide) | `329dd99` | 7 tests for the interactive guide |
+| 14 | `33e99b6` | **fix(studio): regression guard for `$(...).forEach` JS bug** |
+| (polish) | `84bb972` | ignore `/.agents/` (skill mirror, not in git) |
+| (e2e) | `fd77dc7` | **4-suite e2e runner + Day 13-14 surface coverage** |
 
 ---
 
