@@ -38,8 +38,13 @@
     muted: false,         // mute via speaker-icon click — preserves slider position
     volumeBeforeMute: 0.7,
     repeat: 'off',        // 'off' | 'all' | 'one' — repeat entire album or current track
-    shuffle: false,       // shuffle playlist order
-  };
+        shuffle: false,       // shuffle playlist order
+        sleepAt: null,        // epoch ms when playback auto-stops; null = off
+        abLoop: null,         // {a, b} in seconds; null = off
+        speed: 1.0,           // playbackRate
+        timeMode: 'elapsed',  // 'elapsed' | 'remaining'
+        volNudge: 0,          // epoch ms of last volume ↑/↓ nudge
+      };
 
   function loadLS() {
     try {
