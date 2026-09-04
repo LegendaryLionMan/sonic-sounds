@@ -42,7 +42,7 @@
   display: grid;
   /* Tighter fractions: left gets the minimum the cassette needs, right
    * gets enough for vol + tracks button, middle eats the rest. */
-  grid-template-columns: minmax(260px, 1.2fr) 2fr minmax(220px, 1fr);
+  grid-template-columns: auto minmax(180px, 0.9fr) minmax(280px, 2fr) minmax(220px, 1fr);
   align-items: center;
   gap: 16px;
   padding: 0 var(--hp-pad);
@@ -236,13 +236,6 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 }
 .hp-btn-play:hover { background: hsl(36, 85%, 65%); filter: brightness(1.05); }
 .hp-btn-skip { font-size: 13px; }
-.hp-progress {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
 .hp-time {
   font-family: var(--mono, monospace);
   font-size: 11px;
@@ -452,7 +445,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 /* Phase 2 (< 900px): tighter gaps + smaller buttons */
 @media (max-width: 900px) {
   .header-player {
-    grid-template-columns: minmax(220px, 1fr) 1.4fr minmax(180px, auto);
+    grid-template-columns: auto minmax(140px, 0.8fr) minmax(220px, 1.6fr) minmax(180px, auto);
     gap: 10px;
     padding: 0 10px;
   }
@@ -464,7 +457,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 /* Phase 3 (< 720px): hide sub-meta + volume, show tracklist button only */
 @media (max-width: 720px) {
   .header-player {
-    grid-template-columns: minmax(200px, 1fr) 1.5fr auto;
+    grid-template-columns: auto minmax(140px, 0.8fr) minmax(200px, 1.5fr) auto;
   }
   .hp-meta-sub { display: none; }
   .hp-vol-wrap { display: none; }
@@ -473,7 +466,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 /* Phase 4 (< 600px): tighten further; ensure transport stays usable */
 @media (max-width: 600px) {
   .header-player {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(120px, 0.7fr) minmax(180px, 1.5fr) auto;
     gap: 8px;
   }
   .hp-btn { width: 30px; height: 30px; font-size: 12px; }
@@ -499,7 +492,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
     height: auto;
     padding: 8px 10px;
     /* 3 columns × 2 rows */
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(120px, 0.7fr) minmax(180px, 1.5fr) auto;
     grid-template-rows: auto auto;
     column-gap: 10px;
     row-gap: 8px;
@@ -528,8 +521,20 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   .hp-progress {
     grid-column: 1 / -1;
     grid-row: 2;
-    width: auto;        /* span handles width; explicit width limits it */
+    width: auto;
     min-width: 0;
+  }
+  .hp-transport {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .hp-cassette {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .hp-right {
+    grid-column: 4; /* col 4 at narrow widths */
+    grid-row: 1;
   }
   /* Keep the cassette compact */
   .hp-cassette-art { width: 44px; height: 44px; flex-shrink: 0; }
