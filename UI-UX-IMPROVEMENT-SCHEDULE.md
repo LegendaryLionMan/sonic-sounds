@@ -186,8 +186,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no slide-in
 10. ⏳ TODO: Keyboard navigation (up/down/enter)
 
-### Hour 15 — Album card interactions (10 of 10)
-1. ⏳ TODO: Hover lifts card (-2px Y + shadow)
+### Hour 15 — Album card interactions (10 of 10) (DONE)1. ⏳ TODO: Hover lifts card (-2px Y + shadow)
 2. ⏳ TODO: Hover scales cover (1.02)
 3. ⏳ TODO: Hover reveals quick-play overlay
 4. ⏳ TODO: Hover reveals metadata tooltip
@@ -198,8 +197,7 @@
 9. ⏳ TODO: Status badge pulses on hover
 10. ⏳ TODO: prefers-reduced-motion → no lift
 
-### Hour 16 — Pipeline cell animations (10 of 10)
-1. ⏳ TODO: Cell lights up sequentially on invoke (cascade 01 → 02 → 03)
+### Hour 16 — Pipeline cell animations (10 of 10) (DONE)1. ⏳ TODO: Cell lights up sequentially on invoke (cascade 01 → 02 → 03)
 2. ⏳ TODO: 80ms delay between cells
 3. ⏳ TODO: Active cell has accent border + glow
 4. ⏳ TODO: Done cell has checkmark ✓
