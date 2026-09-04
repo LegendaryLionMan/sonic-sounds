@@ -68,15 +68,15 @@
 
 .track-list-full { display: flex; flex-direction: column; gap: 4px; }
 .track-row-full {
-  display: grid;
-  grid-template-columns: 36px 1fr auto auto auto;
-  gap: 18px;
-  align-items: center;
-  padding: 14px 18px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid var(--rule);
-  transition: background .15s ease;
+ display: grid;
+ grid-template-columns: 36px 1fr auto auto auto;
+ gap: 18px;
+ align-items: center;
+ padding: 14px 18px;
+ border-radius: 10px;
+ background: rgba(255,255,255,.02);
+ border: 1px solid var(--rule);
+ transition: background .15s ease;
 }
 .track-row-full:hover { background: rgba(255,255,255,.05); }
 .track-row-full .t-num { font-family: var(--mono); font-size: 13px; color: var(--ink-muted); }
@@ -86,6 +86,38 @@
 .track-row-full .t-play { background: var(--accent); color: var(--accent-fg); border: 0; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
 .track-row-full .t-play:hover { filter: brightness(1.1); }
 .track-row-full .t-play[data-playing="true"] { background: var(--accent-2, var(--accent)); }
+
+/* Narrow widths — stack to TWO ROWS so nothing collapses to 0 width.
+ * The original 5-column grid (num, title, mood, duration, play) becomes
+ * hard to read below 640px because the title column squeezes to < 100px.
+ * Below 640px: row 1 = num | title | play; row 2 = mood | duration.
+ * Below 420px: play gets its own row 3 (touch-target stays put). */
+@media (max-width: 640px) {
+ .track-row-full {
+  grid-template-columns: 36px 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 6px;
+ }
+ .track-row-full .t-num      { grid-column: 1; grid-row: 1; align-self: center; }
+ .track-row-full .t-title    { grid-column: 2; grid-row: 1; }
+ .track-row-full .t-play     { grid-column: 3; grid-row: 1; align-self: center; }
+ .track-row-full .t-mood     { grid-column: 1 / span 2; grid-row: 2; font-size: 10.5px; opacity: 0.85; }
+ .track-row-full .t-duration { grid-column: 3; grid-row: 2; font-size: 11px; }
+ .track-row-full .t-play { padding: 6px 12px; font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+ .track-row-full {
+  grid-template-columns: 32px 1fr auto;
+  grid-template-rows: auto auto auto;
+ }
+ .track-row-full .t-num      { grid-column: 1; grid-row: 1; }
+ .track-row-full .t-title    { grid-column: 2 / span 2; grid-row: 1; }
+ .track-row-full .t-mood     { grid-column: 1 / span 3; grid-row: 2; }
+ .track-row-full .t-duration { grid-column: 1; grid-row: 3; }
+ .track-row-full .t-play     { grid-column: 3; grid-row: 3; padding: 8px 14px; font-size: 11px; }
+}
 
 .session-list, .asset-list { display: flex; flex-direction: column; gap: 6px; }
 .session-row, .asset-row {

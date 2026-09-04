@@ -4,10 +4,15 @@
  * injects the markup into <body>. Reads playback state from localStorage
  * so the user can navigate pages without losing their place.
  *
- * Cassette visual: two reels that spin while audio plays, a label with the
- * album title, a track strip that scrolls. Hover/click → expand tracklist.
+ * Cassette visual: a single cassette-tape artwork (site/assets/cassette-yellow-tape.jpg)
+ * with two overlaid "reel holes" that rotate while audio is playing —
+ * like the spools actually turning inside an old tape deck.
  *
- * Theme: Mixtape '85 dark (matches albums.html, studio.html, album.html).
+ * Responsive: at < 600px the bar collapses into TWO ROWS so nothing
+ * gets squashed to 0 width. At < 480px the album page track rows also
+ * stack title over mood.
+ *
+ * Theme: Mixtape '85 dark.
  */
 
 :root {
@@ -18,11 +23,11 @@
   --hp-accent:       hsl(36, 80%, 60%);
   --hp-accent-fg:    hsl(20, 30%, 12%);
   --hp-rule:         hsl(240, 8%, 22%);
-  --hp-danger:       hsl(0, 65%, 60%);
   --hp-pad:          12px;
   --hp-h:            76px;
   --hp-radius:       14px;
   --hp-shadow:       0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.04) inset;
+  --hp-cassette-img: url("/site/assets/cassette-yellow-tape.jpg");
 }
 
 /* Mount point — fixed top bar */
@@ -35,7 +40,9 @@
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--hp-rule);
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) 2fr minmax(220px, 1fr);
+  /* Tighter fractions: left gets the minimum the cassette needs, right
+   * gets enough for vol + tracks button, middle eats the rest. */
+  grid-template-columns: minmax(260px, 1.2fr) 2fr minmax(220px, 1fr);
   align-items: center;
   gap: 16px;
   padding: 0 var(--hp-pad);
@@ -45,67 +52,121 @@
   box-shadow: var(--hp-shadow);
   user-select: none;
 }
-
-/* When page nav happens on a page that uses .topbar at the top, push it down */
 body.has-header-player { padding-top: calc(var(--hp-h) + 8px); }
 body.has-header-player nav.topbar { top: var(--hp-h); }
 
-/* ----- LEFT: cassette visual + meta ----- */
+/* ----- LEFT: cassette artwork + meta ----- */
 .hp-cassette {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
+
+/* Cassette artwork: shows the sticker + two animated reel holes on top. */
 .hp-cassette-art {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--hp-accent) 0%, hsl(20, 70%, 40%) 100%);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  border-radius: 6px;
   overflow: hidden;
+  background: var(--hp-cassette-img) center/cover no-repeat, #1a1a22;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset;
 }
-.hp-cassette-art img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
+/* A subtle frame outline so the cassette stands out from the dark bar */
+.hp-cassette-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.05);
+  pointer-events: none;
 }
+
+/* The two reel holes. The cassette image already has the holes baked in
+ * (visible as dark spots on the yellow tape), but we overlay animated
+ * pseudo-reels here so users see the "tape spinning" effect when playing.
+ * Position the reels to match where the holes appear on the cassette image. */
 .hp-reels {
   position: absolute;
-  inset: 6px;
+  /* Match the yellow-tape cassette image: reels at ~25% / 75% horizontally,
+   * centred vertically over the tape band (about 38-62% vertical). */
+  top: 38%;
+  left: 22%;
+  right: 22%;
+  bottom: 38%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  gap: 18%;
+  pointer-events: none;
 }
 .hp-reel {
-  background: rgba(0,0,0,0.35);
-  border-radius: 50%;
   position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,0,0,0.55) 0%,
+    rgba(0,0,0,0.55) 28%,
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0) 38%,
+    rgba(0,0,0,0.55) 42%,
+    rgba(0,0,0,0.55) 100%);
+  animation: hp-spin 4s linear infinite;
+  animation-play-state: paused;
 }
+/* Spokes — three lines crossing through the centre */
 .hp-reel::before, .hp-reel::after {
   content: '';
   position: absolute;
-  background: rgba(255,255,255,0.18);
-}
-.hp-reel::before {
-  inset: 18%;
+  inset: 0;
   border-radius: 50%;
-}
-.hp-reel::after {
-  inset: 40%;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.5);
-}
-.hp-reel {
-  animation: hp-spin 1.4s linear infinite;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,255,255,0.35) 0deg, transparent 4deg,
+      transparent 60deg, rgba(255,255,255,0.35) 64deg, transparent 68deg,
+      transparent 120deg, rgba(255,255,255,0.35) 124deg, transparent 128deg,
+      transparent 180deg, rgba(255,255,255,0.35) 184deg, transparent 188deg,
+      transparent 240deg, rgba(255,255,255,0.35) 244deg, transparent 248deg,
+      transparent 300deg, rgba(255,255,255,0.35) 304deg, transparent 308deg,
+      transparent 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 28%, #000 30%, #000 100%);
+          mask: radial-gradient(circle, transparent 28%, #000 30%, #000 100%);
+  opacity: 0.6;
+  animation: hp-spin 4s linear infinite;
   animation-play-state: paused;
 }
-.header-player.is-playing .hp-reel {
+.header-player.is-playing .hp-reel,
+.header-player.is-playing .hp-reel::before,
+.header-player.is-playing .hp-reel::after {
   animation-play-state: running;
+}
+/* The reels spin at slightly different rates for a "the tape is moving"
+ * sense (real cassette hubs differ because tape travels between them). */
+.hp-reel:nth-child(2),
+.hp-reel:nth-child(2)::before,
+.hp-reel:nth-child(2)::after {
+  animation-duration: 4.4s; /* take-up reel spins slower */
 }
 @keyframes hp-spin {
   to { transform: rotate(360deg); }
 }
+
+/* Pause icon overlay hidden by default; appears when paused */
+.hp-pause-indicator {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.7);
+  color: var(--hp-fg);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  pointer-events: none;
+}
+.header-player:not(.is-playing) .hp-pause-indicator { display: flex; }
 
 .hp-meta { min-width: 0; flex: 1; }
 .hp-meta-eyebrow {
@@ -141,6 +202,16 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   align-items: center;
   gap: 14px;
   min-width: 0;
+}
+.hp-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.hp-progress.is-empty {
+  /* Wait until durations/audio load before claiming real height */
+  height: 0;
 }
 .hp-btn {
   background: transparent;
@@ -184,6 +255,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   flex: 1;
   position: relative;
   height: 6px;
+  min-width: 60px;       /* never collapse to zero */
   background: rgba(255,255,255,0.08);
   border-radius: 999px;
   overflow: hidden;
@@ -218,6 +290,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   align-items: center;
   gap: 8px;
   justify-content: flex-end;
+  min-width: 0;
 }
 .hp-vol-wrap {
   display: flex;
@@ -263,6 +336,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   padding: 6px 12px;
   cursor: pointer;
   transition: color .12s ease, border-color .12s ease;
+  white-space: nowrap;
 }
 .hp-list-btn:hover {
   color: var(--hp-fg);
@@ -369,12 +443,102 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   white-space: nowrap;
 }
 
-/* ----- RESPONSIVE: collapse volume on narrow screens ----- */
+/* ============================================================
+ * RESPONSIVE — never let anything collapse to 0 width.
+ * ============================================================ */
+
+/* Phase 1 (>= 900px): full layout as designed above (default) */
+
+/* Phase 2 (< 900px): tighter gaps + smaller buttons */
+@media (max-width: 900px) {
+  .header-player {
+    grid-template-columns: minmax(220px, 1fr) 1.4fr minmax(180px, auto);
+    gap: 10px;
+    padding: 0 10px;
+  }
+  .hp-btn { width: 32px; height: 32px; font-size: 13px; }
+  .hp-btn-play { width: 40px; height: 40px; font-size: 17px; }
+  .hp-vol { width: 70px; }
+}
+
+/* Phase 3 (< 720px): hide sub-meta + volume, show tracklist button only */
 @media (max-width: 720px) {
+  .header-player {
+    grid-template-columns: minmax(200px, 1fr) 1.5fr auto;
+  }
+  .hp-meta-sub { display: none; }
+  .hp-vol-wrap { display: none; }
+}
+
+/* Phase 4 (< 600px): tighten further; ensure transport stays usable */
+@media (max-width: 600px) {
   .header-player {
     grid-template-columns: auto 1fr auto;
     gap: 8px;
   }
-  .hp-vol-wrap { display: none; }
-  .hp-meta-sub { display: none; }
+  .hp-btn { width: 30px; height: 30px; font-size: 12px; }
+  .hp-btn-play { width: 38px; height: 38px; font-size: 16px; }
+  .hp-time { min-width: 32px; font-size: 10px; }
+  .hp-seek { min-width: 40px; }
+  .hp-transport { gap: 6px; }
+  .hp-cassette-art { width: 50px; height: 50px; }
+  .hp-meta-title { font-size: 13px; }
+}
+
+/* Phase 5 (< 480px): SECOND ROW for the player itself.
+ * Row 1: cassette | transport (skip + play + skip)
+ * Row 2: progress (seek + time)
+ * Right column (tracklist button) pulled onto row 1 of the grid where it fits.
+ *
+ * Layout uses a 2-row × 3-col grid:
+ *   [cassette] [transport     ] [tracklist-btn]
+ *   [progress spanning all 3 cols                ]
+ */
+@media (max-width: 480px) {
+  .header-player {
+    height: auto;
+    padding: 8px 10px;
+    /* 3 columns × 2 rows */
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .hp-cassette {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;     /* let cassette shrink to its 44px image */
+    max-width: 160px; /* keep the title from pushing transport out */
+  }
+  .hp-meta {
+    min-width: 0;
+  }
+  .hp-transport {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+    gap: 4px;
+    min-width: 0;
+  }
+  .hp-right {
+    grid-column: 3;
+    grid-row: 1;
+    min-width: 0;
+  }
+  .hp-progress {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: auto;        /* span handles width; explicit width limits it */
+    min-width: 0;
+  }
+  /* Keep the cassette compact */
+  .hp-cassette-art { width: 44px; height: 44px; flex-shrink: 0; }
+  .hp-meta-title { font-size: 13px; }
+  .hp-meta-eyebrow { font-size: 9px; }
+  /* Buttons stay touch-sized */
+  .hp-btn { width: 32px; height: 32px; }
+  .hp-btn-play { width: 40px; height: 40px; font-size: 16px; }
+  .hp-list-btn { padding: 5px 10px; font-size: 9px; }
+
+  body.has-header-player { padding-top: calc(var(--hp-h) + 24px); }
 }

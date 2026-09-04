@@ -73,11 +73,11 @@
     root.innerHTML = `
       <div class="hp-cassette">
         <div class="hp-cassette-art">
-          <img class="hp-cover-img" src="" alt="" hidden>
           <div class="hp-reels">
             <div class="hp-reel"></div>
             <div class="hp-reel"></div>
           </div>
+          <div class="hp-pause-indicator">||</div>
         </div>
         <div class="hp-meta">
           <p class="hp-meta-eyebrow">/cassette · no album loaded</p>
@@ -90,11 +90,12 @@
         <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous">⏮</button>
         <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play/Pause">▷</button>
         <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next">⏭</button>
-        <div class="hp-progress">
-          <span class="hp-time" data-role="cur">0:00</span>
-          <div class="hp-seek" data-role="seek"><div class="hp-seek-fill"></div></div>
-          <span class="hp-time" data-role="dur">0:00</span>
-        </div>
+      </div>
+
+      <div class="hp-progress">
+        <span class="hp-time" data-role="cur">0:00</span>
+        <div class="hp-seek" data-role="seek"><div class="hp-seek-fill"></div></div>
+        <span class="hp-time" data-role="dur">0:00</span>
       </div>
 
       <div class="hp-right">
@@ -263,13 +264,12 @@
       sub.textContent = 'no tracks loaded';
     }
 
-    // Cover
+    // Cover — we now use the cassette sticker image as a fixed artwork;
+    // a cover image slot can be re-added in the future when an album-specific
+    // cassette sticker exists. For now the artwork is always cassette-yellow-tape.
     const img = root.querySelector('.hp-cover-img');
-    if (state.album && state.album.cover_path) {
-      img.src = `/api/albums/${encodeURIComponent(state.album.id)}/cover`;
-      img.alt = state.album.title;
-      img.hidden = false;
-    } else {
+    if (img) {
+      img.removeAttribute('src');
       img.hidden = true;
     }
 
