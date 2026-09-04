@@ -43,8 +43,8 @@ Album total: **90:42** (was target ~39 min for 12×3:15). Total size: 166 MB.
 - **12 tracks** at `~/Music/Twenty-Two/music/NN-slug.mp3` (mirrored to `~/OneDrive/Albums/Twenty-Two/music/`)
 - **12 lyrics files** at `~/Music/Twenty-Two/lyrics/NN-slug.md` (mirrored to OneDrive)
 - **12 prompt files** at `~/Music/Twenty-Two/prompts/slug.md` — exact text sent to `--prompt` + generation result section (mirrored)
-- **Concept brief** at `~/Documents/Projects/album-studio/concept-briefs/twenty-two.md`
-- **Schema + walkthrough + META-DECISIONS** at `~/Documents/Projects/album-studio/`
+- **Concept brief** at `~/Documents/Projects/sonic-studio/concept-briefs/twenty-two.md`
+- **Schema + walkthrough + META-DECISIONS** at `~/Documents/Projects/sonic-studio/`
 
 ---
 
@@ -101,10 +101,10 @@ The album has a coherent spine:
 | `~/OneDrive/Hermes/albums/twenty-two/lyrics/*.md` | 12 lyrics with structure tags |
 | `~/OneDrive/Hermes/albums/twenty-two/scripts/prompts/*.md` | Exact prompts sent + generation result per track |
 | `~/OneDrive/Hermes/albums/twenty-two/README.md` | Album delivery package README |
-| `~/Documents/Projects/album-studio/concept-briefs/twenty-two.md` | Album concept brief |
-| `~/Documents/Projects/album-studio/intake-data/schema.json` | Locked schema (v2.1) |
-| `~/Documents/Projects/album-studio/planning/META-DECISIONS-2026-08-02.md` | All 16 field decisions + v1→v2 rethink history |
-| `~/Documents/Projects/album-studio/planning/QUESTIONNAIRE-WALKTHROUGH-2026-07-29.md` | r2 walkthrough doc |
+| `~/Documents/Projects/sonic-studio/concept-briefs/twenty-two.md` | Album concept brief |
+| `~/Documents/Projects/sonic-studio/intake-data/schema.json` | Locked schema (v2.1) |
+| `~/Documents/Projects/sonic-studio/planning/META-DECISIONS-2026-08-02.md` | All 16 field decisions + v1→v2 rethink history |
+| `~/Documents/Projects/sonic-studio/planning/QUESTIONNAIRE-WALKTHROUGH-2026-07-29.md` | r2 walkthrough doc |
 
 **Convention fix:** original mirror was at `~/OneDrive/Albums/Twenty-Two/` — wrong. Maren Sol (Half-Light-Hours) uses `~/OneDrive/Hermes/albums/<kebab-case>/`. Fixed 2026-08-03 by moving everything to the canonical location.
 

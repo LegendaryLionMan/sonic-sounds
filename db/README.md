@@ -1,4 +1,4 @@
-# db/ — album-studio database layer
+# db/ — sonic-studio database layer
 
 Per PLAN-2026-07-28-v3.4 §Day 2.
 
@@ -23,7 +23,7 @@ CRUD (per Day 2.4):
 - `db.queries`: dashboard_summary, recent_albums_with_progress, session_chat_history, build_jobs_for_album, global_status, format_status_4line
 
 ## Default DB location
-`.meta/album-studio.db` (per Q25)
+`.meta/sonic-studio.db` (per Q25)
 
 ## 13 tables (per Q23, expanded by Q27)
 - artists, albums, tracks, assets (4 core)

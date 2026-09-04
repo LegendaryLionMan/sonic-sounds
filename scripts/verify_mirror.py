@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 from typing import Optional, Union
 
-_log = logging.getLogger("album_studio.scripts.verify_mirror")
+_log = logging.getLogger("sonic_studio.scripts.verify_mirror")
 
 
 def _md5(path: Path) -> str:
@@ -128,7 +128,7 @@ def main() -> int:
     parser.add_argument("--base", default=".",
                         help="Project root (default: current directory)")
     parser.add_argument("--mirror", default=None,
-                        help="OneDrive mirror path (default: ~/OneDrive/Hermes/Agents/planning/album-studio)")
+                        help="OneDrive mirror path (default: ~/OneDrive/Hermes/Agents/planning/sonic-studio)")
     parser.add_argument("--no-meta", action="store_true",
                         help="Skip .meta/ subdirectory (only check albums/)")
     parser.add_argument("--json", action="store_true",
@@ -139,7 +139,7 @@ def main() -> int:
 
     if args.mirror is None:
         # Per R7: OneDrive/Hermes/Agents/planning/<project-name>/
-        mirror = Path.home() / "OneDrive" / "Hermes" / "Agents" / "planning" / "album-studio"
+        mirror = Path.home() / "OneDrive" / "Hermes" / "Agents" / "planning" / "sonic-studio"
     else:
         mirror = Path(args.mirror)
 

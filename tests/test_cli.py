@@ -1,12 +1,12 @@
 """tests/test_cli.py — CLI integration tests.
 
-Each test uses a fresh tempdb via the ALBUM_STUDIO_DB_PATH env var so the
-live .meta/album-studio.db is never touched. The setUpClass creates one
+Each test uses a fresh tempdb via the SONIC_STUDIO_DB_PATH env var so the
+live .meta/sonic-studio.db is never touched. The setUpClass creates one
 tempdir for the whole class, runs migrations on it, and tears it down.
 
 In-process DB setup helpers (create_artist/create_album/open_session) need
 to be redirected to the tempdb as well — we do that by setting the
-ALBUM_STUDIO_DB_PATH for the current process BEFORE importing the db
+SONIC_STUDIO_DB_PATH for the current process BEFORE importing the db
 modules. Since the modules cache DEFAULT_DB_PATH at import time, the
 setUpClass must run before any db.* import takes effect, which is why
 this test imports db lazily inside class methods.
@@ -22,14 +22,14 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 
 # Note: we do NOT import db.* at module top, because DEFAULT_DB_PATH is
-# resolved at import time and would capture the live .meta/album-studio.db.
+# resolved at import time and would capture the live .meta/sonic-studio.db.
 # All db imports happen lazily inside setUpClass so the env var is set first.
 
 
 class TestCli(unittest.TestCase):
     """End-to-end CLI tests via subprocess.
 
-    Runs against a per-class tempdb so the live .meta/album-studio.db is
+    Runs against a per-class tempdb so the live .meta/sonic-studio.db is
     never mutated by the test suite.
     """
 
@@ -38,16 +38,16 @@ class TestCli(unittest.TestCase):
         sys.path.insert(0, str(PROJECT_ROOT))
 
         # Create a tempdir + tempdb for this class
-        cls.tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-cli-"))
+        cls.tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-cli-"))
         cls.tempdb = cls.tmpdir / "test.db"
 
         # Set env BEFORE importing db modules so DEFAULT_DB_PATH picks up
         # the tempdb at import time.
-        os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
+        os.environ["SONIC_STUDIO_DB_PATH"] = str(cls.tempdb)
 
         # Drop any cached db.* + build.* modules so they re-resolve DEFAULT_DB_PATH
         # with our env var. After this block, importing db.* will read
-        # ALBUM_STUDIO_DB_PATH from the environment.
+        # SONIC_STUDIO_DB_PATH from the environment.
         for mod_name in list(sys.modules):
             if (mod_name == "db" or mod_name.startswith("db.")
                     or mod_name.startswith("build.")):
@@ -79,7 +79,7 @@ class TestCli(unittest.TestCase):
         # 1. Close any open connections to our tempdb before we delete
         #    the file. Drop db.* modules first so close_all() picks up the
         #    right cached conn (the test's tempdb, not the live one).
-        os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
+        os.environ["SONIC_STUDIO_DB_PATH"] = str(cls.tempdb)
         for mod_name in list(sys.modules):
             if mod_name == "db" or mod_name.startswith("db."):
                 del sys.modules[mod_name]
@@ -97,12 +97,12 @@ class TestCli(unittest.TestCase):
         import shutil
         shutil.rmtree(cls.tmpdir, ignore_errors=True)
         # 4. Unset the env var so other test classes don't inherit it
-        os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+        os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
     def _subprocess_env(self) -> dict:
         """Build env for subprocess that points CLI at our tempdb."""
         env = os.environ.copy()
-        env["ALBUM_STUDIO_DB_PATH"] = str(self.tempdb)
+        env["SONIC_STUDIO_DB_PATH"] = str(self.tempdb)
         return env
 
     def test_status_cli(self):
@@ -181,14 +181,14 @@ class TestCli(unittest.TestCase):
     def test_chat_cli(self):
         """Create a session, then 'chat' to add a message.
 
-        Uses tempdb (via ALBUM_STUDIO_DB_PATH in the subprocess env) and
+        Uses tempdb (via SONIC_STUDIO_DB_PATH in the subprocess env) and
         a unique artist/album id so the test doesn't collide with state
         left by other test classes.
         """
         env = self._subprocess_env()
         # Bootstrap artist + album in-process (faster than subprocess).
         # The db.* modules are already cached at the tempdb path because
-        # setUpClass set ALBUM_STUDIO_DB_PATH and dropped the cached modules
+        # setUpClass set SONIC_STUDIO_DB_PATH and dropped the cached modules
         # before importing them.
         unique = f"chat-test-{os.getpid()}"
         self._db_modules["create_artist"](unique, "Chat Test")

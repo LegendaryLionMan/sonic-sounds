@@ -1,4 +1,4 @@
-# Album Studio Design Review — 2026-08-05 (Session End)
+# Sonic Studio Design Review — 2026-08-05 (Session End)
 
 ## What got shipped today
 
@@ -73,7 +73,7 @@
 
 2. **Real navigation between Penpot pages** — at minimum, a top nav with links to all 9 pages. Should be a separate "00 Index" page in Penpot.
 
-3. **OneDrive mirror of Penpot file** — the design lives only in the live Penpot instance. Should be backed up to `~/OneDrive/Hermes/Agents/planning/album-studio-design/`.
+3. **OneDrive mirror of Penpot file** — the design lives only in the live Penpot instance. Should be backed up to `~/OneDrive/Hermes/Agents/planning/sonic-studio-design/`.
 
 4. **Cover selection interaction** — the cover-exploration page should let the user click a cassette and have a "this becomes the album cover" feedback state. This requires actual interactive HTML, not just static PNGs.
 
@@ -153,7 +153,7 @@ The user has approved the Mixtape '85 direction. Don't propose cassette-mesh alt
 
 | Track | Status | File | Size |
 |---|---|---|---|
-| Cassette-mesh original | ✅ 6 Penpot pages | album-studio-design Penpot file | full |
+| Cassette-mesh original | ✅ 6 Penpot pages | sonic-studio-design Penpot file | full |
 | Cassette-mesh premium | ✅ 2 Penpot pages | Premium 01, Premium 04 | full |
 | Mixtape '85 | ✅ 1 Penpot page | Premium 01b — Mixtape 85 | full |
 | Animations | ⚠️ static screenshot | site/premium-cassette-animations.html | 10 KB |

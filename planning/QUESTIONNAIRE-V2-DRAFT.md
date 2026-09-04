@@ -1,4 +1,4 @@
-# album-studio Questionnaire v2 — Blind Spots & New Question Proposals
+# sonic-studio Questionnaire v2 — Blind Spots & New Question Proposals
 
 **Date:** 2026-07-30
 **Author:** Penelope (autonomous 24h work)

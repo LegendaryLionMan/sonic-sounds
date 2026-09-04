@@ -16,7 +16,7 @@ Per Q23: SQLite is the schema of record.
 Per Q26: WAL mode + PRAGMAs applied on every open.
 
 Module-level helpers:
-  DEFAULT_DB_PATH — the canonical .meta/album-studio.db (Q25 + R10)
+  DEFAULT_DB_PATH — the canonical .meta/sonic-studio.db (Q25 + R10)
   open_db(db_path=None, *, read_only=False) — per-thread connection
   close_db(db_path=None) — close per-thread connection
   close_all() — close every cached connection (daemon shutdown)
@@ -37,22 +37,22 @@ def default_db_path() -> Path:
     """Return the canonical absolute default DB path.
 
     Resolves at call time (not import time) so that tests which
-    toggle the ALBUM_STUDIO_DB_PATH environment variable mid-process
+    toggle the SONIC_STUDIO_DB_PATH environment variable mid-process
     see the updated path. The env var takes precedence; otherwise the
-    project-root .meta/album-studio.db is used.
+    project-root .meta/sonic-studio.db is used.
 
     Per Q25 + R10: the canonical live database lives in
-    .meta/album-studio.db inside the project root.
+    .meta/sonic-studio.db inside the project root.
     """
-    override = os.environ.get("ALBUM_STUDIO_DB_PATH")
+    override = os.environ.get("SONIC_STUDIO_DB_PATH")
     if override:
         return Path(override).resolve()
-    return _PROJ_ROOT / ".meta" / "album-studio.db"
+    return _PROJ_ROOT / ".meta" / "sonic-studio.db"
 
 
 # Backwards-compatible alias for existing call sites that use the
 # module-level DEFAULT_DB_PATH name. This is the import-time snapshot
-# of the default path. Tests that mutate ALBUM_STUDIO_DB_PATH after
+# of the default path. Tests that mutate SONIC_STUDIO_DB_PATH after
 # import MUST use `default_db_path()` instead.
 DEFAULT_DB_PATH = default_db_path()
 

@@ -1,4 +1,4 @@
-"""scripts/ensure_preview_daemon.py — guarantee album-studio preview is up.
+"""scripts/ensure_preview_daemon.py — guarantee sonic-studio preview is up.
 
 Idempotent, polling-only. Called by the hermes cron grid every 5 minutes.
 Workflow:

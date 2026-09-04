@@ -1,4 +1,4 @@
-# album-studio Questionnaire Walkthrough — 2026-07-29
+# sonic-studio Questionnaire Walkthrough — 2026-07-29
 
 **Source of truth:** Live walkthrough with the user. Each section locks a schema
 field for `intake-data/concept-briefs/*.json` and may add per-song params.
@@ -87,7 +87,7 @@ llms-friendly mirror of the music docs, downloaded 2026-07-29).
 1. **Use CLI `mmx music generate`** with `music-2.6` (or `music-2.6-free` to save quota), `lyrics-optimizer`, **~20s target** by NOT adding structure hints (model picks short). Explicit `--output-format url` returns an `audio_url` we can download.
 2. **If `rc=6` (Network request failed):** wait 15-30s, retry with **same parameters**. Do NOT change.
 3. **If still failing after 2 retries:** fall back to `music-2.6-free` (RPM 3, may not be the same model path).
-4. **For each candidate:** generate clip, save to `~/OneDrive/Hermes/Agents/planning/album-studio/auditions/`, log the `trace_id`, `actual_duration_ms`, `actual_size_bytes` to the walkthrough doc for traceability.
+4. **For each candidate:** generate clip, save to `~/OneDrive/Hermes/Agents/planning/sonic-studio/auditions/`, log the `trace_id`, `actual_duration_ms`, `actual_size_bytes` to the walkthrough doc for traceability.
 5. **Validate after each clip.** User says "next" or "reroll" or "this is the one".
 
 ### §1.2 — Audition candidates for front person (male, pop-punk + grunge dirt, raw/gritty)

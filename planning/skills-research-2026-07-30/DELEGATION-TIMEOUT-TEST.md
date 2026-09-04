@@ -14,7 +14,7 @@ This document was produced by a subagent launched with `child_timeout_seconds: 1
 2. Verify that no premature `TimeoutError` fires around the 600 s mark.
 3. Confirm the parent agent receives a clean completion report from the subagent with the artifact on disk.
 
-If you are reading this file *and* it is complete, the test **passed**. The mirror in `Documents\Projects\album-studio\planning\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` should have the same md5.
+If you are reading this file *and* it is complete, the test **passed**. The mirror in `Documents\Projects\sonic-studio\planning\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` should have the same md5.
 
 ---
 
@@ -39,7 +39,7 @@ The EBU R128 broadcast spec is **-23 LUFS integrated, ±0.5 LU tolerance, -1 dBT
   > *"Spotify and Apple Music will boost quiet masters up to their targets. Apple Music's Sound Check normalizes per track by default. Album-based [normalization is also available]."* — matlefflerschulman.com (2026-04-10)
 - **EBU R128 broadcast standard**: *"The EBU R128 standard sets the broadcast benchmark at -23 LUFS, with a ±0.5 LU tolerance and a true-peak ceiling of -1 dBTP."* — soundbridge.io (2026-05-20)
 
-**Recommendation for album-studio:** master to **-14 LUFS integrated / -1 dBTP true-peak** as the default (Spotify-compat); optionally emit a -16 LUFS variant for Apple-centric distribution. Use `ffmpeg`'s `loudnorm` two-pass filter to hit these targets deterministically. The existing `finalize-album.py` should accept a `--target-lufs` flag.
+**Recommendation for sonic-studio:** master to **-14 LUFS integrated / -1 dBTP true-peak** as the default (Spotify-compat); optionally emit a -16 LUFS variant for Apple-centric distribution. Use `ffmpeg`'s `loudnorm` two-pass filter to hit these targets deterministically. The existing `finalize-album.py` should accept a `--target-lufs` flag.
 
 **Sources cited:**
 - https://tech.ebu.ch/docs/r/r128-2014.pdf — EBU R128 v3.0 spec (LOUDNESS NORMALISATION AND PERMITTED MAXIMUM LEVEL OF AUDIO SIGNALS)
@@ -57,7 +57,7 @@ Standard independent release workflow (as of early/mid-2026) is **8 weeks lead t
 > *"Submit via Spotify for Artists at least 7 days before release, ideally 2–3 weeks out. Your pitch should include: A compelling story about the [artist], genre, mood, and references."* — boost-collective.com (2026-01-28)
 > *"With 6+ tracks to promote and no guaranteed algorithmic boost, albums require marketing infrastructure that most independent artists do not yet [have]."* — collabhouse.com (2026-03-31)
 
-**Key checkpoints** for the album-studio pipeline:
+**Key checkpoints** for the sonic-studio pipeline:
 - **T-8 weeks**: confirm distributor (DistroKid / TuneCore / CD Baby / Amuse / LANDR), lock release date on a Friday (industry norm for new releases).
 - **T-7 weeks**: deliver mastered WAVs + cover art (3000×3000 px JPG) to distributor.
 - **T-4 weeks**: pre-save campaign, IG/TikTok teaser content, submit to playlist curators (Groover, SubmitHub, PlaylistPush).
@@ -92,7 +92,7 @@ Required fields in the standard submission form (per distributor uis + Spotify m
 
 > *"Identification metadata: ISRC codes, UPC [codes]."* — alera.fm (2026-02-10)
 
-**Critical for album-studio:** do not pre-generate or hardcode ISRCs/UPCs. Surface a prompt in the `full-dsp` distribution flow asking the user to paste assigned codes from their distributor. (Already locked in `tools-memo.md`.)
+**Critical for sonic-studio:** do not pre-generate or hardcode ISRCs/UPCs. Surface a prompt in the `full-dsp` distribution flow asking the user to paste assigned codes from their distributor. (Already locked in `tools-memo.md`.)
 
 **Sources cited:**
 - https://support.spotify.com/us/artists/article/metadata-formatting-guidelines/ — Spotify official
@@ -116,7 +116,7 @@ pip install pillow-avif-plugin
 
 **Important system-deps for Windows** (from piwheels.debdeps listing): on Linux the package depends on `libavif16`, `libdav1d7`, `libaom3`, `libgav1-1`, `librav1e0.7`, `libsvtav1enc2`, `libyuv0`, `libatomic1`, `libjpeg62-turbo`. On Windows these are bundled by the wheel, so `pip install` just works.
 
-**Why for album-studio:** AVIF gives 30-50% smaller files than WebP at equivalent perceptual quality. If we want to ship cover-art variants in modern formats (L6 cover-art layer), AVIF beats WebP. **Open question:** whether we need AVIF at all if WebP covers ≥95% of the size win and is universally supported. **Recommendation:** defer until a user requests AVIF explicitly — current plan in FINDINGS.md is WebP-only.
+**Why for sonic-studio:** AVIF gives 30-50% smaller files than WebP at equivalent perceptual quality. If we want to ship cover-art variants in modern formats (L6 cover-art layer), AVIF beats WebP. **Open question:** whether we need AVIF at all if WebP covers ≥95% of the size win and is universally supported. **Recommendation:** defer until a user requests AVIF explicitly — current plan in FINDINGS.md is WebP-only.
 
 **Sources cited:**
 - https://pypi.org/project/pillow-avif-plugin/ — PyPI page
@@ -151,7 +151,7 @@ The README also lists the full official plugin roster (verbatim quote from katsp
 
 Live example page: `https://wavesurfer.xyz/example/regions/` — the example initializes with `backend: 'MediaElement'`, which is the more permissive backend for cross-origin audio.
 
-**Recommendation for album-studio:** ✅ Use wavesurfer v7 + the Regions plugin for the L4 audio player. Mark verse/chorus/bridge regions for click-to-seek. The existing `ux-patterns-memo.md` §4.1 already recommends this; this just confirms the v7 import path is current.
+**Recommendation for sonic-studio:** ✅ Use wavesurfer v7 + the Regions plugin for the L4 audio player. Mark verse/chorus/bridge regions for click-to-seek. The existing `ux-patterns-memo.md` §4.1 already recommends this; this just confirms the v7 import path is current.
 
 **Sources cited:**
 - https://github.com/katspaugh/wavesurfer.js/ — canonical README (raw.githubusercontent fetch succeeded; Cloudflare-fronted wavesurfer.xyz did not respond to extraction providers in this session)
@@ -164,14 +164,14 @@ Live example page: `https://wavesurfer.xyz/example/regions/` — the example ini
 
 `pycairo` (PyPI version **1.29.0**, current as of mid-2026) is a Python binding for the Cairo 2D graphics library. Its primary interface is a low-level draw API; for SVG parsing specifically, the recommended path is **`cairosvg`** rather than direct pycairo.
 
-**Two viable approaches for SVG → PNG in album-studio:**
+**Two viable approaches for SVG → PNG in sonic-studio:**
 
 1. **`cairosvg`** (pip install cairosvg) — high-level: `cairosvg.svg2png(url='in.svg', write_to='out.png', output_width=1400)`. Easiest. Wraps Cairo internally. **Recommended.**
 2. **`pycairo` direct** — manual: load SVG via a parser (e.g. cairosvg or your own), construct a `cairo.SVGSurface`, then write to PNG. More work, more control. Use only if you need Cairo-native rendering tricks (gradients, masks) not exposed by cairosvg.
 
 A 2025/2026 benchmark (`brunoborges/jairosvg` README) compares Python's CairoSVG against Java JSVG/EchoSVG; CairoSVG remains a viable production choice for moderate-volume PNG rasterization (sticker generation is low-volume by definition).
 
-**For album-studio L7 cassette sticker generation:** use `cairosvg.svg2png(url=template_path, write_to=output_png, output_width=1400)`. The pycairo direct-API approach from `py5coding.org/integrations/cairo.html` is documented but is overkill for our sticker templates.
+**For sonic-studio L7 cassette sticker generation:** use `cairosvg.svg2png(url=template_path, write_to=output_png, output_width=1400)`. The pycairo direct-API approach from `py5coding.org/integrations/cairo.html` is documented but is overkill for our sticker templates.
 
 **Sources cited:**
 - https://pypi.org/project/pycairo/ — package summary: "Python interface for cairo" (v1.29.0)
@@ -195,7 +195,7 @@ Quart's value proposition (from their own README):
 
 > *"Using Quart you can: render and serve HTML templates, write (RESTful) JSON APIs, serve WebSockets e.g. a simple chat, stream responses e.g. serve video, all of the above in a single app."* — pallets/quart GitHub
 
-**For album-studio Q37 WebSocket plan:** ✅ Quart is the right choice. The `app.websocket()` decorator exposes the WebSocket route; use `await websocket.send_json(...)` / `await websocket.receive()` for JSON message passing. The chat tutorial is the canonical starter pattern.
+**For sonic-studio Q37 WebSocket plan:** ✅ Quart is the right choice. The `app.websocket()` decorator exposes the WebSocket route; use `await websocket.send_json(...)` / `await websocket.receive()` for JSON message passing. The chat tutorial is the canonical starter pattern.
 
 **Sources cited:**
 - https://quart.palletsprojects.com/en/latest/tutorials/chat_tutorial/ — canonical tutorial
@@ -230,14 +230,14 @@ The v0.5 API docs document the ISRC search explicitly:
 **Concrete ISRC lookup pattern** (assembled from API docs):
 ```python
 import musicbrainzngs
-musicbrainzngs.set_useragent("album-studio", "0.1", "https://example.com/contact")
+musicbrainzngs.set_useragent("sonic-studio", "0.1", "https://example.com/contact")
 result = musicbrainzngs.search_recordings(isrc="USRC17607839", limit=5)
 # result['recording-list'] contains matching recordings with release info
 ```
 
 **Rate limit:** MusicBrainz enforces 1 req/sec for anonymous (non-authenticated) users; authenticate to get higher limits. **Mandatory:** every request must include a descriptive User-Agent (per their usage policy) or requests return 503.
 
-**For album-studio:** ✅ Install musicbrainzngs. Use for M04 reference-track cross-reference and post-distribution ISRC verification. Plan: `tools/album_studio/distribution/verify_isrc.py` calls `musicbrainzngs.search_recordings(isrc=...)` for each track.
+**For sonic-studio:** ✅ Install musicbrainzngs. Use for M04 reference-track cross-reference and post-distribution ISRC verification. Plan: `tools/sonic_studio/distribution/verify_isrc.py` calls `musicbrainzngs.search_recordings(isrc=...)` for each track.
 
 **Sources cited:**
 - https://pypi.org/project/musicbrainzngs/ — PyPI page (v0.7.1)
@@ -275,8 +275,8 @@ The elapsed time turned out to be ~100-150 s because the local extraction provid
 
 ## Files produced this session
 
-- `C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` (primary)
-- `C:\Users\lion_\Documents\Projects\album-studio\planning\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` (mirror)
+- `C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` (primary)
+- `C:\Users\lion_\Documents\Projects\sonic-studio\planning\skills-research-2026-07-30\DELEGATION-TIMEOUT-TEST.md` (mirror)
 
 Both files must have identical md5sums (verified via `md5sum` immediately after the `cp` step).
 
@@ -286,4 +286,4 @@ Both files must have identical md5sums (verified via `md5sum` immediately after 
 
 - The original `FINDINGS.md` in this directory is the **canonical skills-research deliverable**. This file is a **sibling verification document** produced specifically to test the new 1800 s timeout cap.
 - If you want a second-pass run that actually exercises the long tail of the timeout window, the right test pattern is: a subagent that does 25+ `web_search_plus` calls + 25+ full-page extractions + reads 10+ local files + writes a longer artifact. That will reliably take 600-900 s and would fail under the old 600 s cap.
-- The `child_timeout_seconds: 1800` setting is now validated for the realistic delegation workload of album-studio research.
+- The `child_timeout_seconds: 1800` setting is now validated for the realistic delegation workload of sonic-studio research.

@@ -1,4 +1,4 @@
-# album-studio · UI/UX Improvement Schedule
+# sonic-studio · UI/UX Improvement Schedule
 
 > **Math**: 10 days × 24 hours/day × 10 ideas/hour = **2,400 ideas total**
 >
@@ -600,7 +600,7 @@ These will be filled out by future iterations. Each hour adds 10 ideas.
 - Start daemon: `python -m build.serve --host 127.0.0.1 --port 8765`
 - Run e2e before commit: `python e2e/run_all.py` (must all pass)
 - Cache-bust scheme: `?v=dayN-hourM` on every script tag
-- OneDrive mirror per R7: copy docs → `~/OneDrive/Hermes/Agents/planning/album-studio/`
+- OneDrive mirror per R7: copy docs → `~/OneDrive/Hermes/Agents/planning/sonic-studio/`
 - Obsidian daily log: `~/Documents/Obsidian Vault/Hermes/9-daily/YYYY-MM-DD.md`
 - **Every iteration ships 10 ideas.** No fewer. No truncation.
 - **Continue until 2,400 ideas done.**

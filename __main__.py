@@ -1,4 +1,4 @@
-"""__main__.py — album-studio daemon entrypoint (Day 3.4).
+"""__main__.py — sonic-studio daemon entrypoint (Day 3.4).
 
 Run with: `python -m serve` or `python -m build.serve`
 

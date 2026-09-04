@@ -150,7 +150,7 @@ Tonal arc: raw opener (Razor) → quiet intro tracks (2, 4) → first loud state
 
 ## 📌 SOURCE OF TRUTH
 
-- **Album project root:** `~/Documents/Projects/album-studio/`
+- **Album project root:** `~/Documents/Projects/sonic-studio/`
   - Schema (locked): `intake-data/schema.json` (v2.1)
   - Concept brief: `concept-briefs/twenty-two.md`
   - Plan: `planning/PLAN-2026-07-28-v3.2.md`

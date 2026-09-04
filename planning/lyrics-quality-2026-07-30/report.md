@@ -1,4 +1,4 @@
-# album-studio Lyrics Quality — Spec & Scoring Rubric
+# sonic-studio Lyrics Quality — Spec & Scoring Rubric
 
 **Date:** 2026-07-30
 **Goal:** Build a scoring system for lyrics-optimizer output that catches
@@ -131,7 +131,7 @@ All checks passed. Scorer is working.
 
 ## Recommendation for v1
 
-For the album-studio build:
+For the sonic-studio build:
 
 1. **Add a `lyrics_quality_score` column** to `tracks` (integer 0-100)
 2. **Score every lyrics-optimizer output** before allowing user approval

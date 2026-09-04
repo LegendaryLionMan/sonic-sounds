@@ -1,4 +1,4 @@
-"""tools/ui_smoke.py — Playwright UI smoke for the album-studio preview.
+"""tools/ui_smoke.py — Playwright UI smoke for the sonic-studio preview.
 
 Two modes:
 
@@ -87,12 +87,12 @@ SYSTEM_CHROME = Path(r"C:/Program Files/Google/Chrome/Application/chrome.exe")
 CDP_PORT = 9333
 # Driver profile (cloned from user's real profile so the visible window
 # looks like the user's Chrome but doesn't lock their main profile)
-DRIVER_PROFILE = Path(os.path.expandvars(r"%LOCALAPPDATA%/Temp/album-studio-driver"))
+DRIVER_PROFILE = Path(os.path.expandvars(r"%LOCALAPPDATA%/Temp/sonic-studio-driver"))
 USER_PROFILE = Path(os.path.expandvars(r"%LOCALAPPDATA%/Google/Chrome/User Data"))
 
 # Default target
 DEFAULT_URL = "http://127.0.0.1:8765/site/library.html"
-DEFAULT_OUT_DIR = Path(r"C:/Users/lion_/AppData/Local/Temp/album-studio-smoke")
+DEFAULT_OUT_DIR = Path(r"C:/Users/lion_/AppData/Local/Temp/sonic-studio-smoke")
 
 
 def _find_chromium_headless() -> Path | None:
@@ -422,7 +422,7 @@ def _drive_headless(args) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Playwright UI smoke for album-studio")
+    ap = argparse.ArgumentParser(description="Playwright UI smoke for sonic-studio")
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--visible", action="store_true",
                       help="Drive the visible Chrome window (default for live sessions)")

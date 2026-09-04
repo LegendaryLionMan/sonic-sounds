@@ -22,7 +22,7 @@ import threading
 import time
 from typing import Callable, Optional
 
-_log = logging.getLogger("album_studio.sweepers")
+_log = logging.getLogger("sonic_studio.sweepers")
 
 # Sweeper intervals in seconds (per plan)
 INTERVALS = {

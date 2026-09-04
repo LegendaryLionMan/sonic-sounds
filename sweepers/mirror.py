@@ -5,7 +5,7 @@ for changes, mirror to OneDrive with md5".
 
 Per R7 + R10 (per user's memory: "durable artifacts → mirror to
 ~/OneDrive/Hermes/... + md5 verify"), the canonical mirror target
-is ~/OneDrive/Hermes/Agents/planning/album-studio/.
+is ~/OneDrive/Hermes/Agents/planning/sonic-studio/.
 
 Implementation: walk the local <project>/albums/ tree. For each
 file, compute md5 of local AND mirror. If they differ (or mirror
@@ -27,7 +27,7 @@ import shutil
 from pathlib import Path
 from typing import Optional
 
-_log = logging.getLogger("album_studio.sweepers.mirror")
+_log = logging.getLogger("sonic_studio.sweepers.mirror")
 
 
 def _md5(path: Path) -> str:
@@ -46,7 +46,7 @@ def run_sweep(*,
 
     Args:
       source_dir: defaults to <project>/albums/ (the daemon's artifact root).
-      mirror_dir: defaults to ~/OneDrive/Hermes/Agents/planning/album-studio/
+      mirror_dir: defaults to ~/OneDrive/Hermes/Agents/planning/sonic-studio/
         per R7.
 
     Returns:
@@ -56,7 +56,7 @@ def run_sweep(*,
     if source_dir is None:
         source_dir = Path(__file__).resolve().parent.parent / "albums"
     if mirror_dir is None:
-        mirror_dir = Path.home() / "OneDrive" / "Hermes" / "Agents" / "planning" / "album-studio"
+        mirror_dir = Path.home() / "OneDrive" / "Hermes" / "Agents" / "planning" / "sonic-studio"
 
     if not source_dir.exists():
         # No artifacts yet — nothing to mirror. Return ok with zero counts.

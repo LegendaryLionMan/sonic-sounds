@@ -29,7 +29,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-_log = logging.getLogger("album_studio.build.invoke")
+_log = logging.getLogger("sonic_studio.build.invoke")
 
 # Per memory: must be the raw .cmd path so CreateProcess resolves it.
 _DEFAULT_MMX_CMD = Path(
@@ -59,8 +59,8 @@ class InvokeResult:
 
 
 def _resolve_mmx_cmd() -> str:
-    """Pick the mmx CLI path. Honours ALBUM_STUDIO_MMX_CMD env var."""
-    override = os.environ.get("ALBUM_STUDIO_MMX_CMD")
+    """Pick the mmx CLI path. Honours SONIC_STUDIO_MMX_CMD env var."""
+    override = os.environ.get("SONIC_STUDIO_MMX_CMD")
     if override:
         return override
     return str(_DEFAULT_MMX_CMD)

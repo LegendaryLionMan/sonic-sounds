@@ -1,4 +1,4 @@
-/* === album-studio · UX states === */
+/* === sonic-studio · UX states === */
 /* Per Phase 0.U of PLAN-2026-07-28-v3.2:
    Buttons have 5 states: default, disabled, loading, success, error, timeout.
    One-state-screen rule: every interactive surface has exactly one current state.

@@ -41,7 +41,7 @@ from db.pipeline import get_layer
 from build import invoke as build_invoke
 from build.runner import run_job, JobOutcome
 
-_log = logging.getLogger("album_studio.build.handlers")
+_log = logging.getLogger("sonic_studio.build.handlers")
 
 # Per plan Q32 / build/serve.py: artifact root defaults to ./albums/.
 DEFAULT_OUTPUT_BASE = Path(r".\albums")

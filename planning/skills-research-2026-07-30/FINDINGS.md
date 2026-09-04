@@ -1,4 +1,4 @@
-# album-studio Skills Research — FINDINGS
+# sonic-studio Skills Research — FINDINGS
 
 **Date:** 2026-07-30
 **Method:** Verified package availability via pip/npm + cross-referenced with documentation.
@@ -12,7 +12,7 @@
 
 **What it does:** Read + write ID3v2.3/v2.4 tags, Vorbis comments, MP4/M4A atoms, FLAC tags. Supports USLT (lyrics), APIC (cover art), all standard frames.
 
-**Why for album-studio:** Every mastered track needs metadata (artist, album, track#, title, year, genre, lyrics, cover) for DSP submission. Currently we have the recipe validated (`audio-quality-2026-07-30/test_mutagen.py`).
+**Why for sonic-studio:** Every mastered track needs metadata (artist, album, track#, title, year, genre, lyrics, cover) for DSP submission. Currently we have the recipe validated (`audio-quality-2026-07-30/test_mutagen.py`).
 
 **Install:**
 ```bash
@@ -26,7 +26,7 @@
 
 **What it does:** Auto-generate word-level-timestamped LRC + ASS karaoke files from audio, using Whisper + Genius/Spotify lyrics. https://pypi.org/project/lyrics-transcriber/
 
-**Why for album-studio:** `lyrics-quality-2026-07-30/score_lyrics.py` reads lyrics text. If we want to score `lyrics_optimizer=true` outputs automatically, we need to transcribe the audio first. `lyrics-transcriber` does this end-to-end.
+**Why for sonic-studio:** `lyrics-quality-2026-07-30/score_lyrics.py` reads lyrics text. If we want to score `lyrics_optimizer=true` outputs automatically, we need to transcribe the audio first. `lyrics-transcriber` does this end-to-end.
 
 **Install:** `pip install lyrics-transcriber` (needs `openai-whisper` + a Genius API key)
 
@@ -36,7 +36,7 @@
 
 **What it does:** Subprocess wrapper around ffmpeg. Same capabilities, more pythonic API. https://github.com/kkroening/ffmpeg-python
 
-**Why for album-studio:** Cleaner integration than raw subprocess for our audio pipeline (loudnorm two-pass, acrossfade, spectrogram).
+**Why for sonic-studio:** Cleaner integration than raw subprocess for our audio pipeline (loudnorm two-pass, acrossfade, spectrogram).
 
 **Install:** `pip install ffmpeg-python`
 
@@ -46,7 +46,7 @@
 
 **What it does:** High-level audio manipulation (cut, splice, fade, normalize). Wraps ffmpeg or avconv. https://github.com/jiaaro/pydub
 
-**Why for album-studio:** Could simplify the gapless-stitching logic for L5.
+**Why for sonic-studio:** Could simplify the gapless-stitching logic for L5.
 
 **Recommendation:** ⚠️ **Skip** — ffmpeg's `acrossfade` does exactly what we need; pydub would be an extra layer without value.
 
@@ -54,7 +54,7 @@
 
 **What it does:** BPM detection, key detection, tempo, beat tracking, onsets, MFCC, chroma. https://librosa.org/
 
-**Why for album-studio:** Could auto-detect BPM/key from generated audio (instead of trusting the model's `--bpm` param). Useful for the studio's "audio quality" panel.
+**Why for sonic-studio:** Could auto-detect BPM/key from generated audio (instead of trusting the model's `--bpm` param). Useful for the studio's "audio quality" panel.
 
 **Install:** `pip install librosa` (50+ MB deps including scipy, numpy, soundfile, audioread)
 
@@ -64,7 +64,7 @@
 
 **What it does:** Read-only access to Spotify catalog (search artists/albums/tracks, get metadata, ISRC, etc.). https://github.com/spotipy-dev/spotipy
 
-**Why for album-studio:** After distribution, validate that our tracks are actually on Spotify with correct metadata. Also useful for finding reference tracks (M04) — search for "Foo Fighters deep cut" and pull ISRC.
+**Why for sonic-studio:** After distribution, validate that our tracks are actually on Spotify with correct metadata. Also useful for finding reference tracks (M04) — search for "Foo Fighters deep cut" and pull ISRC.
 
 **Install:** `pip install spotipy` (needs Spotify app credentials)
 
@@ -105,7 +105,7 @@ Found:
 
 **What it does:** Async Flask alternative. Native ASGI, WebSocket support. https://quart.palletsprojects.com/
 
-**Why for album-studio:** Q37 in v3.2 plan locks WebSocket as the real-time chat mechanism. Quart is the cleanest stdlib-compatible choice (Flask API, async under the hood).
+**Why for sonic-studio:** Q37 in v3.2 plan locks WebSocket as the real-time chat mechanism. Quart is the cleanest stdlib-compatible choice (Flask API, async under the hood).
 
 **Install:** `pip install quart`
 
@@ -115,7 +115,7 @@ Found:
 
 **What it does:** Async web framework with auto OpenAPI docs. Heavier than Quart but better tooling.
 
-**Why for album-studio:** Alternative to Quart. More popular = more community examples.
+**Why for sonic-studio:** Alternative to Quart. More popular = more community examples.
 
 **Recommendation:** ⚠️ **Skip** for v1 — Quart is more aligned with the "stdlib + minimal deps" ethos. Switch to FastAPI only if Quart has integration issues with our Servy/NSSM service wrapper.
 
@@ -125,7 +125,7 @@ Found:
 ```python
 import sqlite3
 
-conn = sqlite3.connect('.meta/album-studio.db', isolation_level=None)  # autocommit
+conn = sqlite3.connect('.meta/sonic-studio.db', isolation_level=None)  # autocommit
 conn.execute('PRAGMA journal_mode = WAL')
 conn.execute('PRAGMA busy_timeout = 5000')  # 5s timeout
 conn.execute('PRAGMA foreign_keys = ON')
@@ -148,15 +148,15 @@ def take_lock(conn, timeout=10):
     return False
 ```
 
-**Why for album-studio:** Q29, Q29b lock the SQLite advisory lock for build jobs. Without this, concurrent mmx calls would corrupt the database.
+**Why for sonic-studio:** Q29, Q29b lock the SQLite advisory lock for build jobs. Without this, concurrent mmx calls would corrupt the database.
 
-**Recommendation:** ✅ **Implement** — Day 2 of v3.2 plan. Code goes in `tools/album_studio/build/lock.py`.
+**Recommendation:** ✅ **Implement** — Day 2 of v3.2 plan. Code goes in `tools/sonic_studio/build/lock.py`.
 
 ### 3.4 watchdog (Python filesystem events)
 
 **What it does:** Watch filesystem for changes. Cross-platform. https://github.com/gorakhargosh/watchdog
 
-**Why for album-studio:** Not strictly needed — we already plan to use sweepers (cron-style polling). But could speed up file-change detection for the OneDrive mirror.
+**Why for sonic-studio:** Not strictly needed — we already plan to use sweepers (cron-style polling). But could speed up file-change detection for the OneDrive mirror.
 
 **Recommendation:** ⚠️ **Skip for v1** — sweepers are sufficient (Q32/Q34). Add watchdog in v2 if polling latency matters.
 
@@ -165,7 +165,7 @@ def take_lock(conn, timeout=10):
 **apscheduler:** More powerful, supports cron-style triggers, persistent jobs. https://github.com/agronholm/apscheduler
 **schedule:** Simpler, in-process scheduler.
 
-**Why for album-studio:** Daemon has 5 sweepers (idle_pause, wal_checkpoint, quota, mirror, log_rotate). All need periodic execution.
+**Why for sonic-studio:** Daemon has 5 sweepers (idle_pause, wal_checkpoint, quota, mirror, log_rotate). All need periodic execution.
 
 **Recommendation:** ✅ **Use stdlib `threading.Timer`** — for a daemon with 5 fixed sweepers, the stdlib is sufficient. APScheduler is overkill. Document this choice in the daemon README.
 
@@ -211,7 +211,7 @@ def take_lock(conn, timeout=10):
 
 **What it does:** Open encyclopedia of music metadata. Has ISRCs, cover art, label info. https://musicbrainz.org/
 
-**Why for album-studio:** Verify our tracks don't accidentally duplicate existing ISRCs. Pull reference track metadata for M04 (references).
+**Why for sonic-studio:** Verify our tracks don't accidentally duplicate existing ISRCs. Pull reference track metadata for M04 (references).
 
 **Recommendation:** ✅ **Install** — `pip install musicbrainzngs`. Useful for M04 cross-reference and post-distribution verification.
 
@@ -223,7 +223,7 @@ def take_lock(conn, timeout=10):
 
 **What it does:** Image processing in pure Python. https://pillow.readthedocs.io/
 
-**Why for album-studio:** Cover art variants (square crop for Instagram, 1400x1400 for Bandcamp, 1280x1440 header). Convert PNG ↔ JPG ↔ WebP. Embed into mp3 APIC frame.
+**Why for sonic-studio:** Cover art variants (square crop for Instagram, 1400x1400 for Bandcamp, 1280x1440 header). Convert PNG ↔ JPG ↔ WebP. Embed into mp3 APIC frame.
 
 **Install:** `pip install Pillow`
 
@@ -234,13 +234,13 @@ def take_lock(conn, timeout=10):
 **pycairo:** Python bindings for Cairo graphics. Good for vector rendering. https://pycairo.readthedocs.io/
 **skia-python:** Python bindings for Skia (Google's graphics engine). Newer, more capable.
 
-**Why for album-studio:** SVG → PNG rasterization for cassette stickers (L7) and other vector deliverables.
+**Why for sonic-studio:** SVG → PNG rasterization for cassette stickers (L7) and other vector deliverables.
 
 **Recommendation:** ✅ **Use pycairo** — it's stable, simple, and covers SVG-to-PNG for our sticker templates. skia-python is newer but adds binary complexity.
 
 ### 6.3 sharp (Node.js image processing)
 
-**Why for album-studio:** If the studio UI needs to render thumbnails or process uploads client-side.
+**Why for sonic-studio:** If the studio UI needs to render thumbnails or process uploads client-side.
 
 **Recommendation:** ⚠️ **Defer** — server-side Pillow handles all current needs. Client-side sharp is only relevant for drag-and-drop upload UI.
 
@@ -252,7 +252,7 @@ def take_lock(conn, timeout=10):
 
 **What it does:** Speech-to-text. Word-level timestamps. https://github.com/openai/whisper
 
-**Why for album-studio:** Transcribe generated audio back to text for the lyrics-quality scorer. Currently the scorer takes text only.
+**Why for sonic-studio:** Transcribe generated audio back to text for the lyrics-quality scorer. Currently the scorer takes text only.
 
 **Install:**
 - `pip install openai-whisper` (Python wrapper)
@@ -264,7 +264,7 @@ def take_lock(conn, timeout=10):
 
 **What it does:** CMU pronouncing dictionary access. Rhyme detection, syllable counting. https://pypi.org/project/pronouncing/
 
-**Why for album-studio:** Better rhyme detection than my naive "last 2 chars match" heuristic in `score_lyrics.py`. Real CMU dict = vowel-class-aware rhyming.
+**Why for sonic-studio:** Better rhyme detection than my naive "last 2 chars match" heuristic in `score_lyrics.py`. Real CMU dict = vowel-class-aware rhyming.
 
 **Install:** `pip install pronouncing`
 
@@ -274,7 +274,7 @@ def take_lock(conn, timeout=10):
 
 **What it does:** Syllable hyphenation for 50+ languages. https://github.com/Kozea/pyphen
 
-**Why for album-studio:** Better syllable counting than my "count vowel groups" heuristic. Especially for non-English lyrics.
+**Why for sonic-studio:** Better syllable counting than my "count vowel groups" heuristic. Especially for non-English lyrics.
 
 **Install:** `pip install pyphen`
 

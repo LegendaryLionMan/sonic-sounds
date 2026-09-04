@@ -31,8 +31,8 @@ from pathlib import Path
 PROJ_ROOT = Path(__file__).parent.parent.resolve()
 PYTHON_EXE = Path(sys.executable)
 SERVICE_NAME = "ServyAlbumStudio"
-DISPLAY_NAME = "album-studio daemon (Day 3)"
-DESCRIPTION = "album-studio HTTP daemon — Quart ASGI server with WAL+PRAGMAs SQLite."
+DISPLAY_NAME = "sonic-studio daemon (Day 3)"
+DESCRIPTION = "sonic-studio HTTP daemon — Quart ASGI server with WAL+PRAGMAs SQLite."
 
 
 def build_binpath(port: int = 8765, host: str = "127.0.0.1") -> str:
@@ -110,7 +110,7 @@ def query_service() -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Register/unregister album-studio daemon as a Windows Service"
+        description="Register/unregister sonic-studio daemon as a Windows Service"
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 

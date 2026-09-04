@@ -1,4 +1,4 @@
-# album-studio
+# sonic-studio
 
 > **Plan an album. Walk it through the 12-layer build pipeline. Ship a final release.**
 > Mixtape '85 era (v3.4) — replaces the cassette-mesh / Editorial Zine era retired 2026-08-05.
@@ -77,9 +77,9 @@ The studio displays the first 9 layers. The remaining 3 are admin-only.
 
 ## 🔗 Related
 
-- **Skill:** `music-album-planning-questionnaire` (drives the content; album-studio drives the state)
-- **Skill:** `album-studio-day-ship-pattern` (the workflow this project follows)
-- **Skill:** `album-studio-structure-policy` (folder layout rules)
+- **Skill:** `music-album-planning-questionnaire` (drives the content; sonic-studio drives the state)
+- **Skill:** `sonic-studio-day-ship-pattern` (the workflow this project follows)
+- **Skill:** `sonic-studio-structure-policy` (folder layout rules)
 - **Memory:** `~1000 lines of operational memory` (msys traps, hermes-venv contamination, bash double-backslash escaping, etc.)
 
 ---

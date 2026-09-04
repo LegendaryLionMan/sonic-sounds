@@ -22,9 +22,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 
 def _isolate_tempdb():
-    tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-sweepers-"))
+    tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-sweepers-"))
     tempdb = tmpdir / "test.db"
-    os.environ["ALBUM_STUDIO_DB_PATH"] = str(tempdb)
+    os.environ["SONIC_STUDIO_DB_PATH"] = str(tempdb)
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
@@ -40,7 +40,7 @@ def _drop_isolation():
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
-    os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+    os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
 
 class TestIdlePauseSweeper(unittest.IsolatedAsyncioTestCase):

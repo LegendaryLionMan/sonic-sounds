@@ -1,8 +1,8 @@
 import subprocess
 
-src1 = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\music-test-2026-07-29\C01-full-album-brief-short.mp3"
-src2 = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\music-test-2026-07-29\G02-pop-punk-grunge.mp3"
-dst = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\music-test-2026-07-29\test-crossfade.mp3"
+src1 = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\music-test-2026-07-29\C01-full-album-brief-short.mp3"
+src2 = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\music-test-2026-07-29\G02-pop-punk-grunge.mp3"
+dst = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\music-test-2026-07-29\test-crossfade.mp3"
 
 filter_complex = (
     "[0:a]atrim=0:30,asetpts=PTS-STARTPTS[first]; "

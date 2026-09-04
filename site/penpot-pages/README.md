@@ -1,4 +1,4 @@
-# album-studio / penpot-pages
+# sonic-studio / penpot-pages
 
 Autonomous Penpot build-out — what was produced before the 8-hour deadline.
 
@@ -32,8 +32,8 @@ The importer is idempotent — running it again won't duplicate anything.
 ## Mirroring
 
 All files are mirrored to:
-- `~/OneDrive/Hermes/Agents/planning/album-studio/penpot-build/` (canonical)
-- `~/Documents/Projects/album-studio/site/penpot-pages/` (project repo)
+- `~/OneDrive/Hermes/Agents/planning/sonic-studio/penpot-build/` (canonical)
+- `~/Documents/Projects/sonic-studio/site/penpot-pages/` (project repo)
 
 md5 matches verified.
 

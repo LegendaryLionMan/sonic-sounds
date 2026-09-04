@@ -65,10 +65,10 @@ Each topic gets the input shape that fits the kind of answer:
 
 ## 3.4 Auto-save behavior
 
-- **Storage:** `localStorage` key `album-studio.intake.<slug>` where `<slug>` is derived from the artist name + today's date.
+- **Storage:** `localStorage` key `sonic-studio.intake.<slug>` where `<slug>` is derived from the artist name + today's date.
 - **Frequency:** debounced 800ms after the last keystroke.
 - **Visible feedback:** A small `--sans-mono` label below the form masthead shows `SAVED 09:24:35 UTC` and updates on each save.
-- **On load:** the form auto-hydrates from the most recent `album-studio.intake.*` key in localStorage.
+- **On load:** the form auto-hydrates from the most recent `sonic-studio.intake.*` key in localStorage.
 - **On export:** the form clears the localStorage key after successful JSON download (and writes `intake-data/<slug>.json` to disk via the agent).
 
 ## 3.5 Mandatory-gate behavior
@@ -87,7 +87,7 @@ On click when enabled:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  album-studio                                             │  <- masthead
+│  sonic-studio                                             │  <- masthead
 │  intake — 21 questions for the album you haven't made yet │
 │                                                           │
 │  ▌ SAVED 09:24:35 UTC                                    │
@@ -193,7 +193,7 @@ A layer can be in one of four states, matching the existing `full-album-release-
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  album-studio                                             │
+│  sonic-studio                                             │
 │  pipeline — Half-Light Hours · Maren Sol · dream-folk     │
 │                                                           │
 │  ▌ LAST UPDATE 2026-07-28 09:24 UTC                      │

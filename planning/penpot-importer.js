@@ -10,7 +10,7 @@ function getOrCreateSet(name) {
   const s = penpot.library.local.tokens.sets.find(x => x.name === name);
   return s ? s : penpot.library.local.tokens.addSet({ name });
 }
-const ds = getOrCreateSet("album-studio/design-system");
+const ds = getOrCreateSet("sonic-studio/design-system");
 
 function getOrCreateToken(set, type, name, value) {
   const t = set.tokens.find(x => x.name === name);
@@ -66,9 +66,9 @@ for (const name of PAGE_NAMES) {
 r.steps.push({ step: "pages", count: PAGE_NAMES.length });
 
 // ----- 3. Import the 6 PNGs into the right pages -----
-// Images live in C:\Users\lion_\Documents\Projects\album-studio\site\penpot-pages\
+// Images live in C:\Users\lion_\Documents\Projects\sonic-studio\site\penpot-pages\
 // We need to read them via the local file system. The plugin sandbox has access.
-const PNG_DIR = "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\site\\penpot-pages\\";
+const PNG_DIR = "C:\\Users\\lion_\\Documents\\Projects\\sonic-studio\\site\\penpot-pages\\";
 
 const PAGE_TO_PNG = [
   ["01 — Design System",      "01-design-system.png"],

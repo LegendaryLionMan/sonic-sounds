@@ -13,7 +13,7 @@ worked example — every other album will start at layer 01).
 Usage:
   python -m db.seed [--db PATH]
 
-If --db is omitted, defaults to `.meta/album-studio.db` (per plan §Day 2).
+If --db is omitted, defaults to `.meta/sonic-studio.db` (per plan §Day 2).
 """
 import argparse
 import hashlib
@@ -25,7 +25,7 @@ from pathlib import Path
 
 # Album canonical path (per R10 + structure-policy skill)
 ALBUM_CANONICAL = Path("C:/Users/lion_/OneDrive/Hermes/albums/Half-Light-Hours")
-DEFAULT_DB = Path(".meta/album-studio.db")
+DEFAULT_DB = Path(".meta/sonic-studio.db")
 # Schema source: absolute path resolved at import time so it works
 # regardless of the current working directory (e.g. service-mode daemon).
 SCHEMA_FILE = Path(__file__).resolve().parent / "schema.sql"

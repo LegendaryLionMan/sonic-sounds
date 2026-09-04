@@ -29,7 +29,7 @@ if sys.platform != "win32":
 
 # Module-level state (shared across the daemon)
 _shutdown_event = threading.Event()
-_log = logging.getLogger("album_studio.daemon")
+_log = logging.getLogger("sonic_studio.daemon")
 
 
 def is_shutdown_requested() -> bool:

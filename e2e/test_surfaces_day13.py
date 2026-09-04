@@ -1,6 +1,6 @@
 """e2e/test_surfaces_day13.py — Day 13-14 surface coverage (e2e additions).
 
-Adds four new test suites to the album-studio e2e pyramid:
+Adds four new test suites to the sonic-studio e2e pyramid:
   - suite_cover_art        : /api/albums/<id>/cover streams JPEG
   - suite_audio_streaming  : /api/audio/<track> 206 + ID3 bytes
   - suite_guide_overlay    : studio.html loads studio.guide.js + Help
@@ -298,5 +298,5 @@ def run_all(base: str) -> int:
 if __name__ == "__main__":
     import os
     import sys
-    base = os.environ.get("ALBUM_STUDIO_E2E_BASE", "http://127.0.0.1:8793")
+    base = os.environ.get("SONIC_STUDIO_E2E_BASE", "http://127.0.0.1:8793")
     sys.exit(run_all(base))

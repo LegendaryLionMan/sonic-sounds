@@ -1,4 +1,4 @@
-# mixtape85 — album-studio v1 template (Q21 PATCH 2026-08-05)
+# mixtape85 — sonic-studio v1 template (Q21 PATCH 2026-08-05)
 
 **Status:** Locked as v1 template per Q21 patch (2026-08-05).
 

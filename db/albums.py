@@ -7,7 +7,7 @@ Per Q23: 4 of the 13 tables are the core content schema
 Per Q24: ~150 lines of DDL; ~250 lines for db.py. This file is part of the
 db.py layer (the rest is connection.py, migrations.py, sessions.py).
 
-Per Q25: SQLite is at .meta/album-studio.db.
+Per Q25: SQLite is at .meta/sonic-studio.db.
 
 Per Q26: WAL mode + PRAGMAs applied via db.connection.
 

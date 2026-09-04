@@ -18,7 +18,7 @@ import logging
 import os
 from pathlib import Path
 
-_log = logging.getLogger("album_studio.sweepers.log_rotate")
+_log = logging.getLogger("sonic_studio.sweepers.log_rotate")
 
 
 def run_sweep(*, log_path: Path | None = None,

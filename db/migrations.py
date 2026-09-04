@@ -25,7 +25,7 @@ from typing import Union
 from db.connection import open_db, DEFAULT_DB_PATH
 
 # Canonical migrations directory (always points at the project repo,
-# NOT at DEFAULT_DB_PATH.parent). When ALBUM_STUDIO_DB_PATH redirects
+# NOT at DEFAULT_DB_PATH.parent). When SONIC_STUDIO_DB_PATH redirects
 # the database to a tempdir (e.g. in tests), migrations should still
 # come from the project's canonical location, not from a phantom
 # "tempdir/migrations/" dir.
@@ -35,7 +35,7 @@ MIGRATIONS_DIR = _PROJECT_META_DIR / "migrations"
 
 # Migrations always live in the project's canonical .meta/migrations/.
 # They do NOT live next to the database file, so this works correctly
-# even when ALBUM_STUDIO_DB_PATH points the database at a tempdir.
+# even when SONIC_STUDIO_DB_PATH points the database at a tempdir.
 def _resolve_migrations_dir(db_path: Union[str, Path]) -> Path:
     """Return the canonical migrations dir (always project-relative)."""
     return MIGRATIONS_DIR
@@ -300,7 +300,7 @@ def main():
 
     import argparse
     import sys
-    parser = argparse.ArgumentParser(description="Run album-studio db migrations")
+    parser = argparse.ArgumentParser(description="Run sonic-studio db migrations")
     parser.add_argument("--db", type=Path, default=None,
                         help=f"Path to db (default: {DEFAULT_DB_PATH})")
     parser.add_argument("--bootstrap", action="store_true",

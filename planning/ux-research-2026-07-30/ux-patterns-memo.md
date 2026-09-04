@@ -1,15 +1,15 @@
 # UX Research Memo — Album-Creator Studio Patterns
 
 > Research date: 2026-07-30
-> Audience: the album-studio project (editorial-zine aesthetic, Half-Light Hours / Maren Sol visual world).
+> Audience: the sonic-studio project (editorial-zine aesthetic, Half-Light Hours / Maren Sol visual world).
 > Goal: identify UI/UX patterns worth borrowing for an album-CREATOR interface (not a player).
-> Method: `browser_navigate` was unavailable on this host (Chrome failed to launch with `--no-sandbox`); fell back to `web_search_plus` + `curl` extraction of 20+ sources, cross-referenced with the user's existing Half-Light Hours delivery package and the `album-studio/DESIGN.md` token system.
+> Method: `browser_navigate` was unavailable on this host (Chrome failed to launch with `--no-sandbox`); fell back to `web_search_plus` + `curl` extraction of 20+ sources, cross-referenced with the user's existing Half-Light Hours delivery package and the `sonic-studio/DESIGN.md` token system.
 
 ---
 
 ## 0. Ground rules (so "borrow" / "skip" decisions aren't arbitrary)
 
-The album-studio's `DESIGN.md` already commits us to:
+The sonic-studio's `DESIGN.md` already commits us to:
 
 - **Editorial zine**, warm paper (`#F4EFE6`), ink (`#1B1714`), one terracotta accent (`#B8503A`).
 - **Serif** display + body, mono for metadata.
@@ -201,7 +201,7 @@ The academic literature on SoundCloud's UX (Hesmondhalgh, Jones, Rauh, *Social M
 - **No unified web page.** There's no actual `index.html` for the album. The README is the closest analog.
 - **No cross-linked navigation.** Press kit, lyrics, social rollout, Spotify pitch — each is its own .md with no links to the others except via the README's folder tree.
 - **No player.** The 10 MP3s sit in `music/` but there's no in-repo HTML player. Listeners would go to a streaming platform.
-- **No "this is what the studio produced" lineage.** There's no link between `OneDrive/albums/Half-Light-Hours/` (the artifact) and `Documents/Projects/album-studio/` (the studio). For someone using the studio, it should be obvious: "the studio created this album, here are the layers it went through."
+- **No "this is what the studio produced" lineage.** There's no link between `OneDrive/albums/Half-Light-Hours/` (the artifact) and `Documents/Projects/sonic-studio/` (the studio). For someone using the studio, it should be obvious: "the studio created this album, here are the layers it went through."
 
 **Pattern to establish — the studio's "Output" pane.** When the studio produces an album, the output side should show:
 
@@ -211,7 +211,7 @@ The academic literature on SoundCloud's UX (Hesmondhalgh, Jones, Rauh, *Social M
 - Visual identity (palette swatches, type sample, motif mark).
 - Export buttons (download zip, copy landing-page markdown, open in Spotify for Artists).
 
-This is what the album-studio *delivers*. The README.md is a great reference; the studio should render it.
+This is what the sonic-studio *delivers*. The README.md is a great reference; the studio should render it.
 
 **Skip — the README's emoji section markers (📀 🎬 🎤).** The README uses 📀/🎬/🎤/⭐/📋 etc. as section icons. Cute but not editorial — should be hairline rules + italic display serif section labels in the rendered version.
 
@@ -344,4 +344,4 @@ These came up repeatedly and deserve a follow-up research pass before implementa
 - BandLab Sounds browse — `bandlab.com/sounds/browse`
 - Suno creator's release cheat sheet (Matkowski, 2025) — `medium.com/@J.S.Matkowski/...`
 - Local: `OneDrive/Hermes/albums/Half-Light-Hours/README.md` (the existing album delivery package).
-- Local: `Documents/Projects/album-studio/DESIGN.md` (the design token system this memo defers to).
+- Local: `Documents/Projects/sonic-studio/DESIGN.md` (the design token system this memo defers to).

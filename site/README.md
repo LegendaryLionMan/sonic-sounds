@@ -1,6 +1,6 @@
-# album-studio / site
+# sonic-studio / site
 
-This directory holds the two HTML pages that front the album-studio project:
+This directory holds the two HTML pages that front the sonic-studio project:
 
 | File | Role | Reads from | Writes to |
 |---|---|---|---|

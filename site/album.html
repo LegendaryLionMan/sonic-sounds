@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>album-studio · album</title>
+<title>sonic-studio · album</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site/themes.css">
 <link rel="stylesheet" href="/site/album-card.css">
@@ -200,7 +200,7 @@
 <div class="wrap">
 
   <nav class="topbar">
-    <span class="crumb">album-studio<b> / albums / <span id="crumb-id">—</span></b></span>
+    <span class="crumb">sonic-studio<b> / albums / <span id="crumb-id">—</span></b></span>
     <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">loading…</span></span>
     <span class="grow"></span><span data-theme-mount class="theme-picker-host"></span>
     <button class="cmd" id="back-btn">← BACK</button>
@@ -278,7 +278,7 @@
     return;
   }
   $('#crumb-id').textContent = albumId;
-  document.title = `album-studio · ${albumId}`;
+  document.title = `sonic-studio · ${albumId}`;
 
   $('#back-btn').addEventListener('click', () => {
     if (history.length > 1) history.back(); else location.href = '/site/albums.html';

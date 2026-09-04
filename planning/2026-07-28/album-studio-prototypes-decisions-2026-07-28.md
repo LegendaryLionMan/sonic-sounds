@@ -1,4 +1,4 @@
-# 2026-07-28 album-studio prototype decisions
+# 2026-07-28 sonic-studio prototype decisions
 
 ## The brief (verbatim from the user)
 

@@ -1,7 +1,7 @@
-# album-studio · Theme System
+# sonic-studio · Theme System
 
 > World-class 6-theme design system, Mixtape '85 era (v3.5).
-> Built around Omarchy's official themes + a bespoke album-studio Mixtape '85.
+> Built around Omarchy's official themes + a bespoke sonic-studio Mixtape '85.
 
 ## 1. Architecture
 
@@ -91,7 +91,7 @@ Every theme defines the same semantic tokens. There are **never** raw hex values
 ### 1.4 Persistence
 
 ```js
-localStorage["album-studio:theme"] = {
+localStorage["sonic-studio:theme"] = {
   "v": 1,
   "theme": "mixtape85",
   "appliedAt": 1700000000000

@@ -1,12 +1,12 @@
-"""db/__init__.py — package entry point for album-studio db.
+"""db/__init__.py — package entry point for sonic-studio db.
 
 Per plan §7 Day 2 verification:
-"python -c \"from tools.album_studio.db import open_db; open_db()\" → opens, runs migrations, PRAGMAs verified"
+"python -c \"from tools.sonic_studio.db import open_db; open_db()\" → opens, runs migrations, PRAGMAs verified"
 
-Note: the plan's path `tools.album_studio.db` was structural at v3.2 time.
+Note: the plan's path `tools.sonic_studio.db` was structural at v3.2 time.
 v3.4 patches it to `db` (the actual project layout per STRUCTURE-POLICY.md).
 The first import below maintains backward compatibility for daemon code that
-expects `tools.album_studio.db` as the import path.
+expects `tools.sonic_studio.db` as the import path.
 
 Public API:
 - open_db(db_path=None) — opens a SQLite connection with WAL + PRAGMAs

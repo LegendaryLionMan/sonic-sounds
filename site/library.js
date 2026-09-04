@@ -1,4 +1,4 @@
-/* library.js · album-studio · Day 10
+/* library.js · sonic-studio · Day 10
  * Fetches /api/albums + /api/health and renders the cassette wall.
  * Server-rendered HTML provides the shell; this script populates
  * the .shell-grid with cards per album.

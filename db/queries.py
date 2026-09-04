@@ -9,7 +9,7 @@ Functions:
   - recent_albums_with_progress(limit) - top N albums with completion %
   - session_chat_history(session_id, limit) - last N events for the studio UI
   - build_jobs_for_album(album_id) - all jobs for an album, grouped by status
-  - global_status() - 4-line summary for `python -m tools.album_studio status`
+  - global_status() - 4-line summary for `python -m tools.sonic_studio status`
 """
 import sqlite3
 from pathlib import Path
@@ -110,9 +110,9 @@ def build_jobs_for_album(album_id: str,
 
 
 def global_status(db_path: Optional[Union[str, Path]] = None) -> dict:
-    """Return a 4-line summary for `python -m tools.album_studio status`.
+    """Return a 4-line summary for `python -m tools.sonic_studio status`.
 
-    Per plan §7 Day 2 verification: 'python -m tools.album_studio status' shows
+    Per plan §7 Day 2 verification: 'python -m tools.sonic_studio status' shows
     (active sessions / paused / done albums / quota remaining).
     """
     conn = open_db(db_path)

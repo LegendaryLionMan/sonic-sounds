@@ -34,7 +34,7 @@ import db.albums as db_albums
 import db.sessions as db_sessions
 import db.decisions as db_decisions
 
-_log = logging.getLogger("album_studio.intake")
+_log = logging.getLogger("sonic_studio.intake")
 
 # Per intake.html data-qid attributes (verified 2026-09-02).
 # Used to extract the right fields from FormData and validate completeness.

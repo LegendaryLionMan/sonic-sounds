@@ -55,7 +55,7 @@ Plus: `pyproject.toml` (zero deps declared before), seed supports `.webp`/`.webm
 - `tests/test_sessions.py` (51 additions)
 
 **Deleted (in working tree, ignored by .gitignore):**
-- `.meta/album-studio.db` (rebuilt by run_migrations on next daemon start)
+- `.meta/sonic-studio.db` (rebuilt by run_migrations on next daemon start)
 - `.meta/daemon.log` (runtime state)
 
 ## Verification

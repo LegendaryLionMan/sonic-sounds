@@ -21,7 +21,7 @@ import logging
 
 from db.connection import open_db, close_db
 
-_log = logging.getLogger("album_studio.sweepers.wal_checkpoint")
+_log = logging.getLogger("sonic_studio.sweepers.wal_checkpoint")
 
 
 def run_sweep(*, mode: str = "TRUNCATE") -> dict:

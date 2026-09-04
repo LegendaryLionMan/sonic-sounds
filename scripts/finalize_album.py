@@ -32,7 +32,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-_log = logging.getLogger("album_studio.scripts.finalize")
+_log = logging.getLogger("sonic_studio.scripts.finalize")
 
 # Per plan: Spotify default target = -14 LUFS, true-peak ceiling = -1 dBTP.
 DEFAULT_TARGET_LUFS = -14.0

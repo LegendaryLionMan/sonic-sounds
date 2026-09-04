@@ -1,6 +1,6 @@
-# album-studio Tools Memo — Validated Capabilities
+# sonic-studio Tools Memo — Validated Capabilities
 **Date:** 2026-07-30
-**Purpose:** Document which tools are confirmed-available on this host for the album-studio pipeline, and the canonical recipes for each.
+**Purpose:** Document which tools are confirmed-available on this host for the sonic-studio pipeline, and the canonical recipes for each.
 
 ---
 
@@ -25,7 +25,7 @@ ffmpeg -hide_banner -i input.mp3 \
 
 **Verified end-to-end:** C01 mastered to -14.0 LUFS, -1.0 dBTP, 4.4 LU LRA. **43x realtime on this host.**
 
-**Use case in album-studio:** `finalize-album.py` runs loudnorm two-pass per track, with target configurable by `R15 mastering_target` (Spotify -14, Apple -16, YouTube -14, broadcast -23, etc.).
+**Use case in sonic-studio:** `finalize-album.py` runs loudnorm two-pass per track, with target configurable by `R15 mastering_target` (Spotify -14, Apple -16, YouTube -14, broadcast -23, etc.).
 
 #### `ebur128` (one-pass) — measurement only
 
@@ -100,7 +100,7 @@ Verified: produces 1280x480 PNG. C01 spectrogram shows full frequency range (0-2
 # Installed: mutagen-1.48.1
 ```
 
-### Canonical recipe for album-studio ID3 embedding
+### Canonical recipe for sonic-studio ID3 embedding
 
 ```python
 from mutagen.id3 import ID3, ID3NoHeaderError, TPE1, TALB, TIT2, TRCK, TCON, TDRC, USLT, APIC
@@ -120,7 +120,7 @@ audio.save()
 
 **Verified:** All 7 fields write + read back. Persists through ffmpeg re-encoding. Encoding=3 = UTF-8 (correct for non-ASCII titles).
 
-**Use case in album-studio:** `finalize-album.py` embeds artist, album, track#, title, year, genre, lyrics (USLT), cover (APIC) into every mastered mp3.
+**Use case in sonic-studio:** `finalize-album.py` embeds artist, album, track#, title, year, genre, lyrics (USLT), cover (APIC) into every mastered mp3.
 
 ---
 

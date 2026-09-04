@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>album-studio — pipeline dashboard</title>
+  <title>sonic-studio — pipeline dashboard</title>
   <meta name="description" content="Status board for an album as it moves through the 12-layer release pipeline. Reads state.json.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,7 +138,7 @@
 <body><span data-theme-mount class=\"theme-picker-host\"></span>
   <main>
     <header class="masthead">
-      <div class="eyebrow">album-studio · pipeline dashboard</div>
+      <div class="eyebrow">sonic-studio · pipeline dashboard</div>
       <h1 id="dashTitle">Album Pipeline</h1>
       <p class="subtitle" id="dashSubtitle">Loading state.json…</p>
       <span class="update-label" id="updateLabel">
@@ -154,7 +154,7 @@
 
   <script>
     /* ===========================================================
-       album-studio dashboard — behavior
+       sonic-studio dashboard — behavior
        The dashboard is read-only against state.json. It polls the
        file every 30 seconds (via HTTP HEAD + cache-busting query)
        and re-renders. No websockets, no service worker.
@@ -230,9 +230,9 @@
       candidates.push(PROJECT_BASE + '.meta/state.json');
       // Fallback: site-local music dir for sites that ship state under /site/music
       if (slugHint) candidates.push(SITE_BASE + `music/${slugHint}/state.json`);
-      // Walk the album-studio tree for any music/<slug>/state.json (best effort)
+      // Walk the sonic-studio tree for any music/<slug>/state.json (best effort)
       try {
-        const index = await fetchJson(PROJECT_BASE + '.od/projects/album-studio/music');
+        const index = await fetchJson(PROJECT_BASE + '.od/projects/sonic-studio/music');
         if (index && Array.isArray(index.albums)) {
           for (const slug of index.albums) candidates.push(PROJECT_BASE + `music/${slug}/state.json`);
         }

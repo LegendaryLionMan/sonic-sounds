@@ -1,7 +1,7 @@
 r"""
-album-studio site smoke test
+sonic-studio site smoke test
 Tests both intake.html and dashboard.html at desktop viewport (1440x900)
-Captures screenshots to album-studio-smoke-*.png
+Captures screenshots to sonic-studio-smoke-*.png
 """
 from playwright.sync_api import sync_playwright
 import sys, os, json, time
@@ -40,7 +40,7 @@ with sync_playwright() as p:
 
     # Check title
     title = page.title()
-    check("title rendered", "album-studio" in title, title)
+    check("title rendered", "sonic-studio" in title, title)
 
     # Count question cards
     qs = page.locator("article.question").count()
@@ -95,7 +95,7 @@ with sync_playwright() as p:
     check("generate button enabled after 8/8", not btn.is_disabled(), "")
 
     # Capture screenshot
-    shot = os.path.join(SHOTS_DIR, "album-studio-smoke-intake-filled.png")
+    shot = os.path.join(SHOTS_DIR, "sonic-studio-smoke-intake-filled.png")
     page.screenshot(path=shot, full_page=True)
     print(f"  Screenshot: {shot}")
 
@@ -103,7 +103,7 @@ with sync_playwright() as p:
     with page.expect_download(timeout=10000) as dl_info:
         btn.click()
     dl = dl_info.value
-    save_path = os.path.join(SHOTS_DIR, "album-studio-smoke-download.json")
+    save_path = os.path.join(SHOTS_DIR, "sonic-studio-smoke-download.json")
     dl.save_as(save_path)
     check("download fired", os.path.exists(save_path), save_path)
 
@@ -170,7 +170,7 @@ with sync_playwright() as p:
     check("progress bar 12 segments", segs == 12, f"found {segs}")
 
     # Capture screenshot
-    shot = os.path.join(SHOTS_DIR, "album-studio-smoke-dashboard.png")
+    shot = os.path.join(SHOTS_DIR, "sonic-studio-smoke-dashboard.png")
     page.screenshot(path=shot, full_page=True)
     print(f"  Screenshot: {shot}")
 
@@ -206,7 +206,7 @@ with sync_playwright() as p:
     page2 = ctx2.new_page()
     page2.goto(f"{BASE}/dashboard.html?album=half-light-hours", wait_until="networkidle", timeout=15000)
     page2.wait_for_timeout(800)
-    shot = os.path.join(SHOTS_DIR, "album-studio-smoke-dashboard-mobile.png")
+    shot = os.path.join(SHOTS_DIR, "sonic-studio-smoke-dashboard-mobile.png")
     page2.screenshot(path=shot, full_page=True)
     print(f"  Screenshot: {shot}")
     ctx2.close()
@@ -216,7 +216,7 @@ with sync_playwright() as p:
     page3 = ctx3.new_page()
     page3.goto(f"{BASE}/intake.html", wait_until="networkidle", timeout=15000)
     page3.wait_for_timeout(800)
-    shot = os.path.join(SHOTS_DIR, "album-studio-smoke-intake-mobile.png")
+    shot = os.path.join(SHOTS_DIR, "sonic-studio-smoke-intake-mobile.png")
     page3.screenshot(path=shot, full_page=True)
     print(f"  Screenshot: {shot}")
     ctx3.close()

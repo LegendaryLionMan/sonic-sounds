@@ -23,7 +23,7 @@ from typing import Optional
 
 import db.sessions as db_sessions
 
-_log = logging.getLogger("album_studio.sweepers.idle_pause")
+_log = logging.getLogger("sonic_studio.sweepers.idle_pause")
 
 
 def run_sweep(*, threshold_hours: Optional[float] = None,

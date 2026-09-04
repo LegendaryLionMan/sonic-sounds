@@ -2,7 +2,7 @@
 
 Pattern (from tests/test_handlers_sessions.py):
 - IsolatedAsyncioTestCase + Quart test_client
-- Fresh tempdb per class via ALBUM_STUDIO_DB_PATH
+- Fresh tempdb per class via SONIC_STUDIO_DB_PATH
 - Seeds artist + album + session at class setup; per-test event IDs
 
 Endpoints exercised:
@@ -32,9 +32,9 @@ def _isolate_tempdb():
     otherwise keep references to OLD db.connection modules whose
     connections are never closed by the NEW module's close_all().
     """
-    tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-events-"))
+    tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-events-"))
     tempdb = tmpdir / "test.db"
-    os.environ["ALBUM_STUDIO_DB_PATH"] = str(tempdb)
+    os.environ["SONIC_STUDIO_DB_PATH"] = str(tempdb)
     for mod_name in list(sys.modules):
         if (mod_name == "db" or mod_name.startswith("db.")
                 or mod_name.startswith("build.")):
@@ -52,7 +52,7 @@ def _drop_isolation():
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
-    os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+    os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
 
 class TestEventsHandlers(unittest.IsolatedAsyncioTestCase):

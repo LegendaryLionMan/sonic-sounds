@@ -14,8 +14,8 @@ Recipe to embed:
 import sys
 from mutagen.id3 import ID3, ID3NoHeaderError, TPE1, TALB, TIT2, TRCK, TCON, TDRC, USLT, APIC, ID3FileType
 
-src = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\music-test-2026-07-29\C01-full-album-brief-short.mp3"
-dst = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio\audio-quality-2026-07-30\C01-with-id3.mp3"
+src = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\music-test-2026-07-29\C01-full-album-brief-short.mp3"
+dst = r"C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio\audio-quality-2026-07-30\C01-with-id3.mp3"
 
 import shutil
 shutil.copy(src, dst)

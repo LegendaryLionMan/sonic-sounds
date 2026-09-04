@@ -1,6 +1,6 @@
-# DESIGN.md — album-studio
+# DESIGN.md — sonic-studio
 
-> The visual identity for the album-studio project: an HTML front door for the music-album-planning-questionnaire and the full-album-release-package skills.
+> The visual identity for the sonic-studio project: an HTML front door for the music-album-planning-questionnaire and the full-album-release-package skills.
 >
 > Direction locked: **Mixtape '85** — light cream cassette shells with color-banded labels, real photography, vintage worn, dark background to make the colored labels POP.
 >
@@ -127,7 +127,7 @@ What it is NOT:
 ```
 ┌─────────────────────────────────────────────────────┐
 │ topbar (full bleed, backdrop-blur)                  │
-│ album-studio · /mixtape '85 · ⌘K         [SIDE A · C-90]│
+│ sonic-studio · /mixtape '85 · ⌘K         [SIDE A · C-90]│
 ├─────────────────────────────────────────────────────┤
 │                                                     │
 │  hero (96px padding)                                │
@@ -145,7 +145,7 @@ What it is NOT:
 │  ─── section underline (4px gradient) ───           │
 │  [content grid]                                     │
 ├─────────────────────────────────────────────────────┤
-│ footer (mono, 11px, /ALBUM-STUDIO · TEMPLATE 14B)  │
+│ footer (mono, 11px, /SONIC-STUDIO · TEMPLATE 14B)  │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -194,7 +194,7 @@ What it is NOT:
 ### Topbar
 
 ```
-album-studio / mixtape '85 · design system    [▷ SIDE A · C-90]    [▷ PRESS PLAY] [⌘K]
+sonic-studio / mixtape '85 · design system    [▷ SIDE A · C-90]    [▷ PRESS PLAY] [⌘K]
 ```
 
 - Full bleed, `padding: 16px 22px`

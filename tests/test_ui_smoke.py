@@ -1,7 +1,7 @@
 """tests/test_ui_smoke.py — Real-browser smoke against a running daemon.
 
 Default mode: VISIBLE Chrome (CDP on port 9333). The user's main Chrome
-profile is cloned to %LOCALAPPDATA%/Temp/album-studio-driver so the visible
+profile is cloned to %LOCALAPPDATA%/Temp/sonic-studio-driver so the visible
 window looks like theirs but doesn't lock their profile. The smoke then
 drives that visible window via Playwright connect_over_cdp.
 

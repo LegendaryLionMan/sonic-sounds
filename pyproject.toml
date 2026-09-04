@@ -1,17 +1,17 @@
-# pyproject.toml — album-studio (created 2026-08-09)
+# pyproject.toml — sonic-studio (created 2026-08-09)
 # Why: the audit found zero dependency declarations anywhere; a clean
 # clone couldn't reproduce the env without copying the exact venv.
 # This file pins runtime + test deps with min-version constraints that
 # match the versions verified live by the test suite.
 
 [project]
-name = "album-studio"
+name = "sonic-studio"
 version = "0.3.0"  # matches the Day-3 daemon + audit fixes
 description = "HTML front door for the music-album-planning-questionnaire and full-album-release-package skills. SQLite-backed 12-layer pipeline state for album planning and builds."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-authors = [{ name = "album-studio maintainer" }]
+authors = [{ name = "sonic-studio maintainer" }]
 keywords = ["album", "music", "pipeline", "quart", "sqlite"]
 
 # Runtime dependencies (verified against the venv that produced the 140 passing tests).
@@ -34,8 +34,8 @@ test = [
 # skip mutagen with `pip install quart hypercorn`.
 
 [project.urls]
-Homepage = "https://github.com/LegendaryLionMan/album-studio"
-Issues = "https://github.com/LegendaryLionMan/album-studio/issues"
+Homepage = "https://github.com/LegendaryLionMan/sonic-studio"
+Issues = "https://github.com/LegendaryLionMan/sonic-studio/issues"
 
 [tool.pytest.ini_options]
 # Note: the test suite uses unittest, not pytest. This section is included
@@ -50,6 +50,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 # The project is a flat layout — every package dir sits at the repo root.
 # No wheel-build configuration is needed for development; this exists so
-# `pip install -e .` works for contributors who want to import album-studio
+# `pip install -e .` works for contributors who want to import sonic_studio
 # as a package rather than relying on PYTHONPATH=.
 packages = ["build", "cli", "db"]

@@ -42,13 +42,13 @@
 - **Path:** `scripts/lyrics-to-lrc.py` (7.5 KB)
 - **Accepts:** `--album-dir <path>` flag
 - **Auto-detects:** ffprobe availability, falls back to **Length:** field
-- **Mirrored to:** `~/Documents/Projects/album-studio/scripts/` for reuse on future albums
+- **Mirrored to:** `~/Documents/Projects/sonic-studio/scripts/` for reuse on future albums
 
 ### 1.3 — `tag-album.py` script
 - **Path:** `scripts/tag-album.py` (5.0 KB)
 - **Tags applied:** TIT2 (title), TPE1 (artist), TPE2 (album artist), TALB (album), TRCK (track #), TDRC (year), TCON (genre), COMM (comment), USLT (lyrics), APIC (cover art)
 - **Verified:** 12 tracks, 10 tags each (8 ID3 + APIC + USLT)
-- **Mirrored to:** `~/Documents/Projects/album-studio/scripts/`
+- **Mirrored to:** `~/Documents/Projects/sonic-studio/scripts/`
 
 ---
 
@@ -158,8 +158,8 @@
 
 All files mirrored to:
 - `~/Music/Twenty-Two/` (local working copy)
-- `~/Documents/Projects/album-studio/cover-art/twenty-two/` (cover art)
-- `~/Documents/Projects/album-studio/scripts/` (utilities)
+- `~/Documents/Projects/sonic-studio/cover-art/twenty-two/` (cover art)
+- `~/Documents/Projects/sonic-studio/scripts/` (utilities)
 
 Album canonical: `~/OneDrive/Hermes/albums/twenty-two/`
 

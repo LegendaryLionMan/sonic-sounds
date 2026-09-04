@@ -12,7 +12,7 @@
 (function () {
   'use strict';
 
-  const LS_KEY = 'album-studio:theme:v1';
+  const LS_KEY = 'sonic-studio:theme:v1';
   const FALLBACK = 'mixtape85';
 
   // Canonical list of themes. Same shape as palettes.json minus the hex
@@ -21,7 +21,7 @@
     {
       id: 'mixtape85',
       name: "Mixtape '85",
-      desc: 'Warm yellow + cyan on near-black. The album-studio default.',
+      desc: 'Warm yellow + cyan on near-black. The sonic-studio default.',
       isMain: true,
       swatches: ['#f0c53c', '#2dd8f0', '#fafafa'],
       swatchBg: '#0a0a0f'

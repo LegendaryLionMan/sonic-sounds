@@ -82,6 +82,6 @@ All 16 fields locked in `intake-data/schema.json` (schema v2.1). Full rationale 
 - `META-DECISIONS-2026-08-02.md` — every field's rationale + v1→v2 rethink history
 - `QUESTIONNAIRE-WALKTHROUGH-2026-07-29.md` — r2 walkthrough doc with all locks
 
-**OneDrive mirrors:** schema, walkthrough, META-DECISIONS all mirrored to `~/OneDrive/Hermes/Agents/planning/album-studio/` with md5 verified.
+**OneDrive mirrors:** schema, walkthrough, META-DECISIONS all mirrored to `~/OneDrive/Hermes/Agents/planning/sonic-studio/` with md5 verified.
 
 **Next step:** when you say "go", I'll start the per-track lyric drafting workflow (R13 — co-write). At each track, I'll ask you for the memory beat, draft the lyric, and you review/accept/edit. Generation comes after lyrics are locked for each track.

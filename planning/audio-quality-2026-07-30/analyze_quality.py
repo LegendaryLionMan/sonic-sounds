@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Audio Quality Analyzer for album-studio matrix files.
+Audio Quality Analyzer for sonic-studio matrix files.
 
 Uses ffmpeg's loudnorm (LUFS), ebur128 (true-peak), and astats (RMS, peak,
 flat factor) to compute industry-standard audio quality metrics for every

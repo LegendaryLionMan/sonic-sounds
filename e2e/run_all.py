@@ -1,11 +1,11 @@
-"""e2e/run_all.py — full E2E orchestrator for album-studio.
+"""e2e/run_all.py — full E2E orchestrator for sonic-studio.
 
 Run:
   python e2e/run_all.py
 
 This is the entry-point a human (or CI) uses. It:
   1. Seeds a fresh tempdb with maren-sol + half-light-hours
-  2. Starts the daemon on port 8793 (or ALBUM_STUDIO_E2E_PORT env var)
+  2. Starts the daemon on port 8793 (or SONIC_STUDIO_E2E_PORT env var)
   3. Runs test_ui_full_ux.py (API + UX contract — no browser needed)
   4. If Playwright is installed: runs test_playwright_e2e.py
   5. If requested: runs test_browser_drive.py via the browser_exec
@@ -14,7 +14,7 @@ This is the entry-point a human (or CI) uses. It:
 
 Exit code 0 = all green. Non-zero = at least one surface failed.
 
-Why this script exists: per album-studio-day-ship-pattern §5, the
+Why this script exists: per sonic-studio-day-ship-pattern §5, the
 test pyramid has 5 layers (chrome / ux / api / db / unit). A single
 runner that hits all of them gives one verdict per "session close".
 """
@@ -31,8 +31,8 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-PORT = int(os.environ.get("ALBUM_STUDIO_E2E_PORT", "8793"))
-HEADLESS = os.environ.get("ALBUM_STUDIO_E2E_HEADLESS", "1") == "1"
+PORT = int(os.environ.get("SONIC_STUDIO_E2E_PORT", "8793"))
+HEADLESS = os.environ.get("SONIC_STUDIO_E2E_HEADLESS", "1") == "1"
 
 
 def _kill_daemons_on_port(port: int) -> None:
@@ -54,25 +54,25 @@ def _kill_daemons_on_port(port: int) -> None:
 def main() -> int:
     _kill_daemons_on_port(PORT)
 
-    tmpdir = tempfile.mkdtemp(prefix="album-studio-e2e-")
+    tmpdir = tempfile.mkdtemp(prefix="sonic-studio-e2e-")
     db = os.path.join(tmpdir, "test.db")
     lock = os.path.join(tmpdir, "test.lock")
     log = os.path.join(tmpdir, "test.log")
 
     env = os.environ.copy()
-    env["ALBUM_STUDIO_DB_PATH"] = db
-    env["ALBUM_STUDIO_LOCK_PATH"] = lock
-    env["ALBUM_STUDIO_LOG_PATH"] = log
-    env["ALBUM_STUDIO_E2E_BASE"] = f"http://127.0.0.1:{PORT}"
+    env["SONIC_STUDIO_DB_PATH"] = db
+    env["SONIC_STUDIO_LOCK_PATH"] = lock
+    env["SONIC_STUDIO_LOG_PATH"] = log
+    env["SONIC_STUDIO_E2E_BASE"] = f"http://127.0.0.1:{PORT}"
     env["PYTHONPATH"] = ""  # avoid hermes-venv contamination
     # Unset ANTHROPIC_API_KEY / OPENAI_API_KEY / MISTRAL_API_KEY etc —
     # the daemon shouldn't accidentally pick up an external LLM key.
     for k in list(env.keys()):
-        if k.endswith("_API_KEY") and k != "ALBUM_STUDIO_E2E_BASE":
+        if k.endswith("_API_KEY") and k != "SONIC_STUDIO_E2E_BASE":
             env.pop(k, None)
 
     print("=" * 70)
-    print(f"album-studio · full E2E run · {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"sonic-studio · full E2E run · {time.strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     print(f"tmpdir: {tmpdir}")
     print(f"port:  {PORT}")

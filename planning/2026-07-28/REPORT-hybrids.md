@@ -1,4 +1,4 @@
-# album-studio · 5 hybrid templates (2026-07-28)
+# sonic-studio · 5 hybrid templates (2026-07-28)
 
 > **TL;DR:** 5 new templates that genuinely mix vinyl (3) + cassette (4) + mesh (8) + minimal (9). Each has a distinct element the others don't have. All written through Open Design MCP. Gallery now at 17 templates total.
 
@@ -52,7 +52,7 @@ The fix is durable: the orphan processes will not return unless something else s
 ## Files on disk
 
 ```
-album-studio/site/prototypes/
+sonic-studio/site/prototypes/
 ├── index.html                (17-card gallery, rewritten via OD)
 ├── README.md
 ├── a-editorial/
@@ -80,4 +80,4 @@ Or, as before: blend. e.g. "15-morph's scroll behavior + 12-bloom's single-bloom
 
 ## Mirrored to OneDrive
 
-`~/OneDrive/Hermes/Agents/planning/album-studio-2026-07-28-hybrids/` — 93 files, byte-verified.
+`~/OneDrive/Hermes/Agents/planning/sonic-studio-2026-07-28-hybrids/` — 93 files, byte-verified.

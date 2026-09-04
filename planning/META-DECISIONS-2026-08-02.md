@@ -1,4 +1,4 @@
-# album-studio Meta-Decisions — 2026-08-02
+# sonic-studio Meta-Decisions — 2026-08-02
 
 **Source:** Live session 2026-08-02 (Penelope + user). User direction delivered as
 a single message with 6 numbered points + a 7th task (H3 video gen test).
@@ -535,8 +535,8 @@ When the user has just had to repeat or correct an interpretation **in the same 
 ## §8 — File mirrors (per OneDrive mirror rule, 2026-06-22)
 
 This doc lives at:
-- Source: `~/Documents/Projects/album-studio/planning/META-DECISIONS-2026-08-02.md`
-- Mirror: `~/OneDrive/Hermes/Agents/planning/album-studio/META-DECISIONS-2026-08-02.md`
-- v3.2 plan mirror: `~/OneDrive/Hermes/Agents/planning/album-studio/PLAN-2026-07-28-v3.2.md`
-- Schema mirror: `~/OneDrive/Hermes/Agents/planning/album-studio/intake-data/schema.json`
+- Source: `~/Documents/Projects/sonic-studio/planning/META-DECISIONS-2026-08-02.md`
+- Mirror: `~/OneDrive/Hermes/Agents/planning/sonic-studio/META-DECISIONS-2026-08-02.md`
+- v3.2 plan mirror: `~/OneDrive/Hermes/Agents/planning/sonic-studio/PLAN-2026-07-28-v3.2.md`
+- Schema mirror: `~/OneDrive/Hermes/Agents/planning/sonic-studio/intake-data/schema.json`
 - (mirror verified via md5 after each write — see terminal output)

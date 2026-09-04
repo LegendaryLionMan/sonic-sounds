@@ -9,11 +9,11 @@
 setlocal
 
 set CHROME_BIN=C:\Users\lion_\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe
-set PROFILE_DIR=C:\Users\lion_\AppData\Local\hermes\profiles\chrome-album-studio
+set PROFILE_DIR=C:\Users\lion_\AppData\Local\hermes\profiles\chrome-sonic-studio
 set CDP_PORT=9333
 set START_URL=http://127.0.0.1:8765/site/library.html
 set LOG_DIR=%LOCALAPPDATA%\hermes\logs
-set LOG_FILE=%LOG_DIR%\chrome-album-studio.log
+set LOG_FILE=%LOG_DIR%\chrome-sonic-studio.log
 
 REM Ensure dirs exist
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
@@ -27,8 +27,8 @@ if %ERRORLEVEL%==0 (
 )
 
 REM Kill any stale chrome instances with this profile to avoid lock conflicts
-taskkill /F /FI "WINDOWTITLE eq album-studio-verify*" 2>nul >nul
-taskkill /F /FI "IMAGENAME eq chrome.exe" /FI "WINDOWTITLE eq album-studio*" 2>nul >nul
+taskkill /F /FI "WINDOWTITLE eq sonic-studio-verify*" 2>nul >nul
+taskkill /F /FI "IMAGENAME eq chrome.exe" /FI "WINDOWTITLE eq sonic-studio*" 2>nul >nul
 
 echo [%date% %time%] Launching visible browser >> "%LOG_FILE%"
 echo Starting Chrome with profile %PROFILE_DIR%
@@ -36,7 +36,7 @@ echo Starting Chrome with profile %PROFILE_DIR%
 start "" "%CHROME_BIN%" ^
   --remote-debugging-port=%CDP_PORT% ^
   --user-data-dir="%PROFILE_DIR%" ^
-  --window-name=album-studio-verify ^
+  --window-name=sonic-studio-verify ^
   --no-first-run ^
   --no-default-browser-check ^
   --disable-background-timer-throttling ^

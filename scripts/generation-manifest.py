@@ -1,5 +1,5 @@
 """
-generation-manifest.py — Write per-track generation manifests for album-studio builds.
+generation-manifest.py — Write per-track generation manifests for sonic-studio builds.
 
 Usage:
     python scripts/generation-manifest.py --album-dir <path> [--track <slug>] [--regen]
@@ -262,7 +262,7 @@ def load_sonic_dna(album_dir: Path) -> dict | None:
     # root. The album dir is at music/<slug>/. Try a few locations.
     candidates = [
         album_dir.parent / "intake-data" / f"{album_dir.name}.json",
-        Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data") / f"{album_dir.name}.json",
+        Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data") / f"{album_dir.name}.json",
     ]
     for c in candidates:
         if c.exists():
@@ -277,7 +277,7 @@ def load_schema_version(album_dir: Path) -> str:
     """Find the current schema version. Walk up to find intake-data/schema.json."""
     candidates = [
         album_dir.parent / "intake-data" / "schema.json",
-        Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data\schema.json"),
+        Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data\schema.json"),
     ]
     for c in candidates:
         if c.exists():
@@ -297,7 +297,7 @@ def build_manifest(album_dir: Path, slug: str, schema_version: str,
     prompt_candidates = [
         album_dir / "scripts" / "prompts" / f"{slug}.md",
         album_dir.parent / "scripts" / "prompts" / f"{slug}.md",
-        Path(r"C:\Users\lion_\Documents\Projects\album-studio\scripts\prompts") / f"{slug}.md",
+        Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\scripts\prompts") / f"{slug}.md",
     ]
     prompt_md = None
     for c in prompt_candidates:

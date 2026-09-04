@@ -165,7 +165,7 @@ class TestMigrationAtomicity(unittest.TestCase):
         self.tmpdir = Path(tempfile.mkdtemp())
         self.db = self.tmpdir / "mig.db"
         # Save original DEFAULT_DB_PATH so we can restore it on tearDown
-        # (other tests rely on it pointing at the live .meta/album-studio.db).
+        # (other tests rely on it pointing at the live .meta/sonic-studio.db).
         self._orig_default_db_path = db_conn.DEFAULT_DB_PATH
 
     def tearDown(self):

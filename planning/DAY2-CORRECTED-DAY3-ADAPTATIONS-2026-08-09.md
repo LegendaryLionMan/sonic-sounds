@@ -38,7 +38,7 @@ tests/test_decisions.py                                      ✓     4430 bytes
 tests/test_build_jobs.py                                     ✓     6216 bytes
 tests/test_queries.py                                        ✓     5069 bytes
 tests/test_cli.py                                            ✓     4621 bytes
-.meta/album-studio.db                                        ✓   155648 bytes
+.meta/sonic-studio.db                                        ✓   155648 bytes
 .meta/migrations/001_initial_schema.sql                      ✓    10951 bytes
 ```
 

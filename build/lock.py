@@ -48,7 +48,7 @@ from typing import Optional
 
 from db.connection import open_db, close_db
 
-_log = logging.getLogger("album_studio.build.lock")
+_log = logging.getLogger("sonic_studio.build.lock")
 
 # Per-album locks are tracked here so a DEBUG-level log can show
 # "stuck" locks (the holder went away). Keyed on album_id.

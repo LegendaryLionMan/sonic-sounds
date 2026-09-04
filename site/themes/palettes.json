@@ -4,7 +4,7 @@
   "themes": {
     "mixtape85": {
       "name": "Mixtape '85",
-      "desc": "Warm yellow + cyan on near-black. The album-studio default.",
+      "desc": "Warm yellow + cyan on near-black. The sonic-studio default.",
       "isMain": true,
       "source": "bespoke — built from albums-page aesthetic",
       "tokens": {

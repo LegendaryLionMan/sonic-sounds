@@ -1,6 +1,6 @@
-# album-studio · Technical Implementation Reference
+# sonic-studio · Technical Implementation Reference
 
-> The complete architecture of album-studio v3.4 (Mixtape '85 era),
+> The complete architecture of sonic-studio v3.4 (Mixtape '85 era),
 > from the database schema through the HTTP layer to the frontend
 > studio. This is the developer-facing companion to the [User Manual](USER_MANUAL.md).
 
@@ -12,7 +12,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                    album-studio v3.4 daemon                         │
+│                    sonic-studio v3.4 daemon                         │
 │                                                                     │
 │  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐ │
 │  │ db layer│  │ handlers │  │  runner  │  │ sweepers │  │ static  │ │
@@ -32,7 +32,7 @@
 
 ### 1.1 Process model
 
-Single daemon process per album-studio project. Bound to `127.0.0.1:8765` by default. Background threads:
+Single daemon process per sonic-studio project. Bound to `127.0.0.1:8765` by default. Background threads:
 
 - **5 sweeper threads** (idle_pause / wal_checkpoint / quota / mirror / log_rotate)
 - **HTTP server** (Hypercorn + Quart)
@@ -180,7 +180,7 @@ def acquire(album_id: str, *, timeout: float = 30.0) -> str:
 ```python
 def invoke_music(action: str, args: dict, *, mmx_cmd: str = None) -> InvokeOutcome:
     """Run `mmx music generate` (or image / speech / video) and capture the result."""
-    mmx_cmd = mmx_cmd or os.environ.get("ALBUM_STUDIO_MMX_CMD") or r"C:\Users\lion_\AppData\Roaming\npm\mmx.cmd"
+    mmx_cmd = mmx_cmd or os.environ.get("SONIC_STUDIO_MMX_CMD") or r"C:\Users\lion_\AppData\Roaming\npm\mmx.cmd"
     cmd = [mmx_cmd, "music", "generate", "--action", action, ...]
     # The Windows subprocess newline trap: real \n in lyrics string
     # makes CreateProcess split the command line. Escape it.
@@ -401,11 +401,11 @@ class TestX(unittest.IsolatedAsyncioTestCase):
 
 | Var | Default | Purpose |
 |---|---|---|
-| `ALBUM_STUDIO_DB_PATH` | `.meta/album-studio.db` | SQLite database path |
-| `ALBUM_STUDIO_LOCK_PATH` | `.meta/daemon.lock` | Singleton lock file |
-| `ALBUM_STUDIO_LOG_PATH` | `.meta/daemon.log` | Daemon log |
-| `ALBUM_STUDIO_MMX_CMD` | `~/AppData/Roaming/npm/mmx.cmd` | mmx CLI path |
-| `ALBUM_STUDIO_E2E_BASE` | `http://127.0.0.1:8793` | Daemon URL for e2e tests |
+| `SONIC_STUDIO_DB_PATH` | `.meta/sonic-studio.db` | SQLite database path |
+| `SONIC_STUDIO_LOCK_PATH` | `.meta/daemon.lock` | Singleton lock file |
+| `SONIC_STUDIO_LOG_PATH` | `.meta/daemon.log` | Daemon log |
+| `SONIC_STUDIO_MMX_CMD` | `~/AppData/Roaming/npm/mmx.cmd` | mmx CLI path |
+| `SONIC_STUDIO_E2E_BASE` | `http://127.0.0.1:8793` | Daemon URL for e2e tests |
 | `PYTHONPATH` | (empty) | MUST be empty to avoid hermes-venv contamination |
 
 ### 9.2 .gitignore

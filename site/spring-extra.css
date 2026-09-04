@@ -1,7 +1,7 @@
 /* site/spring.css · EXTENDED for Hour 5 — Spring-physics button press (10 ideas)
 
 This file extends the existing spring.css with all 10 Hour-5 ideas
-wired up. Every interactive surface in album-studio uses the spring
+wired up. Every interactive surface in sonic-studio uses the spring
 tokens (--spring-bouncy / --spring-soft / --spring-snappy) and the
 duration tokens (--t-press / --t-pop / --t-slide / --t-theme).
 

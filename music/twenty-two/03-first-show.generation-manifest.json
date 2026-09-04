@@ -9,7 +9,7 @@
   "prompt": {
     "body": "90s hard rock at 152 BPM in A minor. The fastest track on the album. The song is about a first gig that nobody saw, and the band discovering they were real anyway. Slash's Les Paul through a Marshall stack, palm-muted open-A chug, the rhythm is relentless. The vocalist is Axl Rose circa 1988 — pre-fame rawness, no polish, just a kid screaming into a mic. The drummer is pure adrenaline — double-kick on the verse too, not just the chorus, driving the song forward at 152. The cowbell is constant, on every beat, like a fist on a table. The chorus is a gang shout with three-part vocal harmony. The solo is a Slash-style pentatonic run with a dive-bomb at the end. The lyrics are about an amateur show, nine people, four of them friends, the bouncer, the cops, the bar next door — small-town rock and roll, before anyone cared. Think GnR 'Mr. Brownstone' or Skid Row 'Big Guns' — fast, brutal, no pretense. Production: dry, the amps are too loud for the room, the drummer is hitting too hard, the singer is screaming. FIRE.",
     "chars": 1024,
-    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\03-first-show.md"
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\sonic-studio\\scripts\\prompts\\03-first-show.md"
   },
   "flags": {
     "prompt": "90s hard rock at 152 BPM in A minor. The fastest track on th...",

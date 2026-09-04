@@ -10,7 +10,7 @@ the user does via the UI is also a CLI verb. The CLI is how the daemon
 gets started, and how scripts can do everything the UI does.
 
 Usage:
-  python -m cli serve --port=8765 --db=.meta/album-studio.db
+  python -m cli serve --port=8765 --db=.meta/sonic-studio.db
   python -m cli status
   python -m cli list albums
   python -m cli list sessions --album=half-light-hours
@@ -184,7 +184,7 @@ def cmd_migrate(args) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="album-studio CLI — LOCKED verb surface per PLAN-2026-07-28-v3.4",
+        description="sonic-studio CLI — LOCKED verb surface per PLAN-2026-07-28-v3.4",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Locked verbs (per plan §7):

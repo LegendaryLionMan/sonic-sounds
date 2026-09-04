@@ -1,4 +1,4 @@
-# album-studio — 24-Hour Autonomous Work Plan
+# sonic-studio — 24-Hour Autonomous Work Plan
 
 **Started:** 2026-07-30 ~08:30 UTC (user away for 24h)
 **Goal:** Make progress without blocking on the user, while M08+ questionnaire questions wait.
@@ -44,7 +44,7 @@ The matrix test gave us a yes/no pass map. Now go deeper:
 
 ### Category B — Skills research (2-3h)
 
-1. **Hermes skills marketplace** — search for existing skills that apply to album-studio
+1. **Hermes skills marketplace** — search for existing skills that apply to sonic-studio
    - music/audio processing
    - lyrics/creative writing
    - album/cover art generation
@@ -125,7 +125,7 @@ The schema has 20 questions (M01-M08 + R09-R14 + E15-E21). Find gaps:
 The user may want to see actual schema and pipeline-deps.json drafts before Day 1:
 
 1. **SQLite schema skeleton** — 13 tables per v3.2 plan, full DDL with comments
-   - Write to `.meta/album-studio-schema-draft.sql` (NOT yet applied — for review)
+   - Write to `.meta/sonic-studio-schema-draft.sql` (NOT yet applied — for review)
 2. **pipeline-deps.json skeleton** — 12-layer DAG with placeholder mmx_actions
    - Write to `.meta/pipeline-deps-draft.json` (NOT yet applied — for review)
 3. **Both are draft-only — not applied. User reviews and applies.**
@@ -133,7 +133,7 @@ The user may want to see actual schema and pipeline-deps.json drafts before Day 
 ### Category G — Project housekeeping (1h)
 
 1. **Verify git state** — `git status`, commit any orphan files worth keeping
-2. **Mirror key docs to OneDrive** — `planning/`, `DESIGN.md`, `README.md` → `~/OneDrive/Hermes/Agents/planning/album-studio/`
+2. **Mirror key docs to OneDrive** — `planning/`, `DESIGN.md`, `README.md` → `~/OneDrive/Hermes/Agents/planning/sonic-studio/`
 3. **Run the state-path validator** on any new files written today
 
 ---
@@ -181,13 +181,13 @@ The user may want to see actual schema and pipeline-deps.json drafts before Day 
 3. `.meta/audio-quality-report.md` — the matrix's quality deep-dive
 4. `.meta/lyrics-quality-report.md` — lyrics-generation scoring
 5. `.meta/audition-pipeline/` — the audition script + dry-run results
-6. `.meta/album-studio-schema-draft.sql` — schema skeleton
+6. `.meta/sonic-studio-schema-draft.sql` — schema skeleton
 7. `.meta/pipeline-deps-draft.json` — pipeline DAG skeleton
 8. `planning/ux-patterns-memo.md` — UX research findings
 9. `planning/skills-research.md` — marketplace/github search findings
 10. `planning/tools-memo.md` — ffmpeg/mutagen/etc. confirmed capabilities
 
-All mirrored to `~/OneDrive/Hermes/Agents/planning/album-studio/` (mirror-on-write per memory rule).
+All mirrored to `~/OneDrive/Hermes/Agents/planning/sonic-studio/` (mirror-on-write per memory rule).
 
 ---
 

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>album-studio — intake · 26 questions for the album you haven't made yet</title>
+  <title>sonic-studio — intake · 26 questions for the album you haven't made yet</title>
   <meta name="description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     /* ----------------------------------------------------------------
-       album-studio intake — design tokens
+       sonic-studio intake — design tokens
        These match the parent brand palette (per DESIGN.md §6):
          --bg / --bg-soft: paper-white / parchment
          --ink / --ink-soft: text / muted
@@ -330,7 +330,7 @@
 <body><span data-theme-mount class=\"theme-picker-host\"></span>
   <main>
     <header class="masthead">
-      <div class="eyebrow">album-studio · intake</div>
+      <div class="eyebrow">sonic-studio · intake</div>
       <h1>26 questions for the album you haven't made yet</h1>
       <p class="subtitle">Start at the heart, not the genre. Skip nothing in the mandatory tier.</p>
       <div class="saved-label" id="savedLabel" aria-live="polite">
@@ -616,18 +616,18 @@
 
   <script>
     /* ===========================================================
-       album-studio intake — behavior
+       sonic-studio intake — behavior
        Sections:
          A. TRACKLIST GRID (12 rows, indexed 1..12)
          B. STATE + AUTOSAVE (localStorage, debounced 800ms)
          C. MANDATORY-RESOLVED COUNTER + GATE
          D. EXPORT (compose JSON per schema, trigger download)
-         E. HYDRATE FROM MOST RECENT album-studio.intake.* KEY
+         E. HYDRATE FROM MOST RECENT sonic-studio.intake.* KEY
        The form is read-only against the file system; the agent
        writes the corresponding intake-data/<slug>.json file.
     =========================================================== */
 
-    const STORAGE_PREFIX = 'album-studio.intake.';
+    const STORAGE_PREFIX = 'sonic-studio.intake.';
     const DEBOUNCE_MS = 800;
     const INTAKE_FORM_VERSION = '2026-08-03-v2hardening';
     const TRACKLIST_MAX = 12;

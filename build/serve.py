@@ -61,7 +61,7 @@ from build.handlers_decisions import decisions_bp
 from build.handlers_build import build_bp
 from build.handlers_intake import intake_bp
 
-_log = logging.getLogger("album_studio.daemon")
+_log = logging.getLogger("sonic_studio.daemon")
 
 # Project paths
 PROJ_ROOT = Path(__file__).parent.parent
@@ -291,7 +291,7 @@ def register_routes(app: Quart) -> None:
 # === Daemon lifecycle ===
 
 class Daemon:
-    """The album-studio daemon.
+    """The sonic-studio daemon.
 
     Lifecycle:
       1. Acquire singleton lock
@@ -431,7 +431,7 @@ class Daemon:
 # === CLI entry point ===
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="album-studio daemon")
+    parser = argparse.ArgumentParser(description="sonic-studio daemon")
     parser.add_argument("--host", default="127.0.0.1", help="bind host")
     parser.add_argument("--port", type=int, default=8765, help="bind port")
     parser.add_argument("--lock", type=Path, default=DEFAULT_LOCK, help="singleton lock path")

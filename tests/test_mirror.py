@@ -28,7 +28,7 @@ class TestVerifyMirror(unittest.TestCase):
     """scripts/verify-mirror.py pure-function tests."""
 
     def setUp(self):
-        self.tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-mirror-"))
+        self.tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-mirror-"))
         self.base = self.tmpdir / "base"
         self.mirror = self.tmpdir / "mirror"
         self.base.mkdir(parents=True)
@@ -157,7 +157,7 @@ class TestPlaywrightE2ESmoke(unittest.TestCase):
         self.assertIn("def playwright_albums_checks(", content)
         self.assertIn("def api_contract_checks(", content)
         # And references the daemon's base URL
-        self.assertIn("ALBUM_STUDIO_E2E_BASE", content)
+        self.assertIn("SONIC_STUDIO_E2E_BASE", content)
 
 
 if __name__ == "__main__":

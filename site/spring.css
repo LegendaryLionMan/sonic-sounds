@@ -12,7 +12,7 @@
  *   --spring-soft       — for drawers / modals / pills (gentle settle)
  *   --spring-snappy     — for toggles / switches (quick, no overshoot)
  *
- * Every interactive surface in album-studio uses one of these. Plus
+ * Every interactive surface in sonic-studio uses one of these. Plus
  * `prefers-reduced-motion` reduces every spring to a 0ms ease.
  */
 

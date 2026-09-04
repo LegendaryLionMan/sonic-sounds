@@ -29,7 +29,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-_log = logging.getLogger("album_studio.sweepers.quota")
+_log = logging.getLogger("sonic_studio.sweepers.quota")
 
 
 def _read_quota_via_mcp() -> Optional[dict]:
@@ -48,7 +48,7 @@ def _read_quota_via_mcp() -> Optional[dict]:
 
 def _read_quota_via_cli() -> Optional[dict]:
     """Fallback: run mmx quota show and parse stdout."""
-    mmx = os.environ.get("ALBUM_STUDIO_MMX_CMD") or r"C:\Users\lion_\AppData\Roaming\npm\mmx.cmd"
+    mmx = os.environ.get("SONIC_STUDIO_MMX_CMD") or r"C:\Users\lion_\AppData\Roaming\npm\mmx.cmd"
     try:
         result = subprocess.run(
             [mmx, "quota", "show"],

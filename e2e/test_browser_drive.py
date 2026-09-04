@@ -1,7 +1,7 @@
-"""e2e/test_browser_drive.py — browser-driven E2E verification of album-studio UI.
+"""e2e/test_browser_drive.py — browser-driven E2E verification of sonic-studio UI.
 
 This test drives a real Chrome browser (via the browser-use harness
-running locally on 127.0.0.1:9222) against a live album-studio daemon.
+running locally on 127.0.0.1:9222) against a live sonic-studio daemon.
 It exercises EVERY interactive element on /site/albums.html and
 /site/studio.html, including:
 

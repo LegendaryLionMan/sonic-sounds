@@ -2,7 +2,7 @@
 
 Pattern (from tests/test_serve.py):
 - IsolatedAsyncioTestCase + Quart test_client
-- Fresh tempdb per class via ALBUM_STUDIO_DB_PATH
+- Fresh tempdb per class via SONIC_STUDIO_DB_PATH
 - Each test seeds its own artist + album so the JSON shape is predictable
 """
 import json
@@ -28,9 +28,9 @@ def _isolate_tempdb():
     env but its connection would be registered in the OLD
     `_thread_registry` — never closed by the NEW module's close_all().
     """
-    tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-albums-"))
+    tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-albums-"))
     tempdb = tmpdir / "test.db"
-    os.environ["ALBUM_STUDIO_DB_PATH"] = str(tempdb)
+    os.environ["SONIC_STUDIO_DB_PATH"] = str(tempdb)
     for mod_name in list(sys.modules):
         if (mod_name == "db" or mod_name.startswith("db.")
                 or mod_name.startswith("build.")):
@@ -57,7 +57,7 @@ def _drop_isolation():
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
-    os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+    os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
 
 def _reseed_albums(db_albums, db_conn, tempdb):

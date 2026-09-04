@@ -1,4 +1,4 @@
-/* === album-studio · debounce.js === */
+/* === sonic-studio · debounce.js === */
 /* Per Phase 0.U of PLAN-2026-07-28-v3.2:
    debounceButton(el, fn, {timeout: 60000, idempotency: true}) handles:
    - 2xx → navigate/re-render

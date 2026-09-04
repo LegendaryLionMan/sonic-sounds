@@ -118,5 +118,5 @@ Per the plan §12:
 
 ## Mirror status
 
-`~/OneDrive/Hermes/Agents/planning/album-studio/` — mirror complete
+`~/OneDrive/Hermes/Agents/planning/sonic-studio/` — mirror complete
 (via R7 byte-verify loop). All new files synced.

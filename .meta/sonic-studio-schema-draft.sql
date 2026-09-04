@@ -1,4 +1,4 @@
--- album-studio SQLite Schema — DRAFT v0.2 (NOT YET APPLIED)
+-- sonic-studio SQLite Schema — DRAFT v0.2 (NOT YET APPLIED)
 --
 -- Source: planning/PLAN-2026-07-28-v3.2.md § 4 (folder structure)
 --         and § 6 (pipeline-deps.json dependency graph)

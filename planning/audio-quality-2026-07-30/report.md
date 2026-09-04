@@ -1,4 +1,4 @@
-# album-studio Audio Quality Report
+# sonic-studio Audio Quality Report
 **Date:** 2026-07-30
 **Source:** 34 audio files from `music-test-2026-07-29/` (32 passed + 2 short-clip artifacts)
 **Tool:** `audio-quality-2026-07-30/analyze_quality.py` (ffmpeg ebur128 + astats + aspectralstats)

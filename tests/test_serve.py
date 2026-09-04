@@ -6,8 +6,8 @@ Standard Quart testing pattern:
   - Quart 0.21: resp.data is async — use `resp.get_data()` (bytes)
   - For JSON: use `resp.get_json()` directly
 
-Test isolation: each class run uses a fresh tempdb via ALBUM_STUDIO_DB_PATH
-so the live .meta/album-studio.db is never mutated.
+Test isolation: each class run uses a fresh tempdb via SONIC_STUDIO_DB_PATH
+so the live .meta/sonic-studio.db is never mutated.
 """
 import json
 import os
@@ -27,18 +27,18 @@ from db import run_migrations
 class TestServe(unittest.IsolatedAsyncioTestCase):
     """Integration tests using Quart's async test_client.
 
-    Each class run uses a fresh tempdb (set via ALBUM_STUDIO_DB_PATH)
-    so the live .meta/album-studio.db is never mutated.
+    Each class run uses a fresh tempdb (set via SONIC_STUDIO_DB_PATH)
+    so the live .meta/sonic-studio.db is never mutated.
     """
 
     @classmethod
     def setUpClass(cls):
         # Create a tempdir + tempdb for this class
-        cls.tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-serve-"))
+        cls.tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-serve-"))
         cls.tempdb = cls.tmpdir / "test.db"
 
         # Set env BEFORE importing db modules
-        os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
+        os.environ["SONIC_STUDIO_DB_PATH"] = str(cls.tempdb)
 
         # Drop cached db.* + build.* modules so they re-resolve DEFAULT_DB_PATH
         # with our env var. The build.* modules must also be dropped because
@@ -65,7 +65,7 @@ class TestServe(unittest.IsolatedAsyncioTestCase):
         # 1. Close any open connections to our tempdb before we delete
         #    the file. Drop db.* modules first so close_all() picks up the
         #    right cached conn (the test's tempdb, not the live one).
-        os.environ["ALBUM_STUDIO_DB_PATH"] = str(cls.tempdb)
+        os.environ["SONIC_STUDIO_DB_PATH"] = str(cls.tempdb)
         for mod_name in list(sys.modules):
             if mod_name == "db" or mod_name.startswith("db."):
                 del sys.modules[mod_name]
@@ -83,7 +83,7 @@ class TestServe(unittest.IsolatedAsyncioTestCase):
         import shutil
         shutil.rmtree(cls.tmpdir, ignore_errors=True)
         # 4. Unset the env var so other test classes don't inherit it
-        os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+        os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
     async def asyncSetUp(self):
         self.app = create_app()

@@ -1,6 +1,6 @@
-"""e2e/test_ui_full_ux.py — End-to-end UX verification for album-studio.
+"""e2e/test_ui_full_ux.py — End-to-end UX verification for sonic-studio.
 
-This is the canonical E2E spec for the album-studio UI. It exercises
+This is the canonical E2E spec for the sonic-studio UI. It exercises
 every interactive element on /site/albums.html and /site/studio.html
 against a LIVE daemon (must be running on http://127.0.0.1:8791).
 
@@ -35,7 +35,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-BASE = os.environ.get("ALBUM_STUDIO_E2E_BASE", "http://127.0.0.1:8791")
+BASE = os.environ.get("SONIC_STUDIO_E2E_BASE", "http://127.0.0.1:8791")
 
 
 # === Helpers ===

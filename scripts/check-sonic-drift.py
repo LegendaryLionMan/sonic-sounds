@@ -88,7 +88,7 @@ def extract_sonic_dna(album_dir: Path) -> dict | None:
     """Load M09_sonicDNA from intake JSON. Returns None if not set."""
     candidates = [
         album_dir.parent / "intake-data" / f"{album_dir.name}.json",
-        Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data") / f"{album_dir.name}.json",
+        Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data") / f"{album_dir.name}.json",
     ]
     for c in candidates:
         if c.exists():
@@ -330,7 +330,7 @@ def main():
         print(f"[warn] No M09_sonicDNA lock found at:")
         for c in [
             album_dir.parent / "intake-data" / f"{album_dir.name}.json",
-            Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data") / f"{album_dir.name}.json",
+            Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data") / f"{album_dir.name}.json",
         ]:
             print(f"         {c}")
         print(f"\n[hint] The drift check needs a locked M09_sonicDNA to compare against.")

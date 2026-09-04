@@ -37,7 +37,7 @@ from db.pipeline import get_layer
 from build import invoke as build_invoke
 from build.lock import build_lock
 
-_log = logging.getLogger("album_studio.build.runner")
+_log = logging.getLogger("sonic_studio.build.runner")
 
 # Per Q32 / Day 8 plan: artifacts land in <output_base>/<album>/<layer>/
 DEFAULT_OUTPUT_BASE = Path(r".\albums")

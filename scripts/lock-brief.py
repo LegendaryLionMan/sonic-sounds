@@ -266,14 +266,14 @@ def find_intake_path(album_dir: Path) -> Path | None:
     Tries (in order):
     1. <album_dir>/intake-data/<slug>.json (project layout)
     2. <album_dir>/../intake-data/<slug>.json (music/album/intake-data)
-    3. ~/Documents/Projects/album-studio/intake-data/<slug>.json (the
-       canonical album-studio project root — most common case)
+    3. ~/Documents/Projects/sonic-studio/intake-data/<slug>.json (the
+       canonical sonic-studio project root — most common case)
     """
     slug = album_dir.name
     candidates = [
         album_dir / "intake-data" / f"{slug}.json",
         album_dir.parent / "intake-data" / f"{slug}.json",
-        Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data") / f"{slug}.json",
+        Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data") / f"{slug}.json",
     ]
     for c in candidates:
         if c.exists():
@@ -338,7 +338,7 @@ def main():
         for c in [
             album_dir / "intake-data" / f"{album_dir.name}.json",
             album_dir.parent / "intake-data" / f"{album_dir.name}.json",
-            Path(r"C:\Users\lion_\Documents\Projects\album-studio\intake-data") / f"{album_dir.name}.json",
+            Path(r"C:\Users\lion_\Documents\Projects\sonic-studio\intake-data") / f"{album_dir.name}.json",
         ]:
             print(f"        {c}", file=sys.stderr)
         sys.exit(1)

@@ -1,4 +1,4 @@
-# Twenty-Two — Post-mortem & Retro (album-studio V2 hardening)
+# Twenty-Two — Post-mortem & Retro (sonic-studio V2 hardening)
 
 **Date:** 2026-08-03
 **Author:** Penelope (Hermes Agent)
@@ -8,9 +8,9 @@
 
 ## What this doc is
 
-The Twenty-Two / Pyro Altar build (2026-08-02 to 2026-08-03) was the album-studio
+The Twenty-Two / Pyro Altar build (2026-08-02 to 2026-08-03) was the sonic-studio
 **end-to-end validation exercise**. It was NOT meant to produce a real album —
-it was meant to expose what works and what breaks in the album-studio tool
+it was meant to expose what works and what breaks in the sonic-studio tool
 before we ship the studio to other albums.
 
 This retro captures the two failure modes that the exercise surfaced, and the
@@ -257,7 +257,7 @@ happen there too?
 
 ## Bottom line
 
-Twenty-Two was an exercise, not an album. The album-studio is the goal.
+Twenty-Two was an exercise, not an album. The sonic-studio is the goal.
 
 The exercise exposed two design flaws:
 1. The schema and the artifact could drift apart silently.

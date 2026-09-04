@@ -1,4 +1,4 @@
-# album-studio — 24-Hour Autonomous Work RESULTS
+# sonic-studio — 24-Hour Autonomous Work RESULTS
 **Date:** 2026-07-30 (work started ~08:30 UTC, user away 24h)
 **Started plan:** `planning/OVERNIGHT-24H-PLAN.md`
 **Status:** 5 of 7 categories complete, 2 in flight (delegated)
@@ -15,7 +15,7 @@ I made significant autonomous progress. **9 documents written**, **4 categories 
 2. **`planning/QUESTIONNAIRE-V2-DRAFT.md`** — 12 KB. **Decision needed** before Day 9 build.
 3. **`planning/skills-research-2026-07-30/FINDINGS.md`** — 16 KB. Which tools to install vs build.
 4. **`planning/ux-research-2026-07-30/ux-patterns-memo.md`** — 33 KB. 10-platform analysis with 15 prioritized borrow/skip recommendations.
-5. **`.meta/album-studio-schema-draft.sql`** — 17 KB, full 13-table SQLite schema, validated with parser + triggers. Ready for review (NOT applied).
+5. **`.meta/sonic-studio-schema-draft.sql`** — 17 KB, full 13-table SQLite schema, validated with parser + triggers. Ready for review (NOT applied).
 6. **`.meta/pipeline-deps-draft.json`** — 8 KB, 12-layer DAG with approval gates and quota estimates. Ready for review.
 
 ---
@@ -119,7 +119,7 @@ I made significant autonomous progress. **9 documents written**, **4 categories 
 ### ✅ Category F — Schema + pipeline-deps drafts
 
 **Paths:**
-- `.meta/album-studio-schema-draft.sql` (17 KB, 14 tables + 3 triggers + 28 indexes)
+- `.meta/sonic-studio-schema-draft.sql` (17 KB, 14 tables + 3 triggers + 28 indexes)
 - `.meta/pipeline-deps-draft.json` (8 KB, 12 layers with approval gates)
 
 **Schema validated:** parses cleanly, all 14 tables created, 3 triggers fire correctly (albums.status tracks session state), 28 indexes named, partial UNIQUE index on active sessions works (tested: rejects 2nd active session for same album).
@@ -155,7 +155,7 @@ When you return, **read these in order**:
 1. **`audio-quality-2026-07-30/report.md`** — 8 KB. Quick scan of music-gen quality + recommended fixes.
 2. **`planning/QUESTIONNAIRE-V2-DRAFT.md`** — 12 KB. **Decision needed** for Day 9 (intake form) build.
 3. **`planning/ux-research-2026-07-30/ux-patterns-memo.md`** — 33 KB. Skim the §12 Synthesis table for the 15 ranked recommendations.
-4. **`.meta/album-studio-schema-draft.sql`** — review for Day 2 implementation.
+4. **`.meta/sonic-studio-schema-draft.sql`** — review for Day 2 implementation.
 5. **`.meta/pipeline-deps-draft.json`** — review for Phase 0.D implementation.
 
 Then **delegate-pending** items:
@@ -191,7 +191,7 @@ Then **delegate-pending** items:
 - `planning/ux-research-2026-07-30/ux-patterns-memo.md` (33 KB)
 
 **Meta (Desktop canonical):**
-- `.meta/album-studio-schema-draft.sql` (17 KB, validated)
+- `.meta/sonic-studio-schema-draft.sql` (17 KB, validated)
 - `.meta/pipeline-deps-draft.json` (8 KB, validated)
 
 **OneDrive mirror** (md5-verified byte-match): all of above + per-file JSONs (32 files) + summary.json + summary.csv.

@@ -30,9 +30,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 
 def _isolate_tempdb():
-    tmpdir = Path(tempfile.mkdtemp(prefix="album-studio-test-intake-"))
+    tmpdir = Path(tempfile.mkdtemp(prefix="sonic-studio-test-intake-"))
     tempdb = tmpdir / "test.db"
-    os.environ["ALBUM_STUDIO_DB_PATH"] = str(tempdb)
+    os.environ["SONIC_STUDIO_DB_PATH"] = str(tempdb)
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
@@ -46,7 +46,7 @@ def _drop_isolation():
     for mod_name in list(sys.modules):
         if mod_name == "db" or mod_name.startswith("db."):
             del sys.modules[mod_name]
-    os.environ.pop("ALBUM_STUDIO_DB_PATH", None)
+    os.environ.pop("SONIC_STUDIO_DB_PATH", None)
 
 
 # A complete, valid intake payload (9 M-tier + a few R/E for richness)

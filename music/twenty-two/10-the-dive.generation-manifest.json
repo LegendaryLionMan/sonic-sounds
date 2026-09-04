@@ -9,7 +9,7 @@
   "prompt": {
     "body": "90s hard rock at 138 BPM in F# minor. The song is about the lowest bar in the worst town. Slash's Les Paul, palm-muted chug with a swagger — not as fast as the open-mic songs, but with attitude. The vocalist is Axl Rose circa 1988 — swaggering, leering, a sneer in his voice. The drummer is half-time backbeat on the verse, double-kick on the chorus, cowbell on 2 and 4. The bass is thick, walking, almost sleazy. The chorus is a gang shout with three-part vocal harmony. Slash-style solo with a bluesy pentatonic run and a long slow bend. The lyrics are about a bar at the end of the line, a barman missing three fingers, a jukebox broken, toilets worse, cops don't come, 2 AM, a bottle of beer, a woman with a black eye. Think GnR 'Patience' (the slow version) or Mötley Crüe 'On With the Show' — the song has the same seedy glamour, the same sense of being at the bottom of the world. Production: dry, the Les Paul is the lead voice, the bass is sleazy. FIRE.",
     "chars": 962,
-    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\album-studio\\scripts\\prompts\\10-the-dive.md"
+    "source_file": "C:\\Users\\lion_\\Documents\\Projects\\sonic-studio\\scripts\\prompts\\10-the-dive.md"
   },
   "flags": {
     "prompt": "90s hard rock at 138 BPM in F# minor. The song is about the ...",

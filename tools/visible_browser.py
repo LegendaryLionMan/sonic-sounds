@@ -12,8 +12,8 @@ Why raw CDP instead of Playwright:
 The user's Chrome window must be running first. To launch it:
   "C:/Users/lion_/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe" ^
     --remote-debugging-port=9333 ^
-    --user-data-dir="C:/Users/lion_/AppData/Local/hermes/profiles/chrome-album-studio" ^
-    --window-name=album-studio-verify ^
+    --user-data-dir="C:/Users/lion_/AppData/Local/hermes/profiles/chrome-sonic-studio" ^
+    --window-name=sonic-studio-verify ^
     --window-size=1280,820 --window-position=200,150 ^
     "http://127.0.0.1:8765/site/library.html"
 
@@ -37,7 +37,7 @@ from pathlib import Path
 import websockets
 
 CDP_HTTP = "http://127.0.0.1:9333"
-SHOT_DIR = Path(r"C:\Users\lion_\AppData\Local\Temp\album-studio-smoke")
+SHOT_DIR = Path(r"C:\Users\lion_\AppData\Local\Temp\sonic-studio-smoke")
 SHOT_DIR.mkdir(parents=True, exist_ok=True)
 
 

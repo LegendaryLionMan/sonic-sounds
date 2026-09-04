@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://album-studio.local/schemas/intake.json",
-  "title": "album-studio intake brief",
+  "$id": "https://sonic-studio.local/schemas/intake.json",
+  "title": "sonic-studio intake brief",
   "description": "Form payload exported by site/intake.html. Read by the music-album-planning-questionnaire skill to write a CONCEPT-BRIEF.md.",
   "type": "object",
   "required": [

@@ -1,5 +1,5 @@
 """
-lyrics-to-lrc.py — Convert album-studio lyrics/*.md files into LRC synced-lyrics files.
+lyrics-to-lrc.py — Convert sonic-studio lyrics/*.md files into LRC synced-lyrics files.
 
 Usage:
     python scripts/lyrics-to-lrc.py --album-dir <path> [--use-mp3-duration]
@@ -61,7 +61,7 @@ def ffprobe_duration(mp3_path):
 
 
 def parse_lyrics_md(path):
-    """Parse album-studio lyrics/*.md.
+    """Parse sonic-studio lyrics/*.md.
 
     Returns (meta_dict, sections_list) where sections_list is
     [(section_name, [line_text, ...]), ...].

@@ -1,1 +1,1 @@
-"""album-studio tests package."""
+"""sonic-studio tests package."""

@@ -1,4 +1,4 @@
-# album-studio · User Manual
+# sonic-studio · User Manual
 
 > Plan an album, walk it through the 12-layer build pipeline, ship a
 > final release. This manual is the entry point for every new user.
@@ -7,7 +7,7 @@
 
 ---
 
-## 1. What is album-studio?
+## 1. What is sonic-studio?
 
 Album-studio is a workspace for end-to-end music album creation:
 
@@ -18,7 +18,7 @@ Album-studio is a workspace for end-to-end music album creation:
 
 ### 1.1 How this fits with the music-album-planning-questionnaire skill
 
-Album-studio is the **web UI** companion to the existing `music-album-planning-questionnaire` skill. The skill drives the **content** (what to ask, what reference bands to surface); album-studio drives the **state** (which questions are answered, which layers are running, which files are written).
+Album-studio is the **web UI** companion to the existing `music-album-planning-questionnaire` skill. The skill drives the **content** (what to ask, what reference bands to surface); sonic-studio drives the **state** (which questions are answered, which layers are running, which files are written).
 
 When the user says "I want to make an album", the skill triggers first (the questionnaire), and once the brief is locked, the studio opens the workspace.
 
@@ -28,7 +28,7 @@ When the user says "I want to make an album", the skill triggers first (the ques
 
 ```mermaid
 flowchart TD
-    Start([User opens album-studio]) --> Pick[Pick or create album]
+    Start([User opens sonic-studio]) --> Pick[Pick or create album]
 
     Pick -->|Existing album| AlbumDetail[Album drawer opens]
     Pick -->|New album| Intake[26-question intake form]
@@ -96,7 +96,7 @@ The flow has three natural exits: **(a)** short albums that stop at Cover Art or
 `http://127.0.0.1:8765/site/library.html`
 
 ```
-album-studio / library
+sonic-studio / library
 [1 ALBUM · 10 TRACKS]                                    ⌘K
 ─────────────────────────────────────────────────────────────────
 the cassette wall
@@ -124,7 +124,7 @@ your collection
 `http://127.0.0.1:8765/site/albums.html`
 
 ```
-album-studio / albums
+sonic-studio / albums
 [1 ACTIVE]                                       [+ NEW ALBUM] [⌘K]
 ─────────────────────────────────────────────────────────────────
 ALBUMS IN PROGRESS
@@ -156,7 +156,7 @@ DAEMON · 127.0.0.1:8765
 `http://127.0.0.1:8765/site/studio.html?session=<session_id>`
 
 ```
-album-studio / studio
+sonic-studio / studio
 [Half-Light Hours · Brief · active]   ACTIVE   [← Albums] [⌘K]
 ─────────────────────────────────────────────────────────────────
 /SESSION                                  /ALBUM-COVER · MIXTAPE '85
@@ -255,7 +255,7 @@ When you first open the studio, you'll see a brief intro overlay that walks you 
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Welcome to album-studio.                                       │
+│  Welcome to sonic-studio.                                       │
 │  ━━━━━━━━━━━━━━━━━━━━━                                          │
 │                                                                  │
 │  This is the STUDIO. The album you're working on is at the      │
@@ -371,7 +371,7 @@ All assets live in the canonical location: `~/OneDrive/Hermes/albums/Half-Light-
 
 ## 7.5 Screenshots
 
-Page captures live in [`docs/assets/screenshots/`](assets/screenshots/README.md) (mirrored to `~/OneDrive/Hermes/Agents/planning/album-studio/docs/assets/screenshots/` per R7). The naming convention is:
+Page captures live in [`docs/assets/screenshots/`](assets/screenshots/README.md) (mirrored to `~/OneDrive/Hermes/Agents/planning/sonic-studio/docs/assets/screenshots/` per R7). The naming convention is:
 
 - `01-studio.png` — Maren Sol's session view
 - `02-albums.png` — Album grid
@@ -437,7 +437,7 @@ To capture a fresh screenshot: open the relevant URL in Chrome, take a screensho
 
 - **Backend:** `build/serve.py` (Quart + SQLite). All handlers in `build/handlers_*.py`.
 - **Frontend:** `site/*.html` + `site/*.js` + `site/*.module.css` (vanilla JS, no framework).
-- **Database:** SQLite at `<project_root>/.meta/album-studio.db` (or `ALBUM_STUDIO_DB_PATH`).
+- **Database:** SQLite at `<project_root>/.meta/sonic-studio.db` (or `SONIC_STUDIO_DB_PATH`).
 - **Migrations:** `db/migrations/` (auto-applied at daemon startup).
 - **Tests:** `tests/test_*.py` — 377 tests, run with `pytest tests/ build/`.
 - **Plan:** `docs/decisions/` for ADRs.

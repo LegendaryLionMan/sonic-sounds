@@ -1,6 +1,6 @@
-# album-studio · 11-template prototype gallery (2026-07-28)
+# sonic-studio · 11-template prototype gallery (2026-07-28)
 
-> **TL;DR:** From 3 originals (editorial / studio / cinematic) → 11 templates. All built on the studio shell (your "B will be the initial template") but each with a distinct visual system. Inspired by awwwards (music+sound category), sitebuilderreport (musician website examples), and sonaar (waveform / spectrum / music player aesthetic). Live gallery at `~/Documents/Projects/album-studio/site/prototypes/`.
+> **TL;DR:** From 3 originals (editorial / studio / cinematic) → 11 templates. All built on the studio shell (your "B will be the initial template") but each with a distinct visual system. Inspired by awwwards (music+sound category), sitebuilderreport (musician website examples), and sonaar (waveform / spectrum / music player aesthetic). Live gallery at `~/Documents/Projects/sonic-studio/site/prototypes/`.
 
 ## The 11 templates
 
@@ -54,7 +54,7 @@ The brief was "B will be the initial template" + "more music oriented" + "darker
 ## Files on disk
 
 ```
-album-studio/site/prototypes/
+sonic-studio/site/prototypes/
 ├── index.html                (the 11-card gallery — open this first)
 ├── README.md                 (short overview)
 ├── a-editorial/index.html

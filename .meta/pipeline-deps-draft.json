@@ -1,5 +1,5 @@
 {
-  "$schema": "https://album-studio.local/schemas/pipeline-deps.json",
+  "$schema": "https://sonic-studio.local/schemas/pipeline-deps.json",
   "version": "0.1",
   "schema_version_locked": "2026-07-30",
   "description": "Declarative 12-layer DAG for album creation. Each layer specifies its dependencies, the approval gate, the mmx_action that produces it, and which output_table it writes. Consumed by db/pipeline.py to answer: 'can layer X run for album Y?' and 'what's the next runnable layer?'.",

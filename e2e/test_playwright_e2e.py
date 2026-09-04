@@ -37,7 +37,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 # Default to the same port the run_all.py uses; overridable via env.
-BASE = os.environ.get("ALBUM_STUDIO_E2E_BASE", "http://127.0.0.1:8793")
+BASE = os.environ.get("SONIC_STUDIO_E2E_BASE", "http://127.0.0.1:8793")
 
 
 def api(method: str, path: str, data=None, base: str = BASE):

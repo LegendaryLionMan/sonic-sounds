@@ -1,6 +1,6 @@
 """build/handlers_decisions.py — HTTP handlers for /api/decisions/*.
 
-Day 5. Decisions are the album-studio's persistent "what did the user
+Day 5. Decisions are the sonic-studio's persistent "what did the user
 lock, why, when, in which doc" log. Schema:
   code (e.g. "M01") + tier ("mandatory" | "recommended" | "extra")
   + question, answer, rationale, source_doc, session_id, album_id

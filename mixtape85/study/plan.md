@@ -1,7 +1,7 @@
 # Mixtape '85 Study Plan
 
 ## Purpose
-This study plan helps you deepen your understanding of the Mixtape '85 design system, user language patterns, and how to leverage the album-studio workflow for creative development. It is not a technical task — it's a cognitive companion for your creative work.
+This study plan helps you deepen your understanding of the Mixtape '85 design system, user language patterns, and how to leverage the sonic-studio workflow for creative development. It is not a technical task — it's a cognitive companion for your creative work.
 
 ## Core Components
 

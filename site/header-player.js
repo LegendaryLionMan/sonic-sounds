@@ -14,7 +14,7 @@
   'use strict';
 
   const API = '';
-  const LS_KEY = 'album-studio:header-player:v1';
+  const LS_KEY = 'sonic-studio:header-player:v1';
   const $ = (s) => document.querySelector(s);
 
   function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }

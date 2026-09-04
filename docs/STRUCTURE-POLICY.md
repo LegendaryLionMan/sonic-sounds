@@ -1,9 +1,9 @@
-# album-studio Structure Policy
+# sonic-studio Structure Policy
 
 **Status:** Locked 2026-08-01 (cleanup pass 1); v2.2 hardening 2026-08-03 (scripts/, M09_sonicDNA, generation-manifest.json); **2026-08-04 R7+R10 patch to clarify album canonical path**
 **Owner:** Penelope + user
 
-This document is the **authoritative layout rule** for the album-studio project. New
+This document is the **authoritative layout rule** for the sonic-studio project. New
 artifacts go where this doc says, or they get cleaned up at the next maintenance pass.
 
 ---
@@ -11,7 +11,7 @@ artifacts go where this doc says, or they get cleaned up at the next maintenance
 ## 1. Canonical layout
 
 ```
-album-studio/
+sonic-studio/
 ├── README.md                          ← project intro
 ├── DESIGN.md                          ← design doc
 ├── .gitignore                         ← keeps junk out of git
@@ -104,8 +104,8 @@ The `.gitignore` blocks `__pycache__/`, `.od-skills/`, `.placeholder` files,
 
 ### R7. Project mirror is byte-verified (NOT the album canonical).
 
-`~/OneDrive/Hermes/Agents/planning/album-studio/` is the **project mirror** —
-a byte-verified backup of this repo (the album-studio dev project). It must
+`~/OneDrive/Hermes/Agents/planning/sonic-studio/` is the **project mirror** —
+a byte-verified backup of this repo (the sonic-studio dev project). It must
 byte-match the project for any source file. **It is NOT the album canonical.**
 
 The **album canonical** is the user's playback/distribution folder, separate
@@ -113,8 +113,8 @@ from the dev project. See R10 for the album canonical rule. After any write
 to the project source files, run the mirror loop:
 
 ```bash
-PROJ='C:\Users\lion_\Documents\Projects\album-studio'
-ONE='C:\Users\lion_\OneDrive\Hermes\Agents\planning\album-studio'
+PROJ='C:\Users\lion_\Documents\Projects\sonic-studio'
+ONE='C:\Users\lion_\OneDrive\Hermes\Agents\planning\sonic-studio'
 cd "$PROJ" && find . -type f -not -path "./.git/*" -not -path "./.od-skills/*" \
     -not -path "./music/archive/*" -not -path "./site/prototypes/screenshots/*" \
     -not -path "./tests/screenshots/*" | while read f; do
@@ -190,13 +190,13 @@ C:\Users\lion_\OneDrive\Hermes\albums\{slug}/
 
 **When the dev project builds a new track, the artifact goes to BOTH:**
 
-1. The **project repo**: `~/Documents/Projects/album-studio/music/{slug}/{file}`
+1. The **project repo**: `~/Documents/Projects/sonic-studio/music/{slug}/{file}`
    (tracked in git for version history)
 2. The **album canonical**: `~/OneDrive/Hermes/albums/{slug}/{file}`
    (where the user actually listens, distributes, edits)
 
 **Common mistake (avoided as of 2026-08-04):** writing to the project mirror
-(`~/OneDrive/Hermes/Agents/planning/album-studio/`) thinking it was the album
+(`~/OneDrive/Hermes/Agents/planning/sonic-studio/`) thinking it was the album
 canonical. The mirror is a backup of the dev repo, NOT the album folder.
 
 **Three-way verification on every change:**
@@ -205,7 +205,7 @@ canonical. The mirror is a backup of the dev repo, NOT the album folder.
 |---|---|---|
 | `~/Music/Twenty-Two/` | Local working copy | the latest generated files |
 | `~/OneDrive/Hermes/albums/twenty-two/` | **ALBUM canonical** | the album artifacts |
-| `~/Documents/Projects/album-studio/` | Project repo (git) | the dev source |
+| `~/Documents/Projects/sonic-studio/` | Project repo (git) | the dev source |
 
 Always byte-verify all three with `md5sum` after writing.
 
@@ -241,16 +241,16 @@ Now it's `music/archive/test-2026-07-29/`.
 
 ### ❌ AP4. Orphan snapshot dirs
 
-`album-studio-2026-07-28-hybrids/`, `…-templates-v2/`, `…-GO-ALL/` — three
+`sonic-studio-2026-07-28-hybrids/`, `…-templates-v2/`, `…-GO-ALL/` — three
 full-project snapshots from earlier in the day. Now in
-`~/OneDrive/Hermes/Agents/planning/album-studio-archive-2026-07-28/`.
+`~/OneDrive/Hermes/Agents/planning/sonic-studio-archive-2026-07-28/`.
 
 **Why they accumulated:** iterative GO-ALL/HYBRIDS/TEMPLATES-V2 sessions, each
 copying the whole project. The REPORTs reference them as evidence of past states.
 **Prevention:** when a session creates a snapshot, give it a name that includes the
 session's purpose (e.g. `snapshot-2026-07-28-1430-hybrids/`) and **delete the
 predecessor when the next session supersedes it**. If the predecessor is referenced
-in a report, move it under `…/planning/album-studio-archive-YYYY-MM-DD/` instead.
+in a report, move it under `…/planning/sonic-studio-archive-YYYY-MM-DD/` instead.
 
 ### ❌ AP5. Mirrors out of sync with project
 
@@ -301,13 +301,13 @@ output path.
 The canonical is the source of truth; the project repo and project mirror are downstream.
 
 **The canonical write sequence for a new track:**
-1. Write prompt to `~/Documents/Projects/album-studio/scripts/prompts/{slug}.md`
+1. Write prompt to `~/Documents/Projects/sonic-studio/scripts/prompts/{slug}.md`
 2. Write lyrics to `~/OneDrive/Hermes/albums/{slug}/lyrics/{slug}.md`
 3. `mmx music generate --out ~/OneDrive/Hermes/albums/{slug}/music/{slug}.mp3`
 4. Mirror to project repo (step 1 + step 3 are git-tracked) AND project mirror (R7)
 
 **Enforcement:**
-- Pre-commit hook at `~/Documents/Projects/album-studio/.git/hooks/pre-commit` blocks
+- Pre-commit hook at `~/Documents/Projects/sonic-studio/.git/hooks/pre-commit` blocks
   old-model markers in any staged prompt file (see R11).
 - Before any album write, ALWAYS first `ls` the parent folder to confirm the path. If
   `~/Music/` is in the path, STOP — that's the wrong folder.
