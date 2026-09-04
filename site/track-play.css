@@ -1,0 +1,172 @@
+/* site/track-play.css · Day 1 Hour 13 — Track play button reactive fill (10 ideas)
+ *
+ * The .t-play button per track morphs to ⏸ when playing, fills with
+ * accent color, ripple from click, pulse ring on beat, hover preview.
+ * State classes: .is-loading / .is-error / .is-disabled / .is-playing
+ */
+
+:root {
+  --t-play-morph: 220ms;
+  --t-play-ripple: 600ms;
+}
+
+/* =====================================================================
+ * Idea 1: Click ▷ → button morphs to ⏸ over 220ms
+ * ===================================================================== */
+
+.t-play {
+  transition:
+    transform var(--t-play-morph) var(--spring-bouncy),
+    background-color var(--t-play-morph) var(--spring-soft),
+    color var(--t-play-morph) var(--spring-soft),
+    box-shadow var(--t-play-morph) var(--spring-soft);
+}
+.t-play.is-playing {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* When the play button morphs, the icon glyph slides out + new one slides in */
+.t-play .icon-play,
+.t-play .icon-pause {
+  display: inline-block;
+  transition: transform var(--t-play-morph) var(--spring-bouncy),
+              opacity var(--t-play-morph) var(--spring-soft);
+}
+.t-play .icon-pause { display: none; }
+.t-play.is-playing .icon-play  { display: none; }
+.t-play.is-playing .icon-pause { display: inline-block; }
+
+/* =====================================================================
+ * Idea 2: Background fills with --accent during playback
+ * (already implemented above via .is-playing)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 3: Ripple effect from click point
+ * ===================================================================== */
+
+.t-play { position: relative; overflow: hidden; }
+.t-play.is-rippling::after {
+  content: ""; position: absolute; left: var(--ripple-x, 50%);
+  top: var(--ripple-y, 50%);
+  width: 4px; height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: play-ripple var(--t-play-ripple) var(--spring-bouncy) forwards;
+  pointer-events: none;
+}
+@keyframes play-ripple {
+  to { transform: translate(-50%, -50%) scale(80); opacity: 0; }
+}
+
+/* =====================================================================
+ * Idea 4: Pulse ring on beat (BPM-driven) — feeds from Day 3 hour 10
+ *
+ * Default: 1.4s pulse animation. JS overrides --t-play-beat from BPM.
+ * ===================================================================== */
+
+.t-play.is-playing {
+  animation: play-pulse var(--t-play-beat, 1.4s) ease-in-out infinite;
+}
+@keyframes play-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent); }
+  50%      { box-shadow: 0 0 0 10px transparent; }
+}
+
+/* =====================================================================
+ * Idea 5: Hover state shows waveform preview (Day 3 hour 1)
+ *
+ * JS adds .hover-preview class to .track-row when hovered; the
+ * .t-play expands to show a mini-waveform on hover.
+ * ===================================================================== */
+
+.track-row:hover .t-play {
+  width: 80px;
+  transition: width var(--t-press) var(--spring-bouncy);
+}
+
+/* =====================================================================
+ * Idea 6: Loading state while MP3 buffers (spinner)
+ * ===================================================================== */
+
+.t-play.is-loading {
+  pointer-events: none;
+}
+.t-play.is-loading::before {
+  content: "";
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+}
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* =====================================================================
+ * Idea 7: Error state on 404 (red shake + retry button)
+ * ===================================================================== */
+
+.t-play.is-error {
+  animation: error-shake 480ms var(--spring-bouncy);
+  background: color-mix(in srgb, #ef4444 60%, transparent);
+  color: var(--ink);
+}
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+.t-play.is-error::after {
+  content: "↻";
+  position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; color: #ef4444;
+}
+
+/* =====================================================================
+ * Idea 8: Disabled state when no MP3
+ * ===================================================================== */
+
+.t-play.is-disabled {
+  pointer-events: none;
+  opacity: .3;
+  cursor: not-allowed;
+}
+
+/* =====================================================================
+ * Idea 9: Active state when playing (different color)
+ * (Already covered by .is-playing; this is the same selector.)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 10: All states have a11y aria-label
+ *
+ * The aria-label is set in studio.js's loadTrack() call:
+ *   btn.setAttribute('aria-label', 'Play ' + title)
+ *   btn.setAttribute('aria-label', 'Pause ' + title)   // when playing
+ *
+ * CSS gives visual states; JS owns the a11y labels.
+ * ===================================================================== */
+
+.t-play {
+  /* Visual hint that it's a real button */
+  position: relative;
+  border: none;
+  outline-offset: 4px;
+}
+.t-play:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .t-play, .t-play.is-playing,
+  .t-play.is-loading::before,
+  .t-play.is-error {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
