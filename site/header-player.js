@@ -188,6 +188,16 @@
       saveLS();
     });
     audio.addEventListener('ended', () => {
+      // If this was the LAST track, stop (don't loop / restart from track 1).
+      // Otherwise, auto-advance to the next track.
+      const isLastTrack = state.currentIdx >= state.tracks.length - 1;
+      if (isLastTrack) {
+        state.isPlaying = false;
+        state.currentTime = state.audio.currentTime || 0;
+        saveLS();
+        paint();
+        return;
+      }
       skip(+1, true);
     });
     audio.addEventListener('error', () => {
