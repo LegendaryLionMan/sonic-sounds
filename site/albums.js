@@ -41,7 +41,6 @@ function badgeHtml(st) {
 /* ---- state ---- */
 let sessions = [];
 let albums = [];
-let drawerAlbum = null;
 let liveInterval = null;
 
 /* ---- render: page header stats ---- */
@@ -162,52 +161,12 @@ $('#new-album-form').addEventListener('submit', async (e) => {
 });
 function closeModal() { modal.hidden=true; }
 
-/* ---- album detail drawer ---- */
-const drawer = $('#album-drawer');
-$('#drawer-close-btn').addEventListener('click', closeDrawer);
-drawer.addEventListener('click', (e) => { if (e.target===drawer) closeDrawer(); });
-$('#drawer-open-session-btn').addEventListener('click', async () => {
-  if (!drawerAlbum) return;
-  try {
-    const s = await api('/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({album_id:drawerAlbum.id})});
-    await refresh(); closeDrawer();
-  } catch(err) { alert('Open session failed: '+err.message); }
-});
-function openDrawer(album) {
-  drawerAlbum = album;
-  $('#drawer-album-id').textContent = album.id;
-  $('#drawer-album-title').textContent = album.title;
-  const m = $('#drawer-meta');
-  const items = [['artist', album.primary_artist_id],['release', album.release_date||'—'],['runtime', album.runtime_min?album.runtime_min+' min':'—'],['status', album.status],['layers', album.total_layers?album.total_layers:'—'],['covers', album.cover_asset_id||album.cover_image_asset_id?'yes':'—']];
-  m.innerHTML = items.map(([k,v])=>`<div class="meta-item"><span class="mk">${esc(k)}</span><span class="mv">${esc(v)}</span></div>`).join('');
-  renderDrawerSessions(album.sessions||[]);
-  renderDrawerTracks(album.tracks||[]);
-  renderDrawerAssets(album.assets||[]);
-  drawer.hidden=false;
-}
-function closeDrawer() { drawerAlbum=null; drawer.hidden=true; }
-function renderDrawerSessions(slist) {
-  const el = $('#drawer-sessions');
-  if (!slist.length) { el.innerHTML='<p class="hand empty-line">No sessions for this album.</p>'; return; }
-  el.innerHTML = `<div class="session-list">`+slist.map(s=>`<div class="session-row"><span class="sr-label">${badgeHtml(s.status)} ${esc(s.album_title||'')}</span><span class="sr-meta">${fmtMs(s.current_position_ms||s.elapsed_ms)} · layer ${s.current_layer||'—'} · ${relativeTime(s.updated_at||s.created_at||s.opened_at)}</span></div>`).join('')+`</div>`;
-}
-function renderDrawerTracks(tracks) {
-  const el = $('#drawer-tracks');
-  if (!tracks.length) { el.innerHTML='<p class="hand empty-line">No tracks yet.</p>'; return; }
-  el.innerHTML = `<div class="track-list">`+tracks.map((t,i)=>`<div class="track-row"><span class="t-num">${i+1}</span><span class="t-title">${esc(t.title)}</span>${t.lyricist?`<span class="t-lyricist">— ${esc(t.lyricist)}</span>`:' '}${t.duration_ms?`<span style="color:var(--ink-muted);margin-left:auto;font-family:var(--mono);font-size:12px;">${fmtDuration(t.duration_ms/1000)}</span>`:''}</div>`).join('')+`</div>`;
-}
-function renderDrawerAssets(assets) {
-  const el = $('#drawer-assets');
-  if (!assets.length) { el.innerHTML='<p class="hand empty-line">No assets yet.</p>'; return; }
-  el.innerHTML = `<div class="asset-list">`+assets.map(a=>`<div class="asset-row"><span class="a-kind">${esc(a.kind||a.asset_kind||'—')}</span><span class="a-name">${esc(a.id)} ${a.filename?'— '+esc(a.filename):''}</span></div>`).join('')+`</div>`;
-}
-
 /* ---- wire page event delegation ---- */
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('[data-action]');
   if (btn) { const act=btn.dataset.action, id=btn.dataset.id; if (act==='open-studio') openStudio(id); else actionSession(id,act); return; }
   const card = e.target.closest('.album-card');
-  if (card && !e.target.closest('.btn')) { const id=card.dataset.id; const album=albums.find(a=>a.id===id); if(album) openDrawer(album); }
+  if (card && !e.target.closest('.btn')) { location.href = '/site/album.html?id=' + encodeURIComponent(card.dataset.id); }
 });
 
 /* ---- init ---- */

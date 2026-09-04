@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>album-studio · album</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/spring-extra.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/modals.css">
+<style>
+/* album.html — dedicated full album view (replaces drawer) */
+.album-hero {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 40px;
+  padding: 48px 0 24px;
+}
+.album-cover-large {
+  aspect-ratio: 1/1;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+}
+.album-cover-large img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.album-cover-placeholder {
+  font-family: var(--display);
+  font-size: 120px;
+  color: var(--ink-muted);
+}
+.album-headline { display: flex; flex-direction: column; gap: 14px; }
+.album-headline .eyebrow { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; }
+.album-headline h1 { font-family: var(--display); font-size: 56px; line-height: 1.05; letter-spacing: -.01em; margin: 0; }
+.album-headline .lede { color: var(--ink-muted); font-size: 16px; max-width: 56ch; }
+
+.album-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.album-meta-cell {
+  border-left: 2px solid var(--rule);
+  padding: 4px 0 4px 14px;
+}
+.album-meta-cell .mk { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .12em; display: block; }
+.album-meta-cell .mv { font-size: 18px; font-weight: 500; margin-top: 2px; display: block; }
+
+.section-title {
+  font-family: var(--display);
+  font-size: 28px;
+  letter-spacing: -.01em;
+  margin: 32px 0 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.section-title .count { font-family: var(--mono); font-size: 12px; color: var(--ink-muted); }
+
+.track-list-full { display: flex; flex-direction: column; gap: 4px; }
+.track-row-full {
+  display: grid;
+  grid-template-columns: 36px 1fr auto auto auto;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--rule);
+  transition: background .15s ease;
+}
+.track-row-full:hover { background: rgba(255,255,255,.05); }
+.track-row-full .t-num { font-family: var(--mono); font-size: 13px; color: var(--ink-muted); }
+.track-row-full .t-title { font-weight: 500; }
+.track-row-full .t-mood { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); }
+.track-row-full .t-duration { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.track-row-full .t-play { background: var(--accent); color: var(--accent-fg); border: 0; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.track-row-full .t-play:hover { filter: brightness(1.1); }
+.track-row-full .t-play[data-playing="true"] { background: var(--accent-2, var(--accent)); }
+
+.session-list, .asset-list { display: flex; flex-direction: column; gap: 6px; }
+.session-row, .asset-row {
+  display: flex;
+  gap: 18px;
+  padding: 10px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.session-row .s-id { color: var(--ink); }
+.session-row .s-status { margin-left: auto; }
+.asset-row .a-kind { color: var(--accent); text-transform: uppercase; }
+.asset-row .a-name { color: var(--ink); }
+
+.sonic-dna {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: rgba(255,255,255,.02);
+}
+.sonic-dna .dna-cell .mk { display: block; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--ink-muted); margin-bottom: 4px; }
+.sonic-dna .dna-cell .mv { font-size: 14px; line-height: 1.4; }
+
+.empty-note {
+  padding: 24px;
+  border: 1px dashed var(--rule);
+  border-radius: 10px;
+  text-align: center;
+  color: var(--ink-muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.action-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn-ghost, .btn-primary, .btn-danger {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.btn-primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-ghost:hover { background: rgba(255,255,255,.05); }
+.btn-danger { color: #ff6b6b; border-color: rgba(255,107,107,.3); }
+.btn-danger:hover { background: rgba(255,107,107,.1); }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.back-link:hover { color: var(--ink); background: rgba(255,255,255,.04); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar">
+    <span class="crumb">album-studio<b> / albums / <span id="crumb-id">—</span></b></span>
+    <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">loading…</span></span>
+    <span class="grow"></span>
+    <button class="cmd" id="back-btn">← BACK</button>
+  </nav>
+
+  <main id="main">
+    <a class="back-link" href="/site/albums.html">← all albums</a>
+
+    <section class="album-hero" id="album-hero">
+      <div class="album-cover-large" id="album-cover-large">
+        <div class="album-cover-placeholder" id="cover-placeholder">·</div>
+      </div>
+      <div class="album-headline">
+        <span class="eyebrow" id="album-eyebrow">/album · loading</span>
+        <h1 id="album-title">…</h1>
+        <p class="lede" id="album-lede">…</p>
+        <div class="album-meta-grid" id="album-meta-grid"></div>
+        <div class="action-bar">
+          <button class="btn-primary" id="open-session-btn">+ Start new session</button>
+          <a class="btn-ghost" id="open-studio-btn" href="#" hidden>Open studio ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">/tracks <span class="count" id="tracks-count">0</span></h2>
+      <div class="track-list-full" id="track-list"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">/sessions <span class="count" id="sessions-count">0</span></h2>
+      <div class="session-list" id="session-list"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">/sonic-dna</h2>
+      <div class="sonic-dna" id="sonic-dna"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">/assets <span class="count" id="assets-count">0</span></h2>
+      <div class="asset-list" id="asset-list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="health"><span class="dot"></span> daemon · <span id="daemon-host">127.0.0.1:8765</span></div>
+    <span class="grow"></span>
+    <span class="foot-meta"><span id="foot-meta-text">—</span></span>
+  </footer>
+
+</div>
+
+<audio id="audio-el" preload="none" hidden></audio>
+
+<script>
+/* album.html — dedicated full album page. Replaces drawer.
+ * URL: /site/album.html?id=<album-id>
+ * Shows: cover, headline, meta grid, full track list (playable), sessions, sonic DNA, assets.
+ */
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmtDuration = (sec) => {
+    if (!sec && sec !== 0) return '';
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
+
+  const params = new URLSearchParams(location.search);
+  const albumId = params.get('id');
+  if (!albumId) {
+    $('#album-title').textContent = 'no album id';
+    $('#album-eyebrow').textContent = '/error · missing ?id=';
+    return;
+  }
+  $('#crumb-id').textContent = albumId;
+  document.title = `album-studio · ${albumId}`;
+
+  $('#back-btn').addEventListener('click', () => {
+    if (history.length > 1) history.back(); else location.href = '/site/albums.html';
+  });
+
+  async function api(path) {
+    const r = await fetch(path);
+    if (!r.ok) throw new Error(`${path} → ${r.status}`);
+    return r.json();
+  }
+
+  async function load() {
+    let album, tracks, sessions;
+    try {
+      [album, tracks, sessions] = await Promise.all([
+        api(`/api/albums/${encodeURIComponent(albumId)}`),
+        api(`/api/albums/${encodeURIComponent(albumId)}/tracks`),
+        api(`/api/sessions?album_id=${encodeURIComponent(albumId)}`),
+      ]);
+    } catch (e) {
+      $('#album-title').textContent = 'failed to load';
+      $('#album-eyebrow').textContent = '/error · ' + e.message;
+      return;
+    }
+
+    // Eyebrow + headline
+    $('#album-eyebrow').textContent = `/album · ${esc(album.id)}`;
+    $('#album-title').textContent = album.title || album.id;
+    $('#album-lede').textContent = `by ${album.primary_artist_id} · ${album.runtime_min ?? '?'} min · ${album.status}`;
+
+    // Cover
+    const coverEl = $('#album-cover-large');
+    if (album.cover_path) {
+      coverEl.innerHTML = `<img src="/api/albums/${encodeURIComponent(album.id)}/cover" alt="${esc(album.title)}" onerror="this.parentElement.innerHTML='<div class=album-cover-placeholder>${esc((album.title||'').charAt(0)||'·')}</div>'">`;
+    } else {
+      coverEl.innerHTML = `<div class="album-cover-placeholder">${esc((album.title||'').charAt(0)||'·')}</div>`;
+    }
+
+    // Meta grid
+    const meta = [
+      ['artist', album.primary_artist_id],
+      ['release', album.release_date || '—'],
+      ['runtime', album.runtime_min ? album.runtime_min + ' min' : '—'],
+      ['status', album.status],
+      ['isrc', album.isrc || '—'],
+      ['tracks', album.track_count ?? tracks.length],
+      ['sessions', sessions.length],
+      ['created', album.created_at || '—'],
+    ];
+    $('#album-meta-grid').innerHTML = meta.map(([k, v]) => `
+      <div class="album-meta-cell">
+        <span class="mk">${esc(k)}</span>
+        <span class="mv">${esc(v)}</span>
+      </div>`).join('');
+
+    // Tracks
+    $('#tracks-count').textContent = tracks.length;
+    const trackList = $('#track-list');
+    if (!tracks.length) {
+      trackList.innerHTML = `<div class="empty-note">no tracks yet for this album</div>`;
+    } else {
+      tracks.sort((a, b) => (a.track_num || 0) - (b.track_num || 0));
+      trackList.innerHTML = tracks.map((t) => `
+        <div class="track-row-full" data-track-id="${esc(t.id)}" data-mp3="${esc(t.mp3_path||'')}">
+          <span class="t-num">${String(t.track_num ?? '·').padStart(2, '0')}</span>
+          <span class="t-title">${esc(t.title)}</span>
+          <span class="t-mood">${esc(t.mood || '')}</span>
+          <span class="t-duration">${fmtDuration(t.duration_sec)}</span>
+          <button class="t-play" data-action="play">▷ play</button>
+        </div>`).join('');
+
+      // Wire play buttons
+      const audio = $('#audio-el');
+      trackList.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.t-play');
+        if (!btn) return;
+        const row = btn.closest('.track-row-full');
+        const mp3 = row.dataset.mp3;
+        if (!mp3) { alert('no mp3 path for this track'); return; }
+        // visual flip
+        trackList.querySelectorAll('.t-play[data-playing="true"]').forEach(b => {
+          b.dataset.playing = 'false'; b.textContent = '▷ play';
+        });
+        btn.dataset.playing = 'true'; btn.textContent = '⏸ pause';
+        // play
+        if (audio.src.endsWith(mp3) && !audio.paused) {
+          audio.pause();
+          btn.dataset.playing = 'false'; btn.textContent = '▷ play';
+        } else {
+          audio.src = `/api/audio/${encodeURIComponent(t.id)}`;
+          audio.hidden = false;
+          try { await audio.play(); } catch (err) { alert('play failed: ' + err.message); }
+        }
+      });
+    }
+
+    // Sessions
+    $('#sessions-count').textContent = sessions.length;
+    const sList = $('#session-list');
+    if (!sessions.length) {
+      sList.innerHTML = `<div class="empty-note">no sessions yet for this album</div>`;
+    } else {
+      sList.innerHTML = sessions.map((s) => `
+        <div class="session-row" data-session-id="${esc(s.id)}">
+          <span class="s-id">${esc(s.id.slice(0, 8))}</span>
+          <span>created ${esc((s.created_at||'').slice(0,16))}</span>
+          <span>${esc(s.status)}</span>
+          <button class="btn-ghost" data-action="open-studio" data-id="${esc(s.id)}">open studio ↗</button>
+        </div>`).join('');
+      sList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="open-studio"]');
+        if (btn) window.open(`/site/studio.html?session=${encodeURIComponent(btn.dataset.id)}`, '_blank');
+      });
+    }
+
+    // Sonic DNA — server may return as object OR stringified JSON
+    let dna = album.m09_sonic_dna || {};
+    if (typeof dna === 'string') {
+      try { dna = JSON.parse(dna) || {}; } catch (e) { dna = {}; }
+    }
+    const dnaCells = [
+      ['genre', dna.genre],
+      ['vocals', dna.vocals],
+      ['mood', dna.mood],
+      ['instruments', dna.instruments],
+      ['references', dna.references],
+      ['tempo', dna.tempoProfile],
+    ].filter(([_, v]) => v);
+    $('#sonic-dna').innerHTML = dnaCells.length ? dnaCells.map(([k, v]) => `
+      <div class="dna-cell">
+        <span class="mk">${esc(k)}</span>
+        <span class="mv">${esc(v)}</span>
+      </div>`).join('') : `<div class="empty-note">no sonic DNA on file</div>`;
+
+    // Assets — try /api/assets?album_id=... if it exists, else empty
+    try {
+      const assets = await api(`/api/assets?album_id=${encodeURIComponent(albumId)}`);
+      $('#assets-count').textContent = assets.length || 0;
+      $('#asset-list').innerHTML = (assets && assets.length) ? assets.map((a) => `
+        <div class="asset-row">
+          <span class="a-kind">${esc(a.kind || a.asset_kind || '—')}</span>
+          <span class="a-name">${esc(a.id)} ${a.filename ? '— ' + esc(a.filename) : ''}</span>
+        </div>`).join('') : `<div class="empty-note">no assets yet</div>`;
+    } catch (e) {
+      $('#assets-count').textContent = '?';
+      $('#asset-list').innerHTML = `<div class="empty-note">asset lookup unavailable</div>`;
+    }
+
+    // Open-session button
+    $('#open-session-btn').addEventListener('click', async () => {
+      try {
+        const s = await api('/api/sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ album_id: albumId }),
+        });
+        if (s && s.id) {
+          // Open studio in new tab
+          window.open(`/site/studio.html?session=${encodeURIComponent(s.id)}`, '_blank');
+        }
+        await load();  // refresh session list
+      } catch (e) {
+        alert('start session failed: ' + e.message);
+      }
+    });
+
+    // Footer
+    $('#daemon-host').textContent = location.host;
+    $('#foot-meta-text').textContent = `${tracks.length} tracks · ${sessions.length} sessions · ${album.status}`;
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
