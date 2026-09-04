@@ -1,0 +1,148 @@
+/* site/library.css · Cassette wall animations (Hour 2)
+ *
+ * Omarchy-inspired visual treatments:
+ *   - Drifting background: the cassette wall has a slow, multi-axis
+ *     gradient that drifts with deliberately uncorrelated periods
+ *     (15s and 13s for translate, 10s and 21s for hue) so it never
+ *     reads as a single linear sweep — it swirls.
+ *   - Magnetic hover: album cards lift and glow on hover, with a
+ *     tilt that follows cursor position (subtle, 6° max).
+ *   - Vinyl spin: each album card shows a faint rotating shine
+ *     ring on hover (3s linear, paused by default).
+ *   - Reduced motion: every animation honors prefers-reduced-motion.
+ */
+
+.shell-page {
+  position: relative;
+  isolation: isolate;
+}
+
+/* === Drifting background === */
+
+.shell-page::before,
+.shell-page::after {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.6;
+  filter: blur(40px);
+  will-change: transform;
+}
+
+.shell-page::before {
+  background:
+    radial-gradient(circle at 20% 30%, hsl(45 90% 60% / .35) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, hsl(190 90% 55% / .35) 0%, transparent 40%);
+  animation: bg-drift-1 15s ease-in-out infinite alternate;
+}
+
+.shell-page::after {
+  background:
+    radial-gradient(circle at 70% 20%, hsl(280 80% 65% / .30) 0%, transparent 45%),
+    radial-gradient(circle at 30% 80%, hsl(150 70% 55% / .30) 0%, transparent 45%);
+  animation: bg-drift-2 13s ease-in-out infinite alternate;
+}
+
+@keyframes bg-drift-1 {
+  from { transform: translate(-3%, -2%) scale(1); }
+  to   { transform: translate( 4%,  3%) scale(1.05); }
+}
+@keyframes bg-drift-2 {
+  from { transform: translate( 3%, -3%) scale(1.05); }
+  to   { transform: translate(-4%,  2%) scale(1); }
+}
+
+/* === Magnetic hover on cards === */
+
+.shell-page .card.shell {
+  position: relative;
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.2,.8,.2,1),
+              box-shadow .25s ease,
+              border-color .25s ease;
+  transform-style: preserve-3d;
+  /* the JS sets --tilt-x and --tilt-y CSS vars from cursor pos */
+}
+
+.shell-page .card.shell:hover {
+  transform:
+    perspective(800px)
+    translateY(-4px)
+    rotateX(var(--tilt-y, 0deg))
+    rotateY(var(--tilt-x, 0deg))
+    scale(1.02);
+  border-color: var(--accent);
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.4),
+    0 0 0 1px var(--accent);
+}
+
+/* Vinyl shine ring (only visible on hover) */
+.shell-page .card.shell::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--accent) 30deg,
+    transparent 60deg,
+    transparent 360deg
+  );
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+  z-index: -1;
+  animation: vinyl-spin 3s linear infinite;
+}
+.shell-page .card.shell:hover::before { opacity: 0.4; }
+
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Entrance: cards stagger in === */
+
+.shell-page .card.shell {
+  animation: card-enter .55s cubic-bezier(.2,.8,.2,1) both;
+}
+.shell-page .card.shell:nth-child(1) { animation-delay: 0.00s; }
+.shell-page .card.shell:nth-child(2) { animation-delay: 0.08s; }
+.shell-page .card.shell:nth-child(3) { animation-delay: 0.16s; }
+.shell-page .card.shell:nth-child(4) { animation-delay: 0.24s; }
+.shell-page .card.shell:nth-child(5) { animation-delay: 0.32s; }
+.shell-page .card.shell:nth-child(6) { animation-delay: 0.40s; }
+
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(20px) scale(.95); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* === Topbar: subtle entrance === */
+
+.topbar {
+  animation: topbar-enter .6s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes topbar-enter {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* === Reduced motion: disable all of it === */
+
+@media (prefers-reduced-motion: reduce) {
+  .shell-page::before,
+  .shell-page::after,
+  .shell-page .card.shell,
+  .shell-page .card.shell::before,
+  .topbar {
+    animation: none !important;
+    transition: none !important;
+  }
+  .shell-page .card.shell:hover {
+    transform: none;
+  }
+}

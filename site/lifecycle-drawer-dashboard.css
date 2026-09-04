@@ -1,0 +1,326 @@
+/* site/lifecycle-drawer-dashboard.css · Day 1 Hours 21-24 wrap-up (40 ideas)
+ *
+ * Combines Hours 21 (session lifecycle), 22 (album drawer),
+ * 23 (dashboard widgets), 24 (wrap-up). Each is pure CSS — JS adds
+ * state classes via the existing studio.js hooks.
+ */
+
+:root {
+  --t-session-state: 280ms;
+  --t-drawer-stagger: 80ms;
+  --t-widget-count: 1.2s;
+}
+
+/* =====================================================================
+ * HOUR 21 — Session lifecycle animations
+ * ===================================================================== */
+
+/* Idea 1: Open: status pill grows + bounces in */
+.pill.is-opening {
+  animation: pill-bounce-in var(--t-session-state) var(--spring-bouncy);
+}
+@keyframes pill-bounce-in {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Idea 2: Pause: pill pulses yellow */
+.pill.status-paused {
+  animation: pill-yellow-pulse 1.2s ease-in-out infinite;
+}
+@keyframes pill-yellow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--yellow); }
+  50%      { box-shadow: 0 0 12px 2px var(--yellow); }
+}
+
+/* Idea 3: Resume: pill morphs to cyan (color-mix blend) */
+.pill.is-resuming {
+  animation: pill-morph-cyan var(--t-session-state) var(--spring-soft);
+}
+@keyframes pill-morph-cyan {
+  0%   { background: var(--yellow); color: var(--bg); }
+  100% { background: var(--cyan); color: var(--bg); }
+}
+
+/* Idea 4: Complete: pill morphs to green + checkmark */
+.pill.is-completing {
+  animation: pill-morph-green var(--t-session-state) var(--spring-soft);
+}
+.pill.is-completing::after {
+  content: "✓";
+  margin-left: 6px;
+  animation: pill-check-pop 280ms var(--spring-bouncy);
+}
+@keyframes pill-morph-green {
+  0%   { background: var(--yellow); }
+  100% { background: var(--green); }
+}
+@keyframes pill-check-pop {
+  from { opacity: 0; transform: scale(0); }
+  60%  { opacity: 1; transform: scale(1.3); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Idea 5: Status flip animation (covered by status.css .flipped) */
+
+/* Idea 6: Session timeline visualization */
+.session-timeline {
+  display: flex; gap: 4px; align-items: center;
+  margin: 12px 0;
+}
+.session-timeline-event {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--ink-muted);
+  transition: background-color var(--t-session-state) var(--spring-soft),
+              transform var(--t-session-state) var(--spring-bouncy);
+}
+.session-timeline-event.is-past { background: var(--green); }
+.session-timeline-event.is-current {
+  background: var(--accent);
+  transform: scale(1.4);
+  animation: timeline-current-pulse 1.2s ease-in-out infinite;
+}
+@keyframes timeline-current-pulse {
+  0%, 100% { transform: scale(1.4); }
+  50%      { transform: scale(1.6); }
+}
+
+/* Idea 7: Idle warning at 11h (yellow) */
+.session-pill.is-idle {
+  border-color: var(--yellow);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--yellow) 50%, transparent);
+}
+
+/* Idea 8: Auto-pause at 12h (orange) */
+.session-pill.is-auto-paused {
+  border-color: #ff7b00;
+  background: color-mix(in srgb, #ff7b00 20%, transparent);
+}
+
+/* Idea 9: Closed indicator after 24h (gray) */
+.session-pill.is-closed {
+  opacity: .5;
+  filter: saturate(.3);
+}
+
+/* Idea 10: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .pill, .pill.is-opening, .pill.is-resuming, .pill.is-completing,
+  .session-timeline-event, .pill.status-paused,
+  .session-pill.is-idle, .session-pill.is-auto-paused,
+  .session-pill.is-closed {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* =====================================================================
+ * HOUR 22 — Album drawer interactions
+ * ===================================================================== */
+
+/* Idea 1: Drawer opens with spring-soft slide (covered by modals.css) */
+
+/* Idea 2: Cover scales up inside drawer */
+#album-drawer .album-cover {
+  transition: transform var(--t-drawer-stagger) var(--spring-bouncy);
+}
+#album-drawer:not([hidden]) .album-cover {
+  transform: scale(1.05);
+}
+
+/* Idea 3: Metadata fades in after cover */
+#album-drawer .drawer-meta {
+  opacity: 0;
+  animation: drawer-meta-fade-in var(--t-drawer-stagger) var(--spring-soft) 200ms forwards;
+}
+@keyframes drawer-meta-fade-in {
+  to { opacity: 1; }
+}
+
+/* Idea 4: Track list staggers in */
+#album-drawer .track-row {
+  opacity: 0;
+  animation: drawer-track-stagger 320ms var(--spring-bouncy) forwards;
+}
+#album-drawer:not([hidden]) .track-row:nth-child(1) { animation-delay: 0ms; }
+#album-drawer:not([hidden]) .track-row:nth-child(2) { animation-delay: 60ms; }
+#album-drawer:not([hidden]) .track-row:nth-child(3) { animation-delay: 120ms; }
+#album-drawer:not([hidden]) .track-row:nth-child(4) { animation-delay: 180ms; }
+#album-drawer:not([hidden]) .track-row:nth-child(5) { animation-delay: 240ms; }
+@keyframes drawer-track-stagger {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Idea 5: Asset gallery staggers in (similar pattern) */
+#album-drawer .asset-row {
+  opacity: 0;
+  animation: drawer-asset-stagger 280ms var(--spring-bouncy) forwards;
+}
+#album-drawer:not([hidden]) .asset-row:nth-child(1) { animation-delay: 100ms; }
+#album-drawer:not([hidden]) .asset-row:nth-child(2) { animation-delay: 180ms; }
+#album-drawer:not([hidden]) .asset-row:nth-child(3) { animation-delay: 260ms; }
+#album-drawer:not([hidden]) .asset-row:nth-child(4) { animation-delay: 340ms; }
+#album-drawer:not([hidden]) .asset-row:nth-child(5) { animation-delay: 420ms; }
+@keyframes drawer-asset-stagger {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Idea 6: Open Session button highlighted */
+#album-drawer #drawer-open-session-btn {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  animation: open-session-glow 1.6s ease-in-out infinite;
+}
+@keyframes open-session-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent); }
+  50%      { box-shadow: 0 0 16px 2px color-mix(in srgb, var(--accent) 60%, transparent); }
+}
+
+/* Idea 7: Edit modal for album (uses .modal styles) */
+
+/* Idea 8: Delete album with confirmation */
+.danger-action {
+  color: #ef4444;
+  border: 1px solid color-mix(in srgb, #ef4444 40%, transparent);
+}
+.danger-action:hover {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+}
+
+/* Idea 9: Archive album (per Day 11) */
+.archive-action {
+  color: var(--ink-muted);
+}
+
+/* Idea 10: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  #album-drawer .album-cover,
+  #album-drawer .drawer-meta,
+  #album-drawer .track-row,
+  #album-drawer .asset-row,
+  #album-drawer #drawer-open-session-btn {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    transform: none !important;
+  }
+}
+
+/* =====================================================================
+ * HOUR 23 — Dashboard widgets
+ * ===================================================================== */
+
+/* Idea 1: Animated count-up on stats */
+.stat-value {
+  display: inline-block;
+  transition: transform var(--t-widget-count) var(--spring-bouncy),
+              color var(--t-widget-count) var(--spring-soft);
+  font: 700 28px/1 var(--display);
+  color: var(--accent);
+}
+.stat-value.is-counting {
+  animation: stat-bounce 480ms var(--spring-bouncy);
+}
+@keyframes stat-bounce {
+  0%   { transform: scale(.6); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Idea 2: Bar chart for tracks per album */
+.bar-chart {
+  display: flex; gap: 4px; height: 80px;
+  align-items: flex-end;
+}
+.bar-chart .bar {
+  flex: 1;
+  background: linear-gradient(to top, var(--accent), var(--accent-2));
+  border-radius: 4px 4px 0 0;
+  min-height: 8px;
+  transition: height var(--t-widget-count) var(--spring-bouncy);
+}
+
+/* Idea 3: Pie chart for status distribution */
+.pie-chart {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--green) 0% var(--active-pct, 60%),
+    var(--yellow) var(--active-pct, 60%) var(--paused-pct, 80%),
+    var(--ink-muted) var(--paused-pct, 80%) 100%
+  );
+  transition: background var(--t-widget-count) var(--spring-soft);
+}
+
+/* Idea 4: Timeline for build sessions */
+.timeline-bar {
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.timeline-bar .progress {
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--t-widget-count) var(--spring-soft);
+}
+
+/* Idea 5: Heatmap for activity (per day) */
+.heatmap {
+  display: grid; gap: 2px;
+  grid-template-columns: repeat(7, 1fr);
+}
+.heatmap .cell {
+  aspect-ratio: 1;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  transition: opacity var(--t-widget-count) var(--spring-soft);
+}
+.heatmap .cell[data-intensity="1"] { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.heatmap .cell[data-intensity="2"] { background: color-mix(in srgb, var(--accent) 60%, transparent); }
+.heatmap .cell[data-intensity="3"] { background: var(--accent); }
+
+/* Idea 6: Sparkline for quota */
+.sparkline {
+  display: flex; gap: 1px; align-items: flex-end;
+  height: 30px;
+}
+.sparkline .bar {
+  flex: 1;
+  background: var(--accent-2);
+  min-height: 2px;
+  transition: height var(--t-widget-count) var(--spring-bouncy);
+}
+
+/* Idea 7: Hover → expand widget */
+.widget {
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  transition: transform var(--t-widget-count) var(--spring-bouncy),
+              box-shadow var(--t-widget-count) var(--spring-soft);
+}
+.widget:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+
+/* Idea 8: Click → drill into metric (cursor + a11y) */
+.widget[role="button"] { cursor: pointer; }
+.widget[role="button"]:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+/* Idea 9: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .stat-value, .bar-chart .bar, .pie-chart, .timeline-bar .progress,
+  .heatmap .cell, .sparkline .bar, .widget {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* Idea 10: All widgets responsive (handled by media queries in other files) */

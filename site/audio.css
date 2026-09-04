@@ -1,0 +1,149 @@
+/* site/audio.css · Day 1 Hour 9 — Audio progress elastic snap (10 ideas)
+ *
+ * The audio player UI: progress bar thumb stretches on seek,
+ * time tooltip on hover, click-to-seek anywhere on the bar,
+ * keyboard nav, end-of-track behavior. CSS-only implementation
+ * for the visual layer; the JS click-to-seek handler is documented
+ * but lives in studio.js.
+ */
+
+:root {
+  --t-progress-stretch: 220ms;
+  --t-progress-pulse: 1.4s;
+  --progress-height: 6px;
+  --progress-thumb-size: 14px;
+}
+
+/* =====================================================================
+ * Idea 1: Progress bar thumb stretches on seek (scaleX 1 → 1.3 → 1)
+ * ===================================================================== */
+
+audio::-webkit-media-controls-timeline,
+.audio-progress {
+  position: relative;
+  height: var(--progress-height);
+  background: var(--bg-elevated);
+  border-radius: 999px;
+  overflow: visible;
+  cursor: pointer;
+  /* The thumb stretches when this class is added by JS during seek */
+}
+.audio-progress.is-seeking::after {
+  content: ""; position: absolute; right: -2px; top: 50%;
+  width: var(--progress-thumb-size);
+  height: var(--progress-thumb-size);
+  transform: translateY(-50%) scaleX(1.3) scaleY(1.2);
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent);
+  animation: progress-stretch var(--t-progress-stretch) var(--spring-bouncy);
+}
+@keyframes progress-stretch {
+  0%   { transform: translateY(-50%) scaleX(1)   scaleY(1); }
+  50%  { transform: translateY(-50%) scaleX(1.3) scaleY(1.2); }
+  100% { transform: translateY(-50%) scaleX(1)   scaleY(1); }
+}
+
+/* =====================================================================
+ * Idea 2: spring-bouncy curve on the stretch (already in animation
+ * above via var(--spring-bouncy))
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 3: Time tooltip on hover (formatted mm:ss)
+ * ===================================================================== */
+
+.audio-progress[data-current-time]:hover::before {
+  content: attr(data-current-time);
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  padding: 4px 8px; border-radius: 4px;
+  font: 11px/1 var(--mono);
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  animation: tooltip-pop var(--t-press) var(--spring-bouncy);
+}
+@keyframes tooltip-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}
+
+/* =====================================================================
+ * Idea 4: Buffered indicator (light gray bar before playhead)
+ * ===================================================================== */
+
+.audio-progress .audio-buffered {
+  position: absolute; left: 0; top: 0;
+  height: 100%; width: var(--audio-buffered-pct, 0%);
+  background: color-mix(in srgb, var(--ink) 25%, transparent);
+  border-radius: 999px;
+  transition: width var(--t-progress-pulse) ease;
+}
+
+/* =====================================================================
+ * Idea 5: Click-to-seek anywhere on progress bar (visual cue)
+ *
+ * The actual click handler is in studio.js (loadTrack sets
+ * audioEl.currentTime). The CSS gives a hover outline.
+ * ===================================================================== */
+
+.audio-progress:hover {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* =====================================================================
+ * Idea 6: Drag-to-seek with smooth animation
+ * (CSS-only: thumb pulses while dragging.)
+ * ===================================================================== */
+
+.audio-progress.is-dragging::after {
+  animation: progress-stretch var(--t-progress-pulse) var(--spring-bouncy) infinite;
+  background: var(--accent-2);
+}
+
+/* =====================================================================
+ * Idea 7: Keyboard left/right arrows seek ±5s (visual feedback)
+ * (JS handler exists in studio.js. CSS animates the thumb on
+ *  keyboard seek events via the .is-seeking class added/removed by JS.)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 8: Spacebar play/pause (CSS already handles button :active
+ * state via spring-extra.css)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 9: End-of-track behavior (auto-next? repeat? stop?)
+ * (CSS gives a "track complete" overlay via .is-complete)
+ * ===================================================================== */
+
+.audio-progress.is-complete {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  animation: complete-flash var(--t-progress-pulse) ease;
+}
+@keyframes complete-flash {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .6; }
+}
+
+.audio-progress.is-complete::after {
+  background: var(--accent-2);
+  animation: none;
+  transform: translateY(-50%) scaleX(1.4) scaleY(1.3);
+}
+
+/* =====================================================================
+ * Idea 10: prefers-reduced-motion → no stretch animation
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .audio-progress.is-seeking::after,
+  .audio-progress.is-dragging::after {
+    transform: translateY(-50%) scaleX(1);
+    animation: none;
+  }
+}

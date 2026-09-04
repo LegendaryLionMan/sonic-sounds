@@ -1,0 +1,1 @@
+"""sonic-studio tests package."""

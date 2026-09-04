@@ -1,0 +1,190 @@
+/* site/track-rows.css · Day 1 Hour 14 — Track row interactions (10 ideas)
+ *
+ * The .track-row in the studio: hover reveals ▷, currently-playing
+ * has a thin progress bar at the left edge, click-to-play, right-click
+ * menu, etc. Most are CSS-only — JS adds state classes.
+ */
+
+:root {
+  --t-track-reveal: 220ms;
+  --t-track-progress: 1.4s;  /* updated by audio.currentTime events */
+  --track-progress-pct: 0%;  /* updated by JS */
+}
+
+/* =====================================================================
+ * Idea 1: Hover reveals ▷ button inline (slides in from the left)
+ * ===================================================================== */
+
+.track-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color var(--t-press) var(--spring-soft),
+              transform var(--t-press) var(--spring-soft);
+}
+.track-row:hover {
+  background: color-mix(in srgb, var(--accent-2) 8%, transparent);
+  transform: translateX(2px);
+}
+
+/* =====================================================================
+ * Idea 2: Currently-playing row has a thin progress bar (left edge)
+ * ===================================================================== */
+
+.track-row.is-playing {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 20%, transparent) var(--track-progress-pct),
+    transparent var(--track-progress-pct),
+    transparent 100%
+  );
+}
+.track-row.is-playing::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-2));
+  border-radius: 3px;
+  animation: track-progress-bar var(--t-track-progress) linear infinite;
+}
+@keyframes track-progress-bar {
+  /* Indicates progress via vertical glow oscillation */
+  0%, 100% { opacity: .7; }
+  50%      { opacity: 1; }
+}
+
+/* =====================================================================
+ * Idea 3: Hover reveals timestamp tooltip
+ * ===================================================================== */
+
+.track-row [data-timestamp]:hover::after {
+  content: attr(data-timestamp);
+  position: absolute; top: -24px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  color: var(--ink);
+  padding: 2px 6px; border-radius: 4px;
+  font: 10px/1 var(--mono);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+  pointer-events: none;
+  animation: track-tooltip-pop var(--t-press) var(--spring-bouncy);
+}
+@keyframes track-tooltip-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}
+
+/* =====================================================================
+ * Idea 4: Click-to-play (entire row clickable)
+ *
+ * Visual cue: cursor: pointer + hover state. JS handler in studio.js.
+ * ===================================================================== */
+
+.track-row {
+  cursor: pointer;
+}
+.track-row:active {
+  transform: scale(.998);
+}
+
+/* =====================================================================
+ * Idea 5: Right-click → context menu (more actions)
+ *
+ * The context menu itself is a DOM element that JS shows on
+ * contextmenu event. CSS gives it visual style.
+ * ===================================================================== */
+
+.track-context-menu {
+  position: fixed;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  padding: 4px 0;
+  min-width: 180px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  backdrop-filter: blur(20px);
+  z-index: 10000;
+  animation: context-menu-pop var(--t-press) var(--spring-bouncy);
+}
+@keyframes context-menu-pop {
+  from { opacity: 0; transform: translateY(-4px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+.track-context-menu button {
+  display: block; width: 100%; text-align: left;
+  padding: 8px 12px; border: none; background: transparent;
+  color: var(--ink); font: 13px var(--sans); cursor: pointer;
+  transition: background-color var(--t-press) var(--spring-soft);
+}
+.track-context-menu button:hover {
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+}
+.track-context-menu button.danger { color: #ef4444; }
+
+/* =====================================================================
+ * Idea 6: Cmd+click → multi-select (CSS gives a visual cue)
+ * ===================================================================== */
+
+.track-row.is-selected {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  outline: 1px solid var(--accent);
+}
+.track-row.is-selected::after {
+  content: "✓";
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: var(--accent); font-weight: 800;
+}
+
+/* =====================================================================
+ * Idea 7: Shift+click → range select (CSS gives a hint)
+ * ===================================================================== */
+
+.track-row.is-range-start,
+.track-row.is-range-end {
+  outline: 2px solid var(--accent);
+}
+
+/* =====================================================================
+ * Idea 8: Drag to reorder tracks (CSS gives the affordance)
+ * ===================================================================== */
+
+.track-row[draggable="true"] {
+  cursor: grab;
+}
+.track-row[draggable="true"]:active { cursor: grabbing; }
+.track-row.is-dragging {
+  opacity: .4;
+}
+.track-row.is-drag-over {
+  border-top: 2px solid var(--accent);
+}
+
+/* =====================================================================
+ * Idea 9: prefers-reduced-motion → no slide-in
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .track-row,
+  .track-row:hover,
+  .track-context-menu,
+  .track-row.is-playing::before,
+  .track-row [data-timestamp]:hover::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* =====================================================================
+ * Idea 10: Keyboard navigation (up/down/enter) — visual focus ring
+ * ===================================================================== */
+
+.track-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}

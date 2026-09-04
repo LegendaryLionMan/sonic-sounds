@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sonic-studio</title>
+<link rel="stylesheet" href="/site/css/components.css">
+<link rel="stylesheet" href="/site/css/ux-states.css">
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/header-player.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="topbar">
+  <span class="crumb">sonic-studio<b> / home</b></span>
+  <span class="pill"><span class="dot"></span> PAPER MODE</span>
+  <span class="grow"></span><span data-theme-mount class="theme-picker-host"></span>
+  <button class="command">⌘K</button>
+</nav>
+
+<main class="shell-page">
+  <section class="hero-band">
+    <p class="eyebrow">/intro · v3.2 · 12-stage pipeline</p>
+    <h1>the album factory</h1>
+    <p class="hand">Penelope is the first-class client. The local daemon owns HTTP, SQLite, and the build-job queue. Static HTML is a thin viewer over that daemon.</p>
+    <div class="cta-row">
+      <a class="btn" href="/intake.html">▷ Start an album</a>
+      <a class="btn secondary" href="/library.html">Browse library</a>
+    </div>
+  </section>
+
+  <section class="shell-page">
+    <p class="eyebrow">/albums · 1 SEED</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-2xl);">Maren Sol · half-light hours</h2>
+    <div class="shell-grid">
+      <article class="card">
+        <p class="eyebrow">10 TRACKS · 37 MIN · DREAM-FOLK</p>
+        <h3>Half-Light Hours</h3>
+        <p>ID3v2.3 + cover art + embedded lyrics + ISRC US-S1Z-25-01 thru 10.</p>
+        <a class="btn secondary" href="/studio.html">▷ Open studio</a>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
+  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
+  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
+  <span class="grow"></span>
+  <span>v0.0.1 · Phase 0 ✓ · Day 1 in progress</span>
+</footer>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

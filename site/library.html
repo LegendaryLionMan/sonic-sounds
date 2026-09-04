@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sonic-studio · library</title>
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/ux-states.css">
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/spring-extra.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/modals.css">
+<link rel="stylesheet" href="/site/library.css">
+<link rel="stylesheet" href="/site/library-player.css">
+<link rel="stylesheet" href="/site/header-player.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="topbar">
+  <span class="crumb">sonic-studio<b> / library</b></span>
+  <span class="pill"><span class="dot"></span> 1 ALBUM · 10 TRACKS</span>
+  <span class="grow"></span><span data-theme-mount class="theme-picker-host"></span>
+  <button class="command">⌘K</button>
+</nav>
+
+<main class="shell-page">
+  <section class="hero-band">
+    <p class="eyebrow">/library · all albums</p>
+    <h1>the cassette wall</h1>
+    <p class="hand">Every album you've ever made. Click a cassette to drop it into the player.</p>
+  </section>
+
+  <!-- Day 2 Hour X: top-level album player (no session required).
+       Auto-mounts the first album with tracks via /api/albums + /api/audio. -->
+  <div id="library-player-mount" aria-live="polite"></div>
+
+  <section class="shell-page">
+    <p class="eyebrow">/albums · 1</p>
+    <h2 style="font-family: var(--display); font-size: var(--fs-xl);">your collection</h2>
+    <div class="shell-grid">
+      <article class="card shell">
+        <img src="/cover-art/album-cover-front-square.jpg" alt="Half-Light Hours cover" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px;">
+        <p class="eyebrow">2026 · DREAM-FOLK · 10 TRACKS · 37 MIN</p>
+        <h3>Maren Sol · Half-Light Hours</h3>
+        <p>The flagship single-album Mixtape '85 launch. 10 tracks, ID3v2.3, ISRCs tagged.</p>
+        <a class="btn" href="/studio.html">▷ Open studio</a>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="health"><span class="dot"></span> daemon · 127.0.0.1:8765</div>
+  <div class="quota"><span>general</span><div class="bar"><div class="fill" style="width: 73%"></div></div></div>
+  <div class="quota"><span>video</span><div class="bar"><div class="fill" style="width: 88%"></div></div></div>
+  <span class="grow"></span>
+  <span>1 album · 10 tracks · 1.1 GB</span>
+</footer>
+<script src="/site/library.js?v=day11"></script>
+<script src="/site/library-player.js?v=day2"></script>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

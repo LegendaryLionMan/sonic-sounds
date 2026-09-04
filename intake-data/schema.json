@@ -1,0 +1,917 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sonic-studio.local/schemas/intake.json",
+  "title": "sonic-studio intake brief",
+  "description": "Form payload exported by site/intake.html. Read by the music-album-planning-questionnaire skill to write a CONCEPT-BRIEF.md.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "albumSlug",
+    "submittedAt",
+    "answers"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "2.1"
+    },
+    "albumSlug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,40}$",
+      "description": "URL-safe album identifier, derived from artist name + date (e.g. 'maren-sol-half-light-hours-2026-06-25')"
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of form export"
+    },
+    "intakeFormVersion": {
+      "const": "2026-08-02-shapeB-r2"
+    },
+    "answers": {
+      "type": "object",
+      "description": "Map of M·01..E·21 question IDs to answer objects",
+      "properties": {
+        "M09_sonicDNA": {
+          "title": "Sonic DNA (locked at brief approval)",
+          "description": "The frozen-at-approval snapshot of the album's sonic direction. The build skill MUST hold against this on every regen. Any deviation requires explicit user re-approval (the sonic-drift guard). Derived from M03_genre + M05_vocal + R12_production + M07_runtime at brief-approval time. Read-only after approval — to change, re-open the brief.",
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "object",
+              "description": "The locked sonic fingerprint. Each field here is the exact text used in the build pipeline's --vocals / --genre / --mood / --instruments / --tempo / --bpm / --key / --references flags.",
+              "required": [
+                "genre",
+                "vocals",
+                "mood",
+                "instruments",
+                "references",
+                "tempoProfile",
+                "lockedAt"
+              ],
+              "properties": {
+                "genre": {
+                  "type": "string",
+                  "description": "Locked --genre flag value (e.g. 'hard rock', 'dream-folk', 'jazz fusion')"
+                },
+                "vocals": {
+                  "type": "string",
+                  "description": "Locked --vocals flag value (e.g. 'Axl Rose-style raw high tenor, ...')"
+                },
+                "mood": {
+                  "type": "string",
+                  "description": "Locked --mood flag value (comma-separated descriptors)"
+                },
+                "instruments": {
+                  "type": "string",
+                  "description": "Locked --instruments flag value"
+                },
+                "references": {
+                  "type": "string",
+                  "description": "Locked --references flag value (the comp artists list)"
+                },
+                "tempoProfile": {
+                  "type": "string",
+                  "description": "Locked tempo profile (BPM range + key signature shape)"
+                },
+                "lockedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO 8601 UTC timestamp when the brief was approved"
+                }
+              }
+            },
+            "isDefault": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "x-tier": "Mandatory",
+          "x-derived": true,
+          "x-derived-from": [
+            "M03_genre",
+            "M05_vocal",
+            "R12_production",
+            "M07_runtime"
+          ],
+          "x-locked": "Locked 2026-08-03 §1 (sonic-studio V2 hardening — Twenty-Two retro lesson)"
+        },
+        "M01_concept": {
+          "$ref": "#/$defs/answerText"
+        },
+        "M02_scope": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "single",
+            "ep",
+            "album",
+            "double-feature",
+            "concept-piece"
+          ]
+        },
+        "M03_genre": {
+          "$ref": "#/$defs/answerText"
+        },
+        "M04_references": {
+          "$ref": "#/$defs/answerRefs"
+        },
+        "M05_vocal": {
+          "$ref": "#/$defs/answerVocal"
+        },
+        "M06_language": {
+          "$ref": "#/$defs/answerLanguages"
+        },
+        "M07_runtime": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "radio-edit",
+            "standard",
+            "extended",
+            "immersive"
+          ]
+        },
+        "M08_bandName": {
+          "title": "Band name",
+          "description": "The performing band's name. Filled ONLY when the release is by a band (a group of people credited under one name). Leave EMPTY if the release is by a solo artist whose name is the public identity (e.g. 'Maren Sol' has no band name — that goes in M08_artistName instead). Optional.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08a (replaced M08c triple-choice per Shape B)",
+          "x-optional": true,
+          "x-optional-when": "Release is NOT a band (i.e. solo artist)",
+          "x-prompt": "If this release is by a band (a group of people), put the band name here. If it's a solo artist, leave this blank."
+        },
+        "M08_artistName": {
+          "title": "Public-facing artist name",
+          "description": "The artist name shown to listeners. ALWAYS FILLED — every release has at least one artist name. For a solo release, this is the solo artist's name. For a band release, this is either (a) the front person's name if they're separately credited, or (b) the same as M08_bandName if the band is the only public identity.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08b (replaced M08c triple-choice per Shape B)",
+          "x-required": true,
+          "x-prompt": "For a solo release: your artist name (e.g. 'Maren Sol'). For a band release: the front person's name OR the same as M08_bandName if the band is the only public identity."
+        },
+        "M08_creditLine": {
+          "title": "Credit line (optional)",
+          "description": "Free-form 'presented as...' / 'a side project of...' / 'performing name of...' line that goes on the release. Optional. Used by ID3 album artist field when M08_bandName and M08_artistName are both filled and you want a third name in the credits.",
+          "$ref": "#/$defs/answerText",
+          "x-tier": "Mandatory (delta-added 2026-08-02 per META-DECISIONS §1 / walks with M08)",
+          "x-locked": "Locked 2026-08-02 §1.M08c (replaced M08c triple-choice per Shape B — now an OPTIONAL text, not an enum)",
+          "x-optional": true
+        },
+        "R09_title": {
+          "$ref": "#/$defs/answerText"
+        },
+        "R10_tracklist": {
+          "$ref": "#/$defs/answerTracklist"
+        },
+        "R11_motif": {
+          "$ref": "#/$defs/answerText"
+        },
+        "R12_production": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "stripped",
+            "full-band",
+            "electronic",
+            "cinematic",
+            "hybrid"
+          ]
+        },
+        "R13_lyricalSource": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "user-writes",
+            "agent-writes",
+            "co-write"
+          ]
+        },
+        "R14_distribution": {
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "just-for-me",
+            "routenote-free",
+            "full-dsp",
+            "physical-and-dsp"
+          ]
+        },
+        "E15_arc": {
+          "title": "Emotional arc across tracks",
+          "description": "Shape of the listening experience across all 12 tracks. Free-form text — describe the emotional journey.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What's the emotional arc? E.g. 'quiet start, builds to chaos, resolves to silence' or 'constant summer warmth then sudden autumn in track 8'.",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
+        },
+        "E16_influences": {
+          "title": "Non-music influences",
+          "description": "Books, films, places, seasons, weather, people — anything NOT music that shaped this album. (M04 is the music-only version.)",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Other than music references (covered in M04). What's a film, book, place, season, etc. that shaped this?",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; V2-DRAFT §2 clarified non-overlap with M04)"
+        },
+        "E17_coverArt": {
+          "title": "Cover art direction",
+          "description": "What the cover should evoke. Single text field. For richer briefs, use the cover-art generation script directly with your own palette/mood/composition prompt.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What feeling should the cover evoke? (Colors, mood, focal point, typography, composition — free-form description.)",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; V2-DRAFT §2 proposed split but kept single-field for backwards compat — use generation skill directly for finer control)"
+        },
+        "E18_anchor": {
+          "title": "Physical anchor",
+          "description": "The ONE object, image, or sensation the listener should remember after the album ends.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "What's the ONE thing the listener should remember after the album ends? E.g. 'the smell of a candle going out', 'the sound of a van on a freeway at night'.",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
+        },
+        "E19_pressScope": {
+          "title": "Press / rollout scope",
+          "description": "What press + marketing you want. Skipped entirely for just-for-me albums (R14 == just-for-me).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "music-only",
+            "music-plus-press-kit",
+            "music-plus-press-and-social",
+            "everything"
+          ],
+          "x-default": "music-only",
+          "x-prompt": "How much press + marketing? (Music only / + press kit / + press + social / full rollout)",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution != 'just-for-me'",
+          "x-hide-when": "R14_distribution == 'just-for-me'",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub; added x-show-when from V2-DRAFT §4)"
+        },
+        "E20_musicVideos": {
+          "title": "Music videos",
+          "description": "How many music videos to generate. 0 = audio only. Each video costs ~1 weekly video-gen quota slot.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "x-default": 0,
+          "x-prompt": "How many music videos? 0 = audio only. 1-2 = manageable. 3-5 = full visual rollout.",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution != 'just-for-me'",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
+        },
+        "E21_deadline": {
+          "title": "Single release deadline",
+          "description": "Hard deadline for when the album needs to be done. Different from E22 (timeline). E21 = ONE date.",
+          "$ref": "#/$defs/answerDate",
+          "x-prompt": "When does this album need to ship? (ISO date, single value.)",
+          "x-tier": "Extra",
+          "x-locked": "Filled 2026-08-03 §2 (was placeholder stub)"
+        },
+        "R15_loudnessTarget": {
+          "title": "Mastering loudness target",
+          "description": "Streaming/integrator target. Sets the master stage on finalize. Default: spotify (-14 LUFS).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "spotify",
+            "apple-music",
+            "youtube",
+            "broadcast",
+            "cd-master",
+            "vinyl-master",
+            "custom"
+          ],
+          "x-default": "spotify",
+          "x-prompt": "Where will this album mostly be played? This sets the master loudness.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-02 §1.R15 (was QUESTIONNAIRE-V2-DRAFT.md R15)"
+        },
+        "R16_sequencePacing": {
+          "title": "Album sequence & pacing",
+          "description": "Inter-track gap policy. Default: standard-pause (3-4s).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "continuous-flow",
+            "short-pause",
+            "standard-pause",
+            "long-pause",
+            "concept-pause"
+          ],
+          "x-default": "standard-pause",
+          "x-prompt": "How much silence between tracks? Affects gapless playback vs mixtape feel.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-02 §1.R16"
+        },
+        "R17_explicitRating": {
+          "title": "Explicit content rating",
+          "description": "Will this album have explicit lyrics? Affects Spotify/Apple Music metadata, YouTube content ID flags, distribution approval.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "clean",
+            "explicit-tagged",
+            "parental-advisory"
+          ],
+          "x-default": "clean",
+          "x-prompt": "Will this album have explicit lyrics? Affects radio playability + DSP tagging.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R17)"
+        },
+        "R18_coWriter": {
+          "title": "Co-writer / producer credits",
+          "description": "Anyone else to credit? Affects royalty splits + DSP metadata. Default: just you (or just the front person).",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "solo",
+            "co-producer",
+            "co-lyricist",
+            "feature-vocalist",
+            "full-band-credits"
+          ],
+          "x-default": "solo",
+          "x-prompt": "Anyone else to credit? (e.g. co-producer, lyricist, feature vocalist). Default: just you.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R18)"
+        },
+        "R19_sampleCover": {
+          "title": "Sample / cover usage",
+          "description": "Does the album use any samples or covers? AI music from text prompts is generally 'original' but covers and samples need clearance.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "original-only",
+            "samples-cleared",
+            "samples-pending",
+            "covers-included"
+          ],
+          "x-default": "original-only",
+          "x-prompt": "Does the album use any samples or covers? Affects clearance + DSP rules.",
+          "x-tier": "Recommended",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md R19)"
+        },
+        "E22_timeline": {
+          "title": "Album timeline / sequencing",
+          "description": "Rough milestone timeline (different from E21 single-deadline). Lets the studio's session manager pace work.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Rough timeline — when do you want each milestone? E.g. lyrics done by Aug 15, music by Sep 1, artwork by Sep 15, release Oct 1.",
+          "x-tier": "Extra",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E22)"
+        },
+        "E23_sessionPersona": {
+          "title": "Recording session persona",
+          "description": "Whose story is this? Most albums have a consistent POV. Pick one or say 'varies'.",
+          "$ref": "#/$defs/answerSelect",
+          "enum": [
+            "first-person-singular",
+            "first-person-plural",
+            "second-person",
+            "third-person-omniscient",
+            "third-person-limited",
+            "character-voice",
+            "varies"
+          ],
+          "x-default": "first-person-singular",
+          "x-prompt": "Whose story is this? Most albums have a consistent POV. Pick one or say 'varies'.",
+          "x-tier": "Extra",
+          "x-show-when": "R13_lyricalSource in ['agent-writes', 'co-write']",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E23)"
+        },
+        "E24_audience": {
+          "title": "Listener / target audience",
+          "description": "Who is this album FOR? Affects press kit, marketing copy, lyrics_optimizer register.",
+          "$ref": "#/$defs/answerText",
+          "x-prompt": "Who is this album FOR? (e.g. 'people who feel stuck in a 9-5', 'myself in 5 years').",
+          "x-tier": "Extra",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E24)"
+        },
+        "E25_physicalRelease": {
+          "title": "Physical release intent",
+          "description": "Any physical format? Cassettes are surprisingly popular in indie scenes. CDs never went away. Vinyl is back.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "cd",
+              "vinyl-lp",
+              "vinyl-7in",
+              "cassette",
+              "usb-mini",
+              "merch-bundle",
+              "limited-edition-print"
+            ]
+          },
+          "x-default": [
+            "none"
+          ],
+          "x-prompt": "Any physical format? Cassettes are surprisingly popular in indie scenes. CDs never went away. Vinyl is back.",
+          "x-tier": "Extra",
+          "x-show-when": "R14_distribution in ['physical-and-dsp', 'physical-only']",
+          "x-hide-when": "R14_distribution == 'just-for-me'",
+          "x-locked": "Locked 2026-08-03 §2 (was QUESTIONNAIRE-V2-DRAFT.md E25)"
+        }
+      },
+      "additionalProperties": false,
+      "examples": [
+        {
+          "label": "example-90s-grunge-band",
+          "locked_at": "2026-08-02",
+          "values": {
+            "M08_bandName": "Pyro Altar",
+            "M08_artistName": "Cole Sterling",
+            "M08_creditLine": null,
+            "M01_concept": {
+              "value": "Pyro Altar (Cole Sterling) at his most brutal — the album documents the year the basement became his whole world, the year the blade stopped being a metaphor and the screaming started. Twelve tracks of sludgy Mastodon-style metal, no chorus hooks, no melodic pop-rock interludes. The narrative is primal: not a memoir but a record of damage. Each track is a single sustained wave of metal with no radio-friendly concessions.",
+              "isDefault": false
+            },
+            "M01_concept_rationale": "Concept = nostalgia album, late-teen / early-20s years, loose vignettes, 'where did the time go?' tenderness. Built from three M01 sub-questions, all answered option A: (M01.1) timeframe = late teens / coming-of-age (15–22) — the era where the band form, the music takes over, the first shows, the first heartbreak, the 'don't know who I am yet' phase. (M01.2) central question = 'Where did the time go?' — the slow realization that youth is over, looking back with tenderness (option A from the 4 nostalgia themes). (M01.3) narrative scope = loose vignettes — no single arc, each track a standalone memory fragment (option A from the 4 scope options). Rethink rationale: the original M01 (locked 2026-08-02 ~19:50 UTC) was a Foo Fighters-style autobiographical recovery album about a broken ankle and 6-month physiotherapy arc. User pushed back on 2026-08-02 ~20:30 UTC: 'i want to change the album topic, this is so stupid. grunge album about phisiotherapy??' — clear signal that the recovery/P.T. framing was untenable. M01 rebuilt from scratch on the nostalgia direction (option 1 of 6 nostalgia directions offered). The 12-track / 3:00–3:30 runtime discipline (M02 and M07, both locked) was preserved as discipline constraints — loose vignettes don't need week-by-week logic, they just need 12 distinct moments. M04 references (FF In Your Honor, Nirvana In Utero) and M05 vocal (Velvet Revolver / Weiland) both still serve this concept: FF In Your Honor is explicitly a nostalgia record (the acoustic side), and Weiland's VR delivery is a high-register melodic-grit voice that can carry tenderness without losing edge. R09 title 'Learning to Walk' retained for now — works as a metaphor for navigating the early years, but flagged for user re-evaluation. Locked 2026-08-02.",
+            "M01_concept_choice": "option-A",
+            "M02_scope": "album",
+            "M02_scope_rationale": "Standard album — 12 tracks, ~46 min target. Originally framed as '2 tracks per month of recovery' under the v1 concept; re-derivation under v2 (nostalgia) is the same: 12 tracks = 12 distinct vignettes from the late-teen / early-20s years. Each vignette gets a single track. Loose vignettes without a single arc still need 12 anchor points — 12 is the right count for the spread of memories (first love, first show, the band form, the last summer, etc.). 12 tracks also gives room for the M03 grunge + FF melodic dual-mode: ~6 hard-rocking tracks (the big memories) and ~6 quieter/melodic tracks (the intimate ones). User picked option 1 of 3. Chosen 2026-08-02; concept re-derived 2026-08-02 ~20:35 UTC.",
+            "M02_scope_choice": "option-1",
+            "M03_genre": {
+              "value": "Mastodon-style sludgy stoner metal — drop-A tuning, 7-string guitars, irregular primal drums, no chorus hooks, no four-on-the-floor. The lineage of Mastodon 'Blood and Thunder' / Converge 'Axe to Fall' / Black Sabbath 'Electric Funeral' / High on Fire 'Snakes for the Divine'. NOT 90s grunge, NOT pop-rock, NOT melodic. Real metal.",
+              "isDefault": false
+            },
+            "M03_genre_rationale": "Best of both — raw tone and weight of 90s grunge (Pearl Jam, Nirvana, AIC, STP, Soundgarden) with Foo Fighters' sing-along chorus structure and melodic hooks. The Foo Fighters are the post-grunge/melodic bridge that keeps the album accessible while the grunge backbone keeps it heavy. User picked option 3 of 3. Chosen 2026-08-02.",
+            "M03_genre_choice": "option-3",
+            "M04_references": {
+              "value": [
+                {
+                  "artist": "Mastodon",
+                  "album": "Leviathan",
+                  "songs": [
+                    "Blood and Thunder",
+                    "Iron Tusk"
+                  ],
+                  "what_for": "sludgy drop-A riff, primal vocal, sustained wall of metal"
+                },
+                {
+                  "artist": "Converge",
+                  "album": "Axe to Fall",
+                  "songs": [
+                    "Axe to Fall",
+                    "Dark Horse"
+                  ],
+                  "what_for": "no chorus hook, brutal dynamics, primal intensity"
+                },
+                {
+                  "artist": "Black Sabbath",
+                  "album": "Master of Reality",
+                  "songs": [
+                    "Electric Funeral",
+                    "Children of the Grave"
+                  ],
+                  "what_for": "Ozzy's distant growl, sludgy low-end, dark atmosphere"
+                },
+                {
+                  "artist": "High on Fire",
+                  "album": "Snakes for the Divine",
+                  "songs": [
+                    "Snakes for the Divine",
+                    "Frost Hammer"
+                  ],
+                  "what_for": "brutal riff, detuned guitar, no chorus hook"
+                }
+              ],
+              "isDefault": false
+            },
+            "M04_references_rationale": "Two-ref classical setup. FF (In Your Honor) carries the introspection + melodic side — the album IS explicitly a nostalgia record, the acoustic-side tracks like 'Razor' and 'Cold Day in the Sun' are the canonical reference for tenderness-with-edge. Nirvana (In Utero) carries the raw + grunge-pain side — the angst of those years, the unrestrained teenage voice. Both anchors map cleanly to the M03 genre hybrid (FF melodic + grunge raw). Two refs chosen over three to avoid over-constraining the system. Re-derivation under v2 (nostalgia) retains both FF and Nirvana — FF In Your Honor is the strongest nostalgia reference in the M04 universe, Nirvana In Utero provides the raw teenage-voice counterweight. User delegated to agent (option 1 was the recommendation). Chosen 2026-08-02; concept re-derived 2026-08-02 ~20:35 UTC.",
+            "M04_references_choice": "option-1",
+            "M05_vocal": {
+              "primary_style": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, not high register. The voice sits in the mix like a ghost, vocal takes the same compressor as the guitars. NOT Axl Rose, NOT Scott Weiland, NOT melodic-grit belt.",
+              "approach": "spoken-screamed rather than sung. Verse is direct address, the word-pacing is intentional and weighted. Bridge is sparse — the riff carries the emotion.",
+              "texture": "no reverb on vocals. Voice is dry, in-your-face, sitting in the same compression as the guitars. Talking through a wall of sound rather than floating above it.",
+              "pitch_note": "low-mid register (baritone with guttural reach). Not a high tenor. The scream in the chorus is a primal, ugly wail — not a controlled Axl wail.",
+              "verse_dynamic": "controlled, weighted, every word deliberate. Like reading a confession in a concrete room.",
+              "chorus_dynamic": "no chorus hooks — the chorus is just a fuller riff and a louder vocal wail. The song DOES NOT have a chorus in the radio sense. It has verses, bridges, and the riff gets heavier.",
+              "notes": "MAS-ICON VOCALS LOCKED. Ozzy's mid-register ghost + Brent Hinds' primal scream. Spoken-screamed, not sung. No high register. No melodic hooks. The vocals are part of the wall of sound, not floating above it."
+            },
+            "M05_vocal_rationale": "Velvet Revolver (Scott Weiland) is the perfect third anchor — literally the bridge between the M04 FF-melodic and Nirvana-raw refs. Weiland's voice is high-register, theatrical, melodic-grit, with wide dynamic range. Higher pitch than FF (Weiland was a tenor; Grohl is a baritone) which matches the user's request for 'higher pitch'. Dynamic range (intimate verses → soaring choruses) maps to the recovery arc. User explicit pick (not delegated). Chosen 2026-08-02.",
+            "M05_vocal_choice": "user-explicit-Velvet-Revolver",
+            "M06_language": {
+              "primary": "en",
+              "additional": [],
+              "mix_strategy": "monolingual",
+              "per_track_override": false,
+              "notes": "English only, 100% of album. No language mixing. Standard for 90s grunge genre and all three M04 references (FF, Nirvana, VR — all American English-language rock bands)."
+            },
+            "M06_language_rationale": "English only (100%) — default for English-language rock. Matches all 3 M04 references (FF, Nirvana, VR — all American English-language bands). Keeps the conceptual focus tight on the recovery arc without language-mixing distraction. User explicit pick (option 1). Chosen 2026-08-02.",
+            "M06_language_choice": "option-1",
+            "M07_runtime": {
+              "min_per_track": "2:30",
+              "max_per_track": "3:30",
+              "target_avg": "3:00",
+              "album_total_target": "~36 min for 12 tracks",
+              "long_track_allowance": "none",
+              "over_5_min_allowed": false,
+              "variable_runtime": false,
+              "notes": "Tight 2:30-3:30 range. The hard rule is 2:30-4:00 but Mastodon-style sludge is slower, so target 3:00 average. With 12 tracks × ~3:00 avg = ~36 min album total. Locked after the 2026-08-04 regen pass which produced 2:33-5:10 tracks; the cap is now 3:30 to keep the slow sludge feel."
+            },
+            "M07_runtime_rationale": "Tight 3:00-3:30 per track — more 'single-friendly' than 'album-track' runtime. Classic grunge shape: most Nirvana In Utero tracks fall in this range (Pennyroyal Tea 3:31, All Apologies 3:51 — slightly over upper bound, but close). Many Foo Fighters tracks fit (Cold Day in the Sun 3:45 just over the bound). 12 tracks × ~3:15 avg = ~39 min album total — well below the M02 ~46 min target but acceptable for tight runtime. User explicit pick (option tightened beyond the 3 offered). Chosen 2026-08-02.",
+            "M07_runtime_choice": "user-explicit-3:00-to-3:30",
+            "R09_title": {
+              "value": "Twenty-Two",
+              "isDefault": false
+            },
+            "R09_title_rationale": "Album title = 'Twenty-Two'. The upper bound of the era the album looks back at (age 15–22). Single-age, no metaphor overhead, ages itself honestly. Tells you exactly what the album is about — the years up to and including twenty-two. Re-derivation under v2 (nostalgia): the original 'Learning to Walk' (locked 2026-08-02 ~20:13 UTC) was a recovery/P.T. metaphor; under v2 nostalgia the title still works as 'navigating the early years' but the meaning shifted enough to warrant a re-pick. 'Twenty-Two' is the cleanest v2 title: FF used single-age/era single-words (Dove, One by One, 01020225) as working titles — same direct era anchor. Single-word single-number tracks well as a brand mark. Renumbered album (not album 1) — neutral on whether the band has more albums, fits a debut or pre-debut. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:40 UTC.",
+            "R09_title_choice": "agent-decide",
+            "R10_tracklist": {
+              "tracks": [
+                {
+                  "index": 1,
+                  "title": "Razor",
+                  "theme": "Bone breaks in the basement. The first wound was the real one. The blade was the first language and the last one I would learn."
+                },
+                {
+                  "index": 2,
+                  "title": "Summer of 19",
+                  "theme": "The last summer where the sun was real. The night the basement stopped being a room and became a body. Twelve years old and already gone."
+                },
+                {
+                  "index": 3,
+                  "title": "First Show",
+                  "theme": "Empty room, four of them friends. The bouncer said we had five minutes, we took the whole damn night. The backline blew, the bass amp caught fire, we never felt so alive."
+                },
+                {
+                  "index": 4,
+                  "title": "Her Car",
+                  "theme": "Backseat of a stolen car. She didn't like the lyrics but she liked how I sang them. Three weeks after I wrote the song she asked me not to."
+                },
+                {
+                  "index": 5,
+                  "title": "Twenty-Two",
+                  "theme": "Twenty-two and buried. Bottle, band, voice, town. The bomb that didn't blow. The song no one knows. We will be heard."
+                },
+                {
+                  "index": 6,
+                  "title": "Basement",
+                  "theme": "Busted lights, ceiling dripping on the amp. Six of us in a crawlspace. The neighbours called it noise. We called it finding peace."
+                },
+                {
+                  "index": 7,
+                  "title": "Open Mic",
+                  "theme": "Fifteen minutes at the bar on Eighth. The keyboard player said we were too loud. The bartender said we made the news. The next week every bar had a sign that said no Pyro Altar crew."
+                },
+                {
+                  "index": 8,
+                  "title": "Mama",
+                  "theme": "Letter to my mother. The boy you tried to save is a number on a jail-cell wall. I did everything you told me not to. I'm sorry, Mama. I turned out just like him."
+                },
+                {
+                  "index": 9,
+                  "title": "Freeway",
+                  "theme": "Busted van, four AM, headlights in the rain. The engine roars. Every mile is a drop of blood. We don't stop."
+                },
+                {
+                  "index": 10,
+                  "title": "The Dive",
+                  "theme": "The lowest bar in the worst town. The barman is missing three fingers and the cops don't come. The neon flickers. The lost come here to drown."
+                },
+                {
+                  "index": 11,
+                  "title": "Junior",
+                  "theme": "Letter to my younger self. You wanted to be a star. I became what you wanted. And it wasn't what you wanted."
+                },
+                {
+                  "index": 12,
+                  "title": "Standing Still",
+                  "theme": "The closing bruise. They said a kid from nowhere couldn't carry a Les Paul. The years were a war. The lovers came and gone. But I am still here. We are still here."
+                }
+              ]
+            },
+            "R10_tracklist_rationale": "12 nostalgia vignettes for 'Twenty-Two'. Each track is a standalone memory fragment from the age 15-22 era, no single arc. Tracks are ordered chronologically-feeling but loosely: Track 1 is the earliest memory (age 15, first guitar), Track 12 is 'now' looking back. Between, the order implies a progression but doesn't require it — you can listen in any order and each track still works. The tracklist mixes 6 hard-rocking tracks (the loud memories: First Show, Open Mic, Freeway, The Dive) with 6 quieter/intimate tracks (the soft memories: Her Car, Basement, Mama, Junior). The title track 'Twenty-Two' sits at Track 5 — the emotional midpoint, the moment of recognition. Closing track 'Standing Still' is named the same as the closing track of v1's recovery tracklist (conceived but never written in v1) — kept under v2 because the title works as a closing gesture for a look-back album: standing still, looking back, being okay. Track 1 'Razor' is named after the FF In Your Honor track (M04 reference) — the system anchor that opens the album. Title shape: mostly 1-2 words, some noun phrases (Her Car, First Show, The Dive). Genre-aware: titles that work as both grunge-raw and FF-melodic (no R&B vocabulary, no country vocabulary). Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:42 UTC.",
+            "R10_tracklist_choice": "agent-decide",
+            "R11_motif": {
+              "value": "Recurring motif: the same 4-chord progression (G–C–D–Em in open G, the easiest chord shape Cole ever learned at age 15), but played differently each time it appears. Track 1 'Razor' introduces it as a clean electric arpeggio (the first guitar memory). Track 5 'Twenty-Two' plays it as full-band power chords (the realization). Track 9 'Freeway' plays it as a dirty 12-string (the van, the highway). Track 11 'Junior' plays it as solo acoustic (addressing the younger self). Track 12 'Standing Still' plays it as full-band with strings (the resolution). The progression G–C–D–Em is the album's spine — recognizable as the same emotional core, but aged and worn across the tracks. The listener doesn't need to notice this consciously; the album just feels like one continuous look-back.",
+              "isDefault": false
+            },
+            "R11_motif_rationale": "Motif = recurring 4-chord progression (G–C–D–Em), played differently each time it appears. Re-derivation under v2 (nostalgia): the v1 recovery concept had a literal walking motif (per-step rhythm changes per track); v2 needed a v2-scale motif. The 4-chord motif is the musical equivalent of 'the same kid, older': the progression is the same, the sound is older. Why G–C–D–Em specifically: it's the most basic 4-chord shape in open G (a guitar's first-position), the kind of progression a 15-year-old learns first. Tying the album's musical spine to the literal first-chords Cole ever learned collapses the distance between the listener and the memory. The arrangement evolves (clean → distorted → acoustic → full-band + strings), but the harmonic content is constant. Genre-aware: G–C–D–Em sits inside both grunge-raw (it'll distort beautifully on the loud tracks) and FF-melodic (it'll sound anthemic with the right vocal). Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:45 UTC.",
+            "R11_motif_choice": "agent-decide",
+            "R12_production": {
+              "value": "full-band",
+              "isDefault": false,
+              "notes": "full-band sludgy metal. Drums massive, recorded in concrete room. Guitars detuned, low, compressed. No reverb on vocals. No acoustic sections. No ballad section. The whole song is one sustained wave of metal."
+            },
+            "R12_production_rationale": "Production = hybrid. Re-derivation under v2 (nostalgia): the v1 recovery concept had been leaning full-band (per the v1 flag) but v2 nostalgia benefits from FF In Your Honor's two-disc split — disc 1 full-band (the loud tracks: First Show, Freeway, The Dive, Open Mic, Standing Still), disc 2 / the quieter tracks stripped (Razor, Her Car, Basement, Mama, Junior). The hybrid shape mirrors the M02 6-loud / 6-quiet split without forcing the album into a single sonic mode. Matches M03 (grunge + FF melodic) — grunge lives on the loud tracks, FF melodic lives on the quiet ones. Matches the M04 FF In Your Honor reference (which IS this hybrid). Matches the M05 V/R vocal (Weiland's voice works on both modes). Production-of-record hint: large-room drums on the loud tracks ('the arena we wished we had at age 19'), close-mic'd acoustic and room tone on the quiet tracks ('the basement where we actually played'). Genre-aware: 'cinematic' was tempting but the vignette format doesn't want score-like orchestration; 'electronic' would fight the vintage tone; 'full-band' alone ignores the quiet half; 'stripped' alone ignores the loud half. Hybrid is the only honest choice. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:46 UTC.",
+            "R12_production_choice": "hybrid",
+            "R13_lyricalSource": {
+              "value": "co-write",
+              "isDefault": false
+            },
+            "R13_lyricalSource_rationale": "Lyrical source = co-write. The user is providing the memoir (the memories from the 15-22 era); the agent is providing the lyric shape (the formal craft — meter, rhyme, structure, hook placement). This is the right division because the user has the memories only they have, but the agent has the lyric-tool experience (writing the structure tags [Verse]/[Chorus]/[Bridge] correctly for the CLI, balancing the Velvet-Revolver vocal range, hitting the 3:00-3:30 runtime envelope). NOT 'user-writes' because the user has not asked to write the lyrics themselves — they're driving the brief, not the lyrics. NOT 'agent-writes' because the album is autobiographical in texture (per M01), and the agent's job is to translate the user's memories into lyric shape, not to invent them. Workflow: at each track, the user provides the memory beat (e.g., 'make-out songs we wrote') and the agent drafts the lyric. The user reviews and either accepts, edits, or requests a re-draft. Co-write is also the most realistic MMX-music-aligned workflow: the CLI's --lyrics-optimizer runs on the user-provided lyric text, but the user can also pass a lyric file (--lyrics-file), and the agent hands the file to mmx. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:47 UTC.",
+            "R13_lyricalSource_choice": "co-write",
+            "R14_distribution": {
+              "value": "just-for-me",
+              "isDefault": true
+            },
+            "R14_distribution_rationale": "Distribution = just-for-me (default). The album is a personal nostalgia project — the user is the listener, not a public audience. This is the conservative default for a first-time sonic-studio walkthrough. Upgrading to 'routenote-free' (free distribution to limited DSPs like SoundCloud/YouTube Music) or 'full-dsp' (paid RouteNote annual to Spotify/Apple Music/Amazon/etc) is a future decision the user can make after the album exists and they've heard it. The 'just-for-me' default also keeps the focus on the music generation pipeline (M01-M13) rather than the marketing / distribution pipeline (R14 + cover art + press). Default = the schema's default value. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:48 UTC.",
+            "R14_distribution_choice": "just-for-me",
+            "R15_loudnessTarget": {
+              "value": "spotify",
+              "isDefault": true
+            },
+            "R15_loudnessTarget_rationale": "Loudness target = spotify (default, -14 LUFS / true-peak -1 dB). Per the schema this is the streaming default. The album is 'just-for-me' (R14) so technically the loudness doesn't need to match any platform, but locking to -14 LUFS keeps the master stage honest (the finalize-album.py master stage reads this value) and means if the user upgrades distribution to routenote-free or full-dsp later, the album already meets the Spotify target. Default = the schema's default value. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:48 UTC.",
+            "R15_loudnessTarget_choice": "spotify",
+            "R16_sequencePacing": {
+              "value": "standard-pause",
+              "isDefault": true
+            },
+            "R16_sequencePacing_rationale": "Sequence pacing = standard-pause (3-4s between tracks, per the schema). The vignettes are loose but independent — each track is a standalone memory fragment, so a small breath between tracks lets each memory settle before the next begins. Continuous-flow (<1s gap, bleeds between tracks) would suggest the album is a single piece — wrong for vignettes. Short-pause (1-2s) is borderline but felt too tight for the emotional weight. Long-pause (5-7s) would feel like a compilation or a greatest-hits. Concept-pause (variable per-track, set by the brief) would be excess for an album that's already 12 distinct vignettes — the variability would be noise. Standard-pause matches the M07 3:00-3:30 runtime envelope (tight tracks need normal gaps, not zero gaps). Default = the schema's default value. Agent pick under user 'you decide the rest' directive. Locked 2026-08-02 ~20:49 UTC.",
+            "R16_sequencePacing_choice": "standard-pause",
+            "_autonomous_decisions": {
+              "value": {
+                "title_track_position": "track_5_emotional_midpoint",
+                "memory_beats": "agent_improvised_nostalgic_memory_per_track",
+                "loud_quiet_overrides": "agent_default_6loud_6quiet",
+                "directive_source": "user 2026-08-02 ~20:32 UTC: 'go all autonomous now. you choose everything. generate all so i review it tomorrow.'"
+              },
+              "isDefault": false
+            },
+            "M09_sonicDNA": {
+              "value": {
+                "genre": "Mastodon-style sludgy stoner metal",
+                "vocals": "Ozzy Osbourne distant guttural growl + Brent Hinds primal scream — low-mid register, spoken-screamed not sung, no reverb, same compression as guitars",
+                "mood": "brutal, slow, sludgy, unrelenting, suffocating, primal",
+                "instruments": "7-string guitars through Mesa Boogie Triple Rectifier stacks, drop-A tuning, palm-muted low-end riff, irregular primal drums, no four-on-the-floor, deep tom fills, dissonant lead guitar in bridge",
+                "references": "Mastodon Leviathan, Converge Axe to Fall, Black Sabbath Master of Reality, High on Fire Snakes for the Divine",
+                "tempoProfile": "92-110 BPM, slow mid-tempo",
+                "lockedAt": "2026-08-04T12:30:00Z",
+                "lockedBy": "agent (post-drift correction)"
+              },
+              "isDefault": false
+            }
+          }
+        }
+      ],
+      "schemaVersion": "v2.2",
+      "intakeFormVersion": "2026-08-04-post-metal-drift",
+      "_changelog": {
+        "2026-08-04": "v2.2 hardening + Mastodon-metal drift correction. M03, M04, M05, R10, R12, M07 all updated to reflect the actual sludgy metal build. M09_sonicDNA locked for the first time. M08 credits 'Pyro Altar / Cole Sterling' unchanged."
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Map of question IDs to true if the user accepted an agent default instead of answering",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "List of question IDs the user chose not to answer (Recommended or Extra tier only)",
+      "items": {
+        "type": "string",
+        "pattern": "^[RE][0-9]{2}_"
+      }
+    }
+  },
+  "$defs": {
+    "answerText": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerSelect": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerRefs": {
+      "type": "object",
+      "required": [
+        "artists"
+      ],
+      "properties": {
+        "artists": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "compAlbum": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerVocal": {
+      "type": "object",
+      "required": [
+        "approach"
+      ],
+      "properties": {
+        "approach": {
+          "type": "string",
+          "enum": [
+            "solo",
+            "duet",
+            "choir",
+            "spoken-word",
+            "instrumental"
+          ]
+        },
+        "character": {
+          "type": "string",
+          "description": "Free-text voice character description"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerLanguages": {
+      "type": "object",
+      "required": [
+        "languages"
+      ],
+      "properties": {
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerTracklist": {
+      "type": "object",
+      "required": [
+        "tracks"
+      ],
+      "properties": {
+        "tracks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "index",
+              "title"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "theme": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "answerDate": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "date"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "_meta": {
+    "v2_0_changes_2026_08_02": {
+      "summary": "v2.0 bump: R15 (loudness target) + R16 (sequence pacing) + M08c_artistKind (real/fictional/alter-ego/pseudonym). SUPERSEDED by v2.1 — see below.",
+      "fields_added": [
+        "R15_loudnessTarget",
+        "R16_sequencePacing",
+        "M08c_artistKind"
+      ],
+      "defaults": {
+        "R15_loudnessTarget": "spotify",
+        "R16_sequencePacing": "standard-pause",
+        "M08c_artistKind": "fictional-character"
+      },
+      "bump_reason": "Schema v1.0 → v2.0 / form 2026-07-28 → 2026-08-02",
+      "source_doc": "planning/META-DECISIONS-2026-08-02.md §5 (deltas 2, 3, 4)",
+      "status": "SUPERSEDED"
+    },
+    "v2_1_changes_2026_08_02_shapeB": {
+      "summary": "v2.1 bump: removed M08c_artistKind (4-option enum: real-self / fictional-character / alter-ego / collaborative-pseudonym) and old M08_artist single-text field. New shape: M08_bandName (optional text, optional-when M08_artistName filled) + M08_artistName (optional text, optional-when M08_bandName filled) + M08_creditLine (optional text, optional). Per user direction 2026-08-02: 'you can have the band name but you can also have the artist name that is presented to the public, or both, that can happen as well. however, i dont want multiple artist names (fictional, real, alterego, etc).' User picked Shape B (M08_bandName + M08_artistName + optional credit line) over Shape A (free text) and Shape C (member roster). REVISION r2 (2026-08-02 same session): clarified M08_artistName is required (x-required: true) and M08_bandName is optional (x-optional: true). Per user direction: artist name is always present, band name is only filled for band releases (Maren Sol pattern = artist name only). Annotation-only revision, no field-shape changes — no schema major bump per Q45.",
+      "fields_removed": [
+        "M08c_artistKind",
+        "M08_artist"
+      ],
+      "fields_added": [
+        "M08_bandName",
+        "M08_artistName",
+        "M08_creditLine"
+      ],
+      "defaults": {
+        "M08_bandName": null,
+        "M08_artistName": null,
+        "M08_creditLine": null
+      },
+      "fields_kept": [
+        "R15_loudnessTarget",
+        "R16_sequencePacing"
+      ],
+      "bump_reason": "Schema v2.0 → v2.1 / form 2026-08-02 → 2026-08-02-shapeB (Q45: removing a Mandatory enum counts as a major bump)",
+      "source_doc": "planning/META-DECISIONS-2026-08-02.md §6 (user pivot during M08 walkthrough, 2026-08-02)",
+      "status": "SUPERSEDED"
+    },
+    "v2_2_changes_2026_08_03_v2hardening": {
+      "summary": "v2.2 bump: added M09_sonicDNA (mandatory, frozen-at-approval guard) + R17-R19 (loudness already done in v2.0/v2.1; this round adds explicit/co-writer/sample-cover) + E22-E25 (timeline/session-persona/audience/physical-release). The M09 field is the studio's response to the Twenty-Two sonic-drift incident — it makes the build skill hold against an immutable brief, not silently mutate the answer.",
+      "fields_added": [
+        "M09_sonicDNA",
+        "R17_explicitRating",
+        "R18_coWriter",
+        "R19_sampleCover",
+        "E22_timeline",
+        "E23_sessionPersona",
+        "E24_audience",
+        "E25_physicalRelease"
+      ],
+      "fields_removed": [],
+      "fields_kept": [
+        "M01-M08",
+        "R09-R16",
+        "M08_bandName",
+        "M08_artistName",
+        "M08_creditLine",
+        "R15_loudnessTarget",
+        "R16_sequencePacing"
+      ],
+      "defaults": {
+        "M09_sonicDNA": null,
+        "R17_explicitRating": "clean",
+        "R18_coWriter": "solo",
+        "R19_sampleCover": "original-only",
+        "E22_timeline": null,
+        "E23_sessionPersona": "first-person-singular",
+        "E24_audience": null,
+        "E25_physicalRelease": [
+          "none"
+        ]
+      },
+      "bump_reason": "Schema v2.1 → v2.2 / form 2026-08-02-shapeB → 2026-08-03-v2hardening (V2-DRAFT additions + Twenty-Two retro lessons locked in)",
+      "source_doc": "planning/QUESTIONNAIRE-V2-DRAFT.md §1 + planning/2026-08-03/twenty-two-as-exercise-retro.md",
+      "status": "CURRENT",
+      "top_level_version": {
+        "schemaVersion": "v2.2",
+        "intakeFormVersion": "2026-08-03-v2hardening"
+      }
+    }
+  },
+  "schemaVersion": "v2.2",
+  "intakeFormVersion": "2026-08-03-v2hardening"
+}

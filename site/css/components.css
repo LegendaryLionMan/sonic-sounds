@@ -1,0 +1,414 @@
+/* === sonic-studio · components.css === */
+/* Day 1 deliverable: design tokens + base components + app shell styles.
+   Source of truth: DESIGN.md (Mixtape '85 era).
+   Companion to: site/css/ux-states.css (button states, toasts).
+*/
+
+:root {
+  /* === Primary (canvas + ink) === */
+  --bg: #0a0a0f;
+  --bg-soft: #14141a;
+  --bg-card: #ffffff;
+  --shell: #f5f1e8;
+  --shell-shadow: #d4cfb8;
+  --ink: #fafafa;
+  --ink-soft: rgba(255, 255, 255, 0.7);
+  --ink-muted: rgba(255, 255, 255, 0.4);
+  --ink-dark: #0a0a0f;
+  --rule: rgba(255, 255, 255, 0.08);
+  --rule-strong: rgba(255, 255, 255, 0.18);
+
+  /* === Cassette label band palette (the primary content accent) === */
+  --red: #e83a3a;
+  --yellow: #f0c53c;
+  --cyan: #2dd8f0;
+  --green: #4caf50;
+  --blue: #2962ff;
+  --magenta: #f25cb0;
+  --violet: #b94af5;
+  --amber: #ff7b00;
+  --pink: #ff5b8a;
+
+  /* === Status colors (pipeline grid) === */
+  --status-done: var(--amber);
+  --status-active: var(--cyan);
+  --status-blocked: var(--red);
+
+  /* === Aurora (label drift — used for the hero cassette) === */
+  --aurora-magenta: #f25cb0;
+  --aurora-cyan: #2dd8f0;
+  --aurora-amber: #ff7b00;
+
+  /* === Typography (Mixtape '85 era) === */
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  --display: 'Bebas Neue', 'Oswald', sans-serif;
+  --hand: 'Caveat', 'Kalam', cursive;
+
+  /* === Type scale (modular, ratio 1.333) === */
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 15px;
+  --fs-md: 18px;
+  --fs-lg: 24px;
+  --fs-xl: 36px;
+  --fs-2xl: 56px;
+  --fs-3xl: 84px;
+
+  /* === Spacing === */
+  --sp-xs: 8px;
+  --sp-sm: 16px;
+  --sp-md: 24px;
+  --sp-lg: 32px;
+  --sp-xl: 56px;
+  --sp-2xl: 96px;
+
+  /* === Shape === */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* === Motion === */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+  --dur-slow: 400ms;
+}
+
+/* === Base === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--fs-base);
+  line-height: 1.55;
+  font-feature-settings: 'ss01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--yellow); }
+
+/* === Typography primitives === */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.hand {
+  font-family: var(--hand);
+  font-style: italic;
+}
+
+/* === Topbar === */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+}
+.topbar .crumb {
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  letter-spacing: 0.06em;
+}
+.topbar .crumb b { color: var(--ink); font-weight: 600; }
+.topbar .grow { flex: 1; }
+.command {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--rule);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.command:hover { background: rgba(255, 255, 255, 0.08); }
+.command.yellow {
+  background: rgba(240, 197, 60, 0.08);
+  border-color: rgba(240, 197, 60, 0.3);
+  color: var(--yellow);
+}
+.command.yellow::before {
+  content: "▷";
+  font-weight: 700;
+  color: var(--yellow);
+  margin-right: 2px;
+}
+
+/* === Pill (status) === */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(240, 197, 60, 0.08);
+  border: 1px solid rgba(240, 197, 60, 0.3);
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--yellow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--yellow);
+  box-shadow: 0 0 8px var(--yellow);
+}
+.pill.status-done { background: rgba(76, 175, 80, 0.12); border-color: rgba(76, 175, 80, 0.3); color: var(--green); }
+.pill.status-done .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.pill.status-active { background: rgba(45, 216, 240, 0.12); border-color: rgba(45, 216, 240, 0.3); color: var(--cyan); }
+.pill.status-active .dot { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.pill.status-blocked { background: rgba(232, 58, 58, 0.12); border-color: rgba(232, 58, 58, 0.3); color: var(--red); }
+.pill.status-blocked .dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+/* === Button (state styles in ux-states.css) === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: var(--radius-sm);
+  font-family: var(--sans);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4); }
+.btn.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+}
+.btn.yellow { background: var(--yellow); color: var(--ink-dark); border-color: var(--yellow); }
+.btn.cyan { background: var(--cyan); color: var(--ink-dark); border-color: var(--cyan); }
+.btn.red { background: var(--red); color: var(--ink); border-color: var(--red); }
+
+/* === Card === */
+.card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  padding: var(--sp-md);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.card:hover { border-color: var(--rule-strong); }
+.card.shell {
+  background: var(--shell);
+  color: var(--ink-dark);
+  border: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* === Input === */
+.input, input[type=text], input[type=email], input[type=password], textarea, select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--fs-base);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.input:focus, input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--yellow);
+}
+.input::placeholder, input::placeholder { color: var(--ink-muted); }
+.input.error { border-color: var(--red); }
+.input.success { border-color: var(--green); }
+
+/* === Modal === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-lg);
+  max-width: 560px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+}
+.modal h2 {
+  font-family: var(--display);
+  font-size: var(--fs-xl);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* === Badge === */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.badge.dot::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  background: var(--ink-muted);
+}
+.badge.done { background: rgba(76, 175, 80, 0.18); color: var(--green); border-color: rgba(76, 175, 80, 0.4); }
+.badge.done::before { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.badge.active { background: rgba(45, 216, 240, 0.18); color: var(--cyan); border-color: rgba(45, 216, 240, 0.4); }
+.badge.active::before { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.badge.blocked { background: rgba(232, 58, 58, 0.18); color: var(--red); border-color: rgba(232, 58, 58, 0.4); }
+.badge.blocked::before { background: var(--red); }
+
+/* === Cassette sticker (NEW per plan) === */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--shell);
+  color: var(--ink-dark);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--shell-shadow);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform: rotate(-2deg);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.sticker:hover { transform: rotate(-1deg) scale(1.05); }
+.sticker::before { content: "▣"; margin-right: 4px; }
+
+/* === Session card (NEW per plan) === */
+.session-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sp-md);
+  padding: var(--sp-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.session-card:hover { border-color: var(--rule-strong); }
+.session-card .meta { display: flex; flex-direction: column; gap: 6px; }
+.session-card .meta .album-title { font-family: var(--display); font-size: var(--fs-lg); text-transform: uppercase; letter-spacing: 0.04em; }
+.session-card .meta .artist { font-family: var(--hand); font-size: var(--fs-md); color: var(--ink-soft); }
+.session-card .actions { display: flex; align-items: center; gap: 8px; }
+
+/* === Layout primitives === */
+.shell-page {
+  max-width: 2880px;
+  margin: 0 auto;
+  padding: var(--sp-lg) var(--sp-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xl);
+}
+.shell-grid {
+  display: grid;
+  gap: var(--sp-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.hero-band {
+  padding: var(--sp-2xl) var(--sp-xl);
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+}
+.hero-band h1 {
+  font-family: var(--display);
+  font-size: var(--fs-3xl);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+/* === Footer (health indicator + quota bar) === */
+.footer {
+  padding: var(--sp-md) var(--sp-md);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-muted);
+}
+.footer .health { display: flex; align-items: center; gap: 6px; }
+.footer .health .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+.footer .health.warning .dot { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+.footer .health.error .dot { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.footer .quota { display: flex; align-items: center; gap: 8px; }
+.footer .quota .bar {
+  width: 120px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.footer .quota .bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--yellow));
+  transition: width var(--dur-base) var(--ease);
+}

@@ -1,0 +1,173 @@
+/* site/decisions.css · Day 1 Hour 7 — Decision cards staggered reveal (10 ideas)
+ *
+ * When the user creates or locks a decision, the new .decision-card
+ * element flies in from the right with elastic overshoot. The
+ * existing studio.js just appends a div; here we style the entrance
+ * + interactions.
+ */
+
+:root {
+  --t-decision-enter: 380ms;
+  --t-decision-flip: 480ms;
+}
+
+/* =====================================================================
+ * Idea 1-2: decision-slide-in keyframe (spring-bouncy cubic-bezier
+ * over 380ms). Idea 3: duration token already in :root.
+ * ===================================================================== */
+
+@keyframes decision-slide-in {
+  0%   { opacity: 0; transform: translateX(80px) scale(.92); }
+  60%  { opacity: 1; transform: translateX(-8px)  scale(1.02); }
+  100% { opacity: 1; transform: translateX(0)     scale(1); }
+}
+
+.decision-card {
+  transform-origin: right center;
+  animation: decision-slide-in var(--t-decision-enter) var(--spring-bouncy) both;
+  transition:
+    transform var(--t-press) var(--spring-soft),
+    background-color var(--t-press) var(--spring-soft),
+    border-color var(--t-press) var(--spring-soft),
+    box-shadow var(--t-press) var(--spring-soft);
+}
+
+/* Stagger when multiple cards land at once */
+.decision-card:nth-of-type(1)  { animation-delay: 0ms; }
+.decision-card:nth-of-type(2)  { animation-delay: 60ms; }
+.decision-card:nth-of-type(3)  { animation-delay: 120ms; }
+.decision-card:nth-of-type(4)  { animation-delay: 180ms; }
+.decision-card:nth-of-type(5)  { animation-delay: 240ms; }
+.decision-card:nth-of-type(6)  { animation-delay: 300ms; }
+.decision-card:nth-of-type(7)  { animation-delay: 360ms; }
+.decision-card:nth-of-type(8)  { animation-delay: 420ms; }
+.decision-card:nth-of-type(9)  { animation-delay: 480ms; }
+.decision-card:nth-of-type(10) { animation-delay: 540ms; }
+
+/* =====================================================================
+ * Idea 4: Hover lift + edit button reveal
+ * ===================================================================== */
+
+.decision-card {
+  position: relative;
+  cursor: pointer;
+}
+.decision-card:hover {
+  transform: translateX(-4px);
+  box-shadow: -4px 4px 16px color-mix(in srgb, var(--accent-2) 20%, transparent);
+}
+
+.decision-card .edit-btn {
+  position: absolute;
+  top: 50%; right: 12px;
+  transform: translateY(-50%) translateX(8px);
+  opacity: 0; pointer-events: none;
+  transition: transform var(--t-press) var(--spring-bouncy),
+              opacity var(--t-press) var(--spring-soft);
+}
+.decision-card:hover .edit-btn {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+/* =====================================================================
+ * Idea 5: Click to expand → full rationale inline
+ * ===================================================================== */
+
+@keyframes decision-expand {
+  from { max-height: 64px; opacity: .8; }
+  to   { max-height: 600px; opacity: 1; }
+}
+.decision-card.is-expanded {
+  animation: decision-expand var(--t-decision-enter) var(--spring-soft) forwards;
+}
+.decision-card .rationale {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height var(--t-decision-enter) var(--spring-soft),
+    opacity var(--t-press) var(--spring-soft);
+}
+.decision-card.is-expanded .rationale {
+  max-height: 600px;
+  opacity: 1;
+  padding-top: 8px;
+}
+
+/* =====================================================================
+ * Idea 6: Lock animation (the moment status flips to locked)
+ * ===================================================================== */
+
+@keyframes decision-lock {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.06); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-2) 60%, transparent); }
+  100% { transform: scale(1); }
+}
+.decision-card.is-locking {
+  animation: decision-lock var(--t-decision-flip) var(--spring-bouncy);
+}
+
+/* =====================================================================
+ * Idea 7: Color-coded by tier (mandatory=warm, recommended=cool,
+ * optional=neutral)
+ * ===================================================================== */
+
+.decision-card[data-tier="mandatory"] {
+  border-left: 4px solid #f0c53c; /* warm yellow */
+}
+.decision-card[data-tier="recommended"] {
+  border-left: 4px solid #2dd8f0; /* cool cyan */
+}
+.decision-card[data-tier="optional"] {
+  border-left: 4px solid hsl(220 10% 50%); /* neutral */
+}
+
+/* =====================================================================
+ * Idea 8: Stacked decisions with subtle z-index layering
+ * ===================================================================== */
+
+.decision-card:nth-of-type(1) { z-index: 12; }
+.decision-card:nth-of-type(2) { z-index: 11; }
+.decision-card:nth-of-type(3) { z-index: 10; }
+.decision-card:nth-of-type(4) { z-index: 9; }
+.decision-card:nth-of-type(5) { z-index: 8; }
+.decision-card:nth-of-type(6) { z-index: 7; }
+.decision-card:nth-of-type(7) { z-index: 6; }
+.decision-card:nth-of-type(8) { z-index: 5; }
+.decision-card:nth-of-type(9) { z-index: 4; }
+.decision-card:nth-of-type(10) { z-index: 3; }
+
+/* =====================================================================
+ * Idea 9: Delete decision with spring-back-out animation
+ * ===================================================================== */
+
+@keyframes decision-delete {
+  0%   { opacity: 1; transform: translateX(0)     scale(1); }
+  100% { opacity: 0; transform: translateX(80px)  scale(.92); }
+}
+.decision-card.is-deleting {
+  animation: decision-delete var(--t-decision-enter) var(--spring-soft) forwards;
+  pointer-events: none;
+}
+
+/* =====================================================================
+ * Idea 10: Color-mix for tier borders (matches the new accent system)
+ * ===================================================================== */
+
+.decision-card {
+  border: 1px solid var(--rule);
+  border-left: 4px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .decision-card,
+  .decision-card:hover,
+  .decision-card .edit-btn,
+  .decision-card .rationale {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}

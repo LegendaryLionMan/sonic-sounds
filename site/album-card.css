@@ -1,0 +1,151 @@
+/* site/album-card.css · Day 1 Hour 15 — Album card hover interactions (10 ideas)
+ *
+ * The .album-card / .card.shell in library.js. Hover lift, quick-play,
+ * metadata tooltip, double-click → studio, right-click menu.
+ * Distinct from track-rows.css because these are whole-album cards.
+ */
+
+:root {
+  --t-card-hover: 240ms;
+  --t-card-quickplay: 220ms;
+}
+
+/* =====================================================================
+ * Idea 1: Hover lifts card (-2px Y + shadow)
+ * Idea 5: Hover reveals metadata tooltip
+ * ===================================================================== */
+
+.album-card,
+.card.shell {
+  position: relative;
+  cursor: pointer;
+  transition:
+    transform var(--t-card-hover) var(--spring-bouncy),
+    box-shadow var(--t-card-hover) var(--spring-soft),
+    border-color var(--t-card-hover) var(--spring-soft);
+  will-change: transform;
+}
+.album-card:hover,
+.card.shell:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.4),
+    0 0 0 1px color-mix(in srgb, var(--accent-2) 30%, transparent);
+}
+
+/* =====================================================================
+ * Idea 2: Hover scales cover (1.02)
+ * (already covered by cover3d.css scale rule; this is the safety net)
+ * ===================================================================== */
+
+.album-card:hover .album-cover {
+  transform: scale(1.02);
+}
+
+/* =====================================================================
+ * Idea 3: Hover reveals quick-play overlay (▷)
+ * (Implemented in cover3d.css .quick-play)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 4: Hover reveals metadata tooltip (track count + runtime)
+ * ===================================================================== */
+
+.album-card:hover::after {
+  content: attr(data-meta);  /* e.g. "10 tracks · 40 min" */
+  position: absolute; bottom: -32px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated); color: var(--ink);
+  padding: 4px 10px; border-radius: 6px;
+  font: 11px/1 var(--mono);
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  pointer-events: none;
+  animation: meta-tooltip-pop var(--t-card-hover) var(--spring-bouncy);
+}
+@keyframes meta-tooltip-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}
+
+/* =====================================================================
+ * Idea 6: Double-click opens studio
+ * (JS handler — CSS gives a brief pulse on dblclick)
+ * ===================================================================== */
+
+.album-card.is-dblclick {
+  animation: card-dblclick 220ms var(--spring-bouncy);
+}
+@keyframes card-dblclick {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(.96); }
+  100% { transform: scale(1.02); }
+}
+
+/* =====================================================================
+ * Idea 7: Right-click → context menu
+ * (Implemented via .album-context-menu, same pattern as track-context-menu)
+ * ===================================================================== */
+
+.album-context-menu {
+  position: fixed;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 8px;
+  padding: 4px 0;
+  min-width: 200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  backdrop-filter: blur(20px);
+  z-index: 10000;
+  animation: context-menu-pop var(--t-card-hover) var(--spring-bouncy);
+}
+@keyframes context-menu-pop {
+  from { opacity: 0; transform: translateY(-4px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+.album-context-menu button {
+  display: block; width: 100%; text-align: left;
+  padding: 8px 14px; border: none; background: transparent;
+  color: var(--ink); font: 13px var(--sans); cursor: pointer;
+  transition: background-color var(--t-card-hover) var(--spring-soft);
+}
+.album-context-menu button:hover {
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+}
+.album-context-menu button.danger { color: #ef4444; }
+
+/* =====================================================================
+ * Idea 8: Cover shimmer on hover (inherited from cover3d.css)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 9: Status badge pulses on hover
+ * ===================================================================== */
+
+.album-card .status-badge,
+.card.shell .eyebrow {
+  transition: transform var(--t-card-hover) var(--spring-bouncy),
+              box-shadow var(--t-card-hover) var(--spring-soft);
+}
+.album-card:hover .status-badge,
+.card.shell:hover .eyebrow {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-2) 40%, transparent);
+}
+
+/* =====================================================================
+ * Idea 10: prefers-reduced-motion → no lift
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .album-card, .card.shell,
+  .album-card:hover, .card.shell:hover,
+  .album-card .status-badge,
+  .card.shell .eyebrow,
+  .album-context-menu,
+  .album-card.is-dblclick {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+  .album-card:hover, .card.shell:hover { transform: none; }
+}

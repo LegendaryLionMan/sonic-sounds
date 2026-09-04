@@ -1,0 +1,1036 @@
+/* site/header-player.css — Persistent header music player.
+ *
+ * Mounted at top of every page via <script src="header-player.js"> which
+ * injects the markup into <body>. Reads playback state from localStorage
+ * so the user can navigate pages without losing their place.
+ *
+ * Cassette visual: a single cassette-tape artwork (site/assets/cassette-yellow-tape.jpg)
+ * with two overlaid "reel holes" that rotate while audio is playing —
+ * like the spools actually turning inside an old tape deck.
+ *
+ * Responsive: at < 600px the bar collapses into TWO ROWS so nothing
+ * gets squashed to 0 width. At < 480px the album page track rows also
+ * stack title over mood.
+ *
+ * Theme: Mixtape '85 dark.
+ */
+
+:root {
+  --hp-bg:           rgba(12, 12, 18, 0.92);
+  --hp-bg-solid:     hsl(240, 8%, 8%);
+  --hp-fg:           hsl(40, 25%, 92%);
+  --hp-fg-muted:     hsl(40, 12%, 60%);
+  --hp-accent:       hsl(36, 80%, 60%);
+  --hp-accent-fg:    hsl(20, 30%, 12%);
+  --hp-rule:         hsl(240, 8%, 22%);
+  --hp-pad:          12px;
+  --hp-h:            76px;
+  --hp-radius:       14px;
+  --hp-shadow:       0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.04) inset;
+  --hp-cassette-img: url("/site/assets/cassette-yellow-tape.jpg");
+}
+
+/* Mount point — fixed top bar */
+.header-player {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--hp-h);
+  background: var(--hp-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hp-rule);
+  display: grid;
+  /* Tighter fractions: left gets the minimum the cassette needs, right
+   * gets enough for vol + tracks button, middle eats the rest. */
+  grid-template-columns: auto minmax(180px, 0.9fr) minmax(280px, 2fr) minmax(220px, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 0 var(--hp-pad);
+  z-index: 9999;
+  font-family: var(--sans, 'Inter', system-ui);
+  color: var(--hp-fg);
+  box-shadow: var(--hp-shadow);
+  user-select: none;
+}
+body.has-header-player { padding-top: calc(var(--hp-h) + 8px); }
+body.has-header-player nav.topbar { top: var(--hp-h); }
+
+/* ----- LEFT: cassette artwork + meta ----- */
+.hp-cassette {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Cassette artwork: shows the sticker + two animated reel holes on top.
+ * Image source is site/assets/cassette-yellow-tape.jpg — cropped to the
+ * actual cassette artwork (yellow tape + cream label + reel holes), aspect
+ * ~1.29 (W/H). Slot is sized to match that aspect so nothing is cropped. */
+.hp-cassette-art {
+  position: relative;
+  width: 78px;                          /* wider rectangle so the reels have room to turn */
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: transparent;
+  background-image: var(--hp-cassette-img);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+/* A subtle frame outline so the cassette stands out from the dark bar */
+.hp-cassette-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.05);
+  pointer-events: none;
+}
+
+/* The two reel holes. The cassette image already has the holes baked in
+ * (visible as dark spots on the yellow tape), but we overlay animated
+ * pseudo-reels here so users see the "tape spinning" effect when playing.
+ * Position the reels to match where the holes appear on the cassette image. */
+.hp-reels {
+  /* Two animated reel overlays positioned over the cassette artwork so the
+   * reels appear to 'turn around the circles' while audio plays.
+   * Tighter than before because the new wider 78x46 cassette has more
+   * horizontal space; reels sit over the visible reel-hole centers. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 50%;          /* covers the tape band only */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14%;
+  align-items: center;
+  pointer-events: none;
+}
+.hp-reel {
+  position: relative;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,0,0,0.55) 0%,
+    rgba(0,0,0,0.55) 28%,
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0) 38%,
+    rgba(0,0,0,0.55) 42%,
+    rgba(0,0,0,0.55) 100%);
+  animation: hp-spin 4s linear infinite;
+  animation-play-state: paused;
+}
+/* Spokes — three lines crossing through the centre */
+.hp-reel::before, .hp-reel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255,255,255,0.35) 0deg, transparent 4deg,
+      transparent 60deg, rgba(255,255,255,0.35) 64deg, transparent 68deg,
+      transparent 120deg, rgba(255,255,255,0.35) 124deg, transparent 128deg,
+      transparent 180deg, rgba(255,255,255,0.35) 184deg, transparent 188deg,
+      transparent 240deg, rgba(255,255,255,0.35) 244deg, transparent 248deg,
+      transparent 300deg, rgba(255,255,255,0.35) 304deg, transparent 308deg,
+      transparent 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 28%, #000 30%, #000 100%);
+          mask: radial-gradient(circle, transparent 28%, #000 30%, #000 100%);
+  opacity: 0.6;
+  animation: hp-spin 4s linear infinite;
+  animation-play-state: paused;
+}
+.header-player.is-playing .hp-reel,
+.header-player.is-playing .hp-reel::before,
+.header-player.is-playing .hp-reel::after {
+  animation-play-state: running;
+}
+/* The reels spin at slightly different rates for a "the tape is moving"
+ * sense (real cassette hubs differ because tape travels between them). */
+.hp-reel:nth-child(2),
+.hp-reel:nth-child(2)::before,
+.hp-reel:nth-child(2)::after {
+  animation-duration: 4.4s; /* take-up reel spins slower */
+}
+@keyframes hp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pause icon overlay hidden by default; appears when paused */
+.hp-pause-indicator {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.7);
+  color: var(--hp-fg);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  pointer-events: none;
+}
+.header-player:not(.is-playing) .hp-pause-indicator { display: flex; }
+
+.hp-meta { min-width: 0; flex: 1; }
+.hp-meta-eyebrow {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--hp-accent);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-meta-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-meta-sub {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ----- CENTER: transport controls + seek ----- */
+.hp-transport {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.hp-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.hp-progress.is-empty {
+  /* Wait until durations/audio load before claiming real height */
+  height: 0;
+}
+.hp-btn {
+  background: transparent;
+  color: var(--hp-fg);
+  border: 0;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background .15s ease, transform .12s ease;
+}
+.hp-btn:hover { background: rgba(255,255,255,0.08); }
+.hp-btn:active { transform: scale(0.92); }
+.hp-btn-play {
+  width: 44px; height: 44px;
+  background: var(--hp-accent);
+  color: var(--hp-accent-fg);
+  font-size: 18px;
+}
+.hp-btn-play:hover { background: hsl(36, 85%, 65%); filter: brightness(1.05); }
+.hp-btn-skip { font-size: 13px; }
+
+/* Mode buttons (repeat / shuffle): dim by default; light up to accent when active */
+.hp-btn-mode {
+  font-size: 13px;
+  color: var(--ink-faint);
+  transition: color var(--t-base) ease, background var(--t-base) ease;
+}
+.hp-btn-mode:hover {
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.08);
+}
+.hp-btn-mode.is-active {
+  /* Active state: icon brightens, but NO blue background. Just an
+   * underline + slight scale so it's clearly active without
+   * looking like a checkbox chip. */
+  color: var(--accent);
+  background: transparent;
+  box-shadow: inset 0 -2px 0 0 var(--accent);
+}
+.hp-btn-mode.is-active:hover {
+  color: var(--accent);
+  filter: brightness(1.1);
+}
+
+/* Mute button (clickable speaker icon) — same look as a transport button
+ * but text-only and slim. Becomes accented when muted. */
+.hp-btn-mute {
+  background: transparent;
+  border: 0;
+  padding: 0 4px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--t-base) ease, background var(--t-base) ease;
+}
+.hp-btn-mute:hover { color: var(--ink); background: rgba(255,255,255,0.06); }
+.hp-btn-mute.is-muted { color: var(--danger); }
+.hp-btn-mute.is-muted:hover { color: var(--danger); filter: brightness(1.1); }
+.hp-time {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  min-width: 38px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.hp-seek {
+  flex: 1;
+  position: relative;
+  height: 6px;
+  min-width: 60px;       /* never collapse to zero */
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.hp-seek-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--hp-accent) 0%, hsl(20, 80%, 60%) 100%);
+  border-radius: 999px;
+  width: 0%;
+  transition: width .25s linear;
+}
+.hp-seek-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  background: var(--hp-fg);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--hp-accent);
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.hp-seek:hover .hp-seek-fill::after { opacity: 1; }
+
+/* ----- RIGHT: tracklist toggle + volume ----- */
+.hp-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.hp-vol-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+.hp-vol {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 110px;      /* widened to match the seek bar's prominence */
+  height: 6px;       /* same as .hp-seek */
+  background: linear-gradient(90deg,
+                            color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+                            color-mix(in srgb, var(--accent) 12%, transparent) 100%),
+                            rgba(255,255,255,0.10);  /* matches .hp-seek-fill gradient */
+  background-size: var(--vol-pct, 0%) 100%, 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+  /* Allow JS to push --vol-pct (CSS var) to update the filled portion
+   * live. Matches the music progress bar's filled-then-empty look. */
+}
+.hp-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at center, var(--accent) 0%, var(--accent) 60%, transparent 75%);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid var(--bg-elevated);
+}
+.hp-vol::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: radial-gradient(circle at center, var(--accent) 0%, var(--accent) 60%, transparent 75%);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid var(--bg-elevated);
+}
+.hp-list-btn {
+  background: transparent;
+  color: var(--hp-fg-muted);
+  border: 1px solid var(--hp-rule);
+  border-radius: 999px;
+  font-family: var(--mono, monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease;
+  white-space: nowrap;
+}
+.hp-list-btn:hover {
+  color: var(--hp-fg);
+  border-color: var(--hp-accent);
+}
+
+/* ----- EXPANDED TRACKLIST (overlay) ----- */
+.hp-tracklist-panel {
+  position: fixed;
+  top: var(--hp-h);
+  right: 0;
+  width: min(420px, 90vw);
+  max-height: 70vh;
+  background: var(--hp-bg-solid);
+  border: 1px solid var(--hp-rule);
+  border-radius: 0 0 0 var(--hp-radius);
+  box-shadow: var(--hp-shadow);
+  overflow-y: auto;
+  z-index: 9998;
+  padding: 16px;
+  transform: translateY(-12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.header-player.is-open .hp-tracklist-panel {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.hp-tracklist-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hp-rule);
+  margin-bottom: 10px;
+}
+.hp-tracklist-head h4 {
+  font-family: var(--display, 'Bebas Neue', sans-serif);
+  font-size: 18px;
+  letter-spacing: .04em;
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--hp-fg);
+}
+.hp-tracklist-head span {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+}
+.hp-track-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .12s ease;
+  font-family: var(--sans, system-ui);
+}
+.hp-track-item:hover { background: rgba(255,255,255,0.05); }
+.hp-track-item.is-current {
+  background: rgba(255, 200, 80, 0.12);
+  border-left: 3px solid var(--hp-accent);
+  padding-left: 7px;
+}
+.hp-track-item.is-current .hp-track-num { color: var(--hp-accent); }
+.hp-track-num {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hp-track-title {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-track-dur {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hp-track-play {
+  background: transparent;
+  border: 0;
+  color: var(--hp-fg);
+  cursor: pointer;
+  width: 22px;
+  text-align: center;
+  font-size: 12px;
+}
+.hp-track-play:hover { color: var(--hp-accent); }
+
+/* ----- EMPTY STATE ----- */
+.hp-empty {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * RESPONSIVE — never let anything collapse to 0 width.
+ * ============================================================ */
+
+/* Phase 1 (>= 900px): full layout as designed above (default) */
+
+/* Phase 2 (< 900px): tighter gaps + smaller buttons */
+@media (max-width: 900px) {
+  .header-player {
+    grid-template-columns: auto minmax(140px, 0.8fr) minmax(220px, 1.6fr) minmax(180px, auto);
+    gap: 10px;
+    padding: 0 10px;
+  }
+  .hp-btn { width: 32px; height: 32px; font-size: 13px; }
+  .hp-btn-play { width: 40px; height: 40px; font-size: 17px; }
+  .hp-vol { width: 70px; }
+}
+
+/* Phase 3 (< 720px): hide sub-meta + volume, show tracklist button only */
+@media (max-width: 720px) {
+  .header-player {
+    grid-template-columns: auto minmax(140px, 0.8fr) minmax(200px, 1.5fr) auto;
+  }
+  .hp-meta-sub { display: none; }
+  .hp-vol-wrap { display: none; }
+}
+
+/* Phase 4 (< 600px): tighten further; ensure transport stays usable */
+@media (max-width: 600px) {
+  .header-player {
+    grid-template-columns: auto minmax(120px, 0.7fr) minmax(180px, 1.5fr) auto;
+    gap: 8px;
+  }
+  .hp-btn { width: 30px; height: 30px; font-size: 12px; }
+  .hp-btn-play { width: 38px; height: 38px; font-size: 16px; }
+  .hp-time { min-width: 32px; font-size: 10px; }
+  .hp-seek { min-width: 40px; }
+  .hp-transport { gap: 6px; }
+  .hp-cassette-art { width: 64px; height: 38px; }
+  .hp-meta-title { font-size: 13px; }
+}
+
+/* Phase 5 (< 480px): SECOND ROW for the player itself.
+ * Row 1: cassette | transport (skip + play + skip)
+ * Row 2: progress (seek + time)
+ * Right column (tracklist button) pulled onto row 1 of the grid where it fits.
+ *
+ * Layout uses a 2-row × 3-col grid:
+ *   [cassette] [transport     ] [tracklist-btn]
+ *   [progress spanning all 3 cols                ]
+ */
+@media (max-width: 480px) {
+  .header-player {
+    height: auto;
+    padding: 8px 10px;
+    /* 3 columns × 2 rows */
+    grid-template-columns: auto minmax(120px, 0.7fr) minmax(180px, 1.5fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .hp-cassette {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;     /* let cassette shrink to its 44px image */
+    max-width: 160px; /* keep the title from pushing transport out */
+  }
+  .hp-meta {
+    min-width: 0;
+  }
+  .hp-transport {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+    gap: 4px;
+    min-width: 0;
+  }
+  .hp-right {
+    grid-column: 3;
+    grid-row: 1;
+    min-width: 0;
+  }
+  .hp-progress {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: auto;
+    min-width: 0;
+  }
+  .hp-transport {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .hp-cassette {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .hp-right {
+    grid-column: 4; /* col 4 at narrow widths */
+    grid-row: 1;
+  }
+  /* Keep the cassette compact */
+  .hp-cassette-art { width: 56px; height: 34px; flex-shrink: 0; background-size: cover; }
+  .hp-meta-title { font-size: 13px; }
+  .hp-meta-eyebrow { font-size: 9px; }
+  /* Buttons stay touch-sized */
+  .hp-btn { width: 32px; height: 32px; }
+  .hp-btn-play { width: 40px; height: 40px; font-size: 16px; }
+  .hp-list-btn { padding: 5px 10px; font-size: 9px; }
+
+  body.has-header-player { padding-top: calc(var(--hp-h) + 24px); }
+}
+
+
+/* ============================================================
+ * Skip ±15s buttons (.hp-btn-seeksec)
+ * Match the size + style of the prev/next skip buttons exactly —
+ * the only visual difference is a slightly thinner symbol glyph to
+ * convey "smaller skip".
+ * ============================================================ */
+.hp-btn-seeksec {
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+.hp-btn-seeksec:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.hp-btn-seeksec:active { transform: scale(0.92); color: var(--accent); }
+
+/* ============================================================
+ * IMPROVEMENT #2: Mini buttons (sleep, lyrics) — square icon size
+ * ============================================================ */
+.hp-btn-mini {
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: background var(--t-base) ease, color var(--t-base) ease, transform var(--t-quick) var(--t-spring);
+}
+.hp-btn-mini:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.hp-btn-mini:active { transform: scale(0.9); }
+.hp-btn-mini.is-active { color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+
+/* ============================================================
+ * IMPROVEMENT #3: Seek-bar hover preview (Spotify/YouTube pattern)
+ * Vertical bar showing hover position + tooltip with m:ss time
+ * ============================================================ */
+.hp-seek { position: relative; overflow: visible; }
+.hp-seek-hover {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: color-mix(in srgb, var(--ink-soft) 30%, transparent);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: width 60ms linear;
+}
+.hp-seek-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 80ms ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+ * IMPROVEMENT #4: Progressive shimmer on progress fill while playing.
+ * A subtle moving highlight across the seek-fill to convey motion.
+ * ============================================================ */
+@keyframes hp-seek-shimmer {
+  0%   { transform: translateX(-30%); opacity: 0.0; }
+  10%  { opacity: 0.55; }
+  100% { transform: translateX(150%); opacity: 0.0; }
+}
+.hp-seek-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  animation: hp-seek-shimmer 1.8s linear infinite;
+  pointer-events: none;
+}
+.header-player:not(.is-playing) .hp-seek-fill::after { animation: none; opacity: 0; }
+
+
+
+
+
+/* ============================================================
+ * IMPROVEMENT #7: Lyrics slide-out panel (slides in from the right)
+ * ============================================================ */
+.hp-lyrics-panel {
+  position: fixed;
+  top: var(--hp-h);
+  right: 0;
+  width: min(520px, 50vw);
+  max-height: 70vh;
+  background: var(--bg-solid);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 0 14px;
+  box-shadow: -8px 12px 32px rgba(0,0,0,0.5);
+  z-index: 9997;
+  transform: translateX(110%);
+  transition: transform 280ms var(--t-spring);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-player.lyrics-open .hp-lyrics-panel {
+  transform: translateX(0);
+}
+.hp-lyrics-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.hp-lyrics-head span { color: var(--ink); font-weight: 600; }
+.hp-lyrics-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.hp-lyrics-empty {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--ink-muted);
+}
+.hp-lyrics-empty .hand {
+  font-family: var(--hand);
+  font-size: 18px;
+  color: var(--accent);
+}
+
+/* ============================================================
+ * IMPROVEMENT #8: tracklist row entrance stagger
+ * ============================================================ */
+@keyframes hp-track-enter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.hp-track-item {
+  animation: hp-track-enter 240ms var(--t-spring) backwards;
+}
+
+/* ============================================================
+ * IMPROVEMENT #9: 'now-playing pip' on current tracklist row
+ * ============================================================ */
+.hp-track-item.is-current {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-left: 3px solid var(--accent);
+  padding-left: 7px;
+  animation: hp-curr-pulse 2.4s ease-in-out infinite;
+}
+@keyframes hp-curr-pulse {
+  0%, 100% { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  50%      { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+}
+.hp-track-item.is-current .hp-track-play {
+  color: var(--accent);
+  animation: hp-curr-blink 1.4s ease-in-out infinite;
+}
+@keyframes hp-curr-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: Sleep button shows remaining minutes when active
+ * ============================================================ */
+.hp-btn-mini.is-active { color: var(--accent); }
+
+/* Mobile / narrow: hide seek-15s text and lyrics panel slides over full width */
+@media (max-width: 720px) {
+  .hp-lyrics-panel { width: 100vw; border-radius: 0; }
+  .hp-btn-seeksec { display: none; }
+}
+@media (max-width: 600px) {
+  .hp-btn-mini { width: 24px; height: 24px; font-size: 11px; }
+}
+
+/* ============================================================
+ * IMPROVEMENT #1: Track title marquee (when title overflows)
+ * ============================================================ */
+.hp-meta-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.hp-meta-title.is-long {
+  animation: hp-marquee 12s linear infinite;
+}
+@keyframes hp-marquee {
+  0%, 30% { transform: translateX(0); }
+  70%, 100% { transform: translateX(min(-100%, -200px))); }
+}
+
+/* ============================================================
+ * IMPROVEMENT #4: Volume HUD flash on ↑/↓
+ * Briefly shows the new volume percentage above the slider.
+ * ============================================================ */
+.hp-volume-hud {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+  z-index: 10;
+}
+.hp-volume-hud.is-flashing { opacity: 1; }
+.hp-vol-wrap { position: relative; display: inline-flex; align-items: center; }
+
+/* ============================================================
+ * IMPROVEMENT #8: Hover anywhere on the cassette shows
+ * a tiny "now playing" title below the bar.
+ * ============================================================ */
+.hp-cassette { cursor: default; }
+.hp-nowplaying-tip {
+  position: fixed;
+  top: calc(var(--hp-h) + 6px);
+  left: 22px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 160ms ease, transform 160ms var(--t-spring);
+  pointer-events: none;
+  z-index: 9996;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.header-player.hp-np-tip .hp-nowplaying-tip {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hp-nowplaying-tip .hand {
+  font-family: var(--hand);
+  color: var(--accent);
+  margin-left: 6px;
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: idle pulse on the cassette wheel — gentle
+ * breath, only when NOT actively playing. Adds a slow pulse
+ * to indicate "alive but waiting".
+ * ============================================================ */
+@keyframes hp-cassette-idle-pulse {
+  0%, 100% { box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 2px 6px rgba(0,0,0,0.4),
+                    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent) inset; }
+}
+.header-player:not(.is-playing) .hp-cassette-art {
+  animation: hp-cassette-idle-pulse 4s ease-in-out infinite;
+}
+
+/* ============================================================
+ * Keyboard shortcuts popover (? key)
+ * ============================================================ */
+.hp-keys-panel {
+  position: fixed;
+  top: var(--hp-h);
+  left: 0;
+  width: min(440px, 60vw);
+  max-height: 70vh;
+  background: var(--bg-solid);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 14px 0;
+  box-shadow: 8px 12px 32px rgba(0,0,0,0.5);
+  z-index: 9997;
+  transform: translateY(-100%);
+  transition: transform 240ms var(--t-spring);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-player.keys-open .hp-keys-panel {
+  transform: translateY(0);
+}
+.hp-keys-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.hp-keys-head span { color: var(--ink); font-weight: 600; }
+.hp-keys-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 22px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.hp-keys-body dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+}
+.hp-keys-body dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.hp-keys-body dd { margin: 0; }
+.hp-keys-body kbd {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  min-width: 22px;
+  text-align: center;
+  color: var(--ink);
+}
+.hp-keys-hint {
+  margin: 16px 0 0;
+  font-family: var(--hand);
+  font-size: 14px;
+  color: var(--accent);
+  text-align: center;
+}
+
+
+/* ============================================================
+ * IMPROVEMENT #9: track-row hover-lift in dropdown
+ * ============================================================ */
+.hp-track-item {
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms var(--t-spring);
+}
+.hp-track-item:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-left-color: var(--accent);
+  transform: translateX(2px);
+}
+
+/* ============================================================
+ * IMPROVEMENT #2: click-outside panel dismissal CSS — already
+ *   handled via .is-open class toggle. No additional rules.
+ * ============================================================ */
+
+/* ============================================================
+ * IMPROVEMENT #7: cassette subtle hover effect — when not
+ *   actively playing, hover the cassette sticker and a soft
+ *   accent-glow appears (faint "this is clickable" affordance).
+ * ============================================================ */
+.hp-cassette-art { transition: transform var(--t-base) var(--t-spring), filter var(--t-base) ease; }
+.hp-cassette:hover .hp-cassette-art {
+  transform: scale(1.04);
+  filter: brightness(1.08) saturate(1.05);
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: footer credit line under the player
+ * A small italicized line visible when the player has loaded.
+ * ============================================================ */
+.hp-credit {
+  position: fixed;
+  top: calc(var(--hp-h) + 28px);
+  right: 22px;
+  font-family: var(--hand);
+  font-size: 13px;
+  color: var(--ink-muted);
+  pointer-events: none;
+  z-index: 9995;
+  opacity: 0;
+  transition: opacity var(--t-slow) ease;
+}
+body.has-header-player.is-credits-visible .hp-credit {
+  opacity: 1;
+}
+
+/* ============================================================
+ * IM#4: idle pulse already added above (is-playing branch);
+ *   also add hover-button tooltip for the speed cycle.
+ * ============================================================ */

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sonic-studio · studio · mixtape '85</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/studio.module.css">
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/spring-extra.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/modals.css">
+<link rel="stylesheet" href="/site/decision-form.css">
+<link rel="stylesheet" href="/site/audio.css">
+<link rel="stylesheet" href="/site/cover3d.css">
+<link rel="stylesheet" href="/site/scroll.css">
+<link rel="stylesheet" href="/site/transitions.css">
+<link rel="stylesheet" href="/site/track-play.css">
+<link rel="stylesheet" href="/site/track-rows.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/pipeline.css">
+<link rel="stylesheet" href="/site/events.css">
+<link rel="stylesheet" href="/site/assets.css">
+<link rel="stylesheet" href="/site/build-runner.css">
+<link rel="stylesheet" href="/site/lifecycle-drawer-dashboard.css">
+<link rel="stylesheet" href="/site/header-player.css">
+</head>
+<body>
+
+<nav class="topbar">
+  <span class="crumb">sonic-studio<b> / studio</b></span>
+  <select id="session-picker" class="picker" aria-label="Select session"></select>
+  <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">no session</span></span>
+  <span class="grow"></span>
+  <button class="cmd" id="back-btn">← Albums</button>
+  <span data-theme-mount class="theme-picker-host"></span><button class="cmd">⌘K</button>
+</nav>
+
+<div class="studio-shell">
+
+  <aside class="sidebar">
+    <p class="eyebrow">/session</p>
+    <h1 id="album-title" class="album-title">—</h1>
+    <p class="hand artist" id="album-artist">—</p>
+
+    <div class="stat-row">
+      <div class="stat-tile"><span class="stat-key">LAYER</span><span class="stat-val" id="stat-layer">—</span></div>
+      <div class="stat-tile"><span class="stat-key">PHASE</span><span class="stat-val" id="stat-phase">—</span></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-tile"><span class="stat-key">RUNTIME</span><span class="stat-val" id="stat-runtime">—</span></div>
+      <div class="stat-tile"><span class="stat-key">LAST ACTIVITY</span><span class="stat-val" id="stat-idle">—</span></div>
+    </div>
+
+    <div class="lifecycle">
+      <button class="lifecycle-btn" id="btn-pause">⏸ PAUSE</button>
+      <button class="lifecycle-btn primary" id="btn-resume">▶ RESUME</button>
+      <button class="lifecycle-btn danger" id="btn-complete">✓ COMPLETE</button>
+    </div>
+
+    <div class="meta-list">
+      <div class="meta-row"><span class="mk">SESSION</span><span class="mv" id="meta-session">—</span></div>
+      <div class="meta-row"><span class="mk">ALBUM ID</span><span class="mv" id="meta-album-id">—</span></div>
+      <div class="meta-row"><span class="mk">OPENED</span><span class="mv" id="meta-opened">—</span></div>
+      <div class="meta-row"><span class="mk">UPDATED</span><span class="mv" id="meta-updated">—</span></div>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/pipeline · 12-layer build</p>
+        <h2>the build</h2>
+      </header>
+      <div class="pipeline" id="pipeline"></div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/album-cover · mixtape '85</p>
+        <h2>cover</h2>
+      </header>
+      <div class="cover-frame">
+        <img id="album-cover" alt="album cover"
+             style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; display:block;"
+             src="" />
+        <p class="hand" id="cover-meta" style="margin-top:8px; opacity:.7; font-size:12px;"></p>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/tracks · this album</p>
+        <h2>tracks</h2>
+      </header>
+      <div class="track-list" id="track-list">
+        <p class="hand empty-line">No tracks yet.</p>
+      </div>
+      <!-- Day 10: audio player for selected track (range-supported stream) -->
+      <div class="audio-player" id="audio-player" hidden>
+        <audio id="audio-el" controls preload="none" style="width:100%"></audio>
+        <p class="audio-meta" id="audio-meta"></p>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/assets · this album</p>
+        <h2>assets</h2>
+      </header>
+      <div class="asset-list" id="asset-list">
+        <p class="hand empty-line">No assets yet.</p>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/events · live chat log</p>
+        <h2>events</h2>
+      </header>
+      <div class="event-list" id="event-list">
+        <p class="hand empty-line">No events yet.</p>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <header class="card-head">
+        <p class="eyebrow">/decisions · locked-in choices</p>
+        <h2>decisions</h2>
+      </header>
+      <div class="decision-list" id="decision-list">
+        <p class="hand empty-line">No decisions yet.</p>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<footer class="footer">
+  <div class="health"><span class="dot"></span> daemon · <span id="daemon-host">127.0.0.1:8765</span></div>
+  <span class="grow"></span>
+  <span class="foot-meta"><span id="foot-meta-text">—</span></span>
+  <button id="help-btn" title="Show the user guide"
+          style="background:transparent;border:1px solid hsl(220 10% 30%);color:hsl(45 90% 60%);padding:4px 10px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.12em;margin-left:12px;">
+    ❓ HELP
+  </button>
+</footer>
+
+<!-- toast container -->
+<div class="toast" id="toast" hidden></div>
+
+<script src="/site/studio.js?v=day14-h11"></script>
+<script src="/site/studio.guide.js?v=day13"></script>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

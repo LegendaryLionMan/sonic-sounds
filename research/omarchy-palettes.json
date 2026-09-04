@@ -1,0 +1,152 @@
+{
+  "Tokyo Night": {
+    "slug": "tokyo-night",
+    "colors": {
+      "background": "#1a1b26",
+      "foreground": "#a9b1d6",
+      "accent": "#7aa2f7"
+    }
+  },
+  "Catppuccin Latte": {
+    "slug": "catppuccin-latte",
+    "colors": {
+      "background": "#eff1f5",
+      "foreground": "#4c4f69",
+      "accent": "#1e66f5"
+    }
+  },
+  "Everforest": {
+    "slug": "everforest",
+    "colors": {
+      "background": "#2d353b",
+      "foreground": "#d3c6aa",
+      "accent": "#7fbbb3"
+    }
+  },
+  "Gruvbox": {
+    "slug": "gruvbox",
+    "colors": {
+      "background": "#282828",
+      "foreground": "#d4be98",
+      "accent": "#7daea3"
+    }
+  },
+  "Kanagawa": {
+    "slug": "kanagawa",
+    "colors": {
+      "background": "#1f1f28",
+      "foreground": "#dcd7ba",
+      "accent": "#dcd7ba"
+    }
+  },
+  "Rose Pine": {
+    "slug": "rose-pine",
+    "colors": {
+      "background": "#faf4ed",
+      "foreground": "#575279",
+      "accent": "#56949f"
+    }
+  },
+  "Flexoki Light": {
+    "slug": "flexoki-light",
+    "colors": {
+      "background": "#FFFCF0",
+      "foreground": "#100F0F",
+      "accent": "#205EA6"
+    }
+  },
+  "Ristretto": {
+    "slug": "ristretto",
+    "colors": {
+      "background": "#2c2525",
+      "foreground": "#e6d9db",
+      "accent": "#f38d70"
+    }
+  },
+  "Nord": {
+    "slug": "nord",
+    "colors": {
+      "background": "#2e3440",
+      "foreground": "#d8dee9",
+      "accent": "#81a1c1"
+    }
+  },
+  "Matte Black": {
+    "slug": "matte-black",
+    "colors": {
+      "background": "#121212",
+      "foreground": "#bebebe",
+      "accent": "#e68e0d"
+    }
+  },
+  "Osaka Jade": {
+    "slug": "osaka-jade",
+    "colors": {
+      "background": "#111c18",
+      "foreground": "#C1C497",
+      "accent": "#509475"
+    }
+  },
+  "Lumon": {
+    "slug": "lumon",
+    "colors": {
+      "background": "#1b2d40",
+      "foreground": "#d6e2ee",
+      "accent": "#6fb8e3",
+      "cursor": "#f2fcff",
+      "selection background": "#4d9ed3",
+      "selection foreground": "#1b2d40",
+      "color0": "#1b2d40",
+      "color1": "#4d86b0",
+      "color2": "#5e95bc",
+      "color3": "#6fa4c9",
+      "color4": "#6fb8e3",
+      "color5": "#8bc9eb",
+      "color6": "#b4e4f6",
+      "color7": "#d6e2ee",
+      "color8": "#4A6B80",
+      "color9": "#73a6cb",
+      "color10": "#86b7d8",
+      "color11": "#9dcae5",
+      "color12": "#f2fcff",
+      "color13": "#b1d8ee",
+      "color14": "#d1eef8",
+      "color15": "#ffffff"
+    }
+  },
+  "Hackerman": {
+    "slug": "hackerman",
+    "colors": {
+      "background": "#0B0C16",
+      "foreground": "#ddf7ff",
+      "accent": "#82FB9C"
+    }
+  },
+  "Retro 82": {
+    "slug": "retro-82",
+    "colors": {
+      "background": "#00172e",
+      "foreground": "#f6dcac",
+      "accent": "#faa968",
+      "cursor": "#f6dcac",
+      "selection background": "#faa968",
+      "selection foreground": "#00172e",
+      "color0": "#00172e",
+      "color1": "#f85525",
+      "color2": "#028391",
+      "color3": "#e97b3c",
+      "color4": "#faa968",
+      "color5": "#3f8f8a",
+      "color6": "#8cbfb8",
+      "color7": "#f6dcac",
+      "color8": "#57898a",
+      "color9": "#f97751",
+      "color10": "#35a2a7",
+      "color11": "#ed9563",
+      "color12": "#fbb986",
+      "color13": "#65a5a1",
+      "color14": "#a3ccc6",
+      "color15": "#f6dcac"
+    }
+  }
+}

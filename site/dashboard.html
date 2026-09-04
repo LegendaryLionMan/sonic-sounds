@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sonic-studio — pipeline dashboard</title>
+  <meta name="description" content="Status board for an album as it moves through the 12-layer release pipeline. Reads state.json.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root:not([data-theme]) {
+      --bg:           hsl(36 30% 97%);
+      --bg-soft:      hsl(36 22% 93%);
+      --ink:          hsl(220 14% 14%);
+      --ink-soft:     hsl(220 10% 38%);
+      --accent:       hsl(12 64% 48%);
+      --accent-soft:  hsl(12 50% 88%);
+      --rule:         hsl(30 18% 80%);
+      --status-done:  hsl(140 38% 36%);
+      --status-blocked: hsl(28 78% 42%);
+      --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
+      --sans:         'Inter', system-ui, -apple-system, sans-serif;
+      --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+      --shadow-soft:  0 1px 0 hsl(220 14% 14% / 0.04), 0 2px 8px hsl(220 14% 14% / 0.04);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+      background:
+        radial-gradient(60rem 30rem at 90% -10%, hsl(12 50% 88% / 0.35), transparent 70%),
+        radial-gradient(50rem 25rem at 0% 110%, hsl(140 38% 36% / 0.08), transparent 70%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    main { max-width: 76rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    .masthead { padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
+    .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+    .masthead h1 { font-family: var(--display); font-weight: 600; font-size: clamp(2rem, 4.5vw, 2.6rem); margin: 0.4rem 0 0.15rem; letter-spacing: -0.02em; }
+    .masthead .subtitle { font-family: var(--display); font-style: italic; color: var(--ink-soft); font-size: 1.05rem; margin: 0 0 1rem; }
+    .update-label {
+      display: inline-flex; gap: 0.5rem; align-items: center;
+      font-family: var(--mono); font-size: 0.78rem; color: var(--ink-soft);
+      background: var(--bg-soft); padding: 0.4rem 0.75rem;
+      border: 1px solid var(--rule); border-radius: 999px;
+    }
+    .update-label .dot {
+      width: 0.5rem; height: 0.5rem; border-radius: 999px;
+      background: var(--status-done);
+    }
+    .update-label.is-error .dot { background: var(--status-blocked); }
+    .update-label.is-stale .dot { background: var(--accent); }
+
+    .meta-bar { margin: 1.75rem 0 1.5rem; padding: 1rem 1.25rem; background: var(--bg-soft); border: 1px solid var(--rule); border-radius: 8px; }
+    .meta-bar dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem 1.5rem; }
+    .meta-bar dt { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin: 0; }
+    .meta-bar dd { margin: 0; font-family: var(--display); font-size: 1.05rem; color: var(--ink); }
+
+    .progress-section { margin-bottom: 1.5rem; }
+    .progress-section h2 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 0.5rem; }
+    .progress-bar { display: flex; gap: 4px; align-items: center; }
+    .progress-bar .seg { flex: 1 1 0; height: 8px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--rule); transition: background 0.3s; }
+    .progress-bar .seg.done { background: var(--status-done); border-color: var(--status-done); }
+    .progress-bar .seg.in-progress { background: var(--accent); border-color: var(--accent); }
+    .progress-bar .seg.blocked { background: var(--status-blocked); border-color: var(--status-blocked); }
+    .progress-summary { font-family: var(--mono); font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.5rem; }
+
+    .next-action { margin: 1.5rem 0; padding: 1.25rem 1.5rem; border: 1px solid var(--accent); border-left-width: 4px; border-radius: 8px; background: hsl(12 64% 48% / 0.04); display: flex; align-items: flex-start; gap: 1rem; }
+    .next-action .arrow { font-family: var(--mono); color: var(--accent); font-size: 1.4rem; line-height: 1; margin-top: 0.15rem; }
+    .next-action .body { flex: 1; }
+    .next-action h3 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.4rem; }
+    .next-action p { margin: 0; font-family: var(--display); font-size: 1.15rem; }
+    .next-action code { font-family: var(--mono); background: var(--bg); padding: 0.15rem 0.45rem; border-radius: 4px; border: 1px solid var(--rule); }
+
+    .layers-h2 { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); margin: 2rem 0 1rem; }
+    .layers-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    @media (max-width: 768px) { .layers-grid { grid-template-columns: 1fr; } }
+
+    .layer-card {
+      padding: 1.25rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--bg);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .layer-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+    .layer-card .num { font-family: var(--mono); font-size: 0.78rem; color: var(--ink-soft); }
+    .layer-card h3 { font-family: var(--display); font-size: 1.1rem; margin: 0; letter-spacing: -0.01em; }
+    .layer-card .status-badge {
+      align-self: flex-start;
+      font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 0.18rem 0.55rem;
+      border-radius: 4px; border: 1px solid currentColor;
+    }
+    .layer-card[data-status="done"]        { border-color: var(--status-done); }
+    .layer-card[data-status="done"] .status-badge { color: var(--status-done); }
+    .layer-card[data-status="in-progress"] { border-color: var(--accent); }
+    .layer-card[data-status="in-progress"] .status-badge { color: var(--accent); }
+    .layer-card[data-status="blocked"]     { border-color: var(--status-blocked); }
+    .layer-card[data-status="blocked"] .status-badge { color: var(--status-blocked); }
+    .layer-card[data-status="todo"]        .status-badge { color: var(--ink-soft); }
+    .layer-card .meta { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-soft); margin-top: auto; }
+    .layer-card .open-link { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; align-self: flex-start; }
+    .layer-card .open-link:hover { text-decoration: underline; }
+
+    .empty-state {
+      margin: 3rem auto; padding: 2.5rem 2rem; max-width: 36rem;
+      text-align: center; border: 1px dashed var(--rule); border-radius: 12px;
+      background: var(--bg);
+    }
+    .empty-state h2 { font-family: var(--display); margin: 0 0 0.5rem; }
+    .empty-state p { color: var(--ink-soft); margin: 0 0 1.5rem; }
+    .empty-state .button {
+      display: inline-block;
+      font-family: var(--mono); font-size: 0.92rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      background: var(--accent); color: var(--bg);
+      text-decoration: none;
+    }
+    .empty-state .button:hover { background: var(--accent-soft); color: var(--accent); }
+  </style>
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/header-player.css">
+</head>
+<body><span data-theme-mount class=\"theme-picker-host\"></span>
+  <main>
+    <header class="masthead">
+      <div class="eyebrow">sonic-studio · pipeline dashboard</div>
+      <h1 id="dashTitle">Album Pipeline</h1>
+      <p class="subtitle" id="dashSubtitle">Loading state.json…</p>
+      <span class="update-label" id="updateLabel">
+        <span class="dot"></span>
+        <span id="updateText">— · —</span>
+      </span>
+    </header>
+
+    <div id="body">
+      <!-- populated by JS -->
+    </div>
+  </main>
+
+  <script>
+    /* ===========================================================
+       sonic-studio dashboard — behavior
+       The dashboard is read-only against state.json. It polls the
+       file every 30 seconds (via HTTP HEAD + cache-busting query)
+       and re-renders. No websockets, no service worker.
+
+       State path resolution order (first hit wins):
+         1. ?state=… in the URL
+         2. ./state.json (sibling to this page)
+         3. ./music/<slug>/state.json
+         4. ../.meta/state.json (the canonical build-skill output)
+       The page itself does not write to state.json — only the agent
+       does that. See .meta/sections-3-and-4.md §4.6.
+    =========================================================== */
+
+    const LAYERS = [
+      { id: 1,  name: 'Artist brand',              owner: 'Agent (LLM)' },
+      { id: 2,  name: 'Tracklist + lyrics',        owner: 'Agent (user checkpoint at STEP 1.5)' },
+      { id: 3,  name: 'Music tracks',              owner: 'Agent (user checkpoint at STEP 1.7)' },
+      { id: 4,  name: 'Album cover + posters',     owner: 'Agent' },
+      { id: 5,  name: 'Spotify / DistroKid package', owner: 'Agent' },
+      { id: 6,  name: 'EPK / Press kit',           owner: 'Agent' },
+      { id: 7,  name: 'Social rollout (60-day)',   owner: 'Agent' },
+      { id: 8,  name: 'Tour + merch catalog',      owner: 'Agent' },
+      { id: 9,  name: 'Music video concepts + storyboards', owner: 'Agent' },
+      { id: 10, name: 'Podcast / radio interview', owner: 'Agent' },
+      { id: 11, name: 'ID3 metadata embedding',    owner: 'Agent (script)' },
+      { id: 12, name: 'LRC synced lyrics',         owner: 'Agent (script)' },
+    ];
+
+    const POLL_MS = 30_000;
+
+    const STATUS_LABEL = {
+      'todo': 'TODO',
+      'in-progress': 'IN PROGRESS',
+      'blocked': 'BLOCKED',
+      'done': 'DONE',
+    };
+
+    const body = document.getElementById('body');
+    const titleEl = document.getElementById('dashTitle');
+    const subtitleEl = document.getElementById('dashSubtitle');
+    const updateLabel = document.getElementById('updateLabel');
+    const updateText = document.getElementById('updateText');
+
+    const fmtDate = (iso) => {
+      if (!iso) return '—';
+      try {
+        const d = new Date(iso);
+        return d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+      } catch { return iso; }
+    };
+    const fmtNum = (n) => String(n).padStart(2, '0');
+
+    const fetchJson = async (path) => {
+      try {
+        const res = await fetch(path + (path.includes('?') ? '&' : '?') + '_=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch { return null; }
+    };
+
+    const candidateStatePaths = async () => {
+      const url = new URL(location.href);
+      const override = url.searchParams.get('state');
+      // The dashboard.html is served from /site/. Resolve paths relative to that.
+      const SITE_BASE = './';
+      const PROJECT_BASE = '../';
+      const candidates = [];
+      if (override) candidates.push(override);
+      candidates.push(SITE_BASE + 'state.json');
+      // The project might have a slug hint in the URL: ?album=<slug>
+      const slugHint = url.searchParams.get('album');
+      if (slugHint) candidates.push(PROJECT_BASE + `music/${slugHint}/state.json`);
+      candidates.push(PROJECT_BASE + '.meta/state.json');
+      // Fallback: site-local music dir for sites that ship state under /site/music
+      if (slugHint) candidates.push(SITE_BASE + `music/${slugHint}/state.json`);
+      // Walk the sonic-studio tree for any music/<slug>/state.json (best effort)
+      try {
+        const index = await fetchJson(PROJECT_BASE + '.od/projects/sonic-studio/music');
+        if (index && Array.isArray(index.albums)) {
+          for (const slug of index.albums) candidates.push(PROJECT_BASE + `music/${slug}/state.json`);
+        }
+      } catch {}
+      return candidates;
+    };
+
+    const render = (state, source) => {
+      updateLabel.classList.remove('is-error', 'is-stale');
+      const layerState = (id) => {
+        const l = (state.layers || []).find(x => x.id === id);
+        return l ? l.status : 'todo';
+      };
+      const layerUpdatedAt = (id) => {
+        const l = (state.layers || []).find(x => x.id === id);
+        return l ? l.updatedAt : null;
+      };
+      const counts = { 'todo': 0, 'in-progress': 0, 'blocked': 0, 'done': 0 };
+      LAYERS.forEach(l => counts[layerState(l.id)]++);
+      const done = counts['done'];
+      const album = state.album || {};
+      titleEl.textContent = album.title || album.slug
+        ? `${album.title || album.slug} · pipeline`
+        : 'Album Pipeline';
+      const subtitleBits = [];
+      if (album.artist) subtitleBits.push(album.artist);
+      if (album.genre)  subtitleBits.push(album.genre);
+      if (album.scope)  subtitleBits.push(album.scope);
+      subtitleEl.textContent = subtitleBits.length ? subtitleBits.join(' · ') : 'No active album state yet.';
+
+      updateText.textContent = `LAST UPDATE ${fmtDate(state.updatedAt || '')}`;
+      const isStale = state.updatedAt && (Date.now() - new Date(state.updatedAt).getTime() > 14 * 24 * 3600 * 1000);
+      if (isStale) updateLabel.classList.add('is-stale');
+
+      const cards = LAYERS.map(l => {
+        const status = layerState(l.id);
+        const updated = layerUpdatedAt(l.id);
+        const slug = album.slug || (state.albumSlug) || 'album';
+        return `
+          <article class="layer-card" data-status="${status}">
+            <span class="num">${fmtNum(l.id)}</span>
+            <h3>${escapeHtml(l.name)}</h3>
+            <span class="status-badge">${STATUS_LABEL[status] || status}</span>
+            <div class="meta">${updated ? `updated ${fmtDate(updated)}` : 'no timestamp'}</div>
+            <a class="open-link" href="${escapeHtml('../music/' + encodeURIComponent(slug) + '/' + slugForLayer(l.id, slug))}" target="_blank" rel="noopener">open layer →</a>
+          </article>`;
+      }).join('');
+
+      const progressSegs = LAYERS.map(l => `<span class="seg ${layerState(l.id)}" title="${STATUS_LABEL[layerState(l.id)] || layerState(l.id)}"></span>`).join('');
+      const summary = `${done} of 12 layers complete · ${counts['in-progress']} in progress · ${counts['blocked']} blocked · ${counts['todo']} todo`;
+
+      const next = state.nextAction;
+      const nextHtml = next ? `
+        <div class="next-action">
+          <span class="arrow">→</span>
+          <div class="body">
+            <h3>NEXT ACTION · ${escapeHtml((next.for || 'user').toUpperCase())}</h3>
+            <p>${escapeHtml(next.text || '')}</p>
+            ${next.link ? `<p><code>${escapeHtml(next.link)}</code></p>` : ''}
+          </div>
+        </div>` : '';
+
+      body.innerHTML = `
+        <section class="meta-bar" aria-label="Album summary">
+          <dl>
+            <div><dt>Artist</dt><dd>${escapeHtml(album.artist || '—')}</dd></div>
+            <div><dt>Album</dt><dd>${escapeHtml(album.title || '—')}</dd></div>
+            <div><dt>Scope</dt><dd>${escapeHtml(album.scope || '—')}</dd></div>
+            <div><dt>Genre</dt><dd>${escapeHtml(album.genre || '—')}</dd></div>
+            <div><dt>Slug</dt><dd><code>${escapeHtml(album.slug || '—')}</code></dd></div>
+            <div><dt>Schema</dt><dd><code>${escapeHtml(state.schemaVersion || '—')}</code></dd></div>
+          </dl>
+        </section>
+
+        <section class="progress-section" aria-label="Pipeline progress">
+          <h2>PROGRESS</h2>
+          <div class="progress-bar" role="img" aria-label="${summary}">
+            ${progressSegs}
+          </div>
+          <div class="progress-summary">${escapeHtml(summary)}</div>
+        </section>
+
+        ${nextHtml}
+
+        <section aria-label="Pipeline layers">
+          <h2 class="layers-h2">LAYERS</h2>
+          <div class="layers-grid">
+            ${cards}
+          </div>
+        </section>
+
+        <p style="text-align:center; margin-top:2rem; font-family:var(--mono); font-size:0.72rem; color:var(--ink-soft);">
+          reading from <code>${escapeHtml(source)}</code> · polling every ${POLL_MS / 1000}s
+        </p>
+      `;
+    };
+
+    const slugForLayer = (id, albumSlug) => {
+      const map = {
+        1: 'README.md',
+        2: 'lyrics',
+        3: 'music',
+        4: 'cover-art',
+        5: 'spotify/SPOTIFY-DISTRIBUTION-PACKAGE.md',
+        6: 'press/PRESS-KIT.md',
+        7: 'social/SOCIAL-ROLLOUT-PLAN.md',
+        8: 'merch/TOUR-AND-MERCH.md',
+        9: 'videos/VIDEO-CONCEPTS.md',
+        10: 'press/podcast-interview.mp3',
+        11: 'music/tag-manifest.json',
+        12: 'lyrics-lrc',
+      };
+      return map[id] || '';
+    };
+
+    const escapeHtml = (s) => String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const renderEmpty = (reason) => {
+      body.innerHTML = `
+        <section class="empty-state">
+          <h2>No active album yet</h2>
+          <p>${escapeHtml(reason)}</p>
+          <a class="button" href="./intake.html">Open intake form →</a>
+        </section>
+      `;
+      titleEl.textContent = 'Album Pipeline · empty';
+      subtitleEl.textContent = 'No active album state yet.';
+      updateText.textContent = '— · —';
+      updateLabel.classList.add('is-error');
+    };
+
+    const tryLoad = async () => {
+      const paths = await candidateStatePaths();
+      for (const p of paths) {
+        const data = await fetchJson(p);
+        if (data) {
+          render(data, p);
+          return;
+        }
+      }
+      renderEmpty('Open intake.html to start a new project, or drop an existing album into music/<slug>/ and the dashboard will pick it up.');
+    };
+
+    tryLoad();
+    setInterval(tryLoad, POLL_MS);
+  </script>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

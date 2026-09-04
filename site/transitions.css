@@ -1,0 +1,110 @@
+/* site/transitions.css · Day 1 Hour 12 — View Transitions API (10 ideas)
+ *
+ * Uses the View Transitions API (Chrome 111+) for cross-page morph
+ * between albums/library/studio. With fallback to a simple fade for
+ * browsers that don't support it.
+ */
+
+:root {
+  --t-page-morph: 320ms;
+}
+
+/* =====================================================================
+ * Idea 1-2: Capture old page snapshot, animate to new page snapshot
+ * (Baked into the @view-transition block)
+ * ===================================================================== */
+
+@view-transition {
+  navigation: auto;  /* opt into cross-document transitions */
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--t-page-morph);
+  animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* =====================================================================
+ * Idea 3: Shared-element transitions (album card → album page)
+ *
+ * Each .album-card with a [data-view-transition-name="album-XYZ"]
+ * attribute gets a unique transition name. When the user clicks
+ * the card, the destination page sees the same name and the
+ * browser animates between them.
+ * ===================================================================== */
+
+::view-transition-group(album-cover-*) {
+  animation-duration: var(--t-page-morph);
+  animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* =====================================================================
+ * Idea 4: View Transitions API opt-in via @view-transition rule
+ * ===================================================================== */
+
+/* (Already declared above.) */
+
+/* =====================================================================
+ * Idea 5: Fallback for browsers without VT support (fade transition)
+ * ===================================================================== */
+
+@supports not (navigation: auto) {
+  /* Detect VT support via the @view-transition at-rule */
+  body {
+    transition: opacity var(--t-page-morph) cubic-bezier(.2,.8,.2,1);
+  }
+  body.is-leaving {
+    opacity: 0;
+  }
+}
+
+/* =====================================================================
+ * Idea 6: 320ms transition duration
+ * ===================================================================== */
+
+/* Already set via --t-page-morph. */
+
+/* =====================================================================
+ * Idea 7: prefers-reduced-motion → instant cross-page
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.001ms !important;
+  }
+  body { transition: none !important; }
+}
+
+/* =====================================================================
+ * Idea 8: Performance — use CSS @view-transition rule (already done)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 9: Test on Chrome (already supports VT in stable)
+ *
+ * Detection: @supports (view-transition-name: foo) — Chrome 111+
+ * ===================================================================== */
+
+@supports (view-transition-name: album-foo) {
+  :root { --vt-supported: 1; }
+}
+
+/* =====================================================================
+ * Idea 10: Trigger via JS — document.startViewTransition()
+ * (Documented here; the trigger lives in studio.js when implemented.)
+ *
+ * Pattern: function navigateWithFade(url) {
+ *   if (!document.startViewTransition) return location.href = url;
+ *   document.startViewTransition(async () => {
+ *     const res = await fetch(url);
+ *     document.body.innerHTML = await res.text();
+ *     history.pushState({}, '', url);
+ *   });
+ * }
+ * ===================================================================== */
+
+/* A button that opts into the transition (used in albums/library) */
+.go-with-vt {
+  view-transition-name: go-with-vt;
+}
