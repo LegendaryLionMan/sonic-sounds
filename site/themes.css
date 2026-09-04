@@ -1,263 +1,515 @@
-/* site/themes.css · 4 themes for album-studio
+/* site/themes.css · The 6-theme design system.
  *
- * Each theme is a :root[data-theme="name"] block that overrides the
- * semantic CSS variables defined in site/studio.module.css. The
- * default (no data-theme attribute or data-theme="mixtape85") is the
- * existing Mixtape '85 look. Other themes:
+ * 6 themes: mixtape85 (MAIN, bespoke album-studio default), tokyo-night,
+ * catppuccin-latte (light), gruvbox-dark, everforest, kanagawa.
  *
- *   - tokyonight:   Omarchy's default (deep blue, cyan accents)
- *   - catppuccin:  soft pastel (popular community theme)
- *   - gruvbox:     warm retro (amber/red on dark)
- *   - mixtape85:   album-studio default (yellow + cyan on near-black)
+ * Each theme redefines the SAME set of semantic tokens. Components
+ * elsewhere in the codebase MUST reference these tokens only — never raw
+ * hex values. See site/themes/DESIGN.md for the architecture.
  *
- * Themes are loaded by /site/themes.js which sets
- * document.documentElement.dataset.theme.
+ * All 6 themes cover: surface tokens, ink tokens, accent tokens, state
+ * tokens, type tokens, animation tokens. The :root{} defaults match
+ * mixtape85 so the page renders correctly even before themes.js loads.
  */
 
+/* ============================================================
+ * ROOT + ANIMATION TOKENS
+ * These don't change between themes.
+ * ============================================================ */
+:root {
+  --font-scale: 1;
+  --display: 'Bebas Neue', 'Oswald', 'Impact', sans-serif;
+  --sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --mono:    'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+  --hand:    'Caveat', 'Bradley Hand', cursive;
+
+  --t-quick:  120ms;
+  --t-base:   200ms;
+  --t-slow:   320ms;
+  --t-spring: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
+  /* Cover decoration */
+  --cover-frame: 1px solid rgba(255,255,255,0.08);
+  --cover-fade: linear-gradient(to bottom, transparent 0%, var(--bg) 95%);
+}
+
+/* ============================================================
+ * DEFAULT (Mixtape '85 — applied when no theme or unknown theme)
+ * ============================================================ */
+:root,
 :root[data-theme="mixtape85"] {
-  --bg: #0a0a0f;
-  --bg-soft: #14141a;
-  --bg-elevated: #1a1a22;
-  --ink: #fafafa;
-  --ink-soft: rgba(255,255,255,.7);
-  --ink-muted: rgba(255,255,255,.4);
-  --accent: #f0c53c;          /* Mixtape yellow */
-  --accent-2: #2dd8f0;        /* Mixtape cyan */
-  --rule: rgba(255,255,255,.08);
-  --rule-strong: rgba(255,255,255,.18);
+  --bg:           #0a0a0f;
+  --bg-soft:      #14141a;
+  --bg-elevated:  #1a1a22;
+  --bg-overlay:   rgba(0, 0, 0, 0.7);
+  --surface:      rgba(255, 255, 255, 0.04);
+  --surface-raised: rgba(255, 255, 255, 0.08);
+
+  --ink:          #fafafa;
+  --ink-soft:     rgba(255, 255, 255, 0.7);
+  --ink-muted:    rgba(255, 255, 255, 0.4);
+  --ink-faint:    rgba(255, 255, 255, 0.25);
+  --ink-inverse:  #14141a;
+
+  --accent:       #f0c53c;
+  --accent-2:     #2dd8f0;
+  --accent-3:     #f25cb0;
+  --accent-fg:    #14141a;
+  --accent-soft:  rgba(240, 197, 60, 0.12);
+
+  --success:      #4caf50;
+  --warn:         #f0c53c;
+  --danger:       #e83a3a;
+  --info:         #2dd8f0;
+
+  --rule:         rgba(255, 255, 255, 0.08);
+  --rule-strong:  rgba(255, 255, 255, 0.18);
+
+  --cover-frame:  1px solid rgba(255, 255, 255, 0.08);
 }
 
-:root[data-theme="tokyonight"] {
-  --bg: #1a1b26;            /* Tokyo Night "Storm" bg */
-  --bg-soft: #24283b;
-  --bg-elevated: #2f3349;
-  --ink: #c0caf5;
-  --ink-soft: #9aa5ce;
-  --ink-muted: #565f89;
-  --accent: #7aa2f7;          /* Tokyo Night blue */
-  --accent-2: #bb9af7;        /* Tokyo Night purple */
-  --rule: rgba(192,202,245,.08);
-  --rule-strong: rgba(192,202,245,.18);
+/* ============================================================
+ * TOKYO NIGHT — Omarchy official, deep-blue calm
+ * ============================================================ */
+:root[data-theme="tokyo-night"] {
+  --bg:           #1a1b26;
+  --bg-soft:      #16161e;
+  --bg-elevated:  #1f2335;
+  --bg-overlay:   rgba(0, 0, 0, 0.65);
+  --surface:      #24283b;
+  --surface-raised: #2f334d;
+
+  --ink:          #c0caf5;
+  --ink-soft:     #a9b1d6;
+  --ink-muted:    #565f89;
+  --ink-faint:    #414868;
+  --ink-inverse:  #1a1b26;
+
+  --accent:       #7aa2f7;
+  --accent-2:     #bb9af7;
+  --accent-3:     #7dcfff;
+  --accent-fg:    #1a1b26;
+  --accent-soft:  rgba(122, 162, 247, 0.15);
+
+  --success:      #9ece6a;
+  --warn:         #e0af68;
+  --danger:       #f7768e;
+  --info:         #7dcfff;
+
+  --rule:         #292e42;
+  --rule-strong:  #3b4261;
+
+  --cover-frame:  1px solid rgba(122, 162, 247, 0.18);
 }
 
-:root[data-theme="catppuccin"] {
-  --bg: #1e1e2e;            /* Catppuccin Mocha bg */
-  --bg-soft: #313244;
-  --bg-elevated: #45475a;
-  --ink: #cdd6f4;
-  --ink-soft: #bac2de;
-  --ink-muted: #6c7086;
-  --accent: #cba6f7;          /* Catppuccin Mauve */
-  --accent-2: #94e2d5;        /* Catppuccin Teal */
-  --rule: rgba(205,214,244,.08);
-  --rule-strong: rgba(205,214,244,.18);
+/* ============================================================
+ * CATPPUCCIN LATTE — Omarchy official, warm pastel LIGHT
+ * ============================================================ */
+:root[data-theme="catppuccin-latte"] {
+  --bg:           #eff1f5;
+  --bg-soft:      #e6e9ef;
+  --bg-elevated:  #dce0e8;
+  --bg-overlay:   rgba(220, 224, 232, 0.75);
+  --surface:      #ccd0da;
+  --surface-raised: #bcc0cc;
+
+  --ink:          #4c4f69;
+  --ink-soft:     #5c5f77;
+  --ink-muted:    #6c6f85;
+  --ink-faint:    #8c8fa1;
+  --ink-inverse:  #eff1f5;
+
+  --accent:       #1e66f5;
+  --accent-2:     #8839ef;
+  --accent-3:     #fe640b;
+  --accent-fg:    #eff1f5;
+  --accent-soft:  rgba(30, 102, 245, 0.10);
+
+  --success:      #40a02b;
+  --warn:         #df8e1d;
+  --danger:       #d20f39;
+  --info:         #04a5e5;
+
+  --rule:         #ccd0da;
+  --rule-strong:  #9ca0b0;
+
+  --cover-frame:  1px solid rgba(30, 102, 245, 0.20);
 }
 
-:root[data-theme="gruvbox"] {
-  --bg: #282828;            /* Gruvbox Dark bg0 */
-  --bg-soft: #3c3836;
-  --bg-elevated: #504945;
-  --ink: #ebdbb2;
-  --ink-soft: #bdae93;
-  --ink-muted: #7c6f64;
-  --accent: #fabd2f;          /* Gruvbox yellow */
-  --accent-2: #fe8019;        /* Gruvbox orange */
-  --rule: rgba(235,219,178,.08);
-  --rule-strong: rgba(235,219,178,.18);
+/* ============================================================
+ * GRUVBOX — Omarchy official, warm retro amber on warm-black
+ * ============================================================ */
+:root[data-theme="gruvbox-dark"] {
+  --bg:           #282828;
+  --bg-soft:      #1d2021;
+  --bg-elevated:  #3c3836;
+  --bg-overlay:   rgba(0, 0, 0, 0.7);
+  --surface:      #32302f;
+  --surface-raised: #3c3836;
+
+  --ink:          #ebdbb2;
+  --ink-soft:     #d4be98;
+  --ink-muted:    #a89984;
+  --ink-faint:    #7c6f64;
+  --ink-inverse:  #282828;
+
+  --accent:       #fabd2f;
+  --accent-2:     #83a598;
+  --accent-3:     #fb4934;
+  --accent-fg:    #282828;
+  --accent-soft:  rgba(250, 189, 47, 0.12);
+
+  --success:      #b8bb26;
+  --warn:         #fabd2f;
+  --danger:       #fb4934;
+  --info:         #83a598;
+
+  --rule:         #3c3836;
+  --rule-strong:  #504945;
+
+  --cover-frame:  1px solid rgba(250, 189, 47, 0.22);
 }
 
-/* Theme-aware inheritance — every element that uses these vars
- * (already wired in studio.module.css) transitions smoothly. */
-html { transition: background-color .25s ease, color .25s ease; }
-body { transition: background-color .25s ease; }
+/* ============================================================
+ * EVERFOREST — Omarchy official, forest greens + cream
+ * ============================================================ */
+:root[data-theme="everforest"] {
+  --bg:           #2d353b;
+  --bg-soft:      #232a2e;
+  --bg-elevated:  #343f44;
+  --bg-overlay:   rgba(0, 0, 0, 0.65);
+  --surface:      #323a3f;
+  --surface-raised: #3d484d;
 
-/* Theme switcher widget (rendered by themes.js) */
-.theme-switcher {
-  position: fixed; bottom: 24px; left: 24px; z-index: 9999;
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 6px; border-radius: 12px;
-  background: var(--bg-soft);
-  border: 1px solid var(--rule-strong);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  box-shadow: 0 4px 32px rgba(0,0,0,.4);
-  animation: theme-switcher-enter .35s cubic-bezier(.2,.8,.2,1);
+  --ink:          #d3c6aa;
+  --ink-soft:     #9da9a0;
+  --ink-muted:    #7a8478;
+  --ink-faint:    #5e6a5f;
+  --ink-inverse:  #2d353b;
+
+  --accent:       #7fbbb3;
+  --accent-2:     #a7c080;
+  --accent-3:     #d699b6;
+  --accent-fg:    #2d353b;
+  --accent-soft:  rgba(127, 187, 179, 0.13);
+
+  --success:      #a7c080;
+  --warn:         #dbbc7f;
+  --danger:       #e67e80;
+  --info:         #7fbbb3;
+
+  --rule:         #3d484d;
+  --rule-strong:  #475258;
+
+  --cover-frame:  1px solid rgba(127, 187, 179, 0.22);
 }
-@keyframes theme-switcher-enter {
-  from { opacity: 0; transform: translateY(20px) scale(.9); }
-  to   { opacity: 1; transform: none; }
+
+/* ============================================================
+ * KANAGAWA — Omarchy official, sumi-e ink + wave blue
+ * ============================================================ */
+:root[data-theme="kanagawa"] {
+  --bg:           #1f1f28;
+  --bg-soft:      #16161d;
+  --bg-elevated:  #2a2a37;
+  --bg-overlay:   rgba(0, 0, 0, 0.7);
+  --surface:      #2a2a37;
+  --surface-raised: #363646;
+
+  --ink:          #dcd7ba;
+  --ink-soft:     #c8c093;
+  --ink-muted:    #625e5a;
+  --ink-faint:    #4a4843;
+  --ink-inverse:  #1f1f28;
+
+  --accent:       #7fb4ca;
+  --accent-2:     #b6927b;
+  --accent-3:     #d27e99;
+  --accent-fg:    #1f1f28;
+  --accent-soft:  rgba(127, 180, 202, 0.14);
+
+  --success:      #87a987;
+  --warn:         #e6c384;
+  --danger:       #c34043;
+  --info:         #7fb4ca;
+
+  --rule:         #2a2a37;
+  --rule-strong:  #363646;
+
+  --cover-frame:  1px solid rgba(127, 180, 202, 0.22);
 }
 
-.theme-swatch {
-  width: 28px; height: 28px; border-radius: 8px;
-  border: 2px solid transparent;
-  cursor: pointer; transition: all .18s ease;
-  position: relative;
-  background: var(--bg-elevated);
+/* ============================================================
+ * SMOOTH THEME TRANSITIONS
+ * When the user clicks a theme in the picker, every component
+ * animates over 320ms instead of snapping.
+ * ============================================================ */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color var(--t-slow) ease,
+              background var(--t-slow) ease,
+              border-color var(--t-slow) ease,
+              color var(--t-slow) ease,
+              box-shadow var(--t-slow) ease !important;
 }
-.theme-swatch:hover { transform: scale(1.15); }
-.theme-swatch.active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
-}
 
-/* Per-theme swatch previews (small chips) */
-.theme-swatch[data-theme="mixtape85"] { background: linear-gradient(135deg, #f0c53c 0%, #2dd8f0 100%); }
-.theme-swatch[data-theme="tokyonight"] { background: linear-gradient(135deg, #1a1b26 0%, #7aa2f7 100%); }
-.theme-swatch[data-theme="catppuccin"]  { background: linear-gradient(135deg, #cba6f7 0%, #94e2d5 100%); }
-.theme-swatch[data-theme="gruvbox"]    { background: linear-gradient(135deg, #fabd2f 0%, #fe8019 100%); }
-
-.theme-swatch .label {
-  position: absolute; left: 36px; top: 50%; transform: translateY(-50%);
-  background: var(--bg-elevated); color: var(--ink); padding: 4px 10px;
-  border-radius: 6px; font: 11px/1 var(--mono); white-space: nowrap;
-  opacity: 0; pointer-events: none; transition: opacity .15s;
-  border: 1px solid var(--rule-strong);
-}
-.theme-swatch:hover .label { opacity: 1; }
-
-/* Hide the switcher in print mode */
-@media print { .theme-switcher { display: none; } }
-
-/* Reduced motion */
+/* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  html, body, .theme-switcher, .theme-swatch { transition: none !important; animation: none !important; }
+  html.theme-transitioning,
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition: none !important;
+  }
 }
 
-/* === Day 1 Hour 4: filterable carousel + accent picker + triggers === */
+/* ============================================================
+ * BASE APPLICATION OF TOKENS
+ * Apply the canonical semantic names to <html> + <body> so every
+ * component using `var(--ink)`, `var(--bg)`, etc. gets themed.
+ * (Each .module.css can override for its own details; this is the
+ *  page-level baseline that prevents "raw hex everywhere" leaks.)
+ * ============================================================ */
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  transition: background-color var(--t-slow) ease, color var(--t-slow) ease;
+}
 
-/* Trigger buttons dock — bottom-right */
-.theme-triggers {
-  position: fixed; bottom: 24px; right: 24px; z-index: 9998;
-  display: flex; gap: 8px;
-  animation: theme-triggers-enter .35s cubic-bezier(.2,.8,.2,1) .1s backwards;
-}
-@keyframes theme-triggers-enter {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: none; }
-}
-.trigger-btn {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--bg-soft); color: var(--accent);
-  border: 1px solid var(--rule-strong);
-  cursor: pointer; font: 14px/1 var(--mono); font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 120ms cubic-bezier(.34,1.56,.64,1),
-              border-color 120ms;
-}
-.trigger-btn:hover { transform: scale(1.15); border-color: var(--accent); }
+a { color: var(--accent); }
+a:hover { color: var(--accent-2); }
 
-/* Accent picker — horizontal strip of color swatches */
-.accent-picker {
-  position: fixed; bottom: 24px; left: 50px; z-index: 9998;
-  display: flex; gap: 4px;
-  padding: 6px; border-radius: 12px;
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* ============================================================
+ * COMPONENT CLASSES THAT REUSE TOKENS
+ * (These are the baseline classes — individual .module.css files
+ *  override for the album/studio/library specifics.)
+ * ============================================================ */
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
   background: var(--bg-soft);
-  border: 1px solid var(--rule-strong);
   backdrop-filter: blur(20px);
-  animation: theme-triggers-enter .35s cubic-bezier(.2,.8,.2,1) .15s backwards;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  transition: background var(--t-slow) ease, border-color var(--t-slow) ease;
 }
-.accent-swatch {
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: transform 120ms cubic-bezier(.34,1.56,.64,1),
-              border-color 120ms;
+.crumb {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+  letter-spacing: .06em;
 }
-.accent-swatch:hover { transform: scale(1.2); }
-.accent-swatch.active {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
-}
+.crumb b { color: var(--ink); font-weight: 600; }
 
-/* Carousel — full-screen overlay with backdrop-filter */
-.theme-carousel {
-  position: fixed; inset: 0; z-index: 10001;
-  display: flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter: blur(8px);
-  animation: carousel-enter .3s cubic-bezier(.2,.8,.2,1);
+/* Pills */
+.pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--accent);
+  letter-spacing: .14em;
+  text-transform: uppercase;
 }
-.theme-carousel[hidden] { display: none; }
-@keyframes carousel-enter {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
 }
-.theme-carousel-inner {
-  width: min(90vw, 920px);
-  max-height: 80vh; overflow: auto;
-  background: var(--bg-elevated);
-  border: 1px solid var(--rule-strong);
-  border-radius: 16px;
-  padding: 24px;
-  animation: carousel-inner-enter .35s cubic-bezier(.2,.8,.2,1);
+.status-active {
+  background: color-mix(in srgb, var(--info) 12%, transparent);
+  border-color: color-mix(in srgb, var(--info) 30%, transparent);
+  color: var(--info);
 }
-@keyframes carousel-inner-enter {
-  from { transform: translateY(20px) scale(.96); opacity: 0; }
-  to   { transform: none; opacity: 1; }
-}
-.theme-carousel-header {
-  display: flex; gap: 12px; align-items: center;
-  margin-bottom: 20px;
-}
-.theme-carousel-title {
-  margin: 0; font-family: var(--display); font-size: 18px;
-  letter-spacing: .12em; text-transform: uppercase;
+.status-active .dot { background: var(--info); box-shadow: 0 0 8px var(--info); }
+.status-paused {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   color: var(--accent);
 }
-.theme-carousel-filter {
-  flex: 1; background: var(--bg-soft);
+.status-paused .dot { background: var(--accent); }
+.status-done {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+  color: var(--success);
+}
+.status-done .dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+.status-blocked {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+  color: var(--danger);
+}
+.status-blocked .dot { background: var(--danger); }
+
+/* Buttons */
+.cmd {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface);
   border: 1px solid var(--rule);
-  color: var(--ink);
-  padding: 8px 14px; border-radius: 8px;
-  font: 14px var(--mono); letter-spacing: .04em;
-  outline: none;
-}
-.theme-carousel-filter:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
-}
-.theme-carousel-close {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--bg-soft); border: 1px solid var(--rule);
-  color: var(--ink); font-size: 18px; cursor: pointer;
-}
-.theme-carousel-close:hover { background: var(--accent); color: var(--bg); }
-.theme-carousel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-.theme-card {
+  color: var(--ink-soft);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: var(--mono);
+  letter-spacing: .04em;
   cursor: pointer;
-  background: var(--bg-soft);
-  border: 2px solid var(--rule);
-  border-radius: 12px;
-  padding: 12px;
-  transition: transform 220ms cubic-bezier(.34,1.56,.64,1),
-              border-color 120ms;
+  text-decoration: none;
+  transition: background var(--t-base) ease, color var(--t-base) ease, border-color var(--t-base) ease;
 }
-.theme-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-.theme-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
-.theme-card-preview {
-  aspect-ratio: 2/1; border-radius: 8px; margin-bottom: 12px;
-  transition: transform 320ms cubic-bezier(.2,.8,.2,1);
-}
-.theme-card:hover .theme-card-preview { transform: scale(1.02); }
-.theme-card-preview[data-theme="mixtape85"] { background: linear-gradient(135deg, #f0c53c 0%, #2dd8f0 100%); }
-.theme-card-preview[data-theme="tokyonight"] { background: linear-gradient(135deg, #1a1b26 0%, #7aa2f7 100%); }
-.theme-card-preview[data-theme="catppuccin"] { background: linear-gradient(135deg, #cba6f7 0%, #94e2d5 100%); }
-.theme-card-preview[data-theme="gruvbox"] { background: linear-gradient(135deg, #fabd2f 0%, #fe8019 100%); }
-.theme-card-label {
-  font-family: var(--display); font-size: 14px;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--ink);
-}
-.theme-carousel-empty {
-  grid-column: 1/-1; text-align: center;
-  color: var(--ink-muted); padding: 40px 0;
+.cmd:hover { background: var(--surface-raised); color: var(--ink); }
+
+/* Eyebrow */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .theme-triggers, .accent-picker, .theme-carousel, .theme-carousel-inner, .theme-card { animation: none !important; transition: none !important; }
+/* Cards */
+.card {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 22px;
+  transition: background var(--t-base) ease, border-color var(--t-base) ease, transform var(--t-base) var(--t-spring);
+}
+.card:hover {
+  background: var(--bg-elevated);
+  border-color: var(--rule-strong);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+ * THEME PICKER
+ * ============================================================ */
+.theme-picker {
+  position: relative;
+  display: inline-block;
+}
+.theme-picker-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: background var(--t-base) ease, color var(--t-base) ease, border-color var(--t-base) ease;
+}
+.theme-picker-btn:hover { background: var(--surface-raised); color: var(--ink); border-color: var(--rule-strong); }
+.theme-picker-btn .tp-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  transition: background var(--t-base) ease;
+}
+
+.theme-picker-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 999;
+  min-width: 280px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 1px 0 var(--rule-strong) inset;
+  padding: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity var(--t-base) ease, transform var(--t-base) var(--t-spring);
+}
+.theme-picker.is-open .theme-picker-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.theme-picker-row {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background var(--t-base) ease;
+}
+.theme-picker-row:hover { background: var(--surface-raised); }
+.theme-picker-row[aria-selected="true"] {
+  background: var(--accent-soft);
+}
+.theme-picker-row .tpr-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+}
+.theme-picker-row[aria-selected="true"] .tpr-marker {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.theme-picker-row .tpr-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.theme-picker-row .tpr-desc {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+  font-family: var(--mono);
+}
+.theme-picker-row .tpr-swatches {
+  display: flex;
+  gap: 4px;
+}
+.theme-picker-row .tpr-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--rule-strong);
+}
+
+/* Section divider in picker */
+.theme-picker-head {
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
 }

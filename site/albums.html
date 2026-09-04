@@ -23,7 +23,7 @@
     <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">loading…</span></span>
     <span class="grow"></span>
     <button class="cmd" id="new-album-btn">+ NEW ALBUM</button>
-    <button class="cmd">⌘K</button>
+    <span data-theme-mount class="theme-picker-host"></span><button class="cmd">⌘K</button>
   </nav>
 
   <header class="hero">
@@ -115,7 +115,7 @@
 </div>
 
 <script src="/site/albums.js?v=day12-no-drawer"></script>
-<script src="/site/themes.js?v=day1-h4"></script>
+<script src="/site/themes.js" defer></script>
 <script src="/site/header-player.js?v=hp1"></script>
 </body>
 </html>

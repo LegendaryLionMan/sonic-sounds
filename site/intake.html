@@ -19,7 +19,7 @@
          --status-done / --status-blocked: badges
        All values are HSL so the QA harness can verify contrast.
     ---------------------------------------------------------------- */
-    :root {
+    :root:not([data-theme]) {
       --bg:           hsl(36 30% 97%);
       --bg-soft:      hsl(36 22% 93%);
       --ink:          hsl(220 14% 14%);
@@ -327,7 +327,7 @@
 <link rel="stylesheet" href="/site/decisions.css">
 <link rel="stylesheet" href="/site/header-player.css">
 </head>
-<body>
+<body><span data-theme-mount class=\"theme-picker-host\"></span>
   <main>
     <header class="masthead">
       <div class="eyebrow">album-studio · intake</div>
@@ -926,6 +926,7 @@
     // ---- first paint ----
     refreshGate();
   </script>
+<script src="/site/themes.js" defer></script>
 <script src="/site/header-player.js?v=hp1"></script>
 </body>
 </html>

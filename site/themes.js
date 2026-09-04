@@ -1,273 +1,248 @@
-/* site/themes.js · Theme switcher for album-studio (Omarchy-inspired).
+/* site/themes.js — Album-studio theme manager.
  *
- * Renders a small floating swatch dock in the bottom-left corner of
- * every page. Each swatch shows the theme's gradient preview; click
- * to switch. The choice persists in localStorage so it survives
- * reloads.
+ * - On DOMContentLoaded: read the saved theme from localStorage and apply
+ *   it BEFORE the page paints (so there's no flash of default theme).
+ * - Exposes a small global API (`window.Themes`) so the theme picker can
+ *   list themes, apply a theme, and listen to changes.
+ * - Switching a theme plays a 320ms transition on every colored property
+ *   so the change feels like a paint roll, not a snap.
  *
- * Available themes are defined in site/themes.css (CSS variables).
- *
- * Day 1 backlog (completed):
- *   - Filter input with substring match (Omarchy v4.0 carousel pattern)
- *   - Theme accent color picker (overrides --accent-2 with a swatch grid)
- *   - Per-theme font-family (overrides --display / --mono / --sans)
+ * Pair with site/themes.css which defines the 6 themes.
  */
-(function() {
+(function () {
+  'use strict';
+
+  const LS_KEY = 'album-studio:theme:v1';
+  const FALLBACK = 'mixtape85';
+
+  // Canonical list of themes. Same shape as palettes.json minus the hex
+  // values, so we can render the picker without a second fetch.
   const THEMES = [
     {
-      id: "mixtape85",
-      label: "Mixtape '85",
-      font: { display: "'Bebas Neue', sans-serif", mono: "'JetBrains Mono', monospace", sans: "'Inter', sans-serif" },
+      id: 'mixtape85',
+      name: "Mixtape '85",
+      desc: 'Warm yellow + cyan on near-black. The album-studio default.',
+      isMain: true,
+      swatches: ['#f0c53c', '#2dd8f0', '#fafafa'],
+      swatchBg: '#0a0a0f'
     },
     {
-      id: "tokyonight",
-      label: "Tokyo Night",
-      font: { display: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace", sans: "'Inter', sans-serif" },
+      id: 'tokyo-night',
+      name: 'Tokyo Night',
+      desc: 'Calm nocturnal deep-blue. Soft pastel.',
+      swatches: ['#7aa2f7', '#bb9af7', '#1a1b26'],
+      swatchBg: '#1a1b26'
     },
     {
-      id: "catppuccin",
-      label: "Catppuccin",
-      font: { display: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace", sans: "'Inter', sans-serif" },
+      id: 'catppuccin-latte',
+      name: 'Catppuccin Latte',
+      desc: 'Warm pastel light. Daytime, reading-friendly.',
+      swatches: ['#1e66f5', '#8839ef', '#fe640b'],
+      swatchBg: '#eff1f5'
     },
     {
-      id: "gruvbox",
-      label: "Gruvbox",
-      font: { display: "'Bebas Neue', sans-serif", mono: "'JetBrains Mono', monospace", sans: "'Inter', sans-serif" },
+      id: 'gruvbox-dark',
+      name: 'Gruvbox',
+      desc: 'Warm retro amber on warm-black. Den-studio vibes.',
+      swatches: ['#fabd2f', '#83a598', '#fb4934'],
+      swatchBg: '#282828'
     },
-  ];
-  // 8 curated accent colors. User's choice is layered on top of the
-  // theme's base palette — so Mixtape '85 + violet still has the
-  // cassette yellow vibe, just with violet accents.
-  const ACCENTS = [
-    { id: "amber",  label: "Amber",  hex: "#f0c53c" },
-    { id: "cyan",   label: "Cyan",   hex: "#2dd8f0" },
-    { id: "violet", label: "Violet", hex: "#b94af5" },
-    { id: "rose",   label: "Rose",   hex: "#f25cb0" },
-    { id: "lime",   label: "Lime",   hex: "#a3e635" },
-    { id: "amber2", label: "Tangerine", hex: "#ff7b00" },
-    { id: "blue",   label: "Cobalt", hex: "#2962ff" },
-    { id: "teal",   label: "Teal",   hex: "#14b8a6" },
-  ];
-  const STORAGE_KEY = "studio-theme";
-  const ACCENT_KEY = "studio-accent"; // null = use theme's base
-
-  function currentTheme() {
-    return localStorage.getItem(STORAGE_KEY) || "mixtape85";
-  }
-  function currentAccent() {
-    return localStorage.getItem(ACCENT_KEY);
-  }
-  function themeFont(themeId) {
-    const t = THEMES.find(t => t.id === themeId);
-    return t ? t.font : null;
-  }
-  function accentColor(accentId) {
-    const a = ACCENTS.find(a => a.id === accentId);
-    return a ? a.hex : null;
-  }
-
-  function applyFont(themeId) {
-    const font = themeFont(themeId);
-    if (!font) return;
-    const r = document.documentElement.style;
-    r.setProperty("--display", font.display);
-    r.setProperty("--mono", font.mono);
-    r.setProperty("--sans", font.sans);
-  }
-  function applyAccent(accentId) {
-    if (!accentId) return;
-    const hex = accentColor(accentId);
-    if (!hex) return;
-    document.documentElement.style.setProperty("--accent-2", hex);
-  }
-
-  function apply(themeId) {
-    if (!THEMES.find(t => t.id === themeId)) return;
-    document.documentElement.dataset.theme = themeId;
-    localStorage.setItem(STORAGE_KEY, themeId);
-    applyFont(themeId);             // per-theme font
-    applyAccent(currentAccent());   // user's accent override (if any)
-    document.querySelectorAll(".theme-swatch").forEach(s => {
-      s.classList.toggle("active", s.dataset.theme === themeId);
-      s.setAttribute("aria-checked", s.dataset.theme === themeId ? "true" : false);
-    });
-    document.querySelectorAll(".theme-carousel .theme-card").forEach(c => {
-      c.classList.toggle("active", c.dataset.theme === themeId);
-    });
-    document.dispatchEvent(new CustomEvent("studio:theme-changed", {
-      detail: { theme: themeId }
-    }));
-  }
-
-  function buildSwatchDock() {
-    const active = currentTheme();
-    const dock = document.createElement("div");
-    dock.className = "theme-switcher";
-    dock.setAttribute("role", "radiogroup");
-    dock.setAttribute("aria-label", "Theme switcher");
-    for (const t of THEMES) {
-      const sw = document.createElement("button");
-      sw.className = "theme-swatch" + (t.id === active ? " active" : "");
-      sw.dataset.theme = t.id;
-      sw.setAttribute("role", "radio");
-      sw.setAttribute("aria-checked", t.id === active ? "true" : false);
-      sw.setAttribute("aria-label", t.label);
-      sw.title = t.label;
-      const lbl = document.createElement("span");
-      lbl.className = "label";
-      lbl.textContent = t.label;
-      sw.appendChild(lbl);
-      sw.addEventListener("click", () => apply(t.id));
-      dock.appendChild(sw);
+    {
+      id: 'everforest',
+      name: 'Everforest',
+      desc: 'Forest greens + cream. Acoustic, organic, outdoors.',
+      swatches: ['#7fbbb3', '#a7c080', '#d699b6'],
+      swatchBg: '#2d353b'
+    },
+    {
+      id: 'kanagawa',
+      name: 'Kanagawa',
+      desc: 'Sumi-e ink + wave blue. Zen, ink-on-paper.',
+      swatches: ['#7fb4ca', '#b6927b', '#d27e99'],
+      swatchBg: '#1f1f28'
     }
-    document.body.appendChild(dock);
+  ];
+
+  const byId = Object.fromEntries(THEMES.map(t => [t.id, t]));
+
+  // ----- Storage -----
+  function load() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return FALLBACK;
+      const v = JSON.parse(raw);
+      if (v && v.theme && byId[v.theme]) return v.theme;
+    } catch (e) { /* corrupt; fall through */ }
+    return FALLBACK;
+  }
+  function save(theme) {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        v: 1,
+        theme,
+        appliedAt: Date.now()
+      }));
+    } catch (e) { /* private mode — ignore */ }
   }
 
-  // Filterable theme carousel (Omarchy v4.0 pattern) — opens via the
-  // dock's "⋯" button, shows all themes as full-size cards with a
-  // substring filter input at the top.
-  function buildCarousel() {
-    const active = currentTheme();
-    const root = document.createElement("div");
-    root.className = "theme-carousel";
-    root.id = "theme-carousel";
-    root.hidden = true;  // hide by default
-    root.setAttribute("aria-hidden", "true");
-    root.setAttribute("role", "dialog");
-    root.setAttribute("aria-label", "Theme carousel");
-    root.innerHTML = `
-      <div class="theme-carousel-inner">
-        <header class="theme-carousel-header">
-          <h2 class="theme-carousel-title">themes</h2>
-          <input class="theme-carousel-filter" type="search"
-                 placeholder="filter (e.g. catppuccin, gruvbox, mixtape)"
-                 aria-label="Filter themes" />
-          <button class="theme-carousel-close" aria-label="Close">×</button>
-        </header>
-        <div class="theme-carousel-grid"></div>
+  // ----- Apply -----
+  function apply(themeId, withTransition) {
+    const t = byId[themeId] ? themeId : FALLBACK;
+    const root = document.documentElement;
+    if (withTransition) {
+      root.classList.add('theme-transitioning');
+      // Auto-remove the transition class once the animation finishes so
+      // future hovers/draws don't get a 320ms tail.
+      setTimeout(() => root.classList.remove('theme-transitioning'), 380);
+    }
+    root.dataset.theme = t;
+    root.style.colorScheme = (t === 'catppuccin-latte') ? 'light' : 'dark';
+    try {
+      // Update meta theme-color so phone browser chrome matches.
+      let meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+      }
+      meta.content = getComputedStyle(root).getPropertyValue('--bg').trim() || '#0a0a0f';
+    } catch (e) { /* ignore */ }
+    // Broadcast
+    window.dispatchEvent(new CustomEvent('theme:change', { detail: { theme: t } }));
+    return t;
+  }
+
+  function set(themeId) {
+    const t = apply(themeId, true);
+    save(t);
+    // Update any active picker's selected marker
+    document.querySelectorAll('[data-theme-picker]').forEach(picker => {
+      picker.dataset.theme = t;
+      const rows = picker.querySelectorAll('.theme-picker-row');
+      rows.forEach(row => {
+        row.setAttribute('aria-selected', row.dataset.themeId === t ? 'true' : 'false');
+      });
+      const btn = picker.querySelector('.theme-picker-btn .tp-name');
+      if (btn) btn.textContent = byId[t].name;
+      const dot = picker.querySelector('.theme-picker-btn .tp-dot');
+      if (dot) dot.style.background = byId[t].swatches[0];
+    });
+    return t;
+  }
+
+  function current() {
+    return document.documentElement.dataset.theme || FALLBACK;
+  }
+
+  function list() {
+    return THEMES.slice();
+  }
+
+  // ----- Mount theme pickers in the topbar -----
+  function mountPicker(hostEl, opts) {
+    opts = opts || {};
+    hostEl.classList.add('theme-picker');
+    hostEl.setAttribute('data-theme-picker', '');
+    const t = current();
+    hostEl.dataset.theme = t;
+    const theme = byId[t];
+
+    hostEl.innerHTML = `
+      <button class="theme-picker-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+        <span class="tp-dot" style="background:${theme.swatches[0]}"></span>
+        <span class="tp-name">${esc(theme.name)}</span>
+        <span style="opacity:.6">▾</span>
+      </button>
+      <div class="theme-picker-menu" role="listbox">
+        <div class="theme-picker-head">theme</div>
+        ${THEMES.map(th => `
+          <div class="theme-picker-row" role="option" data-theme-id="${th.id}"
+               aria-selected="${th.id === t ? 'true' : 'false'}">
+            <span class="tpr-marker"></span>
+            <span>
+              <div class="tpr-name">${esc(th.name)}${th.isMain ? ' <span style="font-size:9px;color:var(--ink-muted);letter-spacing:.14em">· MAIN</span>' : ''}</div>
+              <div class="tpr-desc">${esc(th.desc)}</div>
+            </span>
+            <span class="tpr-swatches">
+              ${th.swatches.map(sw => `<span class="tpr-swatch" style="background:${sw}"></span>`).join('')}
+            </span>
+          </div>`).join('')}
       </div>
     `;
-    document.body.appendChild(root);
-    const grid = root.querySelector(".theme-carousel-grid");
-    function renderThemes(filter) {
-      const q = (filter || "").trim().toLowerCase();
-      grid.innerHTML = "";
-      for (const t of THEMES) {
-        if (q && !t.label.toLowerCase().includes(q) && !t.id.includes(q)) continue;
-        const card = document.createElement("button");
-        card.className = "theme-card" + (t.id === active ? " active" : "");
-        card.dataset.theme = t.id;
-        card.setAttribute("role", "listitem");
-        card.setAttribute("aria-label", t.label);
-        card.innerHTML = `
-          <div class="theme-card-preview" data-theme="${t.id}"></div>
-          <div class="theme-card-label">${t.label}</div>
-        `;
-        card.addEventListener("click", () => {
-          apply(t.id);
-          // close after selection (per Omarchy carousel UX)
-          setTimeout(() => close(), 250);
-        });
-        grid.appendChild(card);
-      }
-      if (!grid.children.length) {
-        grid.innerHTML = `<p class="theme-carousel-empty">no themes match "${q}"</p>`;
-      }
-    }
-    renderThemes("");
 
-    const filterInput = root.querySelector(".theme-carousel-filter");
-    filterInput.addEventListener("input", (e) => renderThemes(e.target.value));
-
-    // Close handlers
-    const closeBtn = root.querySelector(".theme-carousel-close");
-    closeBtn.addEventListener("click", close);
-    root.addEventListener("click", (e) => {
-      if (e.target === root) close();
+    const btn = hostEl.querySelector('.theme-picker-btn');
+    const menu = hostEl.querySelector('.theme-picker-menu');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = hostEl.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(isOpen));
     });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !root.hidden) close();
+    hostEl.querySelectorAll('.theme-picker-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        e.stopPropagation();
+        set(row.dataset.themeId);
+        hostEl.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
     });
-    function open() {
-      root.hidden = false;
-      root.setAttribute("aria-hidden", "false");
-      filterInput.focus();
-    }
-    function close() {
-      root.hidden = true;
-      root.setAttribute("aria-hidden", "true");
-    }
-    window.themeCarousel = { open, close };
+    // Close on outside click
+    document.addEventListener('click', () => {
+      hostEl.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+    // Keyboard
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { hostEl.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false'); }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const isOpen = hostEl.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      }
+    });
+    hostEl.addEventListener('keydown', (e) => {
+      const rows = Array.from(hostEl.querySelectorAll('.theme-picker-row'));
+      const i = rows.findIndex(r => r === document.activeElement);
+      if (e.key === 'ArrowDown') { e.preventDefault(); rows[(i + 1 + rows.length) % rows.length].focus(); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); rows[(i - 1 + rows.length) % rows.length].focus(); }
+      if (e.key === 'Enter' && document.activeElement.classList.contains('theme-picker-row')) {
+        e.preventDefault();
+        set(document.activeElement.dataset.themeId);
+        hostEl.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    // Make rows focusable
+    hostEl.querySelectorAll('.theme-picker-row').forEach(r => r.tabIndex = 0);
   }
 
-  // Accent color picker — opens from the dock's "A" button. The
-  // user's accent is layered on top of the active theme.
-  function buildAccentPicker() {
-    const root = document.createElement("div");
-    root.className = "accent-picker";
-    root.setAttribute("role", "group");
-    root.setAttribute("aria-label", "Accent color");
-    for (const a of ACCENTS) {
-      const sw = document.createElement("button");
-      sw.className = "accent-swatch";
-      sw.dataset.accent = a.id;
-      sw.setAttribute("aria-label", a.label);
-      sw.title = a.label;
-      sw.style.background = a.hex;
-      sw.addEventListener("click", () => {
-        // Clear accent on the same accent (toggle off)
-        if (currentAccent() === a.id) {
-          localStorage.removeItem(ACCENT_KEY);
-          applyAccent(null);
-        } else {
-          localStorage.setItem(ACCENT_KEY, a.id);
-          applyAccent(a.id);
-        }
-        document.dispatchEvent(new CustomEvent("studio:accent-changed", {
-          detail: { accent: a.id }
-        }));
-        updateActive();
-      });
-      root.appendChild(sw);
+  function esc(s) {
+    return String(s).replace(/[<>&"]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;' }[c]));
+  }
+
+  // ----- Bootstrap -----
+  // Apply synchronously to avoid flash. We read from localStorage NOW
+  // (before <body> paints) and write to data-theme.
+  let savedTheme = FALLBACK;
+  try { savedTheme = load(); } catch (e) { savedTheme = FALLBACK; }
+  document.documentElement.dataset.theme = savedTheme;
+  if (savedTheme === 'catppuccin-latte') {
+    document.documentElement.style.colorScheme = 'light';
+  }
+
+  // Expose API
+  window.Themes = {
+    list, current, set, apply, mountPicker, save, load,
+    THEMES,
+    /** Initialize after DOMContentLoaded. Mounts any picker with [data-theme-mount]. */
+    init() {
+      // Wire any auto-mounted picker slots
+      document.querySelectorAll('[data-theme-mount]').forEach(el => mountPicker(el));
     }
-    function updateActive() {
-      const cur = currentAccent();
-      root.querySelectorAll(".accent-swatch").forEach(s => {
-        s.classList.toggle("active", s.dataset.accent === cur);
-        s.setAttribute("aria-pressed", s.dataset.accent === cur ? "true" : "false");
-      });
-    }
-    updateActive();
-    document.body.appendChild(root);
-  }
+  };
 
-  function buildTriggerButtons() {
-    // Two small trigger buttons docked at the bottom-right:
-    //   T  → theme carousel
-    //   A  → accent picker (already docked via CSS positioning)
-    const triggers = document.createElement("div");
-    triggers.className = "theme-triggers";
-    const carouselBtn = document.createElement("button");
-    carouselBtn.className = "trigger-btn";
-    carouselBtn.setAttribute("aria-label", "Open theme carousel");
-    carouselBtn.textContent = "⋯";
-    carouselBtn.title = "Themes";
-    carouselBtn.addEventListener("click", () => window.themeCarousel.open());
-    triggers.appendChild(carouselBtn);
-    document.body.appendChild(triggers);
-  }
-
-  function init() {
-    apply(currentTheme());   // sets data-theme + font + accent
-    buildSwatchDock();
-    buildAccentPicker();
-    buildCarousel();
-    buildTriggerButtons();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.Themes.init);
   } else {
-    init();
+    window.Themes.init();
   }
 })();

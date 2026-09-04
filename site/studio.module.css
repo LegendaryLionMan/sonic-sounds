@@ -1,5 +1,5 @@
 /* === STUDIO PAGE · MIXTAPE '85 === */
-:root {
+:root:not([data-theme]) {
   --bg: #0a0a0f;
   --bg-soft: #14141a;
   --bg-elevated: #1a1a22;

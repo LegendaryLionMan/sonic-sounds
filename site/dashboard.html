@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
+    :root:not([data-theme]) {
       --bg:           hsl(36 30% 97%);
       --bg-soft:      hsl(36 22% 93%);
       --ink:          hsl(220 14% 14%);
@@ -135,7 +135,7 @@
 <link rel="stylesheet" href="/site/decisions.css">
 <link rel="stylesheet" href="/site/header-player.css">
 </head>
-<body>
+<body><span data-theme-mount class=\"theme-picker-host\"></span>
   <main>
     <header class="masthead">
       <div class="eyebrow">album-studio · pipeline dashboard</div>
@@ -384,6 +384,7 @@
     tryLoad();
     setInterval(tryLoad, POLL_MS);
   </script>
+<script src="/site/themes.js" defer></script>
 <script src="/site/header-player.js?v=hp1"></script>
 </body>
 </html>
