@@ -499,3 +499,29 @@ document.addEventListener('DOMContentLoaded', () => {
   eventsPollInterval = setInterval(pollEvents, 2000);
   window.addEventListener('focus', refresh);
 });
+
+/* Day 1 Hour 11: scroll-progress updater.
+ * Sets --scroll-progress on :root based on window.scrollY,
+ * threshold 200px. CSS uses this var to compress the topbar.
+ * (Loaded after studio.js's main IIFE.) */
+(function() {
+  var ticking = false;
+  function update() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function() {
+      var y = window.scrollY || 0;
+      var progress = Math.max(0, Math.min(1, (y - 200) / 200));
+      document.documentElement.style.setProperty('--scroll-progress', progress.toFixed(3));
+      // Also toggle .is-scrolled for the @supports fallback
+      if (y > 200) {
+        document.body.classList.add('is-scrolled');
+      } else {
+        document.body.classList.remove('is-scrolled');
+      }
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();  // initial state
+})();

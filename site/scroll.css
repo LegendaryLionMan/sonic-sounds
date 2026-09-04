@@ -1,0 +1,128 @@
+/* site/scroll.css · Day 1 Hour 11 — Scroll-linked parallax topbar (10 ideas)
+ *
+ * Uses @scroll-timeline (Chrome 115+) for declarative scroll-driven
+ * animation, with a JS fallback for older browsers. The topbar
+ * compresses, font shrinks, backdrop-filter intensifies as the user
+ * scrolls.
+ */
+
+:root {
+  --t-scroll-compress: 280ms;
+  --scroll-progress: 0;  /* updated by JS, 0..1 */
+}
+
+/* =====================================================================
+ * Idea 1: Topbar compresses as user scrolls (height 64px → 48px)
+ * ===================================================================== */
+
+.topbar {
+  position: sticky; top: 0;
+  height: calc(64px - 16px * var(--scroll-progress, 0));
+  padding-block: calc(20px - 8px * var(--scroll-progress, 0));
+  /* Modern: scroll-driven via @scroll-timeline (Chrome 115+) */
+  timeline: --page-scroll block;
+  transition:
+    height var(--t-scroll-compress) var(--spring-soft),
+    padding-block var(--t-scroll-compress) var(--spring-soft),
+    backdrop-filter var(--t-scroll-compress) var(--spring-soft);
+}
+@scroll-timeline --page-scroll {
+  source: auto;
+  scroll-offsets: 0% 50%;
+}
+
+/* =====================================================================
+ * Idea 2: @scroll-timeline (modern browsers) + JS fallback
+ * ===================================================================== */
+
+/* The CSS keyframes are 0%..100% progress; JS reads --scroll-progress
+ * and applies it for older browsers via animation-timeline: none. */
+@supports not (animation-timeline: scroll()) {
+  .topbar.is-scrolled {
+    height: 48px;
+    padding-block: 12px;
+  }
+}
+
+/* =====================================================================
+ * Idea 3: Backdrop-filter intensifies on scroll (more blur)
+ * ===================================================================== */
+
+.topbar {
+  backdrop-filter: blur(calc(8px + 12px * var(--scroll-progress, 0)))
+                  saturate(calc(1 + 0.4 * var(--scroll-progress, 0)));
+  -webkit-backdrop-filter: blur(calc(8px + 12px * var(--scroll-progress, 0)))
+                          saturate(calc(1 + 0.4 * var(--scroll-progress, 0)));
+}
+
+/* =====================================================================
+ * Idea 4: Font-size scales down with scroll
+ * ===================================================================== */
+
+.topbar .crumb,
+.topbar .pill,
+.topbar .command {
+  font-size: calc(13px - 2px * var(--scroll-progress, 0));
+  transition: font-size var(--t-scroll-compress) var(--spring-soft);
+}
+
+/* =====================================================================
+ * Idea 5: Logo compresses (the album title in sidebar)
+ * ===================================================================== */
+
+.sidebar #album-title,
+.sidebar .album-title {
+  font-size: calc(28px - 6px * var(--scroll-progress, 0));
+  letter-spacing: calc(.04em - .01em * var(--scroll-progress, 0));
+  transition:
+    font-size var(--t-scroll-compress) var(--spring-soft),
+    letter-spacing var(--t-scroll-compress) var(--spring-soft);
+}
+
+/* =====================================================================
+ * Idea 6: Cmd+K hint appears on scroll (fades in past 200px)
+ * ===================================================================== */
+
+.topbar .cmd-hint {
+  opacity: var(--scroll-progress, 0);
+  transform: translateY(calc(-8px + 8px * var(--scroll-progress, 0)));
+  transition:
+    opacity var(--t-scroll-compress) var(--spring-soft),
+    transform var(--t-scroll-compress) var(--spring-bouncy);
+}
+
+/* =====================================================================
+ * Idea 7: Scroll back up → reverse animation
+ * (Implicit: CSS transitions run in reverse when var(--scroll-progress) decreases)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 8: Threshold 200px scroll → start animation
+ * ===================================================================== */
+
+/* JS sets --scroll-progress only after scrolling past 200px.
+ * Before that, --scroll-progress = 0 (no compression). */
+.topbar { transition-delay: 0ms; }  /* Always responsive */
+
+/* =====================================================================
+ * Idea 9: prefers-reduced-motion → no auto-compression
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar, .topbar .crumb, .topbar .pill, .topbar .command,
+  .sidebar #album-title, .sidebar .album-title, .topbar .cmd-hint {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* =====================================================================
+ * Idea 10: Sticky behavior preserved (always visible)
+ * ===================================================================== */
+
+/* The .topbar already has position: sticky; top: 0; in studio.module.css.
+ * We add z-index + isolation so the backdrop-filter doesn't leak. */
+.topbar {
+  z-index: 100;
+  isolation: isolate;
+}
