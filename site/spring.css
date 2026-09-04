@@ -30,6 +30,14 @@
   --t-theme: 260ms;   /* theme color transition */
 }
 
+/* Theme color transitions (260ms via --t-theme). */
+.theme-switcher,.accent-picker,.theme-triggers,.theme-card,.theme-swatch{
+  transition:
+    background-color var(--t-theme) var(--spring-soft),
+    border-color var(--t-theme) var(--spring-soft),
+    color var(--t-theme) var(--spring-soft);
+}
+
 /* === Button press: 120ms scale-down-and-back === */
 
 button, .btn, .cmd, .pill, .t-play {
