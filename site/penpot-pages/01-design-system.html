@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>01 — Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F4EFE6;
+  --ink: #1B1714;
+  --ink-soft: #3D3530;
+  --rule: #C9BFAE;
+  --accent: #B8503A;
+  --accent-soft: #D9846F;
+  --highlight: #E8D9A8;
+  --status-done: #4A6B47;
+  --status-active: #B8503A;
+  --status-blocked: #7A1F1F;
+  --serif-display: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --serif-body: 'Lora', 'Source Serif Pro', Georgia, serif;
+  --sans-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.25rem;
+  --fs-lg: 1.75rem;
+  --fs-xl: 2.75rem;
+  --fs-2xl: 4.25rem;
+  --fs-3xl: 6.5rem;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif-body);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  width: 1440px;
+  min-height: 1024px;
+  padding: clamp(24px, 4vw, 64px);
+  position: relative;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+}
+
+.masthead .left {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  letter-spacing: 0.02em;
+}
+
+.masthead .right {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hairline {
+  border-top: 1px solid var(--rule);
+  position: relative;
+  margin: 32px 0;
+}
+
+.hairline .dot {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+h1.display {
+  font-family: var(--serif-display);
+  font-size: var(--fs-3xl);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+h2.section {
+  font-family: var(--serif-display);
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+h3.sub {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.mono {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mono-tag {
+  display: inline-block;
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+
+.mono-tag.mandatory { border-color: var(--accent); color: var(--accent); }
+.mono-tag.recommended { border-color: var(--ink-soft); color: var(--ink-soft); }
+.mono-tag.extra { border-color: var(--rule); color: var(--ink-soft); }
+.mono-tag.todo { color: var(--ink-soft); border-color: var(--rule); }
+.mono-tag.in-progress { color: var(--accent); border-color: var(--accent); }
+.mono-tag.done { color: var(--status-done); border-color: var(--status-done); }
+.mono-tag.blocked { color: var(--status-blocked); border-color: var(--status-blocked); }
+
+.meta-row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.meta-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  min-width: 64px;
+}
+
+.meta-row .label {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.card {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 32px;
+  position: relative;
+}
+
+.card .status-dot {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.card.blocked .status-dot { background: var(--accent); }
+.card.done .status-dot { background: var(--status-done); }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 48px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--rule);
+}
+
+.swatch-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.swatch-name {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swatch-hex {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}
+
+.type-sample {
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: baseline;
+}
+
+.motif {
+  display: inline-block;
+  width: 32px;
+  height: 24px;
+  position: relative;
+}
+
+.motif svg {
+  display: block;
+}
+
+.question-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr auto;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+
+.question-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.question-row .text {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.question-row .input {
+  border: 1px solid var(--rule);
+  height: 36px;
+  background: var(--paper);
+}
+
+.layer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-card .layer-num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layer-card .layer-name {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+
+.layer-card .layer-desc {
+  font-family: var(--serif-body);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.layer-card .layer-meta {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: auto;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <span class="left">sonic-sounds</span>
+    <span class="right">01 / DESIGN SYSTEM</span>
+  </div>
+
+  <h1 class="display" style="margin-bottom: 16px;">sonic-sounds</h1>
+  <p class="mono" style="margin-bottom: 64px;">VISUAL IDENTITY · EDITORIAL · ZINE · 2026</p>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Color tokens</h2>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #F4EFE6;"></div>
+    <div>
+      <div class="swatch-name">color/paper</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Primary background · warm off-white</div>
+    </div>
+    <div class="swatch-hex">#F4EFE6</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #1B1714;"></div>
+    <div>
+      <div class="swatch-name">color/ink</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Primary text · near-black warm</div>
+    </div>
+    <div class="swatch-hex">#1B1714</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #3D3530;"></div>
+    <div>
+      <div class="swatch-name">color/ink-soft</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Secondary text</div>
+    </div>
+    <div class="swatch-hex">#3D3530</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #C9BFAE;"></div>
+    <div>
+      <div class="swatch-name">color/rule</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Hairlines · dividers · borders</div>
+    </div>
+    <div class="swatch-hex">#C9BFAE</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #B8503A;"></div>
+    <div>
+      <div class="swatch-name">color/accent</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">CTA · critical · accent only</div>
+    </div>
+    <div class="swatch-hex">#B8503A</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #D9846F;"></div>
+    <div>
+      <div class="swatch-name">color/accent-soft</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Hover · accent wash</div>
+    </div>
+    <div class="swatch-hex">#D9846F</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #E8D9A8;"></div>
+    <div>
+      <div class="swatch-name">color/highlight</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Pinned · mandatory tier</div>
+    </div>
+    <div class="swatch-hex">#E8D9A8</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #4A6B47;"></div>
+    <div>
+      <div class="swatch-name">color/status-done</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Approved · done</div>
+    </div>
+    <div class="swatch-hex">#4A6B47</div>
+  </div>
+
+  <div class="swatch-row">
+    <div class="swatch" style="background: #7A1F1F;"></div>
+    <div>
+      <div class="swatch-name">color/status-blocked</div>
+      <div class="mono" style="margin-top: 4px; color: var(--ink-soft);">Deep oxblood · blocked</div>
+    </div>
+    <div class="swatch-hex">#7A1F1F</div>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Typography</h2>
+
+  <div style="margin-bottom: 32px;">
+    <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">DISPLAY · CORMORANT GARAMOND</div>
+    <div style="font-family: var(--serif-display); font-size: 4.25rem; font-weight: 500; line-height: 1;">Aa Gg · sonic-sounds</div>
+  </div>
+
+  <div style="margin-bottom: 32px;">
+    <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">BODY · LORA</div>
+    <div style="font-family: var(--serif-body); font-size: 1.0625rem; line-height: 1.7;">The studio and the album feel like one artifact — same half-lit window motif, same warm paper, same editorial typography.</div>
+  </div>
+
+  <div style="margin-bottom: 32px;">
+    <div class="mono" style="color: var(--ink-soft); margin-bottom: 8px;">MONO · JETBRAINS MONO</div>
+    <div style="font-family: var(--sans-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;">L · 01 · IN-PROGRESS · 12 TRACKS · 42:31</div>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Type scale · perfect fourth · 1.333</h2>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · 3XL · 104px</div>
+    <div style="font-family: var(--serif-display); font-size: 6.5rem; line-height: 1;">Display</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · 2XL · 68px</div>
+    <div style="font-family: var(--serif-display); font-size: 4.25rem; line-height: 1;">Hero</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · XL · 44px</div>
+    <div style="font-family: var(--serif-display); font-size: 2.75rem; line-height: 1.1;">Section</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · LG · 28px</div>
+    <div style="font-family: var(--serif-display); font-style: italic; font-size: 1.75rem;">Sub-heading</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · MD · 20px</div>
+    <div style="font-family: var(--serif-display); font-style: italic; font-size: 1.25rem;">Lead paragraph</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · BASE · 17px</div>
+    <div style="font-family: var(--serif-body); font-size: 1.0625rem;">Body text</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · SM · 14px</div>
+    <div style="font-family: var(--serif-body); font-size: 0.875rem;">Helper</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="mono" style="color: var(--ink-soft);">FS · XS · 12px</div>
+    <div style="font-family: var(--sans-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;">Metadata · mono · caps</div>
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Spacing scale</h2>
+
+  <div style="display: flex; align-items: end; gap: 24px;">
+    <div style="text-align: center;">
+      <div style="width: 8px; height: 8px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">XS · 8</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 16px; height: 16px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">SM · 16</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 24px; height: 24px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">MD · 24</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 32px; height: 32px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">LG · 32</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 48px; height: 48px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">XL · 48</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 64px; height: 64px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">2XL · 64</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 96px; height: 96px; background: var(--accent); margin: 0 auto 8px;"></div>
+      <div class="mono">3XL · 96</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

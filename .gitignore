@@ -1,0 +1,70 @@
+# sonic-sounds .gitignore
+# Last updated: 2026-08-09 (added .meta/ runtime state)
+# Why: prevents re-spread of artifacts; see docs/STRUCTURE-POLICY.md.
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+# Local skill mirror (mirrored to OneDrive, not tracked here)
+/.agents/
+
+# --- Open Design artifacts (rebuildable, ~70 KB per prototype) ---
+.od-skills/
+
+# --- Placeholders (mark a not-yet-built subdirectory) ---
+.placeholder
+*.placeholder
+
+# --- Local scratch / temp dumps ---
+*.tmp
+*.bak
+
+# --- Large media outside the project (lives in OneDrive music-test-*) ---
+# Music research sandboxes are large (200+ MB) and rebuildable.
+# They're stored on disk for reference but not in git.
+music/archive/
+
+# Audio quality research: keep scripts + JSON data + reports; ignore mp3 outputs
+# (rebuildable from music-3.0 with same brief)
+planning/audio-quality-2026-07-30/*.mp3
+
+# --- Editor / OS noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# --- Secrets ---
+.env
+.env.local
+*.key
+*.pem
+
+# --- Build artifacts (Phase 0.A test seed) ---
+build/*.db
+build/*.db-journal
+build/*.db-wal
+
+# --- Runtime state (machine-specific; rebuilt on first launch) ---
+# .meta/ holds the SQLite database, daemon logs, schema drafts. None of
+# this should be in version control — it varies per-host, per-run.
+.meta/*.db
+.meta/*.db-journal
+.meta/*.db-wal
+.meta/*.db-shm
+.meta/daemon.log
+.meta/daemon.lock
+.meta/preview_daemon.log
+.meta/preview_daemon.pid
+# Allow the schema migrations + draft files to be tracked (they're code,
+# not runtime state).
+!.meta/migrations/
+!.meta/sonic-sounds-schema-draft.sql
+
+# Test scratch dir (created 2026-08-09 for audit verification)
+scratch/

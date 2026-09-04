@@ -1,0 +1,55 @@
+# pyproject.toml — sonic-sounds (created 2026-08-09)
+# Why: the audit found zero dependency declarations anywhere; a clean
+# clone couldn't reproduce the env without copying the exact venv.
+# This file pins runtime + test deps with min-version constraints that
+# match the versions verified live by the test suite.
+
+[project]
+name = "sonic-sounds"
+version = "0.3.0"  # matches the Day-3 daemon + audit fixes
+description = "HTML front door for the music-album-planning-questionnaire and full-album-release-package skills. SQLite-backed 12-layer pipeline state for album planning and builds."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "sonic-sounds maintainer" }]
+keywords = ["album", "music", "pipeline", "quart", "sqlite"]
+
+# Runtime dependencies (verified against the venv that produced the 140 passing tests).
+# min-version is what we tested against; >= allows patch upgrades.
+dependencies = [
+    "quart>=0.21",           # Quart 0.21 — async ASGI web framework
+    "hypercorn>=0.18",       # Hypercorn 0.18 — ASGI server used by the daemon
+    "mutagen>=1.47",         # mutagen — ID3 tagging in scripts/tag-album.py
+]
+
+[project.optional-dependencies]
+# Playwright is used by tests/site-smoke.py (UI smoke test, not part of unittest).
+# Run separately: `python tests/site-smoke.py` after `playwright install chromium`.
+test = [
+    "playwright>=1.61",
+]
+
+# scripts/tag-album.py and scripts/generation-manifest.py use mutagen; the daemon
+# itself does not. If you're running the daemon only (no album tagging), you can
+# skip mutagen with `pip install quart hypercorn`.
+
+[project.urls]
+Homepage = "https://github.com/LegendaryLionMan/sonic-sounds"
+Issues = "https://github.com/LegendaryLionMan/sonic-sounds/issues"
+
+[tool.pytest.ini_options]
+# Note: the test suite uses unittest, not pytest. This section is included
+# so pytest users can run `pytest tests/` and have the unittest tests discovered.
+testpaths = ["tests"]
+addopts = "-v"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# The project is a flat layout — every package dir sits at the repo root.
+# No wheel-build configuration is needed for development; this exists so
+# `pip install -e .` works for contributors who want to import sonic_sounds
+# as a package rather than relying on PYTHONPATH=.
+packages = ["build", "cli", "db"]

@@ -1,0 +1,104 @@
+{
+  "version": "1.0",
+  "description": "Album-studio build pipeline dependencies. Each day depends on the completion of prior days. Per Q29c (v3.2 §6), each layer carries 6 fields: id, display_name, depends_on[], approval_required, mmx_action, output_table.",
+  "version_date": "2026-08-09",
+  "schema_note": "Per PLAN-2026-07-28-v3.2 §6 (Q29c) + v3.4 patch (2026-08-09): approval_required, mmx_action, output_table are now in pipeline-deps.json. db/pipeline.py reads depends_on; the other 3 fields drive Day 4-7 handlers + Day 6 build runner.",
+  "days": [
+    {
+      "id": "01_brief",
+      "display_name": "Brief",
+      "depends_on": [],
+      "approval_required": false,
+      "mmx_action": null,
+      "output_table": "album_briefs"
+    },
+    {
+      "id": "02_lyrics_drafts",
+      "display_name": "Lyrics Drafts",
+      "depends_on": ["01_brief"],
+      "approval_required": true,
+      "mmx_action": "music.generate",
+      "output_table": "tracks"
+    },
+    {
+      "id": "03_lyrics_finalize",
+      "display_name": "Lyrics Finalize",
+      "depends_on": ["02_lyrics_drafts"],
+      "approval_required": true,
+      "mmx_action": "music.generate",
+      "output_table": "tracks"
+    },
+    {
+      "id": "04_vocal_recordings",
+      "display_name": "Vocal Recordings",
+      "depends_on": ["03_lyrics_finalize"],
+      "approval_required": false,
+      "mmx_action": "music.generate",
+      "output_table": "tracks"
+    },
+    {
+      "id": "05_instrumental",
+      "display_name": "Instrumental",
+      "depends_on": ["04_vocal_recordings"],
+      "approval_required": false,
+      "mmx_action": "music.generate",
+      "output_table": "tracks"
+    },
+    {
+      "id": "06_cover_art",
+      "display_name": "Cover Art",
+      "depends_on": ["05_instrumental"],
+      "approval_required": true,
+      "mmx_action": "image.generate",
+      "output_table": "assets"
+    },
+    {
+      "id": "07_cassette_sticker",
+      "display_name": "Cassette Sticker",
+      "depends_on": ["06_cover_art"],
+      "approval_required": false,
+      "mmx_action": "image.generate",
+      "output_table": "assets"
+    },
+    {
+      "id": "08_audio_mastering",
+      "display_name": "Audio Mastering",
+      "depends_on": ["07_cassette_sticker"],
+      "approval_required": false,
+      "mmx_action": null,
+      "output_table": "tracks"
+    },
+    {
+      "id": "09_metadata_isrc",
+      "display_name": "Metadata + ISRC",
+      "depends_on": ["08_audio_mastering"],
+      "approval_required": true,
+      "mmx_action": null,
+      "output_table": "tracks"
+    },
+    {
+      "id": "10_distribution",
+      "display_name": "Distribution",
+      "depends_on": ["09_metadata_isrc"],
+      "approval_required": false,
+      "mmx_action": null,
+      "output_table": "albums"
+    },
+    {
+      "id": "11_press_kit",
+      "display_name": "Press Kit",
+      "depends_on": ["10_distribution"],
+      "approval_required": true,
+      "mmx_action": null,
+      "output_table": "assets"
+    },
+    {
+      "id": "12_finalize",
+      "display_name": "Finalize",
+      "depends_on": ["11_press_kit"],
+      "approval_required": true,
+      "mmx_action": null,
+      "output_table": "albums"
+    }
+  ]
+}

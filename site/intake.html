@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sonic-sounds — intake · 26 questions for the album you haven't made yet</title>
+  <meta name="description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ----------------------------------------------------------------
+       sonic-sounds intake — design tokens
+       These match the parent brand palette (per DESIGN.md §6):
+         --bg / --bg-soft: paper-white / parchment
+         --ink / --ink-soft: text / muted
+         --accent / --accent-soft: terracotta (CTA + active tier)
+         --rule: hairline divider
+         --status-done / --status-blocked: badges
+       All values are HSL so the QA harness can verify contrast.
+    ---------------------------------------------------------------- */
+    :root:not([data-theme]) {
+      --bg:           hsl(36 30% 97%);
+      --bg-soft:      hsl(36 22% 93%);
+      --ink:          hsl(220 14% 14%);
+      --ink-soft:     hsl(220 10% 38%);
+      --accent:       hsl(12 64% 48%);
+      --accent-soft:  hsl(12 50% 88%);
+      --rule:         hsl(30 18% 80%);
+      --status-done:  hsl(140 38% 36%);
+      --status-blocked: hsl(28 78% 42%);
+      --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
+      --sans:         'Inter', system-ui, -apple-system, sans-serif;
+      --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+      --shadow-soft:  0 1px 0 hsl(220 14% 14% / 0.04), 0 2px 8px hsl(220 14% 14% / 0.04);
+      --shadow-pop:   0 2px 0 hsl(220 14% 14% / 0.06), 0 8px 24px hsl(220 14% 14% / 0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+      background:
+        radial-gradient(60rem 30rem at 90% -10%, hsl(12 50% 88% / 0.35), transparent 70%),
+        radial-gradient(50rem 25rem at 0% 110%, hsl(140 38% 36% / 0.08), transparent 70%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    main { max-width: 62rem; margin: 0 auto; padding: 2.5rem 1.5rem 8rem; }
+
+    /* ---- masthead ---- */
+    .masthead { padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+    .masthead .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .masthead h1 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 0.5rem 0 0.25rem;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .masthead .subtitle {
+      font-family: var(--display);
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 1.1rem;
+      margin: 0 0 1.25rem;
+    }
+    .saved-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      background: var(--bg-soft);
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+    }
+    .saved-label .dot {
+      width: 0.5rem; height: 0.5rem; border-radius: 999px;
+      background: var(--status-done);
+      box-shadow: 0 0 0 4px hsl(140 38% 36% / 0.15);
+    }
+    .saved-label.is-dirty .dot { background: var(--accent); box-shadow: 0 0 0 4px hsl(12 64% 48% / 0.15); }
+
+    /* ---- tier band ---- */
+    .tier-band {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2.5rem 0 1.25rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--rule);
+      background: var(--bg-soft);
+    }
+    .tier-band[data-tier="M"] { border-color: var(--accent); border-left-width: 4px; }
+    .tier-band[data-tier="R"] { border-color: var(--ink-soft); border-left-width: 4px; }
+    .tier-band[data-tier="E"] { border-color: var(--rule); border-left-width: 4px; }
+    .tier-band h2 {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0;
+      color: var(--ink);
+    }
+    .tier-band[data-tier="M"] h2 { color: var(--accent); }
+    .tier-band[data-tier="R"] h2 { color: var(--ink-soft); }
+    .tier-band .resolved {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+    .tier-band[data-tier="M"] .resolved { color: var(--accent); }
+
+    /* ---- question card ---- */
+    .question {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .question:last-child { border-bottom: 0; }
+    .question .head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .question .tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid currentColor;
+      color: var(--ink-soft);
+    }
+    .question[data-tier="M"] .tag { color: var(--accent); }
+    .question .id {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+    .question h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin: 0.1rem 0 0.15rem;
+      letter-spacing: -0.01em;
+    }
+    .question .hint {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      margin: 0 0 0.85rem;
+      max-width: 56ch;
+    }
+    .question .control { width: 100%; }
+    .question textarea,
+    .question input[type="text"],
+    .question input[type="date"],
+    .question select {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      font-family: var(--sans);
+      font-size: 1rem;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .question textarea {
+      min-height: 5.5rem;
+      resize: vertical;
+      font-family: var(--display);
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .question input[type="text"]:focus,
+    .question textarea:focus,
+    .question input[type="date"]:focus,
+    .question select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px hsl(12 64% 48% / 0.12);
+    }
+    .question[data-tier="M"] input,
+    .question[data-tier="M"] textarea,
+    .question[data-tier="M"] select {
+      border-color: var(--accent);
+    }
+    .question .row { display: flex; gap: 0.5rem; }
+    .question .row > * { flex: 1 1 0; min-width: 0; }
+    .question .tracklist-rows {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr 8rem;
+      gap: 0.4rem 0.5rem;
+      align-items: center;
+    }
+    .question .tracklist-rows .num {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      text-align: right;
+    }
+    .question .is-filled {
+      color: var(--status-done);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+    .question .refs-slot {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .question .refs-slot input { font-size: 0.95rem; }
+
+    /* ---- sticky footer with the generate CTA ---- */
+    .cta-bar {
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(180deg, transparent, var(--bg) 30%);
+      padding: 1.25rem 0 0.5rem;
+      margin: 1rem 0 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .cta-bar .button {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.92rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 1rem 1.5rem;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--bg);
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .cta-bar .button:hover { background: var(--accent-soft); color: var(--accent); transform: translateY(-1px); }
+    .cta-bar .button:disabled,
+    .cta-bar .button[aria-disabled="true"] {
+      background: transparent;
+      color: var(--ink-soft);
+      border-color: var(--rule);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .cta-bar .cta-hint {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+    .cta-bar .button[data-state="ready"] { box-shadow: var(--shadow-pop); }
+
+    /* ---- confirmation card after export ---- */
+    .confirmation {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border: 1px solid var(--status-done);
+      border-left-width: 4px;
+      border-radius: 8px;
+      background: hsl(140 38% 36% / 0.04);
+    }
+    .confirmation.is-shown { display: block; }
+    .confirmation h3 {
+      font-family: var(--display);
+      margin: 0 0 0.5rem;
+      color: var(--status-done);
+    }
+    .confirmation p { margin: 0 0 0.5rem; }
+    .confirmation code {
+      font-family: var(--mono);
+      background: var(--bg);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+    }
+
+    /* ---- reset + header chips ---- */
+    .reset-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .reset-bar button {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--rule);
+      background: transparent;
+      color: var(--ink-soft);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .reset-bar button:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+    @media (max-width: 720px) {
+      main { padding: 1.5rem 1rem 7rem; }
+      .question .refs-slot { grid-template-columns: 1fr; }
+    }
+  </style>
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/header-player.css">
+</head>
+<body><span data-theme-mount class=\"theme-picker-host\"></span>
+  <main>
+    <header class="masthead">
+      <div class="eyebrow">sonic-sounds · intake</div>
+      <h1>26 questions for the album you haven't made yet</h1>
+      <p class="subtitle">Start at the heart, not the genre. Skip nothing in the mandatory tier.</p>
+      <div class="saved-label" id="savedLabel" aria-live="polite">
+        <span class="dot"></span>
+        <span class="text">READY · no local save yet</span>
+      </div>
+    </header>
+
+    <div class="reset-bar" role="toolbar" aria-label="Form controls">
+      <button type="button" id="resetBtn">RESET FORM</button>
+      <button type="button" id="hydrateBtn">RESTORE MOST RECENT</button>
+    </div>
+
+    <form id="intakeForm" novalidate autocomplete="off">
+
+      <!-- ====================== MANDATORY ====================== -->
+      <section aria-label="Mandatory questions">
+        <div class="tier-band" data-tier="M">
+          <h2>MANDATORY · 9 questions · gate: all 9 to export</h2>
+          <span class="resolved" id="mandatoryResolved">resolved 0 of 9</span>
+        </div>
+
+        <!-- M·01 album concept -->
+        <article class="question" data-tier="M" data-qid="M01_concept">
+          <div class="head">
+            <span class="tag">M·01</span>
+            <span class="id">album concept</span>
+          </div>
+          <h3>What is this album <em>about</em>?</h3>
+          <p class="hint">The emotional or narrative heart — not genre, not vibe, not references. One sentence you would tell a friend.</p>
+          <textarea class="control" name="M01_concept" placeholder="It is the album about..."></textarea>
+        </article>
+
+        <!-- M·02 scope -->
+        <article class="question" data-tier="M" data-qid="M02_scope">
+          <div class="head"><span class="tag">M·02</span><span class="id">project scope</span></div>
+          <h3>What scope?</h3>
+          <p class="hint">Be honest about your ambition. A single is its own discipline.</p>
+          <select class="control" name="M02_scope">
+            <option value="">— pick one —</option>
+            <option value="single">single (1 track)</option>
+            <option value="ep">EP (3–5 tracks)</option>
+            <option value="album">album (8–12 tracks)</option>
+            <option value="double-feature">double-feature (14–18 tracks)</option>
+            <option value="concept-piece">concept piece (one continuous work)</option>
+          </select>
+        </article>
+
+        <!-- M·03 genre -->
+        <article class="question" data-tier="M" data-qid="M03_genre">
+          <div class="head"><span class="tag">M·03</span><span class="id">genre direction</span></div>
+          <h3>What genre family?</h3>
+          <p class="hint">One primary family at minimum. Pick a primary that frames the whole work.</p>
+          <input class="control" name="M03_genre" list="genreList" placeholder="dream-folk, ambient techno, sad-cowboy indie...">
+          <datalist id="genreList">
+            <option value="dream-folk"></option><option value="indie-rock"></option><option value="art-pop"></option>
+            <option value="ambient"></option><option value="electronic"></option><option value="hip-hop"></option>
+            <option value="r&b"></option><option value="soul"></option><option value="jazz"></option>
+            <option value="classical"></option><option value="cinematic-orchestral"></option>
+            <option value="metal"></option><option value="punk"></option><option value="lo-fi"></option>
+            <option value="hyperpop"></option><option value="experimental"></option>
+            <option value="world-music"></option><option value="sad-cowboy"></option>
+          </datalist>
+        </article>
+
+        <!-- M·04 references -->
+        <article class="question" data-tier="M" data-qid="M04_references">
+          <div class="head"><span class="tag">M·04</span><span class="id">reference artists</span></div>
+          <h3>1–3 reference artists whose sound you want to channel</h3>
+          <p class="hint">Artists you want to <em>sound like</em>, not artists you merely admire. Less is more.</p>
+          <div class="refs-slot">
+            <input type="text" name="M04_ref1" placeholder="Artist 1 — name" autocomplete="off">
+            <input type="text" name="M04_ref2" placeholder="Artist 2 (optional)" autocomplete="off">
+            <input type="text" name="M04_ref3" placeholder="Artist 3 (optional)" autocomplete="off">
+          </div>
+        </article>
+
+        <!-- M·05 vocal -->
+        <article class="question" data-tier="M" data-qid="M05_vocal">
+          <div class="head"><span class="tag">M·05</span><span class="id">vocal approach</span></div>
+          <h3>Vocal approach + voice character</h3>
+          <p class="hint">Pick the structural approach, then describe the <em>character</em> of the voice in one or two lines.</p>
+          <div class="row" style="margin-bottom:.6rem;">
+            <select class="control" name="M05_approach">
+              <option value="">— approach —</option>
+              <option value="solo">solo vocal</option>
+              <option value="duet">duet (two voices)</option>
+              <option value="choir">choir / ensemble</option>
+              <option value="spoken-word">spoken word</option>
+              <option value="instrumental">instrumental + occasional voice</option>
+            </select>
+            <input type="text" name="M05_character" placeholder="voice character — e.g. low, breathy, close-mic'd">
+          </div>
+        </article>
+
+        <!-- M·06 language -->
+        <article class="question" data-tier="M" data-qid="M06_language">
+          <div class="head"><span class="tag">M·06</span><span class="id">languages</span></div>
+          <h3>Language(s) for lyrics</h3>
+          <p class="hint">Comma-separated. If you write in two languages, list both — the agent will balance accordingly.</p>
+          <input class="control" name="M06_languages" placeholder="English, Portuguese">
+        </article>
+
+        <!-- M·07 runtime -->
+        <article class="question" data-tier="M" data-qid="M07_runtime">
+          <div class="head"><span class="tag">M·07</span><span class="id">runtime target</span></div>
+          <h3>Runtime target per track</h3>
+          <p class="hint">Different mixes for different platforms. Pick the one your album is <em>primarily</em> shaped for.</p>
+          <select class="control" name="M07_runtime">
+            <option value="">— pick one —</option>
+            <option value="radio-edit">radio edit (2:30 – 3:30)</option>
+            <option value="standard">standard (3:30 – 4:30)</option>
+            <option value="extended">extended (4:30 – 6:30)</option>
+            <option value="immersive">immersive / cinematic (6:30+)</option>
+          </select>
+        </article>
+
+        <!-- M·08 artist -->
+        <article class="question" data-tier="M" data-qid="M08_artist">
+          <div class="head"><span class="tag">M·08</span><span class="id">artist identity</span></div>
+          <h3>Artist stage name</h3>
+          <p class="hint">New or existing persona. This becomes the album slug prefix.</p>
+          <input class="control" name="M08_artist" placeholder="e.g. Maren Sol">
+        </article>
+      </section>
+
+      <!-- ====================== RECOMMENDED ====================== -->
+      <section aria-label="Recommended questions">
+        <div class="tier-band" data-tier="R">
+          <h2>RECOMMENDED · 10 questions · strong defaults applied if you skip</h2>
+          <span class="resolved" id="recommendedResolved">resolved 0 of 10</span>
+        </div>
+
+        <!-- R·09 title -->
+        <article class="question" data-tier="R" data-qid="R09_title">
+          <div class="head"><span class="tag">R·09</span><span class="id">working album title</span></div>
+          <h3>Working album title</h3>
+          <p class="hint">Placeholder OK. You can change later.</p>
+          <input class="control" name="R09_title" placeholder="e.g. Half-Light Hours">
+        </article>
+
+        <!-- R·10 tracklist -->
+        <article class="question" data-tier="R" data-qid="R10_tracklist">
+          <div class="head"><span class="tag">R·10</span><span class="id">tracklist placeholder</span></div>
+          <h3>Rough song titles or themes</h3>
+          <p class="hint">Up to 12 rows. Title is required, theme is a one-line note. Leave blank rows — only filled rows count.</p>
+          <div class="tracklist-rows" id="tracklistGrid">
+            <!-- rows injected by JS -->
+          </div>
+        </article>
+
+        <!-- R·11 visual motif -->
+        <article class="question" data-tier="R" data-qid="R11_motif">
+          <div class="head"><span class="tag">R·11</span><span class="id">visual motif</span></div>
+          <h3>One recurring image</h3>
+          <p class="hint">A window, a color, an object. The visual hook the cover and rollout will return to.</p>
+          <textarea class="control" name="R11_motif" placeholder="A half-closed window at dawn..."></textarea>
+        </article>
+
+        <!-- R·12 production -->
+        <article class="question" data-tier="R" data-qid="R12_production">
+          <div class="head"><span class="tag">R·12</span><span class="id">production style</span></div>
+          <h3>Production style</h3>
+          <select class="control" name="R12_production">
+            <option value="">— pick one (default: hybrid) —</option>
+            <option value="stripped">stripped / acoustic-first</option>
+            <option value="full-band">full band</option>
+            <option value="electronic">electronic / produced</option>
+            <option value="cinematic">cinematic / orchestral</option>
+            <option value="hybrid">hybrid (default)</option>
+          </select>
+        </article>
+
+        <!-- R·13 lyrical source -->
+        <article class="question" data-tier="R" data-qid="R13_lyricalSource">
+          <div class="head"><span class="tag">R·13</span><span class="id">lyrical source</span></div>
+          <h3>Who writes the lyrics?</h3>
+          <select class="control" name="R13_lyricalSource">
+            <option value="">— pick one (default: co-write) —</option>
+            <option value="user-writes">I write all the lyrics</option>
+            <option value="agent-writes">agent drafts, I edit</option>
+            <option value="co-write">we co-write, line by line (default)</option>
+          </select>
+        </article>
+
+        <!-- R·14 distribution -->
+        <article class="question" data-tier="R" data-qid="R14_distribution">
+          <div class="head"><span class="tag">R·14</span><span class="id">distribution intent</span></div>
+          <h3>How far does this album go?</h3>
+          <select class="control" name="R14_distribution">
+            <option value="">— pick one (default: full-dsp) —</option>
+            <option value="just-for-me">just for me / private</option>
+            <option value="routenote-free">RouteNote Free / Bandcamp</option>
+            <option value="full-dsp">full DSP (Spotify + Apple + etc.) (default)</option>
+            <option value="physical-and-dsp">physical release (vinyl/CD) + DSP</option>
+          </select>
+        </article>
+      </section>
+
+      <!-- ====================== EXTRA ====================== -->
+      <section aria-label="Extra questions">
+        <div class="tier-band" data-tier="E">
+          <h2>EXTRA · 11 questions · pure opt-in</h2>
+          <span class="resolved" id="extraResolved">resolved 0 of 11</span>
+        </div>
+
+        <!-- E·15 arc -->
+        <article class="question" data-tier="E" data-qid="E15_arc">
+          <div class="head"><span class="tag">E·15</span><span class="id">emotional arc</span></div>
+          <h3>Shape of the listening experience</h3>
+          <p class="hint">Cold → warm → cold?  gentle rise to catharsis?  scattered vignettes?  One paragraph.</p>
+          <textarea class="control" name="E15_arc" placeholder="The album opens at low volume and brightens with each track..."></textarea>
+        </article>
+
+        <!-- E·16 influences -->
+        <article class="question" data-tier="E" data-qid="E16_influences">
+          <div class="head"><span class="tag">E·16</span><span class="id">non-music influences</span></div>
+          <h3>Books, films, places, seasons that shaped the sound</h3>
+          <textarea class="control" name="E16_influences" placeholder="The reading room of the public library on Sundays, before closing. Tarkovsky's Mirror. The first hour of a thunderstorm."></textarea>
+        </article>
+
+        <!-- E·17 cover art -->
+        <article class="question" data-tier="E" data-qid="E17_coverArt">
+          <div class="head"><span class="tag">E·17</span><span class="id">cover art direction</span></div>
+          <h3>Palette, photo vs illustration, typography mood</h3>
+          <textarea class="control" name="E17_coverArt" placeholder="Hand-drawn line illustration on cream paper, sage-green and rust accent, serif title set in lower-case only."></textarea>
+        </article>
+
+        <!-- E·18 anchor -->
+        <article class="question" data-tier="E" data-qid="E18_anchor">
+          <div class="head"><span class="tag">E·18</span><span class="id">physical anchor</span></div>
+          <h3>The ONE thing the listener should remember</h3>
+          <textarea class="control" name="E18_anchor" placeholder="The breath at the start of track 3. The line: 'I was not ready then, but I am ready now.'"></textarea>
+        </article>
+
+        <!-- E·19 press scope -->
+        <article class="question" data-tier="E" data-qid="E19_pressScope">
+          <div class="head"><span class="tag">E·19</span><span class="id">press / rollout scope</span></div>
+          <h3>How loud is the rollout?</h3>
+          <select class="control" name="E19_pressScope">
+            <option value="">— pick one (default: music-only) —</option>
+            <option value="music-only">music only (default)</option>
+            <option value="music-press">music + press kit (EPK)</option>
+            <option value="music-press-social">music + press + social</option>
+            <option value="everything">everything (full campaign)</option>
+          </select>
+        </article>
+
+        <!-- E·20 music videos -->
+        <article class="question" data-tier="E" data-qid="E20_musicVideos">
+          <div class="head"><span class="tag">E·20</span><span class="id">music videos</span></div>
+          <h3>How many music videos?</h3>
+          <select class="control" name="E20_musicVideos">
+            <option value="">— pick one (default: 0) —</option>
+            <option value="0">0 (default)</option>
+            <option value="1-2">1–2 (lead single + one B-side)</option>
+            <option value="3-5">3–5 (full visual album)</option>
+          </select>
+        </article>
+
+        <!-- E·21 deadline -->
+        <article class="question" data-tier="E" data-qid="E21_deadline">
+          <div class="head"><span class="tag">E·21</span><span class="id">deadline</span></div>
+          <h3>When does this need to ship?</h3>
+          <p class="hint">If no real deadline, leave blank — the agent will pace to default release windows.</p>
+          <input class="control" type="date" name="E21_deadline">
+        </article>
+      </section>
+
+      <div class="cta-bar">
+        <button type="submit" class="button" id="generateBtn" aria-disabled="true" disabled>
+          Generate CONCEPT-BRIEF · 9/9 mandatory required
+        </button>
+      </div>
+    </form>
+
+    <aside class="confirmation" id="confirmationCard" aria-live="polite">
+      <h3>Brief exported.</h3>
+      <p>The file <code id="downloadFileName">intake-data/album-slug.json</code> has been downloaded to your machine.</p>
+      <p>Open a chat with Penelope and say <code>approve brief &lt;slug&gt;</code> to start the build pipeline. The agent will write the corresponding <code>intake-data/&lt;slug&gt;.json</code> into the project, generate a CONCEPT-BRIEF.md, and the album studio will boot the 12-layer dashboard for it.</p>
+    </aside>
+  </main>
+
+  <script>
+    /* ===========================================================
+       sonic-sounds intake — behavior
+       Sections:
+         A. TRACKLIST GRID (12 rows, indexed 1..12)
+         B. STATE + AUTOSAVE (localStorage, debounced 800ms)
+         C. MANDATORY-RESOLVED COUNTER + GATE
+         D. EXPORT (compose JSON per schema, trigger download)
+         E. HYDRATE FROM MOST RECENT sonic-sounds.intake.* KEY
+       The form is read-only against the file system; the agent
+       writes the corresponding intake-data/<slug>.json file.
+    =========================================================== */
+
+    const STORAGE_PREFIX = 'sonic-sounds.intake.';
+    const DEBOUNCE_MS = 800;
+    const INTAKE_FORM_VERSION = '2026-08-03-v2hardening';
+    const TRACKLIST_MAX = 12;
+
+    const slugify = (s) => (s || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40);
+
+    /* ---------------- A. tracklist grid ---------------- */
+    const grid = document.getElementById('tracklistGrid');
+    for (let i = 1; i <= TRACKLIST_MAX; i++) {
+      const num = document.createElement('div');
+      num.className = 'num'; num.textContent = String(i).padStart(2, '0');
+      const title = document.createElement('input');
+      title.type = 'text'; title.name = `R10_t${i}_title`;
+      title.placeholder = `Track ${i} — title`; title.autocomplete = 'off';
+      const theme = document.createElement('input');
+      theme.type = 'text'; theme.name = `R10_t${i}_theme`;
+      theme.placeholder = 'theme (optional)'; theme.autocomplete = 'off';
+      grid.appendChild(num); grid.appendChild(title); grid.appendChild(theme);
+    }
+
+    /* ---------------- B. state + autosave ---------------- */
+    const form = document.getElementById('intakeForm');
+    const savedLabel = document.getElementById('savedLabel');
+    const savedText = savedLabel.querySelector('.text');
+    const setSaved = (msg, isDirty = false) => {
+      savedText.textContent = msg;
+      savedLabel.classList.toggle('is-dirty', !!isDirty);
+    };
+    let currentKey = null;        // localStorage key for this session
+    let saveTimer = null;
+    const debouncedSave = () => {
+      setSaved('TYPING…', true);
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(commitSave, DEBOUNCE_MS);
+    };
+    const readForm = () => {
+      const fd = new FormData(form);
+      const out = {};
+      for (const [k, v] of fd.entries()) {
+        if (typeof v === 'string') out[k] = v;
+      }
+      return out;
+    };
+    const commitSave = () => {
+      const data = readForm();
+      const artist = data['M08_artist'] || '';
+      const today = new Date().toISOString().slice(0, 10);
+      const key = `${STORAGE_PREFIX}${slugify(artist) || 'untitled'}-${today}`;
+      localStorage.setItem(key, JSON.stringify({
+        savedAt: new Date().toISOString(),
+        formVersion: INTAKE_FORM_VERSION,
+        data
+      }));
+      currentKey = key;
+      setSaved(`SAVED ${new Date().toISOString().slice(11, 19)} UTC · ${key.slice(STORAGE_PREFIX.length)}`);
+    };
+    form.addEventListener('input', debouncedSave);
+
+    /* ---------------- C. mandatory-resolved counter + gate ---------------- */
+    const mandatorySelectors = [
+      '[data-qid="M01_concept"] textarea',
+      '[data-qid="M02_scope"] select',
+      '[data-qid="M03_genre"] input',
+      '[data-qid="M04_references"] input[name="M04_ref1"]',
+      '[data-qid="M05_vocal"] select',
+      '[data-qid="M06_language"] input',
+      '[data-qid="M07_runtime"] select',
+      // M08 split v2.1: artistName is the required one
+      '[data-qid="M08_artistName"] input',
+      // M09 NEW v2.2: sonic DNA lock — derived from M03/M05/R12/M07, computed at approval
+      '[data-qid="M09_sonicDNA"] input',
+    ];
+    const recommendedSelectors = [
+      '[data-qid="R09_title"] input',
+      '[data-qid="R11_motif"] textarea',
+      '[data-qid="R12_production"] select',
+      '[data-qid="R13_lyricalSource"] select',
+      '[data-qid="R14_distribution"] select',
+      // R10 counts as 1 question: it resolves if any track row is filled
+      '[data-qid="R10_tracklist"] input',
+      // R15-R19 NEW v2.2: mastering + credits + samples
+      '[data-qid="R15_loudnessTarget"] select',
+      '[data-qid="R16_sequencePacing"] select',
+      '[data-qid="R17_explicitRating"] select',
+      '[data-qid="R18_coWriter"] select',
+      '[data-qid="R19_sampleCover"] select',
+    ];
+    const extraSelectors = [
+      '[data-qid="E15_arc"] textarea',
+      '[data-qid="E16_influences"] textarea',
+      '[data-qid="E17_coverArt"] textarea',
+      '[data-qid="E18_anchor"] textarea',
+      '[data-qid="E19_pressScope"] select',
+      '[data-qid="E20_musicVideos"] select',
+      '[data-qid="E21_deadline"] input',
+      // E22-E25 NEW v2.2: timeline / persona / audience / physical
+      '[data-qid="E22_timeline"] textarea',
+      '[data-qid="E23_sessionPersona"] select',
+      '[data-qid="E24_audience"] textarea',
+      '[data-qid="E25_physicalRelease"] select',
+    ];
+
+    const isFilled = (sel) => {
+      if (sel === '[data-qid="R10_tracklist"] input') {
+        const titles = document.querySelectorAll(sel);
+        return Array.from(titles).some(i => i.name.endsWith('_title') && i.value.trim());
+      }
+      const els = document.querySelectorAll(sel);
+      return Array.from(els).some(e => e.value.trim());
+    };
+
+    const generateBtn = document.getElementById('generateBtn');
+    const mandatoryResolvedEl = document.getElementById('mandatoryResolved');
+    const recommendedResolvedEl = document.getElementById('recommendedResolved');
+    const extraResolvedEl = document.getElementById('extraResolved');
+    const refreshGate = () => {
+      let m = 0; mandatorySelectors.forEach(s => { if (isFilled(s)) m++; });
+      let r = 0; recommendedSelectors.forEach(s => { if (isFilled(s)) r++; });
+      let e = 0; extraSelectors.forEach(s => { if (isFilled(s)) e++; });
+      mandatoryResolvedEl.textContent = `resolved ${m} of 9`;
+      recommendedResolvedEl.textContent = `resolved ${r} of 10`;
+      extraResolvedEl.textContent = `resolved ${e} of 11`;
+      const ready = m === 9;
+      generateBtn.disabled = !ready;
+      generateBtn.setAttribute('aria-disabled', String(!ready));
+      generateBtn.dataset.state = ready ? 'ready' : 'pending';
+      generateBtn.textContent = ready
+        ? `Generate CONCEPT-BRIEF · ${m}/9 mandatory ✓`
+        : `Generate CONCEPT-BRIEF · ${m}/9 mandatory required`;
+    };
+    form.addEventListener('input', refreshGate);
+
+    /* ---------------- D. export ---------------- */
+    const confirmationCard = document.getElementById('confirmationCard');
+    const downloadFileName = document.getElementById('downloadFileName');
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const m = mandatorySelectors.filter(s => isFilled(s)).length;
+      if (m < 8) return;
+      const payload = composeJson();
+      const slug = payload.albumSlug;
+      const filename = `${slug}.json`;
+      downloadFileName.textContent = `intake-data/${filename}`;
+      // Trigger download
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      confirmationCard.classList.add('is-shown');
+      // Clear the localStorage key (form has been exported; no need to retain)
+      if (currentKey) {
+        try { localStorage.removeItem(currentKey); } catch {}
+        currentKey = null;
+        setSaved('EXPORTED · local save cleared');
+      }
+      confirmationCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    const composeJson = () => {
+      const raw = readForm();
+      const today = new Date().toISOString();
+      const artist = (raw['M08_artist'] || '').trim();
+      const title = (raw['R09_title'] || '').trim();
+      const slugRaw = slugify(`${artist}-${title || 'untitled'}`);
+      const albumSlug = slugRaw || 'untitled-album';
+
+      // Tracklist: collect non-empty rows
+      const tracks = [];
+      for (let i = 1; i <= TRACKLIST_MAX; i++) {
+        const t = (raw[`R10_t${i}_title`] || '').trim();
+        if (!t) continue;
+        const theme = (raw[`R10_t${i}_theme`] || '').trim();
+        tracks.push({ index: tracks.length + 1, title: t, theme: theme || undefined });
+      }
+
+      // Languages: comma-separated → trimmed array of non-empty strings
+      const languages = (raw['M06_languages'] || '')
+        .split(',').map(s => s.trim()).filter(Boolean);
+
+      // References: up to 3
+      const refs = [];
+      for (let n = 1; n <= 3; n++) {
+        const name = (raw[`M04_ref${n}`] || '').trim();
+        if (name) refs.push({ name });
+      }
+
+      const answers = {
+        M01_concept:      text(raw['M01_concept']),
+        M02_scope:        sel (raw['M02_scope']),
+        M03_genre:        text(raw['M03_genre']),
+        M04_references:   { artists: refs },
+        M05_vocal:        { approach: (raw['M05_approach'] || '').trim(), character: (raw['M05_character'] || '').trim() },
+        M06_language:     { languages },
+        M07_runtime:      sel(raw['M07_runtime']),
+        M08_artist:       text(raw['M08_artist']),
+        R09_title:        text(raw['R09_title']),
+        R10_tracklist:    { tracks },
+        R11_motif:        text(raw['R11_motif']),
+        R12_production:   sel(raw['R12_production']),
+        R13_lyricalSource: sel(raw['R13_lyricalSource']),
+        R14_distribution: sel(raw['R14_distribution']),
+        E15_arc:          text(raw['E15_arc']),
+        E16_influences:   text(raw['E16_influences']),
+        E17_coverArt:     text(raw['E17_coverArt']),
+        E18_anchor:       text(raw['E18_anchor']),
+        E19_pressScope:   sel(raw['E19_pressScope']),
+        E20_musicVideos:  sel(raw['E20_musicVideos']),
+        E21_deadline:     { value: (raw['E21_deadline'] || '').trim() },
+      };
+
+      // Skipped list (Recommended or Extra tier only, when empty)
+      const skipped = [];
+      const skipIfEmpty = (qid, ansObj) => {
+        if (!isAnswerFilled(ansObj)) skipped.push(qid);
+      };
+      // Mandatory always required; only R/E can be skipped
+      skipIfEmpty('R09_title', answers.R09_title);
+      skipIfEmpty('R10_tracklist', answers.R10_tracklist);
+      skipIfEmpty('R11_motif', answers.R11_motif);
+      skipIfEmpty('R12_production', answers.R12_production);
+      skipIfEmpty('R13_lyricalSource', answers.R13_lyricalSource);
+      skipIfEmpty('R14_distribution', answers.R14_distribution);
+      skipIfEmpty('E15_arc', answers.E15_arc);
+      skipIfEmpty('E16_influences', answers.E16_influences);
+      skipIfEmpty('E17_coverArt', answers.E17_coverArt);
+      skipIfEmpty('E18_anchor', answers.E18_anchor);
+      skipIfEmpty('E19_pressScope', answers.E19_pressScope);
+      skipIfEmpty('E20_musicVideos', answers.E20_musicVideos);
+      skipIfEmpty('E21_deadline', answers.E21_deadline);
+
+      return {
+        schemaVersion: '2.2',
+        albumSlug,
+        submittedAt: today,
+        intakeFormVersion: INTAKE_FORM_VERSION,
+        answers,
+        skipped,
+      };
+    };
+
+    const text = (v) => ({ value: (v || '').trim() });
+    const sel  = (v) => ({ value: (v || '').trim() });
+    const isAnswerFilled = (a) => {
+      if (!a || typeof a !== 'object') return false;
+      if ('value' in a) return !!a.value && a.value.length > 0;
+      if ('tracks' in a)  return Array.isArray(a.tracks) && a.tracks.length > 0;
+      if ('artists' in a) return Array.isArray(a.artists) && a.artists.length > 0;
+      if ('languages' in a) return Array.isArray(a.languages) && a.languages.length > 0;
+      if ('approach' in a) return !!a.approach;
+      return false;
+    };
+
+    /* ---------------- E. hydrate from most recent ---------------- */
+    const hydrateBtn = document.getElementById('hydrateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    hydrateBtn.addEventListener('click', () => {
+      const keys = Object.keys(localStorage)
+        .filter(k => k.startsWith(STORAGE_PREFIX))
+        .sort((a, b) => {
+          const ta = JSON.parse(localStorage.getItem(a) || '{}').savedAt || '';
+          const tb = JSON.parse(localStorage.getItem(b) || '{}').savedAt || '';
+          return tb.localeCompare(ta);
+        });
+      if (keys.length === 0) {
+        setSaved('NO PRIOR SAVE FOUND', true);
+        return;
+      }
+      const latest = JSON.parse(localStorage.getItem(keys[0]) || '{}');
+      const data = latest.data || {};
+      for (const [k, v] of Object.entries(data)) {
+        const el = form.elements[k];
+        if (el && 'value' in el) el.value = v;
+      }
+      currentKey = keys[0];
+      setSaved(`RESTORED ${latest.savedAt?.slice(11,19) || '?'} UTC · ${keys[0].slice(STORAGE_PREFIX.length)}`);
+      refreshGate();
+    });
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('Reset the entire form? Local autosave will be cleared too.')) return;
+      form.reset();
+      if (currentKey) {
+        try { localStorage.removeItem(currentKey); } catch {}
+        currentKey = null;
+      }
+      setSaved('RESET · no local save yet');
+      refreshGate();
+    });
+
+    // ---- first paint ----
+    refreshGate();
+  </script>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

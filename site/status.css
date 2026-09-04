@@ -1,0 +1,164 @@
+/* site/status.css · Day 1 Hour 6 — Status pill state transitions (10 ideas)
+ *
+ * The .pill element in studio.html shows session status (active/
+ * paused/done). These 10 ideas make it feel alive + announce state
+ * changes via the existing CustomEvent bus.
+ */
+
+:root {
+  /* Status pill timing tokens */
+  --t-status-color: 240ms;
+  --t-status-pulse: 360ms;
+}
+
+/* =====================================================================
+ * Idea 1: Status pill color transition across all 3 states
+ * ===================================================================== */
+
+.pill {
+  transition:
+    background-color var(--t-status-color) var(--spring-soft),
+    border-color     var(--t-status-color) var(--spring-soft),
+    color            var(--t-status-color) var(--spring-soft),
+    transform        var(--t-press)     var(--spring-bouncy),
+    box-shadow       var(--t-press)     var(--spring-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+/* =====================================================================
+ * Idea 2: status-pulse on every state flip
+ * ===================================================================== */
+
+@keyframes status-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 var(--accent-2); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 transparent; }
+}
+.pill.flipped {
+  animation: status-pulse var(--t-status-pulse) var(--spring-bouncy);
+}
+
+/* =====================================================================
+ * Idea 3: Subtle glow ring on active pill (animated)
+ * ===================================================================== */
+
+.pill.status-active::before {
+  content: ""; position: absolute; inset: -2px;
+  border-radius: inherit; pointer-events: none;
+  background: linear-gradient(45deg, var(--accent-2), transparent, var(--accent));
+  background-size: 200% 100%;
+  animation: glow-rotate 4s linear infinite;
+  opacity: 0.4; z-index: -1;
+  filter: blur(8px);
+}
+@keyframes glow-rotate {
+  from { background-position: 0% 0; }
+  to   { background-position: 200% 0; }
+}
+
+/* =====================================================================
+ * Idea 4: Inline quick-actions on hover (pause/resume dropdown)
+ * ===================================================================== */
+
+.pill[role="status"] {
+  cursor: help;
+}
+.pill[role="status"]:hover::before {
+  content: attr(data-action-hint);
+  position: absolute; bottom: -28px; right: 0;
+  background: var(--accent); color: var(--bg);
+  padding: 4px 8px; border-radius: 4px;
+  font: 11px/1 var(--mono); letter-spacing: .04em;
+  white-space: nowrap; pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+
+/* =====================================================================
+ * Idea 5: Status pill with timestamp "ACTIVE · 2h ago" detail
+ * (text is set via studio.js but we style it here)
+ * ===================================================================== */
+
+#status-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+#status-pill::after {
+  content: " · " attr(data-relative);
+  font-family: var(--mono); font-size: 11px; opacity: .7;
+  margin-left: 4px;
+}
+
+/* =====================================================================
+ * Idea 6: Count badge showing paused vs done sessions count
+ * (rendered as ::before when .has-count is on .pill)
+ * ===================================================================== */
+
+.pill.has-count {
+  padding-right: 28px;
+}
+.pill.has-count::after {
+  content: attr(data-count);
+  position: absolute; top: 50%; right: 8px;
+  transform: translateY(-50%);
+  background: var(--bg-elevated);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font: 10px/1 var(--mono);
+  min-width: 18px; text-align: center;
+}
+
+/* =====================================================================
+ * Idea 7: Color-blind safe palette toggle (deuteranopia/protanopia)
+ *
+ * If `data-cb-safe="1"` is set on <html>, the pill uses patterns
+ * (●◐○) instead of pure colors for status distinction.
+ * ===================================================================== */
+
+:root[data-cb-safe="1"] .pill.status-active  { font-weight: 600; }
+:root[data-cb-safe="1"] .pill.status-paused::before { content: "◐ "; }
+:root[data-cb-safe="1"] .pill.status-done::before   { content: "✓ "; }
+
+/* =====================================================================
+ * Idea 8: Animated count-up on initial load (subtle scale-in)
+ * ===================================================================== */
+
+.pill.flipped,
+.pill.is-new {
+  animation: status-pulse var(--t-status-pulse) var(--spring-bouncy),
+             count-up 480ms var(--spring-soft);
+}
+@keyframes count-up {
+  from { transform: scale(.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* =====================================================================
+ * Idea 9: Status emoji fallback (🟢/🟡/🔴 when CSS classes fail)
+ *
+ * The pill text always includes the emoji, but if for some reason
+ * the CSS class fails, the emoji still conveys status.
+ * ===================================================================== */
+
+.status-active::before  { content: "● "; }
+.status-paused::before  { content: "◐ "; }
+.status-done::before    { content: "✓ "; }
+
+/* =====================================================================
+ * Idea 10: Aria-live region announcing state changes
+ * (DOM is rendered elsewhere; here we style the announcer region
+ * so screen readers see "Session paused" on state flip.)
+ * ===================================================================== */
+
+[aria-live="polite"].sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pill, .pill::before, .pill::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}

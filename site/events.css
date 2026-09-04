@@ -1,0 +1,180 @@
+/* site/events.css · Day 1 Hour 18 — Events log animations (10 ideas)
+ *
+ * The .event-row elements in the events panel. New events slide in
+ * from the top, semantic colors per kind, role tints, empty-state
+ * illustration. JS adds .is-new / .kind-X classes.
+ */
+
+:root {
+  --t-event-enter: 320ms;
+  --t-event-filter: 220ms;
+}
+
+/* =====================================================================
+ * Idea 1: New events slide in from top (push existing down)
+ * ===================================================================== */
+
+.event-row {
+  position: relative;
+  padding: 6px 10px;
+  border-radius: 4px;
+  animation: event-enter var(--t-event-enter) var(--spring-bouncy) both;
+  transition: background-color var(--t-press) var(--spring-soft),
+              transform var(--t-press) var(--spring-soft);
+  transform-origin: center top;
+}
+@keyframes event-enter {
+  0%   { opacity: 0; transform: translateY(-12px) scale(.98); }
+  60%  { opacity: 1; transform: translateY(2px)   scale(1.005); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* =====================================================================
+ * Idea 2: Spring-bouncy curve (covered by .event-row transition tokens)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 3: Chat events: human = blue tint, assistant = green tint
+ * ===================================================================== */
+
+.event-row[data-role="user"],
+.event-row[data-role="human"] {
+  border-left: 3px solid #2962ff;  /* blue */
+  padding-left: 8px;
+  background: color-mix(in srgb, #2962ff 4%, transparent);
+}
+.event-row[data-role="assistant"] {
+  border-left: 3px solid #4caf50;  /* green */
+  padding-left: 8px;
+  background: color-mix(in srgb, #4caf50 4%, transparent);
+}
+
+/* =====================================================================
+ * Idea 4: Build events: subtle pulse on appearance
+ * ===================================================================== */
+
+.event-row[data-kind="build"] {
+  animation: event-enter var(--t-event-enter) var(--spring-bouncy) both,
+             event-pulse var(--t-event-enter) var(--spring-soft);
+}
+@keyframes event-pulse {
+  0%   { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  100% { background: transparent; }
+}
+
+/* =====================================================================
+ * Idea 5: Log events: monospace
+ * ===================================================================== */
+
+.event-row[data-kind="log"] {
+  font-family: var(--mono);
+  font-size: 11px;
+  opacity: .7;
+}
+
+/* =====================================================================
+ * Idea 6: Click event → open in detail view (visual cue)
+ * ===================================================================== */
+
+.event-row { cursor: pointer; }
+.event-row:hover {
+  background: color-mix(in srgb, var(--accent-2) 6%, transparent);
+  transform: translateX(2px);
+}
+.event-row.is-expanded {
+  animation: event-expand var(--t-event-enter) var(--spring-soft);
+}
+@keyframes event-expand {
+  from { max-height: 24px; }
+  to   { max-height: 600px; }
+}
+
+/* =====================================================================
+ * Idea 7: Filter pills (chat/build/log)
+ * ===================================================================== */
+
+.event-filters {
+  display: flex; gap: 4px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.event-filter {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font: 11px var(--mono);
+  letter-spacing: .04em;
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  transition: background-color var(--t-event-filter) var(--spring-soft),
+              color var(--t-event-filter) var(--spring-soft),
+              border-color var(--t-event-filter) var(--spring-soft);
+}
+.event-filter:hover {
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
+.event-filter.is-active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* =====================================================================
+ * Idea 8: Auto-scroll to bottom (toggleable)
+ *
+ * The visual hint is a small badge that fades in when auto-scroll
+ * is paused. JS handles the actual scroll behavior.
+ * ===================================================================== */
+
+.event-list[data-autoscroll="paused"] {
+  border-bottom: 2px solid var(--accent);
+}
+.event-list[data-autoscroll="paused"]::after {
+  content: "⏸ auto-scroll paused";
+  display: block;
+  text-align: center;
+  font: 10px/1 var(--mono);
+  color: var(--accent);
+  padding: 4px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* =====================================================================
+ * Idea 9: prefers-reduced-motion → no slide
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .event-row, .event-row[data-kind="build"],
+  .event-filter, .event-row:hover {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* =====================================================================
+ * Idea 10: Empty state with illustration (italic prompt)
+ * ===================================================================== */
+
+.event-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ink-muted);
+  font-family: var(--hand, var(--sans));
+  font-style: italic;
+  font-size: 14px;
+  opacity: .7;
+}
+.event-empty::before {
+  content: "✦";
+  display: block;
+  font-size: 36px;
+  opacity: .4;
+  margin-bottom: 8px;
+  animation: empty-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes empty-twinkle {
+  0%, 100% { opacity: .2; transform: scale(1); }
+  50%      { opacity: .8; transform: scale(1.1); }
+}

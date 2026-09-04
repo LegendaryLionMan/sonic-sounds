@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>05 — Cover Exploration</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F4EFE6;
+  --ink: #1B1714;
+  --ink-soft: #3D3530;
+  --rule: #C9BFAE;
+  --accent: #B8503A;
+  --accent-soft: #D9846F;
+  --highlight: #E8D9A8;
+  --status-done: #4A6B47;
+  --status-active: #B8503A;
+  --status-blocked: #7A1F1F;
+  --serif-display: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  --serif-body: 'Lora', 'Source Serif Pro', Georgia, serif;
+  --sans-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1.0625rem;
+  --fs-md: 1.25rem;
+  --fs-lg: 1.75rem;
+  --fs-xl: 2.75rem;
+  --fs-2xl: 4.25rem;
+  --fs-3xl: 6.5rem;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif-body);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  width: 1440px;
+  min-height: 1024px;
+  padding: clamp(24px, 4vw, 64px);
+  position: relative;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+}
+
+.masthead .left {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  letter-spacing: 0.02em;
+}
+
+.masthead .right {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hairline {
+  border-top: 1px solid var(--rule);
+  position: relative;
+  margin: 32px 0;
+}
+
+.hairline .dot {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+h1.display {
+  font-family: var(--serif-display);
+  font-size: var(--fs-3xl);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+h2.section {
+  font-family: var(--serif-display);
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+h3.sub {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.mono {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mono-tag {
+  display: inline-block;
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+
+.mono-tag.mandatory { border-color: var(--accent); color: var(--accent); }
+.mono-tag.recommended { border-color: var(--ink-soft); color: var(--ink-soft); }
+.mono-tag.extra { border-color: var(--rule); color: var(--ink-soft); }
+.mono-tag.todo { color: var(--ink-soft); border-color: var(--rule); }
+.mono-tag.in-progress { color: var(--accent); border-color: var(--accent); }
+.mono-tag.done { color: var(--status-done); border-color: var(--status-done); }
+.mono-tag.blocked { color: var(--status-blocked); border-color: var(--status-blocked); }
+
+.meta-row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.meta-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  min-width: 64px;
+}
+
+.meta-row .label {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.card {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 32px;
+  position: relative;
+}
+
+.card .status-dot {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.card.blocked .status-dot { background: var(--accent); }
+.card.done .status-dot { background: var(--status-done); }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 48px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--rule);
+}
+
+.swatch-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.swatch-name {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swatch-hex {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-soft);
+}
+
+.type-sample {
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0;
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: baseline;
+}
+
+.motif {
+  display: inline-block;
+  width: 32px;
+  height: 24px;
+  position: relative;
+}
+
+.motif svg {
+  display: block;
+}
+
+.question-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr auto;
+  gap: 32px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+}
+
+.question-row .num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.question-row .text {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+}
+
+.question-row .input {
+  border: 1px solid var(--rule);
+  height: 36px;
+  background: var(--paper);
+}
+
+.layer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-card .layer-num {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.layer-card .layer-name {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: var(--fs-lg);
+}
+
+.layer-card .layer-desc {
+  font-family: var(--serif-body);
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.layer-card .layer-meta {
+  font-family: var(--sans-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: auto;
+}
+</style>
+<style>
+  .cover { width: 100%; aspect-ratio: 1; background: var(--paper); border: 1px solid var(--rule); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: end; padding: 24px; }
+  .cover .album-num { font-family: var(--serif-display); font-style: italic; font-size: 6.5rem; line-height: 1; color: var(--ink); }
+  .cover .album-title { font-family: var(--serif-display); font-style: italic; font-size: 2.75rem; line-height: 1; color: var(--ink); margin-top: 8px; }
+  .cover .album-meta { font-family: var(--sans-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 16px; }
+  .cover-altar { background: linear-gradient(180deg, #1B1714 0%, #3D3530 60%, #B8503A 100%); }
+  .cover-altar .album-num, .cover-altar .album-title { color: #F4EFE6; }
+  .cover-altar .album-meta { color: #C9BFAE; }
+  .cover-bed { background: #1B1714; }
+  .cover-bed::before { content: ""; position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: #E8D9A8; box-shadow: 0 0 80px 40px rgba(232, 217, 168, 0.4); }
+  .cover-bed .album-num, .cover-bed .album-title { color: #F4EFE6; position: relative; z-index: 2; }
+  .cover-bed .album-meta { color: #C9BFAE; position: relative; z-index: 2; }
+  .cover-stage { background: radial-gradient(circle at 50% 100%, #B8503A 0%, #3D3530 50%, #1B1714 100%); }
+  .cover-stage .album-num { color: #F4EFE6; font-size: 9rem; text-align: center; }
+  .cover-stage .album-title, .cover-stage .album-meta { display: none; }
+  .cover-paper { background: #F4EFE6; }
+  .cover-paper::before { content: ""; position: absolute; top: 20%; left: 10%; right: 10%; height: 60%; background-image: repeating-linear-gradient(0deg, transparent 0, transparent 28px, #C9BFAE 28px, #C9BFAE 29px); }
+  .cover-paper .album-num { color: #1B1714; position: relative; z-index: 2; }
+  .cover-paper .album-title { color: #1B1714; position: relative; z-index: 2; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <span class="left">sonic-sounds</span>
+    <span class="right">05 / COVER EXPLORATION</span>
+  </div>
+
+  <h1 class="display" style="margin-bottom: 16px;">Cover exploration</h1>
+  <p class="mono" style="margin-bottom: 64px;">FOUR DIRECTIONS · SAME ALBUM · 90S GRUNGE · 22</p>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <div class="grid-4" style="margin-top: 32px;">
+
+    <div>
+      <div class="cover cover-altar">
+        <div class="album-num">22</div>
+        <div class="album-title">PYRO ALTAR</div>
+        <div class="album-meta">FIRE · STONE · GOLD</div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div class="mono" style="color: var(--accent); margin-bottom: 4px;">V1 · ALTAR</div>
+        <p style="color: var(--ink-soft); font-size: 0.875rem;">Massive stone altar · real flames · weathered stencil type. Heavy, ritual, 90s grunge energy.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="cover cover-bed">
+        <div class="album-num">22</div>
+        <div class="album-title">BARE BULB</div>
+        <div class="album-meta">BEDROOM · COAST · NIGHT</div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div class="mono" style="color: var(--accent); margin-bottom: 4px;">V2 · BEDROOM</div>
+        <p style="color: var(--ink-soft); font-size: 0.875rem;">Unmade bed · guitar · Pacifica coastline · bare bulb · wall of posters. Nostalgic, intimate, very 90s indie.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="cover cover-stage">
+        <div class="album-num">22</div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div class="mono" style="color: var(--accent); margin-bottom: 4px;">V3 · STAGE</div>
+        <p style="color: var(--ink-soft); font-size: 0.875rem;">Concert from behind · massive illuminated "22" backdrop · palms · smoke · crowd. Foo Fighters / Pearl Jam energy.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="cover cover-paper">
+        <div class="album-num">22</div>
+        <div class="album-title">BURNED</div>
+        <div class="album-meta">INK · CANDLE · SMOKE</div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div class="mono" style="color: var(--accent); margin-bottom: 4px;">V4 · BURNED PAPER</div>
+        <p style="color: var(--ink-soft); font-size: 0.875rem;">Handwritten notebook page · "22" in heavy ink · candle wax · pencil · cigarette butts · tungsten light.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hairline"><span class="dot"></span></div>
+
+  <h2 class="section">Decision</h2>
+  <p style="color: var(--ink-soft); max-width: 600px;">Pick one variant for the master 3000×3000 cover. The other three become art assets for posters, merch, and the cassette J-card.</p>
+
+  <div style="display: flex; gap: 24px; margin-top: 32px;">
+    <button style="background: var(--paper); color: var(--ink); border: 1px solid var(--rule); padding: 16px 32px; font-family: var(--sans-mono); font-size: 0.875rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">V1 ALTAR</button>
+    <button style="background: var(--paper); color: var(--ink); border: 1px solid var(--rule); padding: 16px 32px; font-family: var(--sans-mono); font-size: 0.875rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">V2 BEDROOM</button>
+    <button style="background: var(--accent); color: var(--paper); border: none; padding: 16px 32px; font-family: var(--sans-mono); font-size: 0.875rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">V3 STAGE ✓</button>
+    <button style="background: var(--paper); color: var(--ink); border: 1px solid var(--rule); padding: 16px 32px; font-family: var(--sans-mono); font-size: 0.875rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">V4 BURNED</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+/* site/pipeline.css · Day 1 Hour 16 — Pipeline cells cascade light-up (10 ideas)
+ *
+ * The .pipe-invoke cells in the studio. When a user clicks INVOKE on
+ * layer 01, the cell lights up; layer 02 cascades; etc. JS adds
+ * .is-active / .is-done / .is-failed / .is-pending classes.
+ */
+
+:root {
+  --t-pipeline-cascade-step: 80ms;
+  --t-pipeline-pulse: 1.2s;
+}
+
+/* =====================================================================
+ * Idea 1: Pipeline cells light up sequentially on invoke
+ * (cascade 01 → 02 → 03). JS sets --pipeline-progress (0..9)
+ * to drive the cascade.
+ * ===================================================================== */
+
+.pipe-invoke {
+  position: relative;
+  transition:
+    background-color var(--t-press) var(--spring-soft),
+    border-color var(--t-press) var(--spring-soft),
+    box-shadow var(--t-press) var(--spring-soft),
+    transform var(--t-press) var(--spring-bouncy);
+  --cascade-delay: calc(var(--pipeline-cell-index, 0) * var(--t-pipeline-cascade-step));
+}
+
+/* =====================================================================
+ * Idea 2: 80ms delay between cells (already in --cascade-delay)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 3: Active cell has accent border + glow
+ * ===================================================================== */
+
+.pipe-invoke.is-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--accent) 50%, transparent),
+    inset 0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+  animation: pipeline-pulse var(--t-pipeline-pulse) ease-in-out infinite;
+}
+@keyframes pipeline-pulse {
+  0%, 100% { box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 40%, transparent); }
+  50%      { box-shadow: 0 0 32px color-mix(in srgb, var(--accent) 70%, transparent); }
+}
+
+/* =====================================================================
+ * Idea 4: Done cell has checkmark ✓
+ * ===================================================================== */
+
+.pipe-invoke.is-done::after {
+  content: "✓";
+  position: absolute; top: 4px; right: 6px;
+  width: 18px; height: 18px;
+  background: var(--accent); color: var(--bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 11px/1 var(--sans);
+  animation: pipeline-done-pop var(--t-pipeline-pulse) var(--spring-bouncy);
+}
+@keyframes pipeline-done-pop {
+  from { opacity: 0; transform: scale(0); }
+  60%  { opacity: 1; transform: scale(1.2); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* =====================================================================
+ * Idea 5: Failed cell has ✗ + red glow
+ * ===================================================================== */
+
+.pipe-invoke.is-failed {
+  border-color: #ef4444;
+  background: color-mix(in srgb, #ef4444 10%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, #ef4444 50%, transparent);
+  animation: pipeline-failed-shake 480ms var(--spring-bouncy);
+}
+.pipe-invoke.is-failed::after {
+  content: "✗";
+  position: absolute; top: 4px; right: 6px;
+  width: 18px; height: 18px;
+  background: #ef4444; color: var(--bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font: 700 12px/1 var(--sans);
+}
+@keyframes pipeline-failed-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* =====================================================================
+ * Idea 6: Pending cell is dimmed
+ * ===================================================================== */
+
+.pipe-invoke.is-pending {
+  opacity: .35;
+  filter: saturate(.4);
+  pointer-events: none;
+}
+
+/* =====================================================================
+ * Idea 7: Spring-bouncy on active state (already via .pipe-invoke transition)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 8: Pulse on click
+ * ===================================================================== */
+
+.pipe-invoke:active {
+  transform: scale(.92);
+  animation: pipeline-click var(--t-press) var(--spring-bouncy);
+}
+@keyframes pipeline-click {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(.92); }
+  100% { transform: scale(1); }
+}
+
+/* =====================================================================
+ * Idea 9: Hover shows phase tooltip
+ * ===================================================================== */
+
+.pipe-invoke[data-phase]:hover::before {
+  content: attr(data-phase);
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated); color: var(--ink);
+  padding: 4px 10px; border-radius: 6px;
+  font: 11px/1 var(--mono);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+  pointer-events: none;
+  animation: pipeline-tooltip-pop var(--t-press) var(--spring-bouncy);
+}
+@keyframes pipeline-tooltip-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%); }
+}
+
+/* =====================================================================
+ * Idea 10: prefers-reduced-motion → no cascade
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .pipe-invoke,
+  .pipe-invoke.is-active,
+  .pipe-invoke.is-done::after,
+  .pipe-invoke.is-failed,
+  .pipe-invoke.is-failed::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}

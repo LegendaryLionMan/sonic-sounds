@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sonic-sounds · albums · mixtape '85</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site/albums.module.css">
+<link rel="stylesheet" href="/site/themes.css">
+<link rel="stylesheet" href="/site/album-card.css">
+<link rel="stylesheet" href="/site/spring.css">
+<link rel="stylesheet" href="/site/spring-extra.css">
+<link rel="stylesheet" href="/site/status.css">
+<link rel="stylesheet" href="/site/decisions.css">
+<link rel="stylesheet" href="/site/modals.css">
+<link rel="stylesheet" href="/site/decision-form.css">
+<link rel="stylesheet" href="/site/header-player.css">
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar">
+    <span class="crumb">sonic-sounds<b> / albums</b></span>
+    <span class="pill" id="status-pill"><span class="dot"></span> <span id="status-text">loading…</span></span>
+    <span class="grow"></span>
+    <button class="cmd" id="new-album-btn">+ NEW ALBUM</button>
+    <span data-theme-mount class="theme-picker-host"></span><button class="cmd">⌘K</button>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">/albums · mixtape '85 · the cassette is the chassis</p>
+      <h1>albums in progress</h1>
+      <p class="lede">Max 3 active sessions. 12h idle auto-pause. Every build layer tracked via the daemon.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-key">ACTIVE SESSIONS</span>
+        <span class="stat-val" id="stat-active">—</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-key">ALBUMS</span>
+        <span class="stat-val" id="stat-albums">—</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-key">DONE</span>
+        <span class="stat-val" id="stat-done">—</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <header class="section-head">
+      <p class="eyebrow">/active · live sessions</p>
+      <h2>active sessions</h2>
+    </header>
+    <div class="session-grid" id="session-grid">
+      <div class="empty-card"><p class="hand">No active sessions. Open one from an album below.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <header class="section-head">
+      <p class="eyebrow">/library · all albums</p>
+      <h2>album library</h2>
+    </header>
+    <div class="album-grid" id="album-grid">
+      <div class="empty-card"><p class="hand">No albums yet. The first one sets the tone.</p></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="health"><span class="dot"></span> daemon · <span id="daemon-host">127.0.0.1:8765</span></div>
+    <span class="grow"></span>
+    <span class="foot-meta"><span id="foot-meta-text">—</span></span>
+  </footer>
+
+</div>
+
+<!-- ============== NEW ALBUM MODAL ============== -->
+<div class="modal-backdrop" id="new-album-modal" hidden>
+  <div class="modal">
+    <header class="modal-head">
+      <p class="eyebrow">/new · create album</p>
+      <h3>new album</h3>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">×</button>
+    </header>
+    <form id="new-album-form" class="modal-body">
+      <label class="field">
+        <span class="field-label">ID <em>· slug, lowercase, no spaces</em></span>
+        <input type="text" name="id" required pattern="[a-z0-9-]+" placeholder="e.g. midnight-room">
+      </label>
+      <label class="field">
+        <span class="field-label">TITLE</span>
+        <input type="text" name="title" required placeholder="e.g. Midnight Room">
+      </label>
+      <label class="field">
+        <span class="field-label">ARTIST ID</span>
+        <input type="text" name="primary_artist_id" required value="maren-sol" placeholder="maren-sol">
+      </label>
+      <label class="field">
+        <span class="field-label">RELEASE DATE <em>· YYYY-MM-DD</em></span>
+        <input type="text" name="release_date" pattern="\d{4}-\d{2}-\d{2}" placeholder="2026-09-21">
+      </label>
+      <label class="field">
+        <span class="field-label">RUNTIME <em>· minutes</em></span>
+        <input type="number" name="runtime_min" min="1" max="200" value="40">
+      </label>
+      <div class="form-error" id="form-error" hidden></div>
+      <div class="modal-actions">
+        <button type="button" class="cta-secondary" id="modal-cancel-btn">Cancel</button>
+        <button type="submit" class="cta-primary">Create album</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/site/albums.js?v=day12-no-drawer"></script>
+<script src="/site/themes.js" defer></script>
+<script src="/site/header-player.js?v=hp1"></script>
+</body>
+</html>

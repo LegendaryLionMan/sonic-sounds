@@ -1,0 +1,163 @@
+/* site/build-runner.css · Day 1 Hour 20 — Build runner animations (10 ideas)
+ *
+ * The /api/build/invoke + /api/build/jobs flow. JS shows job state
+ * with classes: .is-queued / .is-running / .is-done / .is-failed /
+ * .is-skipped / .is-cancelled. CSS animates each.
+ */
+
+:root {
+  --t-job-progress: 220ms;
+  --t-job-pulse: 1.2s;
+}
+
+/* =====================================================================
+ * Idea 1: Job in-progress: progress ring fills around layer cell
+ * ===================================================================== */
+
+.build-job.is-running {
+  position: relative;
+  overflow: hidden;
+}
+.build-job.is-running::before {
+  content: "";
+  position: absolute; inset: -2px;
+  border: 2px solid transparent;
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+  border-radius: inherit;
+  animation: build-job-spin var(--t-job-pulse) linear infinite;
+  pointer-events: none;
+}
+@keyframes build-job-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =====================================================================
+ * Idea 2: Started: brief flash on the cell
+ * ===================================================================== */
+
+.build-job.is-queued {
+  animation: build-job-flash 320ms var(--spring-bouncy);
+}
+@keyframes build-job-flash {
+  0%   { background: color-mix(in srgb, var(--accent) 50%, transparent); }
+  100% { background: transparent; }
+}
+
+/* =====================================================================
+ * Idea 4: Done: green checkmark + fade
+ * ===================================================================== */
+
+.build-job.is-done {
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+  border-color: var(--accent);
+}
+.build-job.is-done::after {
+  content: "\2713";
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: var(--accent);
+  font: 800 16px/1 var(--sans);
+  animation: build-job-done-pop var(--t-job-progress) var(--spring-bouncy);
+}
+@keyframes build-job-done-pop {
+  from { opacity: 0; transform: translateY(-50%) scale(0); }
+  60%  { opacity: 1; transform: translateY(-50%) scale(1.3); }
+  100% { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+/* Idea 5 */
+.build-job.is-failed {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border-color: #ef4444;
+  animation: build-job-fail-shake 480ms var(--spring-bouncy);
+}
+.build-job.is-failed::after {
+  content: "\2717";
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: #ef4444;
+  font: 800 16px/1 var(--sans);
+}
+@keyframes build-job-fail-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* Idea 6 */
+.build-job.is-skipped {
+  opacity: .4;
+  filter: saturate(.3);
+}
+.build-job.is-skipped::after {
+  content: "\2014";
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-muted);
+  font: 800 16px/1 var(--sans);
+}
+
+/* Idea 7 */
+.build-job.is-cancelled {
+  background: color-mix(in srgb, var(--ink-muted) 15%, transparent);
+  border-color: var(--ink-muted);
+}
+.build-job.is-cancelled::after {
+  content: "\2715";
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-muted);
+  font: 800 16px/1 var(--sans);
+  animation: build-job-cancel-pop var(--t-job-progress) var(--spring-bouncy);
+}
+@keyframes build-job-cancel-pop {
+  from { opacity: 0; transform: translateY(-50%) scale(2); }
+  to   { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+/* Idea 8 */
+.build-layer-transition {
+  position: relative;
+  height: 32px;
+  overflow: hidden;
+}
+.build-layer-transition .layer {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity var(--t-job-progress) var(--spring-soft),
+              transform var(--t-job-progress) var(--spring-bouncy);
+  transform: translateY(20px);
+}
+.build-layer-transition .layer.is-current {
+  opacity: 1;
+  transform: translateY(0);
+}
+.build-layer-transition .layer.is-leaving {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Idea 9 */
+@media (prefers-reduced-motion: reduce) {
+  .build-job,
+  .build-job.is-queued,
+  .build-job.is-running::before,
+  .build-job.is-failed,
+  .build-job.is-done::after,
+  .build-job.is-cancelled::after,
+  .build-layer-transition .layer {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* Idea 10 */
+.build-history-timestamp {
+  font: 10px var(--mono);
+  color: var(--ink-muted);
+  display: block;
+  text-align: right;
+  margin-top: 2px;
+}
+.build-history-row.is-recent {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  padding-left: 8px;
+  border-left: 2px solid var(--accent);
+}

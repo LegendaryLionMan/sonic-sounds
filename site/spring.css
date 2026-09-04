@@ -1,0 +1,174 @@
+/* site/spring.css · Hour 3 spring-physics animation system (2026 standard)
+ *
+ * Per Creative Alive "Micro-Interactions in 2026: Spring physics on every
+ * tactile control. Linear and ease-out curves feel mechanical in 2026;
+ * springs — configured with mass, stiffness, and damping — feel alive."
+ *
+ * We use CSS `animation-timing-function: linear(...)` (the 2026-native
+ * spring cubic-bezier alternative) plus cubic-bezier overshoot values
+ * tuned per element-type:
+ *
+ *   --spring-bouncy     — for INVOKE / play / pause (high overshoot)
+ *   --spring-soft       — for drawers / modals / pills (gentle settle)
+ *   --spring-snappy     — for toggles / switches (quick, no overshoot)
+ *
+ * Every interactive surface in sonic-sounds uses one of these. Plus
+ * `prefers-reduced-motion` reduces every spring to a 0ms ease.
+ */
+
+:root {
+  /* Spring cubic-bezier approximations (browsers don't all support
+   * linear() yet — these fallbacks are visually close). */
+  --spring-bouncy: cubic-bezier(.34, 1.56, .64, 1);
+  --spring-soft:   cubic-bezier(.2, .8, .2, 1);
+  --spring-snappy: cubic-bezier(.4, 0, .2, 1);
+
+  /* Standard duration tokens */
+  --t-press: 120ms;   /* haptic-press feedback */
+  --t-pop:   220ms;   /* pop-in (decisions, modals) */
+  --t-slide: 320ms;   /* drawer/modal slide */
+  --t-theme: 260ms;   /* theme color transition */
+}
+
+/* Theme color transitions (260ms via --t-theme). */
+.theme-switcher,.accent-picker,.theme-triggers,.theme-card,.theme-swatch{
+  transition:
+    background-color var(--t-theme) var(--spring-soft),
+    border-color var(--t-theme) var(--spring-soft),
+    color var(--t-theme) var(--spring-soft);
+}
+
+/* === Button press: 120ms scale-down-and-back === */
+
+button, .btn, .cmd, .pill, .t-play {
+  transition:
+    transform var(--t-press) var(--spring-bouncy),
+    box-shadow var(--t-press) var(--spring-soft),
+    background-color var(--t-press) var(--spring-soft),
+    border-color var(--t-press) var(--spring-soft);
+  transform: translateZ(0);  /* GPU hint */
+}
+
+button:active,
+.btn:active,
+.cmd:active,
+.pill:active,
+.t-play:active {
+  transform: scale(.92);
+}
+
+/* Buttons that "do something important" (invoke, play) bounce
+ * slightly past their rest position so the press feels deliberate. */
+button.is-primary:active,
+.t-play:active,
+.pipe-invoke:active {
+  transform: scale(.94);
+}
+
+/* === Cards: spring-soft enter + lift on hover === */
+
+.card,
+.album-card,
+.decision-card,
+.event-row,
+.track-row {
+  transition:
+    transform var(--t-press) var(--spring-soft),
+    background-color var(--t-press) var(--spring-soft),
+    box-shadow var(--t-press) var(--spring-soft);
+}
+
+.card:hover,
+.album-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+
+/* === Status pill: state-transition with color morph === */
+
+.pill {
+  transition:
+    background-color 220ms var(--spring-soft),
+    border-color     220ms var(--spring-soft),
+    color            220ms var(--spring-soft),
+    transform        220ms var(--spring-bouncy);
+}
+
+.pill.status-active {
+  transition:
+    background-color 220ms var(--spring-soft),
+    border-color     220ms var(--spring-soft),
+    color            220ms var(--spring-soft),
+    transform        220ms var(--spring-bouncy),
+    box-shadow       220ms var(--spring-soft);
+  box-shadow: 0 0 16px var(--accent-2);
+}
+
+.pill.status-paused {
+  box-shadow: 0 0 12px var(--yellow);
+}
+
+/* When the status flips, do a brief scale pulse */
+@keyframes status-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.pill.flipped {
+  animation: status-pulse 320ms var(--spring-bouncy);
+}
+
+/* === Modals + drawers: spring-soft slide in === */
+
+#album-drawer {
+  transition:
+    transform var(--t-slide) var(--spring-soft),
+    opacity   var(--t-slide) var(--spring-soft);
+}
+#album-drawer[hidden] {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+#new-album-modal {
+  transition:
+    transform var(--t-slide) var(--spring-soft),
+    opacity   var(--t-slide) var(--spring-soft);
+}
+#new-album-modal[hidden] {
+  transform: translateY(20px) scale(.96);
+  opacity: 0;
+}
+
+/* === Audio player: elastic progress bar === */
+
+#audio-el {
+  transition: filter var(--t-press) var(--spring-soft);
+}
+#audio-el:hover { filter: drop-shadow(0 0 12px var(--accent-2)); }
+
+/* Decision cards: spring-bouncy slide-in from the right */
+.decision-card {
+  transform-origin: right center;
+  animation: decision-slide-in 360ms var(--spring-bouncy) both;
+}
+@keyframes decision-slide-in {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* === Reduced motion: collapse to instant transitions === */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  button:active,
+  .btn:active,
+  .t-play:active {
+    transform: none;
+  }
+}
