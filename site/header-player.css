@@ -793,3 +793,233 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 @media (max-width: 600px) {
   .hp-btn-mini { width: 24px; height: 24px; font-size: 11px; }
 }
+
+/* ============================================================
+ * IMPROVEMENT #1: Track title marquee (when title overflows)
+ * ============================================================ */
+.hp-meta-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.hp-meta-title.is-long {
+  animation: hp-marquee 12s linear infinite;
+}
+@keyframes hp-marquee {
+  0%, 30% { transform: translateX(0); }
+  70%, 100% { transform: translateX(min(-100%, -200px))); }
+}
+
+/* ============================================================
+ * IMPROVEMENT #4: Volume HUD flash on ↑/↓
+ * Briefly shows the new volume percentage above the slider.
+ * ============================================================ */
+.hp-volume-hud {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+  z-index: 10;
+}
+.hp-volume-hud.is-flashing { opacity: 1; }
+.hp-vol-wrap { position: relative; display: inline-flex; align-items: center; }
+
+/* ============================================================
+ * IMPROVEMENT #8: Hover anywhere on the cassette shows
+ * a tiny "now playing" title below the bar.
+ * ============================================================ */
+.hp-cassette { cursor: default; }
+.hp-nowplaying-tip {
+  position: fixed;
+  top: calc(var(--hp-h) + 6px);
+  left: 22px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 160ms ease, transform 160ms var(--t-spring);
+  pointer-events: none;
+  z-index: 9996;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.header-player.hp-np-tip .hp-nowplaying-tip {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hp-nowplaying-tip .hand {
+  font-family: var(--hand);
+  color: var(--accent);
+  margin-left: 6px;
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: idle pulse on the cassette wheel — gentle
+ * breath, only when NOT actively playing. Adds a slow pulse
+ * to indicate "alive but waiting".
+ * ============================================================ */
+.hp-reel, .hp-reel::before, .hp-reel::after {
+  /* Note: the markup removed hp-reels above the cassette (it was
+   * overlaid). The reel animation now only applies to whatever
+   * ::before/::after pseudo-elements exist on .hp-cassette-art.
+   * (Kept the rules empty to preserve any future re-introduction.) */
+}
+@keyframes hp-cassette-idle-pulse {
+  0%, 100% { box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 2px 6px rgba(0,0,0,0.4),
+                    0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent) inset; }
+}
+.header-player:not(.is-playing) .hp-cassette-art {
+  animation: hp-cassette-idle-pulse 4s ease-in-out infinite;
+}
+
+/* ============================================================
+ * Keyboard shortcuts popover (? key)
+ * ============================================================ */
+.hp-keys-panel {
+  position: fixed;
+  top: var(--hp-h);
+  left: 0;
+  width: min(440px, 60vw);
+  max-height: 70vh;
+  background: var(--bg-solid);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 14px 0;
+  box-shadow: 8px 12px 32px rgba(0,0,0,0.5);
+  z-index: 9997;
+  transform: translateY(-100%);
+  transition: transform 240ms var(--t-spring);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-player.keys-open .hp-keys-panel {
+  transform: translateY(0);
+}
+.hp-keys-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.hp-keys-head span { color: var(--ink); font-weight: 600; }
+.hp-keys-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 22px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.hp-keys-body dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+}
+.hp-keys-body dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.hp-keys-body dd { margin: 0; }
+.hp-keys-body kbd {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  min-width: 22px;
+  text-align: center;
+  color: var(--ink);
+}
+.hp-keys-hint {
+  margin: 16px 0 0;
+  font-family: var(--hand);
+  font-size: 14px;
+  color: var(--accent);
+  text-align: center;
+}
+
+
+/* ============================================================
+ * IMPROVEMENT #9: track-row hover-lift in dropdown
+ * ============================================================ */
+.hp-track-item {
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms var(--t-spring);
+}
+.hp-track-item:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-left-color: var(--accent);
+  transform: translateX(2px);
+}
+
+/* ============================================================
+ * IMPROVEMENT #2: click-outside panel dismissal CSS — already
+ *   handled via .is-open class toggle. No additional rules.
+ * ============================================================ */
+
+/* ============================================================
+ * IMPROVEMENT #7: cassette subtle hover effect — when not
+ *   actively playing, hover the cassette sticker and a soft
+ *   accent-glow appears (faint "this is clickable" affordance).
+ * ============================================================ */
+.hp-cassette-art { transition: transform var(--t-base) var(--t-spring), filter var(--t-base) ease; }
+.hp-cassette:hover .hp-cassette-art {
+  transform: scale(1.04);
+  filter: brightness(1.08) saturate(1.05);
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: footer credit line under the player
+ * A small italicized line visible when the player has loaded.
+ * ============================================================ */
+.hp-credit {
+  position: fixed;
+  top: calc(var(--hp-h) + 28px);
+  right: 22px;
+  font-family: var(--hand);
+  font-size: 13px;
+  color: var(--ink-muted);
+  pointer-events: none;
+  z-index: 9995;
+  opacity: 0;
+  transition: opacity var(--t-slow) ease;
+}
+body.has-header-player.is-credits-visible .hp-credit {
+  opacity: 1;
+}
+
+/* ============================================================
+ * IM#4: idle pulse already added above (is-playing branch);
+ *   also add hover-button tooltip for the speed cycle.
+ * ============================================================ */

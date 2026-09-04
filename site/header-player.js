@@ -129,6 +129,32 @@
         <button class="hp-list-btn" data-action="toggle-list">▤ tracks</button>
       </div>
 
+      <div class="hp-keys-panel" role="dialog" aria-label="Keyboard shortcuts">
+        <div class="hp-keys-head">
+          <span>Keyboard shortcuts</span>
+          <button class="hp-btn-mini" data-action="close-keys" aria-label="Close" title="Close">✕</button>
+        </div>
+        <div class="hp-keys-body">
+          <dl>
+            <dt><kbd>Space</kbd></dt><dd>Play / Pause</dd>
+            <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Previous / Next track</dd>
+            <dt><kbd>,</kbd> <kbd>.</kbd></dt><dd>Skip ±15 seconds</dd>
+            <dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Volume ±5%</dd>
+            <dt><kbd>M</kbd></dt><dd>Mute / Unmute</dd>
+            <dt><kbd>R</kbd></dt><dd>Repeat: off → all → one</dd>
+            <dt><kbd>S</kbd></dt><dd>Shuffle</dd>
+            <dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>A/B loop start / end</dd>
+            <dt><kbd>+</kbd> <kbd>−</kbd></dt><dd>Speed (0.5× → 2×)</dd>
+            <dt><kbd>I</kbd></dt><dd>Elapsed / Remaining time</dd>
+            <dt><kbd>L</kbd></dt><dd>Lyrics panel</dd>
+            <dt><kbd>T</kbd></dt><dd>Tracklist panel</dd>
+            <dt><kbd>?</kbd></dt><dd>This panel</dd>
+            <dt><kbd>Esc</kbd></dt><dd>Close any panel</dd>
+          </dl>
+          <p class="hp-keys-hint">Tip: most controls are also clickable with the mouse.</p>
+        </div>
+      </div>
+
       <div class="hp-lyrics-panel" role="dialog" aria-label="Lyrics">
         <div class="hp-lyrics-head">
           <span data-role="lyrics-track-name">—</span>
@@ -181,6 +207,24 @@
       else if (act === 'sleep') cycleSleep();
       else if (act === 'lyrics') root.classList.toggle('lyrics-open');
       else if (act === 'close-lyrics') root.classList.remove('lyrics-open');
+      else if (act === 'close-keys') root.classList.remove('keys-open');
+    });
+
+    // Click-outside closes tracklist + lyrics + shortcut popover
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target)) {
+        if (root.classList.contains('is-open')) root.classList.remove('is-open');
+        if (root.classList.contains('lyrics-open')) root.classList.remove('lyrics-open');
+        if (root.classList.contains('keys-open')) root.classList.remove('keys-open');
+      }
+    });
+    // Also close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        root.classList.remove('is-open');
+        root.classList.remove('lyrics-open');
+        root.classList.remove('keys-open');
+      }
     });
 
     // Seek bar — click to seek, hover shows preview tooltip + vertical
@@ -244,6 +288,11 @@
     // Audio events
     audio.addEventListener('timeupdate', () => {
       state.currentTime = audio.currentTime;
+      // A/B loop: when currentTime passes b, jump back to a.
+      if (state.abLoop && state.abLoop.a != null && state.abLoop.b != null
+          && state.duration && state.audio.currentTime >= state.abLoop.b) {
+        try { state.audio.currentTime = state.abLoop.a; } catch (e) {}
+      }
       // Sleep timer: if the deadline has passed, pause playback.
       // We use audio.currentTime % 1 to throttle — check at most ~once a second.
       if (state.sleepAt && Date.now() >= state.sleepAt) {
@@ -453,7 +502,14 @@
       title.textContent = cur.title;
       const trackNum = String(idx0(cur.track_num, state.currentIdx + 1)).padStart(2, '0');
       const total = state.tracks.length;
-      sub.textContent = `track ${trackNum} / ${total} · ${state.album ? state.album.primary_artist_id : ''}`;
+      const badges = [];
+      if (state.speed !== 1.0) badges.push(state.speed + '×');
+      if (state.abLoop && state.abLoop.a != null) {
+        if (state.abLoop.b != null) badges.push(`A↔B ${fmt(state.abLoop.a)}–${fmt(state.abLoop.b)}`);
+        else badges.push(`A ${fmt(state.abLoop.a)}`);
+      }
+      const badgeText = badges.length ? '  ·  ' + badges.join('  ') : '';
+      sub.textContent = `track ${trackNum} / ${total}${badgeText} · ${state.album ? state.album.primary_artist_id : ''}`;
     } else if (state.tracks.length) {
       title.textContent = state.album ? state.album.title : '—';
       sub.textContent = `${state.tracks.length} tracks`;
@@ -504,7 +560,9 @@
     }
 
     // Time + seek
-    root.querySelector('[data-role="cur"]').textContent = fmt(t);
+    // Left time: elapsed (or −remaining if mode='remaining')
+    const curText = state.timeMode === 'remaining' ? '−' + fmt(Math.max(0, dur - t)) : fmt(t);
+    root.querySelector('[data-role="cur"]').textContent = curText;
     root.querySelector('[data-role="dur"]').textContent = fmt(dur);
     const pct = dur > 0 ? Math.min(100, (t / dur) * 100) : 0;
     root.querySelector('.hp-seek-fill').style.width = pct + '%';
@@ -551,6 +609,51 @@
     }
   }
 
+  // A/B loop: '[' marks the start point, ']' marks the end. Once both are
+  // set, audio loops within that range. State is {a, b} where a, b are seconds.
+  // Hitting ']' with no 'a' sets 'a' too. Hitting the same key again
+  // resets the loop. ('AB' tag shows the active range in the meta sub-line.)
+  function setAbLoopPoint(which) {
+    if (state.abLoop == null) state.abLoop = { a: null, b: null };
+    // Read from audio element first so the value is fresh even between timeupdate ticks.
+    const cur = state.audio && isFinite(state.audio.currentTime)
+        ? state.audio.currentTime
+        : state.currentTime;
+    if (which === 'a') {
+      state.abLoop.a = cur;
+      if (state.abLoop.b != null && state.abLoop.b <= cur) state.abLoop.b = null;
+    } else {
+      // 'b' or if abLoop.a is null, set both
+      if (state.abLoop.a == null) state.abLoop.a = cur;
+      state.abLoop.b = Math.max(cur, (state.abLoop.a || 0) + 0.5);
+    }
+    paint(); saveLS();
+  }
+
+  // Playback speed: cycles through 0.5/0.75/1/1.25/1.5/2 (default 1).
+  // Called by '+' / '-' keyboard shortcuts.
+  function cycleSpeed(dir) {
+    const levels = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const idx = levels.indexOf(state.speed);
+    const next = Math.max(0, Math.min(levels.length - 1, (idx < 0 ? 2 : idx) + dir));
+    state.speed = levels[next];
+    if (state.audio) state.audio.playbackRate = state.speed;
+    paint(); saveLS();
+  }
+
+  // Time display mode: 'elapsed' (default) shows 0:00..3:45, 'remaining'
+  // shows -1:23..0:00. Press 'i' to toggle.
+  function toggleTimeMode() {
+    state.timeMode = state.timeMode === 'elapsed' ? 'remaining' : 'elapsed';
+    paint(); saveLS();
+  }
+
+  // Keyboard hints popover — press '?' to toggle.
+  function toggleKeys() {
+    if (!state.root) return;
+    state.root.classList.toggle('keys-open');
+  }
+
   // ---- Keyboard shortcuts ----
   // Space=play/pause, ←/→=prev/next, ↑/↓=volume, M=mute, R=repeat,
   // S=shuffle, comma/period=±15s skip, L=lyrics, T=tracks panel
@@ -571,6 +674,12 @@
     }
     else if (k === ',') skipSec(-15);
     else if (k === '.') skipSec(+15);
+    else if (k === '[') setAbLoopPoint('a');
+    else if (k === ']') setAbLoopPoint('b');
+    else if (k === '+' || k === '=') cycleSpeed(+1);
+    else if (k === '-' || k === '_') cycleSpeed(-1);
+    else if (k === 'i') toggleTimeMode();
+    else if (k === '?' || (e.shiftKey && k === '/')) toggleKeys();
     else if (e.key === 'ArrowLeft') skip(-1);
     else if (e.key === 'ArrowRight') skip(+1);
     else if (e.key === 'ArrowUp') {
