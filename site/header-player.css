@@ -63,15 +63,22 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   min-width: 0;
 }
 
-/* Cassette artwork: shows the sticker + two animated reel holes on top. */
+/* Cassette artwork: shows the sticker + two animated reel holes on top.
+ * Image source is site/assets/cassette-yellow-tape.jpg — cropped to the
+ * actual cassette artwork (yellow tape + cream label + reel holes), aspect
+ * ~1.29 (W/H). Slot is sized to match that aspect so nothing is cropped. */
 .hp-cassette-art {
   position: relative;
   width: 60px;
-  height: 60px;
+  height: 46px;
   flex-shrink: 0;
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
-  background: var(--hp-cassette-img) center/cover no-repeat, #1a1a22;
+  background-color: #0a0a0f;            /* neutral near-black, matches the bar bg */
+    background-image: var(--hp-cassette-img);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset;
 }
 /* A subtle frame outline so the cassette stands out from the dark bar */
@@ -474,7 +481,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   .hp-time { min-width: 32px; font-size: 10px; }
   .hp-seek { min-width: 40px; }
   .hp-transport { gap: 6px; }
-  .hp-cassette-art { width: 50px; height: 50px; }
+  .hp-cassette-art { width: 50px; height: 38px; }
   .hp-meta-title { font-size: 13px; }
 }
 
@@ -537,7 +544,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
     grid-row: 1;
   }
   /* Keep the cassette compact */
-  .hp-cassette-art { width: 44px; height: 44px; flex-shrink: 0; }
+  .hp-cassette-art { width: 44px; height: 34px; flex-shrink: 0; }
   .hp-meta-title { font-size: 13px; }
   .hp-meta-eyebrow { font-size: 9px; }
   /* Buttons stay touch-sized */
