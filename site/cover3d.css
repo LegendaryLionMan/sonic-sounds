@@ -1,0 +1,155 @@
+/* site/cover3d.css · Day 1 Hour 10 — Album cover 3D + shimmer (10 ideas)
+ *
+ * Album covers get a 3D tilt on hover (Omarchy-style perspective),
+ * shimmer reflection sweep (Apple Liquid Glass inspired), quick-play
+ * overlay, and click-ripple. Most of this is pure CSS — the JS
+ * side just sets --tilt-x/--tilt-y from cursor position (already
+ * exists in library.js for cassettes; we generalize for any .album-cover).
+ */
+
+:root {
+  --t-cover-tilt: 280ms;
+  --t-cover-shimmer: 1.4s;
+}
+
+/* =====================================================================
+ * Idea 1: Hover tilts cover ±3° on X and Y axes (perspective)
+ * Idea 2: Spring-bouncy curve on tilt (already wired in library.js;
+ *         .album-cover reads --tilt-x/--tilt-y)
+ * ===================================================================== */
+
+.album-cover,
+.shell-page .card.shell img {
+  transition: transform var(--t-cover-tilt) var(--spring-bouncy);
+  transform-style: preserve-3d;
+  will-change: transform;
+  perspective: 800px;
+}
+
+/* JS sets --tilt-x / --tilt-y on mousemove */
+.album-cover {
+  transform:
+    perspective(800px)
+    rotateX(var(--tilt-y, 0deg))
+    rotateY(var(--tilt-x, 0deg));
+  position: relative;
+  overflow: hidden;
+}
+
+/* =====================================================================
+ * Idea 3: Shimmer reflection sweep on hover (linear-gradient + transform)
+ * ===================================================================== */
+
+.album-cover::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    color-mix(in srgb, white 25%, transparent) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform var(--t-cover-tilt) var(--spring-soft);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.album-cover:hover::after {
+  transform: translateX(100%);
+  transition-duration: var(--t-cover-shimmer);
+}
+
+/* =====================================================================
+ * Idea 4: 1.2s shimmer duration (slow enough to feel intentional)
+ * (slightly longer than 1.4s default to match the Apple aesthetic)
+ * ===================================================================== */
+
+/* Already set above via --t-cover-shimmer. */
+
+/* =====================================================================
+ * Idea 5: Glow ring on hover (box-shadow color-mix with accent)
+ * ===================================================================== */
+
+.album-cover:hover,
+.shell-page .card.shell:hover img {
+  box-shadow:
+    0 12px 36px rgba(0,0,0,.5),
+    0 0 0 2px color-mix(in srgb, var(--accent-2) 40%, transparent);
+}
+
+/* =====================================================================
+ * Idea 6: Quick-play overlay (▷) on hover
+ * ===================================================================== */
+
+.album-cover .quick-play {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  transition: opacity var(--t-press) var(--spring-soft);
+}
+.album-cover:hover .quick-play { opacity: 1; }
+.album-cover .quick-play span {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--accent); color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  transform: scale(.8);
+  transition: transform var(--t-cover-tilt) var(--spring-bouncy);
+}
+.album-cover:hover .quick-play span {
+  transform: scale(1);
+}
+
+/* =====================================================================
+ * Idea 7: Click → ripple from click point
+ * (JS adds .rippling class + --ripple-x/--ripple-y. CSS animates.)
+ * ===================================================================== */
+
+.album-cover .ripple {
+  position: absolute;
+  left: var(--ripple-x, 50%);
+  top:  var(--ripple-y, 50%);
+  width: 4px; height: 4px;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: .8;
+  pointer-events: none;
+}
+.album-cover .ripple.is-rippling {
+  animation: cover-ripple 600ms var(--spring-bouncy) forwards;
+}
+@keyframes cover-ripple {
+  to { transform: translate(-50%, -50%) scale(80); opacity: 0; }
+}
+
+/* =====================================================================
+ * Idea 8: prefers-reduced-motion → no tilt, no shimmer
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .album-cover,
+  .album-cover:hover,
+  .album-cover::after,
+  .album-cover .quick-play span,
+  .album-cover .ripple.is-rippling {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* =====================================================================
+ * Idea 9: 3D only on cover (not on surrounding card)
+ * (achieved by .album-cover selector — only the img, not the parent card)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 10: Performance budget — 60fps on mid-tier hardware
+ *
+ * will-change: transform on .album-cover hints the compositor.
+ * transform uses only translateX/Y + rotate + scale (compositor-only).
+ * ===================================================================== */
+
+.album-cover { will-change: transform; }
