@@ -59,6 +59,8 @@ build/*.db-wal
 .meta/*.db-shm
 .meta/daemon.log
 .meta/daemon.lock
+.meta/preview_daemon.log
+.meta/preview_daemon.pid
 # Allow the schema migrations + draft files to be tracked (they're code,
 # not runtime state).
 !.meta/migrations/
