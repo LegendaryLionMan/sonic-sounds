@@ -131,10 +131,20 @@ def register_routes(app: Quart) -> None:
         }
         return jsonify(payload)
 
+    @app.route("/", methods=["GET"])
+    async def index():
+        """Root URL redirects to the studio — bare `localhost:8765/` always works."""
+        from quart import redirect
+        return redirect("/site/studio.html", code=302)
+
     @app.route("/site/<path:filepath>", methods=["GET"])
     async def site_static(filepath: str):
         """Static file handler for site/ directory."""
-        target = (SITE_DIR / filepath).resolve()
+        # Serve directory root as studio.html (last-resort fallback)
+        if filepath == "" or filepath.endswith("/"):
+            target = (SITE_DIR / (filepath + "studio.html")).resolve()
+        else:
+            target = (SITE_DIR / filepath).resolve()
         try:
             target.relative_to(SITE_DIR.resolve())
         except ValueError:
