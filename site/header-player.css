@@ -74,12 +74,12 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
-  background-color: #0a0a0f;            /* neutral near-black, matches the bar bg */
-    background-image: var(--hp-cassette-img);
-  background-size: contain;
+  background-color: transparent;
+  background-image: var(--hp-cassette-img);
+  background-size: cover;             /* fill the slot completely */
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 /* A subtle frame outline so the cassette stands out from the dark bar */
 .hp-cassette-art::before {
@@ -585,7 +585,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
     grid-row: 1;
   }
   /* Keep the cassette compact */
-  .hp-cassette-art { width: 44px; height: 34px; flex-shrink: 0; }
+  .hp-cassette-art { width: 44px; height: 34px; flex-shrink: 0; background-size: cover; }
   .hp-meta-title { font-size: 13px; }
   .hp-meta-eyebrow { font-size: 9px; }
   /* Buttons stay touch-sized */
@@ -598,16 +598,14 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 
 
 /* ============================================================
- * IMPROVEMENT #1: Skip ±15s buttons (.hp-btn-seeksec)
- * Smaller text than transport buttons. Dim by default.
+ * Skip ±15s buttons (.hp-btn-seeksec)
+ * Match the size + style of the prev/next skip buttons exactly —
+ * the only visual difference is a slightly thinner symbol glyph to
+ * convey "smaller skip".
  * ============================================================ */
 .hp-btn-seeksec {
-  font-size: 9px;
-  font-weight: 700;
-  font-family: var(--mono);
-  letter-spacing: 0.04em;
-  min-width: 28px;
-  color: var(--ink-faint);
+  font-size: 16px;
+  color: var(--ink-soft);
 }
 .hp-btn-seeksec:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
 .hp-btn-seeksec:active { transform: scale(0.92); color: var(--accent); }
@@ -689,49 +687,9 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 }
 .header-player:not(.is-playing) .hp-seek-fill::after { animation: none; opacity: 0; }
 
-/* ============================================================
- * IMPROVEMENT #5: Now-playing pip on the cassette corner.
- * Small green pulsing dot like Spotify's "now playing" indicator.
- * ============================================================ */
-.hp-np-pip {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 6px var(--success), 0 0 12px color-mix(in srgb, var(--success) 60%, transparent);
-  opacity: 0;
-  transition: opacity var(--t-base) ease;
-  pointer-events: none;
-}
-.header-player.is-pip .hp-np-pip {
-  opacity: 1;
-  animation: hp-pip-pulse 1.4s ease-in-out infinite;
-}
-@keyframes hp-pip-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
-}
 
-/* ============================================================
- * IMPROVEMENT #6: Cassette glow + reel speed up when playing
- * ============================================================ */
-@keyframes hp-cassette-glow {
-  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset,
-                                0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
-  50% { box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset,
-                                0 0 14px 2px color-mix(in srgb, var(--accent) 28%, transparent); }
-}
-.header-player.is-pip .hp-cassette-art {
-  animation: hp-cassette-glow 2.6s ease-in-out infinite;
-}
-.header-player.is-pip .hp-reel,
-.header-player.is-pip .hp-reel::before,
-.header-player.is-pip .hp-reel::after {
-  animation-duration: 1.2s !important;
-}
+
+
 
 /* ============================================================
  * IMPROVEMENT #7: Lyrics slide-out panel (slides in from the right)

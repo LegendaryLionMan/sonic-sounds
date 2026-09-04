@@ -86,14 +86,7 @@
     root.className = 'header-player';
     root.innerHTML = `
       <div class="hp-cassette">
-        <div class="hp-cassette-art">
-          <div class="hp-reels">
-            <div class="hp-reel"></div>
-            <div class="hp-reel"></div>
-          </div>
-          <div class="hp-pause-indicator">||</div>
-          <div class="hp-np-pip" aria-hidden="true"></div>
-        </div>
+        <div class="hp-cassette-art"></div>
         <div class="hp-meta">
           <p class="hp-meta-eyebrow">/cassette · no album loaded</p>
           <h3 class="hp-meta-title">—</h3>
@@ -103,11 +96,11 @@
 
       <div class="hp-transport">
         <button class="hp-btn hp-btn-mode" data-action="shuffle" aria-label="Shuffle" title="Shuffle">🔀</button>
-        <button class="hp-btn hp-btn-seeksec" data-action="seek-back" aria-label="Back 15 seconds" title="−15s">−15</button>
-        <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous">⏮</button>
-        <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play/Pause">▷</button>
-        <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next">⏭</button>
-        <button class="hp-btn hp-btn-seeksec" data-action="seek-fwd" aria-label="Forward 15 seconds" title="+15s">+15</button>
+        <button class="hp-btn hp-btn-seeksec" data-action="seek-back" aria-label="Back 15 seconds" title="−15 seconds">⟲</button>
+        <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous track">⏮</button>
+        <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play / Pause">▷</button>
+        <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next track">⏭</button>
+        <button class="hp-btn hp-btn-seeksec" data-action="seek-fwd" aria-label="Forward 15 seconds" title="+15 seconds">⟳</button>
         <button class="hp-btn hp-btn-mode" data-action="repeat" aria-label="Repeat" title="Repeat: off">↻</button>
       </div>
 
@@ -529,21 +522,20 @@
       tl.innerHTML = `<li class="hp-empty" style="padding:14px;text-align:center;">no tracks yet</li>`;
     }
 
-    // Cassette 'now playing' pip — green dot when audio is playing.
-    // Updates the root class so CSS can animate the cassette (glow + reel spin
-    // speed boost) and show a tiny pulsing pip on the cassette corner.
-    state.nowPlaying = audio && !audio.paused && state.duration > 0;
-    root.classList.toggle('is-pip', !!state.nowPlaying);
+    // (Removed: now-playing pip + cassette glow. The cassette image should
+    // just show the artwork cleanly, no overlays.)
 
-    // Sleep timer button label
+    // Sleep timer button label. Reverted to the static ⏱ icon
+    // (don't swap to a number when active — feels visually inconsistent).
+    // The .is-active class + the title attribute carry the state.
     const sleepBtn = root.querySelector('.hp-btn-mini[data-action="sleep"]');
     if (sleepBtn) {
       const mins = minutesFromSleep();
       sleepBtn.classList.toggle('is-active', !!mins);
-      sleepBtn.title = mins ? `Sleep in ${mins} min` : 'Sleep timer (off)';
-      sleepBtn.setAttribute('aria-label', sleepBtn.title);
-      // Show remaining time inside the icon when active
-      sleepBtn.textContent = mins ? `${mins}` : '⏱';
+      const label = mins ? `Sleep timer: ${mins} min remaining` : 'Sleep timer (off)';
+      sleepBtn.title = label;
+      sleepBtn.setAttribute('aria-label', label);
+      sleepBtn.textContent = '⏱';
     }
 
     // Lyrics track name in the panel
