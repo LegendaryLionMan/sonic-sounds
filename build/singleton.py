@@ -54,12 +54,42 @@ class SingletonLock:
         self.pid: Optional[int] = None
 
     def _pid_alive(self, pid: int) -> bool:
-        """Check if pid is alive. Cross-platform: os.kill(pid, 0) works on Win + Unix."""
-        try:
-            os.kill(pid, 0)
-            return True
-        except (OSError, ProcessLookupError):
+        """Check if pid is alive. Cross-platform, robust against Windows quirks.
+
+        `os.kill(pid, 0)` is documented as the portable check, but on Windows
+        it can raise SystemError or return-with-exception-set under specific
+        race conditions (stale PID after process group teardown). Fall back to
+        kernel32 OpenProcess/OpenProcessToken-style check via ctypes — that path
+        is well-defined and never raises SystemError.
+        """
+        if pid <= 0:
             return False
+        # Fast path: same process is always alive to itself.
+        if pid == os.getpid():
+            return True
+        # Prefer ctypes on Windows — explicit, no SystemError trap.
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            STILL_ACTIVE = 259
+            h = ctypes.windll.kernel32.OpenProcess(
+                PROCESS_QUERY_LIMITED_INFORMATION, False, pid
+            )
+            if not h:
+                return False  # OpenProcess returns 0 for dead/unauthorized pids
+            try:
+                code = ctypes.c_ulong()
+                ok = ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(code))
+                return bool(ok) and code.value == STILL_ACTIVE
+            finally:
+                ctypes.windll.kernel32.CloseHandle(h)
+        except (OSError, AttributeError):
+            # Non-Windows or no ctypes — fall back to os.kill with broad catch.
+            try:
+                os.kill(pid, 0)
+                return True
+            except (OSError, ProcessLookupError, SystemError):
+                return False
 
     def _read_pid(self) -> Optional[int]:
         """Read PID from lock file. Returns None if file doesn't exist or is invalid."""
