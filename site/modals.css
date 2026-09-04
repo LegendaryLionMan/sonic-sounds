@@ -1,0 +1,131 @@
+/* site/modals.css · Day 1 Hour 8 — Modal/drawer spring entrance (10 ideas)
+ *
+ * The #album-drawer, #new-album-modal, and any .drawer/.modal
+ * element. Each idea is a complete CSS implementation that the
+ * JS-side controllers can opt into via classes.
+ */
+
+:root {
+  --t-modal-backdrop: 280ms;
+  --t-modal-panel: 320ms;
+  --t-modal-panel-fast: 200ms;
+}
+
+/* =====================================================================
+ * Idea 1-2: Modal translateY(20px) scale(0.96) → translateY(0) scale(1)
+ * over 320ms spring-soft.
+ * ===================================================================== */
+
+#new-album-modal {
+  transition:
+    transform var(--t-modal-panel) var(--spring-soft),
+    opacity var(--t-modal-panel) var(--spring-soft);
+  transform-origin: center top;
+}
+#new-album-modal[hidden] {
+  transform: translateY(20px) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+}
+#new-album-modal:not([hidden]) {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* =====================================================================
+ * Idea 3: Backdrop fade-in 280ms (slightly faster than modal)
+ * ===================================================================== */
+
+#new-album-modal::backdrop,
+.drawer-backdrop,
+.modal-backdrop {
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(6px);
+  animation: backdrop-fade-in var(--t-modal-backdrop) var(--spring-soft);
+}
+@keyframes backdrop-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* =====================================================================
+ * Idea 4: Drawer translateX(20px) → translateX(0) on open
+ * Idea 5: Drawer opacity 0 → 1 over the same duration
+ * ===================================================================== */
+
+#album-drawer,
+.drawer {
+  transition:
+    transform var(--t-modal-panel) var(--spring-soft),
+    opacity var(--t-modal-panel) var(--spring-soft);
+  transform-origin: right center;
+}
+#album-drawer[hidden],
+.drawer[hidden] {
+  transform: translateX(20px);
+  opacity: 0;
+  pointer-events: none;
+}
+#album-drawer:not([hidden]),
+.drawer:not([hidden]) {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* =====================================================================
+ * Idea 6: Close = reverse animation (no jump)
+ * (Implicit in the [hidden] selector above — same transition runs in reverse.)
+ * ===================================================================== */
+
+/* =====================================================================
+ * Idea 7: Esc dismisses modal/drawer — JS hook
+ * (The Esc handler lives in themes.js for the theme carousel.
+ *  Extend that pattern to .drawer/.modal with data-esc-dismiss.)
+ * ===================================================================== */
+
+[data-esc-dismiss]:focus-within,
+.drawer:focus-within,
+.modal:focus-within {
+  outline: none;
+}
+
+/* =====================================================================
+ * Idea 8: Focus trap inside modal — visual cue
+ * (Real focus trap requires JS. CSS gives a visual ring on focused
+ *  inputs within the modal so users see what has focus.)
+ * ===================================================================== */
+
+.modal :focus-visible,
+.drawer :focus-visible,
+#new-album-modal :focus-visible,
+#album-drawer :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* =====================================================================
+ * Idea 9: Click-outside-modal closes (but not click-inside)
+ * (Implemented via backdrop element with pointer-events.)
+ * ===================================================================== */
+
+.modal-backdrop,
+.drawer-backdrop {
+  position: fixed; inset: 0;
+  z-index: -1;  /* sits behind the panel */
+  background: transparent;  /* fade-in via separate pseudo */
+  cursor: pointer;
+}
+
+/* =====================================================================
+ * Idea 10: prefers-reduced-motion → 0ms transitions
+ * ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #album-drawer, .drawer,
+  #new-album-modal,
+  .modal-backdrop, .drawer-backdrop {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
