@@ -243,6 +243,47 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 }
 .hp-btn-play:hover { background: hsl(36, 85%, 65%); filter: brightness(1.05); }
 .hp-btn-skip { font-size: 13px; }
+
+/* Mode buttons (repeat / shuffle): dim by default; light up to accent when active */
+.hp-btn-mode {
+  font-size: 13px;
+  color: var(--ink-faint);
+  transition: color var(--t-base) ease, background var(--t-base) ease;
+}
+.hp-btn-mode:hover {
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.08);
+}
+.hp-btn-mode.is-active {
+  color: var(--accent);
+  /* Subtle pill behind the active icon so the user sees which mode is on */
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.hp-btn-mode.is-active:hover {
+  color: var(--accent);
+  filter: brightness(1.1);
+}
+
+/* Mute button (clickable speaker icon) — same look as a transport button
+ * but text-only and slim. Becomes accented when muted. */
+.hp-btn-mute {
+  background: transparent;
+  border: 0;
+  padding: 0 4px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--t-base) ease, background var(--t-base) ease;
+}
+.hp-btn-mute:hover { color: var(--ink); background: rgba(255,255,255,0.06); }
+.hp-btn-mute.is-muted { color: var(--danger); }
+.hp-btn-mute.is-muted:hover { color: var(--danger); filter: brightness(1.1); }
 .hp-time {
   font-family: var(--mono, monospace);
   font-size: 11px;

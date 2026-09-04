@@ -35,6 +35,10 @@
     currentTime: 0,
     duration: 0,
     volume: 0.7,
+    muted: false,         // mute via speaker-icon click — preserves slider position
+    volumeBeforeMute: 0.7,
+    repeat: 'off',        // 'off' | 'all' | 'one' — repeat entire album or current track
+    shuffle: false,       // shuffle playlist order
   };
 
   function loadLS() {
@@ -45,8 +49,12 @@
         if (saved && typeof saved === 'object') {
           state.currentTime = saved.currentTime || 0;
           state.volume = saved.volume != null ? saved.volume : 0.7;
+          state.volumeBeforeMute = saved.volumeBeforeMute != null ? saved.volumeBeforeMute : state.volume;
+          state.muted = !!saved.muted;
           state.albumId = saved.albumId || null;
           state.currentIdx = saved.currentIdx != null ? saved.currentIdx : -1;
+          state.repeat = (saved.repeat === 'all' || saved.repeat === 'one') ? saved.repeat : 'off';
+          state.shuffle = !!saved.shuffle;
         }
       }
     } catch (e) { /* ignore */ }
@@ -59,6 +67,10 @@
         currentIdx: state.currentIdx,
         currentTime: state.currentTime,
         volume: state.volume,
+        volumeBeforeMute: state.volumeBeforeMute,
+        muted: state.muted,
+        repeat: state.repeat,
+        shuffle: state.shuffle,
         isPlaying: state.isPlaying,
         ts: Date.now(),
       }));
@@ -87,9 +99,11 @@
       </div>
 
       <div class="hp-transport">
+        <button class="hp-btn hp-btn-mode" data-action="shuffle" aria-label="Shuffle" title="Shuffle">🔀</button>
         <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous">⏮</button>
         <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play/Pause">▷</button>
         <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next">⏭</button>
+        <button class="hp-btn hp-btn-mode" data-action="repeat" aria-label="Repeat" title="Repeat: off">↻</button>
       </div>
 
       <div class="hp-progress">
@@ -100,7 +114,7 @@
 
       <div class="hp-right">
         <div class="hp-vol-wrap">
-          <span style="font-size:14px">🔊</span>
+          <button class="hp-btn-mute" data-action="mute" aria-label="Mute" title="Mute / Unmute" type="button">🔊</button>
           <input type="range" class="hp-vol" min="0" max="1" step="0.01" value="0.7">
         </div>
         <button class="hp-list-btn" data-action="toggle-list">▤ tracks</button>
@@ -140,6 +154,9 @@
       else if (act === 'prev') skip(-1);
       else if (act === 'next') skip(+1);
       else if (act === 'toggle-list') root.classList.toggle('is-open');
+      else if (act === 'mute') toggleMute();
+      else if (act === 'repeat') cycleRepeat();
+      else if (act === 'shuffle') toggleShuffle();
     });
 
     // Seek bar
@@ -188,8 +205,24 @@
       saveLS();
     });
     audio.addEventListener('ended', () => {
-      // If this was the LAST track, stop (don't loop / restart from track 1).
-      // Otherwise, auto-advance to the next track.
+      // Repeat-one: replay the same track from 0 (single-track loop).
+      if (state.repeat === 'one') {
+        const t = state.tracks[state.currentIdx];
+        if (t) {
+          state.currentTime = 0;
+          state.audio.src = `/api/audio/${encodeURIComponent(t.id)}`;
+          state.audio.load();
+          state.audio.play().catch(() => {});
+          paint();
+        }
+        return;
+      }
+      // Repeat-all: roll over to track 0 when last track ends.
+      if (state.repeat === 'all' && state.tracks.length) {
+        loadTrack(0, true);
+        return;
+      }
+      // Default (repeat off): stop at end of album, otherwise auto-advance.
       const isLastTrack = state.currentIdx >= state.tracks.length - 1;
       if (isLastTrack) {
         state.isPlaying = false;
@@ -225,6 +258,48 @@
     if (next < 0) next = 0;
     if (next >= state.tracks.length) next = state.tracks.length - 1;
     loadTrack(next, true);
+  }
+
+  // Click the speaker icon: mute (preserves slider position) or unmute back
+  // to the volume the user had before they muted. The slider still moves
+  // live with the audio when dragged — but a click on the icon is the
+  // toggle.
+  function toggleMute() {
+    // state.audio is set in mount(); use it instead of a closure variable
+    if (state.muted) {
+      // Unmute: restore the previous volume (or a sensible default)
+      const v = state.volumeBeforeMute > 0.05 ? state.volumeBeforeMute : 0.7;
+      state.volume = v;
+      state.muted = false;
+      state.audio.volume = v;
+      const slider = state.root.querySelector('.hp-vol');
+      if (slider) slider.value = v;
+    } else {
+      // Mute: remember current volume, set to 0
+      if (state.volume > 0.05) state.volumeBeforeMute = state.volume;
+      state.volume = 0;
+      state.muted = true;
+      state.audio.volume = 0;
+      const slider = state.root.querySelector('.hp-vol');
+      if (slider) slider.value = 0;
+    }
+    paint();
+    saveLS();
+  }
+
+  // Cycle repeat modes: off → all → one → off
+  function cycleRepeat() {
+    const order = ['off', 'all', 'one'];
+    const idx = order.indexOf(state.repeat);
+    state.repeat = order[(idx + 1) % order.length];
+    paint();
+    saveLS();
+  }
+
+  function toggleShuffle() {
+    state.shuffle = !state.shuffle;
+    paint();
+    saveLS();
   }
 
   function loadTrack(idx, autoplay) {
@@ -286,6 +361,34 @@
     // Play/pause icon
     const playBtn = root.querySelector('.hp-btn-play');
     playBtn.textContent = audio && !audio.paused ? '⏸' : '▷';
+
+    // Mute speaker icon — flips between 🔊 and 🔇, plus a class for CSS
+    const muteBtn = root.querySelector('.hp-btn-mute');
+    if (muteBtn) {
+      muteBtn.textContent = state.muted ? '🔇' : '🔊';
+      muteBtn.classList.toggle('is-muted', !!state.muted);
+      muteBtn.setAttribute('aria-label', state.muted ? 'Unmute' : 'Mute');
+    }
+
+    // Repeat button — three states with distinct visual + ARIA
+    const repeatBtn = root.querySelector('.hp-btn-mode[data-action="repeat"]');
+    if (repeatBtn) {
+      const labels = { off: 'Repeat: off', all: 'Repeat: album', one: 'Repeat: one' };
+      const icons  = { off: '↻', all: '🔁', one: '🔂' };
+      repeatBtn.textContent = icons[state.repeat] || '↻';
+      repeatBtn.title = labels[state.repeat] || 'Repeat';
+      repeatBtn.setAttribute('aria-label', labels[state.repeat] || 'Repeat');
+      repeatBtn.classList.toggle('is-active', state.repeat !== 'off');
+      repeatBtn.dataset.mode = state.repeat;
+    }
+
+    // Shuffle button — toggle with visual active state
+    const shuffleBtn = root.querySelector('.hp-btn-mode[data-action="shuffle"]');
+    if (shuffleBtn) {
+      shuffleBtn.classList.toggle('is-active', !!state.shuffle);
+      shuffleBtn.title = state.shuffle ? 'Shuffle: on' : 'Shuffle: off';
+      shuffleBtn.setAttribute('aria-label', shuffleBtn.title);
+    }
 
     // Time + seek
     root.querySelector('[data-role="cur"]').textContent = fmt(t);
