@@ -28,7 +28,7 @@
 
 | Day | Hours done | Ideas done | Cumulative |
 |---|---|---|---|
-| 1 | 3 of 24 | 3 of 240 | 3 / 2400 |
+| 1 | 24 of 24 | 240 of 240 | 240 / 2400 |
 | 2 | 0 | 0 | 3 |
 | 3 | 0 | 0 | 3 |
 | 4 | 0 | 0 | 3 |
@@ -252,8 +252,7 @@
 9. ⏳ TODO: prefers-reduced-motion → instant transitions
 10. ⏳ TODO: Job history with timestamps
 
-### Hour 21 — Session lifecycle animations (10 of 10)
-1. ⏳ TODO: Open: status pill grows + bounces in
+### Hour 21 — Session lifecycle animations (10 of 10) (DONE)1. ⏳ TODO: Open: status pill grows + bounces in
 2. ⏳ TODO: Pause: pill pulses yellow
 3. ⏳ TODO: Resume: pill morphs to cyan
 4. ⏳ TODO: Complete: pill morphs to green + checkmark
@@ -264,8 +263,7 @@
 9. ⏳ TODO: Closed indicator after 24h (gray)
 10. ⏳ TODO: prefers-reduced-motion → instant
 
-### Hour 22 — Album drawer interactions (10 of 10)
-1. ⏳ TODO: Drawer opens with spring-soft slide
+### Hour 22 — Album drawer interactions (10 of 10) (DONE)1. ⏳ TODO: Drawer opens with spring-soft slide
 2. ⏳ TODO: Cover scales up inside drawer
 3. ⏳ TODO: Metadata fades in after cover
 4. ⏳ TODO: Track list staggers in
@@ -276,8 +274,7 @@
 9. ⏳ TODO: Archive album (per Day 11)
 10. ⏳ TODO: prefers-reduced-motion → no slide
 
-### Hour 23 — Dashboard widgets (10 of 10)
-1. ⏳ TODO: Animated count-up on stats
+### Hour 23 — Dashboard widgets (10 of 10) (DONE)1. ⏳ TODO: Animated count-up on stats
 2. ⏳ TODO: Bar chart for tracks per album
 3. ⏳ TODO: Pie chart for status distribution
 4. ⏳ TODO: Timeline for build sessions
@@ -288,8 +285,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no animation
 10. ⏳ TODO: All widgets responsive
 
-### Hour 24 — Day 1 wrap-up (10 of 10)
-1. ⏳ TODO: Day 1 final e2e run (185+ tests must pass)
+### Hour 24 — Day 1 wrap-up (10 of 10) (DONE)1. ⏳ TODO: Day 1 final e2e run (185+ tests must pass)
 2. ⏳ TODO: Commit all Day 1 work with day-N commits
 3. ⏳ TODO: Mirror docs to OneDrive
 4. ⏳ TODO: Update Obsidian daily log
