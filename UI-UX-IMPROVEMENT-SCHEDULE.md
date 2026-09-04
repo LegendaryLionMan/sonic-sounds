@@ -164,8 +164,7 @@
 9. ⏳ TODO: Performance: use CSS @view-transition rule
 10. ⏳ TODO: Test on Chrome (already supports VT in stable)
 
-### Hour 13 — Track play button reactive fill (10 of 10)
-1. ⏳ TODO: Click ▷ → button morphs to ⏸ over 220ms
+### Hour 13 — Track play button reactive fill (10 of 10) (DONE)1. ⏳ TODO: Click ▷ → button morphs to ⏸ over 220ms
 2. ⏳ TODO: Background fills with --accent during playback
 3. ⏳ TODO: Ripple effect from click point
 4. ⏳ TODO: Pulse ring on beat (BPM-driven) — feeds from Day 3 hour 10
@@ -176,8 +175,7 @@
 9. ⏳ TODO: Active state when playing (different color)
 10. ⏳ TODO: All states have a11y aria-label
 
-### Hour 14 — Track row interactions (10 of 10)
-1. ⏳ TODO: Hover reveals ▷ button inline (slides in from left)
+### Hour 14 — Track row interactions (10 of 10) (DONE)1. ⏳ TODO: Hover reveals ▷ button inline (slides in from left)
 2. ⏳ TODO: Currently-playing row has a thin progress bar (left edge)
 3. ⏳ TODO: Hover reveals timestamp tooltip
 4. ⏳ TODO: Click-to-play (entire row clickable)
