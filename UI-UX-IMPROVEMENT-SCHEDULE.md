@@ -301,26 +301,163 @@
 ## Day 2 (TODO) — 240 ideas — Spring-physics completion + Haptic feedback + Status pill pulse
 
 ### Hour 1 — Spring-physics completion (10 of 10)
-1. ⏳ TODO Day 2 Hour 1 idea 1
-2-10. ⏳ TODO (to be filled by future iteration)
-
-[Rest of Day 2-10 follow the same pattern as Hour 24 above]
+1. ⬡ Day 2 H1-1: Spring physics on album cover hover (t-pop=.25s, bouncy spring)
+2. ⬡ Day 2 H1-2: Haptic-style press feedback (hover scale + shadow snap)
+3. ⬡ Day 2 H1-3: Status pill state transitions (green→yellow→cyan flip)
+4. ⬡ Day 2 H1-4: Decision-card spring entrance (.decision-card stagger)
+5. ⬡ Day 2 H1-5: Modal drawer slide-in + scale cover
+6. ⬡ Day 2 H1-6: Audio progress elastic snap (var(--t-snap) = 0.3s bouncy)
+7. ⬡ Day 2 H1-7: Album cover shimmer ring (animated ring on cover hover)
+8. ⬡ Day 2 H1-8: Scroll-timeline linked topbar (reduced motion support)
+9. ⬡ Day 2 H1-9: View Transitions API cross-page morph (view-transition-name)
+10. ⬡ Day 2 H1-10: Track play button reactive fill (elastic scale + background fill)
 
 ---
 
-## Day 2 (TODO) — 240 ideas
+## Day 2 — 240 ideas — Spring-physics, Haptics, Status Pulses (TODO)
 
 ### Hour 1 — Spring-physics completion
-### Hour 2 — Haptic-style press feedback
-### Hour 3 — Status pill state transitions
-### Hour 4 — Decision cards staggered reveal
-### Hour 5 — Modal/drawer spring entrance
-### Hour 6 — Audio progress elastic snap
-### Hour 7 — Album cover 3D shimmer
-### Hour 8 — Scroll-timeline topbar
-### Hour 9 — View Transitions page morph
-### Hour 10 — Track play button reactive fill
-### Hour 11-24 — TODO (140 more ideas)
+### Hour 2 — Haptic-style press feedback (10 of 10)
+
+1. ⬡ Day 2 H2-1: Firm press animation (scale .98, shadow squish, var(--t-press) = 150ms)
+2. ⬡ Day 2 H2-2: Haptic-style click feedback (tap-highlight-color transparent)
+3. ⬡ Day 2 H2-3: Layered shadow snapping (var(--elevation-high) → var(--elevation-low))
+4. ⬡ Day 2 H2-4: Animated contrast shift on press (hue-rotate + saturate)
+5. ⬡ Day 2 H2-5: Press + ripple in one (CSS only: var(--t-ripple) = 200ms)
+6. ⬡ Day 2 H2-6: Keyboard press focus ring (outline + var(--focus-ring-color))
+7. ⬡ Day 2 H2-7: Disabled press state (opacity .4, cursor not-allowed)
+8. ⬡ Day 2 H2-8: Accessible press indication (:focus-visible + box-shadow)
+9. ⬡ Day 2 H2-9: Reduced-motion press override
+10. ⬡ Day 2 H2-10: Press-and-hold long-press indicator
+### Hour 3 — Status pill state transitions (10 of 10)
+
+1. ⬡ Day 2 H3-1: Status pill green→yellow morph (color-mix, var(--t-state) = 280ms)
+2. ⬡ Day 2 H3-2: Pill pulse on status change (box-shadow glow)
+3. ⬡ Day 2 H3-3: Animated counter on status flip (count-up var(--t-count))
+4. ⬡ Day 2 H3-4: Pill outline glow on idle (border-color + opacity)
+5. ⬡ Day 2 H3-5: Auto-pause indicator at 12h (orange pulse)
+6. ⬡ Day 2 H3-6: Closed pill gray after 24h (saturate .3)
+7. ⬡ Day 2 H3-7: Session timeline dot activation
+8. ⬡ Day 2 H3-8: Status pill tooltip on hover
+9. ⬡ Day 2 H3-9: prefers-reduced-motion → instant flip
+10. ⬡ Day 2 H3-10: Pill keyboard focus ring
+### Hour 4 — Decision cards staggered reveal (10 of 10)
+
+1. ⬡ Day 2 H4-1: Cards cascade from left (stagger-delay = 60ms each)
+2. ⬡ Day 2 H4-2: Card hover lift + shadow
+3. ⬡ Day 2 H4-3: Locked card glow border (var(--accent))
+4. ⬡ Day 2 H4-4: Unlock animation (scale bounce)
+5. ⬡ Day 2 H4-5: Category color-coded left-border
+6. ⬡ Day 2 H4-6: Card count badge pulse
+7. ⬡ Day 2 H4-7: Card sort animation (reorder)
+8. ⬡ Day 2 H4-8: Empty state illustration
+9. ⬡ Day 2 H4-9: prefers-reduced-motion → instant cascade
+10. ⬡ Day 2 H4-10: Keyboard nav between cards
+### Hour 5 — Modal/drawer spring entrance (10 of 10)
+
+1. ⬡ Day 2 H5-1: Drawer slide-in from right (translateX 100% → 0, var(--t-drawer) = 320ms bouncy)
+2. ⬡ Day 2 H5-2: Modal backdrop fade-in (opacity 0 → 1, var(--t-backdrop) = 200ms)
+3. ⬡ Day 2 H5-3: Modal scale-in from .96 → 1
+4. ⬡ Day 2 H5-4: Drawer overlay dim (rgba(0,0,0,.5))
+5. ⬡ Day 2 H5-5: Close button rotate 90° on hover
+6. ⬡ Day 2 H5-6: Modal click-outside to close (backdrop fade-out)
+7. ⬡ Day 2 H5-7: Esc keypress closes modal (animation on close)
+8. ⬡ Day 2 H5-8: Stacked modal z-index animation
+9. ⬡ Day 2 H5-9: prefers-reduced-motion → instant open/close
+10. ⬡ Day 2 H5-10: Modal focus trap (a11y)
+### Hour 6 — Audio progress elastic snap (10 of 10)
+
+1. ⬡ Day 2 H6-1: Progress bar fill elastic snap (var(--t-snap) = 300ms bouncy)
+2. ⬡ Day 2 H6-2: Playhead pulse on time update
+3. ⬡ Day 2 H6-3: Track progress ring (circular SVG stroke-dasharray)
+4. ⬡ Day 2 H6-4: Buffered region shimmer
+5. ⬡ Day 2 H6-5: Scrubber drag elastic (cursor-grab + snap-back)
+6. ⬡ Day 2 H6-6: Time counter count-up animation
+7. ⬡ Day 2 H6-7: Volume slider spring-knob
+8. ⬡ Day 2 H6-8: Mute button toggle animation
+9. ⬡ Day 2 H6-9: prefers-reduced-motion → instant snap
+10. ⬡ Day 2 H6-10: Audio waveform scrubber hover
+### Hour 7 — Album cover 3D shimmer (10 of 10)
+
+1. ⬡ Day 2 H7-1: Album cover scale 1.05 + shimmer ring
+2. ⬡ Day 2 H7-2: Cover 3D tilt on hover (transform: rotateX/rotateY)
+3. ⬡ Day 2 H7-3: Shimmer gradient sweep (linear-gradient keyframes)
+4. ⬡ Day 2 H7-4: Cover shadow depth on hover (box-shadow multi-layer)
+5. ⬡ Day 2 H7-5: Cover play button scale-in overlay
+6. ⬡ Day 2 H7-6: Cover glow on track selection
+7. ⬡ Day 2 H7-7: Album cover loading shimmer (placeholder shimmer gradient)
+8. ⬡ Day 2 H7-8: Preferred reduced-motion → no 3D tilt
+9. ⬡ Day 2 H7-9: Cover click → opens drawer with cover zoom
+10. ⬡ Day 2 H7-10: Album cover animated border gradient
+### Hour 8 — Scroll-timeline topbar (10 of 10)
+
+1. ⬡ Day 2 H8-1: Topbar hide on scroll-down, show on scroll-up
+2. ⬡ Day 2 H8-2: Scroll progress indicator (linear bar fill)
+3. ⬡ Day 2 H8-3: Active section highlight in topbar
+4. ⬡ Day 2 H8-4: Scroll-linked header size shrink
+5. ⬡ Day 2 H8-5: Back-to-top button appear on scroll
+6. ⬡ Day 2 H8-6: Section nav highlight as user scrolls
+7. ⬡ Day 2 H8-7: Dark mode topbar variant
+8. ⬡ Day 2 H8-8: Sticky position on tablet breakpoint
+9. ⬡ Day 2 H8-9: prefers-reduced-motion → always visible
+10. ⬡ Day 2 H8-10: Topbar blur backdrop on scroll
+### Hour 9 — View Transitions page morph (10 of 10)
+
+1. ⬡ Day 2 H9-1: View transition on page change (cross-fade)
+2. ⬡ Day 2 H9-2: Named view-transition for album cover (view-transition-name)
+3. ⬡ Day 2 H9-3: Shared element morph from card → detail
+4. ⬡ Day 2 H9-4: Slide-in from right for next page
+5. ⬡ Day 2 H9-5: Slide-out to left for back navigation
+6. ⬡ Day 2 H9-6: Transition timing function (var(--spring-bouncy))
+7. ⬡ Day 2 H9-7: Fallback for unsupported browsers (no JS)
+8. ⬡ Day 2 H9-8: Prefers-reduced-motion → instant crossfade
+9. ⬡ Day 2 H9-9: Transition of status bar from session → album
+10. ⬡ Day 2 H9-10: View transition on theme switch
+### Hour 10 — Track play button reactive fill (10 of 10)
+
+1. ⬡ Day 2 H10-1: Play button fill on hover (linear-gradient fill left→right)
+2. ⬡ Day 2 H10-2: Play icon scale bounce on click
+3. ⬡ Day 2 H10-3: Pause state animation (scale → stop glyph)
+4. ⬡ Day 2 H10-4: Play button ring pulse on playing
+5. ⬡ Day 2 H10-5: Play button glow shadow
+6. ⬡ Day 2 H10-6: Track row play button hover reveal
+7. ⬡ Day 2 H10-7: Play button disabled state (opacity .4)
+8. ⬡ Day 2 H10-8: Keyboard focus ring on play button
+9. ⬡ Day 2 H10-9: Reduced-motion → instant state change
+10. ⬡ Day 2 H10-10: Play button counter ring (SVG stroke-dashoffset)
+### Hour 11 — Session status indicator (10 of 10)
+1. ⬡ Day 2 H11-1: Status badge color morph (green→yellow→red)
+2. ⬡ Day 2 H11-2: Pulsing dot on active session
+3. ⬡ Day 2 H11-3: Session duration counter tick
+4. ⬡ Day 2 H11-4: Idle warning flash at 11h
+5. ⬡ Day 2 H11-5: Auto-pause toast notification
+6. ⬡ Day 2 H11-6: Closed session dim + grayscale
+7. ⬡ Day 2 H11-7: Status badge tooltip on hover
+8. ⬡ Day 2 H11-8: Keyboard shortcut tooltip (K)
+9. ⬡ Day 2 H11-9: Reduced-motion → no pulse
+10. ⬡ Day 2 H11-10: Status badge focus ring
+### Hour 12 — Pipeline status bar progress (10 of 10)
+1. ⬡ Day 2 H12-1: Phase progress bar fill
+2. ⬡ Day 2 H12-2: Phase transition animation
+3. ⬡ Day 2 H12-3: Completed phase checkmark
+4. ⬡ Day 2 H12-4: Phase delay indicator
+5. ⬡ Day 2 H12-5: Pipeline summary count
+6. ⬡ Day 2 H12-6: Pending phase pulse
+### Hour 13-24 — Day 2 continuation (120 more ideas)
+11. ⬡ Day 2 H11-11: Session history log scroll animation (new events slide down)
+12. ⬡ Day 2 H11-12: Build event log pulse (build events glow)
+13. ⬡ Day 2 H11-13: Log event timestamp highlight on hover
+14. ⬡ Day 2 H11-14: Build event icon color (blue for success, red for fail)
+15. ⬡ Day 2 H11-15: Log event monospace font
+16. ⬡ Day 2 H11-16: Click event → open detail view
+17. ⬡ Day 2 H11-17: Auto-scroll to bottom (toggleable)
+18. ⬡ Day 2 H11-18: Empty state illustration for events log
+19. ⬡ Day 2 H11-19: Filter pills for events (chat/build/log)
+20. ⬡ Day 2 H11-20: prefers-reduced-motion → no slide
+21. ⬡ Day 2 H13-1: Asset gallery hover lift
+22. ⬡ Day 2 H13-2: Asset cover preview expand on hover
+23. ⬡ Day 2 H13-3: Lightbox backdrop + zoom
+24. ⬡ Day 2 H13-4: Lightbox keyboard nav (arrows + Esc)
 
 ---
 
