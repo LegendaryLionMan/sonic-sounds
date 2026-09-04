@@ -356,8 +356,31 @@
       paint();
     }
 
-    // Wire tracklist clicks (delegated)
+    // Wire tracklist clicks (delegated).
+    // Two click semantics:
+    //   • Click on the .hp-track-play button → toggle play/pause for THIS track
+    //     (if it's the current track, this pauses; if it's a different track,
+    //     this jumps to it and starts playing).
+    //   • Click anywhere else on the .hp-track-item row → jump to that track.
+    // Without this split, a click on the pause button of the CURRENT track
+    // would also fire the row handler and reload the track from 0 (restart).
     state.root.addEventListener('click', (e) => {
+      // Play-button click: handle play/pause toggle
+      const playBtn = e.target.closest('.hp-track-play');
+      if (playBtn) {
+        e.stopPropagation();
+        const item = playBtn.closest('.hp-track-item');
+        if (!item) return;
+        const idx = parseInt(item.dataset.trackIdx, 10);
+        if (isNaN(idx)) return;
+        if (idx === state.currentIdx) {
+          togglePlay(); // current track → pause/resume (preserve position)
+        } else {
+          jumpToTrack(idx); // different track → load and play from start
+        }
+        return;
+      }
+      // Row click anywhere else → jump to that track
       const item = e.target.closest('.hp-track-item');
       if (!item) return;
       const idx = parseInt(item.dataset.trackIdx, 10);
