@@ -1,0 +1,380 @@
+/* site/header-player.css — Persistent header music player.
+ *
+ * Mounted at top of every page via <script src="header-player.js"> which
+ * injects the markup into <body>. Reads playback state from localStorage
+ * so the user can navigate pages without losing their place.
+ *
+ * Cassette visual: two reels that spin while audio plays, a label with the
+ * album title, a track strip that scrolls. Hover/click → expand tracklist.
+ *
+ * Theme: Mixtape '85 dark (matches albums.html, studio.html, album.html).
+ */
+
+:root {
+  --hp-bg:           rgba(12, 12, 18, 0.92);
+  --hp-bg-solid:     hsl(240, 8%, 8%);
+  --hp-fg:           hsl(40, 25%, 92%);
+  --hp-fg-muted:     hsl(40, 12%, 60%);
+  --hp-accent:       hsl(36, 80%, 60%);
+  --hp-accent-fg:    hsl(20, 30%, 12%);
+  --hp-rule:         hsl(240, 8%, 22%);
+  --hp-danger:       hsl(0, 65%, 60%);
+  --hp-pad:          12px;
+  --hp-h:            76px;
+  --hp-radius:       14px;
+  --hp-shadow:       0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.04) inset;
+}
+
+/* Mount point — fixed top bar */
+.header-player {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--hp-h);
+  background: var(--hp-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hp-rule);
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 2fr minmax(220px, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 0 var(--hp-pad);
+  z-index: 9999;
+  font-family: var(--sans, 'Inter', system-ui);
+  color: var(--hp-fg);
+  box-shadow: var(--hp-shadow);
+  user-select: none;
+}
+
+/* When page nav happens on a page that uses .topbar at the top, push it down */
+body.has-header-player { padding-top: calc(var(--hp-h) + 8px); }
+body.has-header-player nav.topbar { top: var(--hp-h); }
+
+/* ----- LEFT: cassette visual + meta ----- */
+.hp-cassette {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.hp-cassette-art {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--hp-accent) 0%, hsl(20, 70%, 40%) 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  overflow: hidden;
+}
+.hp-cassette-art img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.hp-reels {
+  position: absolute;
+  inset: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.hp-reel {
+  background: rgba(0,0,0,0.35);
+  border-radius: 50%;
+  position: relative;
+}
+.hp-reel::before, .hp-reel::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.18);
+}
+.hp-reel::before {
+  inset: 18%;
+  border-radius: 50%;
+}
+.hp-reel::after {
+  inset: 40%;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+}
+.hp-reel {
+  animation: hp-spin 1.4s linear infinite;
+  animation-play-state: paused;
+}
+.header-player.is-playing .hp-reel {
+  animation-play-state: running;
+}
+@keyframes hp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.hp-meta { min-width: 0; flex: 1; }
+.hp-meta-eyebrow {
+  font-family: var(--mono, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--hp-accent);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-meta-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-meta-sub {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ----- CENTER: transport controls + seek ----- */
+.hp-transport {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.hp-btn {
+  background: transparent;
+  color: var(--hp-fg);
+  border: 0;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background .15s ease, transform .12s ease;
+}
+.hp-btn:hover { background: rgba(255,255,255,0.08); }
+.hp-btn:active { transform: scale(0.92); }
+.hp-btn-play {
+  width: 44px; height: 44px;
+  background: var(--hp-accent);
+  color: var(--hp-accent-fg);
+  font-size: 18px;
+}
+.hp-btn-play:hover { background: hsl(36, 85%, 65%); filter: brightness(1.05); }
+.hp-btn-skip { font-size: 13px; }
+.hp-progress {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.hp-time {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  min-width: 38px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.hp-seek {
+  flex: 1;
+  position: relative;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.hp-seek-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--hp-accent) 0%, hsl(20, 80%, 60%) 100%);
+  border-radius: 999px;
+  width: 0%;
+  transition: width .25s linear;
+}
+.hp-seek-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  background: var(--hp-fg);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--hp-accent);
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.hp-seek:hover .hp-seek-fill::after { opacity: 1; }
+
+/* ----- RIGHT: tracklist toggle + volume ----- */
+.hp-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.hp-vol-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+.hp-vol {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 90px;
+  height: 4px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+.hp-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--hp-accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.hp-vol::-moz-range-thumb {
+  width: 12px; height: 12px;
+  background: var(--hp-accent);
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+}
+.hp-list-btn {
+  background: transparent;
+  color: var(--hp-fg-muted);
+  border: 1px solid var(--hp-rule);
+  border-radius: 999px;
+  font-family: var(--mono, monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease;
+}
+.hp-list-btn:hover {
+  color: var(--hp-fg);
+  border-color: var(--hp-accent);
+}
+
+/* ----- EXPANDED TRACKLIST (overlay) ----- */
+.hp-tracklist-panel {
+  position: fixed;
+  top: var(--hp-h);
+  right: 0;
+  width: min(420px, 90vw);
+  max-height: 70vh;
+  background: var(--hp-bg-solid);
+  border: 1px solid var(--hp-rule);
+  border-radius: 0 0 0 var(--hp-radius);
+  box-shadow: var(--hp-shadow);
+  overflow-y: auto;
+  z-index: 9998;
+  padding: 16px;
+  transform: translateY(-12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.header-player.is-open .hp-tracklist-panel {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.hp-tracklist-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hp-rule);
+  margin-bottom: 10px;
+}
+.hp-tracklist-head h4 {
+  font-family: var(--display, 'Bebas Neue', sans-serif);
+  font-size: 18px;
+  letter-spacing: .04em;
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--hp-fg);
+}
+.hp-tracklist-head span {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+}
+.hp-track-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .12s ease;
+  font-family: var(--sans, system-ui);
+}
+.hp-track-item:hover { background: rgba(255,255,255,0.05); }
+.hp-track-item.is-current {
+  background: rgba(255, 200, 80, 0.12);
+  border-left: 3px solid var(--hp-accent);
+  padding-left: 7px;
+}
+.hp-track-item.is-current .hp-track-num { color: var(--hp-accent); }
+.hp-track-num {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hp-track-title {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-track-dur {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hp-track-play {
+  background: transparent;
+  border: 0;
+  color: var(--hp-fg);
+  cursor: pointer;
+  width: 22px;
+  text-align: center;
+  font-size: 12px;
+}
+.hp-track-play:hover { color: var(--hp-accent); }
+
+/* ----- EMPTY STATE ----- */
+.hp-empty {
+  font-family: var(--mono, monospace);
+  font-size: 11px;
+  color: var(--hp-fg-muted);
+  white-space: nowrap;
+}
+
+/* ----- RESPONSIVE: collapse volume on narrow screens ----- */
+@media (max-width: 720px) {
+  .header-player {
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+  .hp-vol-wrap { display: none; }
+  .hp-meta-sub { display: none; }
+}
