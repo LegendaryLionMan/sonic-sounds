@@ -69,14 +69,14 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
  * ~1.29 (W/H). Slot is sized to match that aspect so nothing is cropped. */
 .hp-cassette-art {
   position: relative;
-  width: 60px;
+  width: 78px;                          /* wider rectangle so the reels have room to turn */
   height: 46px;
   flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
   background-color: transparent;
   background-image: var(--hp-cassette-img);
-  background-size: cover;             /* fill the slot completely */
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
@@ -96,16 +96,20 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
  * pseudo-reels here so users see the "tape spinning" effect when playing.
  * Position the reels to match where the holes appear on the cassette image. */
 .hp-reels {
+  /* Two animated reel overlays positioned over the cassette artwork so the
+   * reels appear to 'turn around the circles' while audio plays.
+   * Tighter than before because the new wider 78x46 cassette has more
+   * horizontal space; reels sit over the visible reel-hole centers. */
   position: absolute;
-  /* Match the yellow-tape cassette image: reels at ~25% / 75% horizontally,
-   * centred vertically over the tape band (about 38-62% vertical). */
-  top: 38%;
-  left: 22%;
-  right: 22%;
-  bottom: 38%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 50%;          /* covers the tape band only */
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18%;
+  gap: 14%;
+  align-items: center;
   pointer-events: none;
 }
 .hp-reel {
@@ -255,9 +259,12 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   background: rgba(255, 255, 255, 0.08);
 }
 .hp-btn-mode.is-active {
+  /* Active state: icon brightens, but NO blue background. Just an
+   * underline + slight scale so it's clearly active without
+   * looking like a checkbox chip. */
   color: var(--accent);
-  /* Subtle pill behind the active icon so the user sees which mode is on */
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  background: transparent;
+  box-shadow: inset 0 -2px 0 0 var(--accent);
 }
 .hp-btn-mode.is-active:hover {
   color: var(--accent);
@@ -342,28 +349,38 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 .hp-vol {
   -webkit-appearance: none;
   appearance: none;
-  width: 90px;
-  height: 4px;
-  background: rgba(255,255,255,0.12);
+  width: 110px;      /* widened to match the seek bar's prominence */
+  height: 6px;       /* same as .hp-seek */
+  background: linear-gradient(90deg,
+                            color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+                            color-mix(in srgb, var(--accent) 12%, transparent) 100%),
+                            rgba(255,255,255,0.10);  /* matches .hp-seek-fill gradient */
+  background-size: var(--vol-pct, 0%) 100%, 100% 100%;
+  background-repeat: no-repeat;
   border-radius: 999px;
   outline: none;
   cursor: pointer;
+  /* Allow JS to push --vol-pct (CSS var) to update the filled portion
+   * live. Matches the music progress bar's filled-then-empty look. */
 }
 .hp-vol::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
-  height: 12px;
-  background: var(--hp-accent);
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at center, var(--accent) 0%, var(--accent) 60%, transparent 75%);
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid var(--bg-elevated);
 }
 .hp-vol::-moz-range-thumb {
-  width: 12px; height: 12px;
-  background: var(--hp-accent);
+  width: 14px; height: 14px;
+  background: radial-gradient(circle at center, var(--accent) 0%, var(--accent) 60%, transparent 75%);
   border-radius: 50%;
-  border: 0;
   cursor: pointer;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 55%, transparent);
+  border: 2px solid var(--bg-elevated);
 }
 .hp-list-btn {
   background: transparent;
@@ -522,7 +539,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   .hp-time { min-width: 32px; font-size: 10px; }
   .hp-seek { min-width: 40px; }
   .hp-transport { gap: 6px; }
-  .hp-cassette-art { width: 50px; height: 38px; }
+  .hp-cassette-art { width: 64px; height: 38px; }
   .hp-meta-title { font-size: 13px; }
 }
 
@@ -585,7 +602,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
     grid-row: 1;
   }
   /* Keep the cassette compact */
-  .hp-cassette-art { width: 44px; height: 34px; flex-shrink: 0; background-size: cover; }
+  .hp-cassette-art { width: 56px; height: 34px; flex-shrink: 0; background-size: cover; }
   .hp-meta-title { font-size: 13px; }
   .hp-meta-eyebrow { font-size: 9px; }
   /* Buttons stay touch-sized */
@@ -876,12 +893,6 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
  * breath, only when NOT actively playing. Adds a slow pulse
  * to indicate "alive but waiting".
  * ============================================================ */
-.hp-reel, .hp-reel::before, .hp-reel::after {
-  /* Note: the markup removed hp-reels above the cassette (it was
-   * overlaid). The reel animation now only applies to whatever
-   * ::before/::after pseudo-elements exist on .hp-cassette-art.
-   * (Kept the rules empty to preserve any future re-introduction.) */
-}
 @keyframes hp-cassette-idle-pulse {
   0%, 100% { box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
   50% { box-shadow: 0 2px 6px rgba(0,0,0,0.4),

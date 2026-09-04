@@ -91,7 +91,12 @@
     root.className = 'header-player';
     root.innerHTML = `
       <div class="hp-cassette">
-        <div class="hp-cassette-art"></div>
+        <div class="hp-cassette-art">
+          <div class="hp-reels">
+            <div class="hp-reel"></div>
+            <div class="hp-reel"></div>
+          </div>
+        </div>
         <div class="hp-meta">
           <p class="hp-meta-eyebrow">/cassette · no album loaded</p>
           <h3 class="hp-meta-title">—</h3>
@@ -100,13 +105,13 @@
       </div>
 
       <div class="hp-transport">
-        <button class="hp-btn hp-btn-mode" data-action="shuffle" aria-label="Shuffle" title="Shuffle">🔀</button>
         <button class="hp-btn hp-btn-seeksec" data-action="seek-back" aria-label="Back 15 seconds" title="−15 seconds">⟲</button>
         <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous track">⏮</button>
         <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play / Pause">▷</button>
         <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next track">⏭</button>
         <button class="hp-btn hp-btn-seeksec" data-action="seek-fwd" aria-label="Forward 15 seconds" title="+15 seconds">⟳</button>
         <button class="hp-btn hp-btn-mode" data-action="repeat" aria-label="Repeat" title="Repeat: off">↻</button>
+        <button class="hp-btn hp-btn-mode" data-action="shuffle" aria-label="Shuffle" title="Shuffle">🔀</button>
       </div>
 
       <div class="hp-progress">
@@ -124,8 +129,6 @@
           <button class="hp-btn-mute" data-action="mute" aria-label="Mute" title="Mute / Unmute" type="button">🔊</button>
           <input type="range" class="hp-vol" min="0" max="1" step="0.01" value="0.7">
         </div>
-        <button class="hp-btn-mini" data-action="sleep" aria-label="Sleep timer" title="Sleep timer (off)">⏱</button>
-        <button class="hp-btn-mini" data-action="lyrics" aria-label="Lyrics" title="Lyrics">♪</button>
         <button class="hp-list-btn" data-action="toggle-list">▤ tracks</button>
       </div>
 
@@ -204,8 +207,6 @@
       else if (act === 'shuffle') toggleShuffle();
       else if (act === 'seek-back') skipSec(-15);
       else if (act === 'seek-fwd') skipSec(+15);
-      else if (act === 'sleep') cycleSleep();
-      else if (act === 'lyrics') root.classList.toggle('lyrics-open');
       else if (act === 'close-lyrics') root.classList.remove('lyrics-open');
       else if (act === 'close-keys') root.classList.remove('keys-open');
     });
@@ -279,9 +280,12 @@
     // Volume
     const vol = root.querySelector('.hp-vol');
     vol.value = state.volume;
+    function paintVol() { vol.style.setProperty('--vol-pct', (parseFloat(vol.value) * 100).toFixed(1) + '%'); }
+    paintVol();
     vol.addEventListener('input', () => {
       state.volume = parseFloat(vol.value);
       audio.volume = state.volume;
+      paintVol();
       saveLS();
     });
 
@@ -383,21 +387,19 @@
   function toggleMute() {
     // state.audio is set in mount(); use it instead of a closure variable
     if (state.muted) {
-      // Unmute: restore the previous volume (or a sensible default)
       const v = state.volumeBeforeMute > 0.05 ? state.volumeBeforeMute : 0.7;
       state.volume = v;
       state.muted = false;
       state.audio.volume = v;
       const slider = state.root.querySelector('.hp-vol');
-      if (slider) slider.value = v;
+      if (slider) { slider.value = v; slider.style.setProperty('--vol-pct', (v * 100).toFixed(1) + '%'); }
     } else {
-      // Mute: remember current volume, set to 0
       if (state.volume > 0.05) state.volumeBeforeMute = state.volume;
       state.volume = 0;
       state.muted = true;
       state.audio.volume = 0;
       const slider = state.root.querySelector('.hp-vol');
-      if (slider) slider.value = 0;
+      if (slider) { slider.value = 0; slider.style.setProperty('--vol-pct', '0%'); }
     }
     paint();
     saveLS();
