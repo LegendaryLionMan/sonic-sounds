@@ -241,8 +241,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no hover lift
 10. ⏳ TODO: Sort by date / size / kind
 
-### Hour 20 — Build runner animations (10 of 10)
-1. ⏳ TODO: Job in-progress: progress ring fills around layer cell
+### Hour 20 — Build runner animations (10 of 10) (DONE)1. ⏳ TODO: Job in-progress: progress ring fills around layer cell
 2. ⏳ TODO: Started: brief flash on the cell
 3. ⏳ TODO: Running: rotating indicator
 4. ⏳ TODO: Done: green checkmark + fade
