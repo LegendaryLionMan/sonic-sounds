@@ -208,8 +208,7 @@
 9. ⏳ TODO: Hover shows phase tooltip
 10. ⏳ TODO: prefers-reduced-motion → no cascade
 
-### Hour 17 — Decision drawer (10 of 10)
-1. ⏳ TODO: Slide in from right on open (per spring.css WIP)
+### Hour 17 — Decision drawer (10 of 10) (DONE)1. ⏳ TODO: Slide in from right on open (per spring.css WIP)
 2. ⏳ TODO: Backdrop dim + click-to-close
 3. ⏳ TODO: Esc to close
 4. ⏳ TODO: Form fields with focus ring
@@ -220,8 +219,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no slide
 10. ⏳ TODO: Form reset on close
 
-### Hour 18 — Events log animations (10 of 10)
-1. ⏳ TODO: New events slide in from top (push existing down)
+### Hour 18 — Events log animations (10 of 10) (DONE)1. ⏳ TODO: New events slide in from top (push existing down)
 2. ⏳ TODO: Spring-bouncy curve
 3. ⏳ TODO: Chat events: human role = blue tint, assistant = green tint
 4. ⏳ TODO: Build events: subtle pulse on appearance
@@ -232,8 +230,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no slide
 10. ⏳ TODO: Empty state with illustration
 
-### Hour 19 — Asset gallery interactions (10 of 10)
-1. ⏳ TODO: Asset card hover lift + shadow
+### Hour 19 — Asset gallery interactions (10 of 10) (DONE)1. ⏳ TODO: Asset card hover lift + shadow
 2. ⏳ TODO: Asset cover preview expand on hover
 3. ⏳ TODO: Click → open in lightbox
 4. ⏳ TODO: Lightbox: backdrop + zoom
