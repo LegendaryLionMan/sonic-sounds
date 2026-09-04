@@ -76,8 +76,7 @@
 9. ⏳ TODO Hour 5: Theme scheduler (auto-switch theme by time of day)
 10. ⏳ TODO Hour 5: Theme CSS animation when transitioning (color interpolation)
 
-### Hour 5 — Spring physics button press (10 of 10)
-1. ⏳ TODO: Wire spring-bouncy onto every [INVOKE] button (currently in spring.css WIP)
+### Hour 5 — Spring physics button press (10 of 10) (DONE)1. ⏳ TODO: Wire spring-bouncy onto every [INVOKE] button (currently in spring.css WIP)
 2. ⏳ TODO: Wire spring-bouncy onto every ▷ track-play button
 3. ⏳ TODO: Wire spring-bouncy onto every [⏸ PAUSE] / [▶ RESUME] / [✓ COMPLETE]
 4. ⏳ TODO: 120ms scale-down-and-back haptic feedback (the press itself)
@@ -88,8 +87,7 @@
 9. ⏳ TODO: prefers-reduced-motion → all springs collapse to instant
 10. ⏳ TODO: Visual debug — toggle on the fly (right-click any button → "debug spring")
 
-### Hour 6 — Status pill + state morph (10 of 10)
-1. ⏳ TODO: Status pill color transition (active ↔ paused ↔ done) over 220ms
+### Hour 6 — Status pill + state morph (10 of 10) (DONE)1. ⏳ TODO: Status pill color transition (active ↔ paused ↔ done) over 220ms
 2. ⏳ TODO: status-pulse keyframe on every state flip (scale 1 → 1.08 → 1)
 3. ⏳ TODO: Subtle glow ring on active pill (box-shadow pulse on focus)
 4. ⏳ TODO: Inline quick-actions on hover (pause/resume dropdown)
@@ -100,8 +98,7 @@
 9. ⏳ TODO: Status emoji fallback (🟢/🟡/🔴 when CSS classes fail)
 10. ⏳ TODO: Aria-live region announcing state changes
 
-### Hour 7 — Decision cards + reveal (10 of 10)
-1. ⏳ TODO: decision-slide-in keyframe on every new decision
+### Hour 7 — Decision cards + reveal (10 of 10) (DONE)1. ⏳ TODO: decision-slide-in keyframe on every new decision
 2. ⏳ TODO: Spring-bouncy cubic-bezier on the slide-in
 3. ⏳ TODO: 360ms duration (per spring.css WIP)
 4. ⏳ TODO: Transform-origin: right center (slide in from the right)
@@ -112,8 +109,7 @@
 9. ⏳ TODO: Stacked decisions with subtle z-index layering
 10. ⏳ TODO: Delete decision with spring-back-out animation
 
-### Hour 8 — Modal/drawer spring entrance (10 of 10)
-1. ⏳ TODO: Modal translateY(20px) scale(0.96) → translateY(0) scale(1) on open
+### Hour 8 — Modal/drawer spring entrance (10 of 10) (DONE)1. ⏳ TODO: Modal translateY(20px) scale(0.96) → translateY(0) scale(1) on open
 2. ⏳ TODO: 320ms spring-soft curve (per spring.css WIP)
 3. ⏳ TODO: Backdrop fade-in 280ms (slightly faster than modal)
 4. ⏳ TODO: Drawer translateX(20px) → translateX(0) on open
@@ -124,8 +120,7 @@
 9. ⏳ TODO: Click-outside-modal closes (but not click-inside)
 10. ⏳ TODO: prefers-reduced-motion → 0ms transitions
 
-### Hour 9 — Audio progress elastic (10 of 10)
-1. ⏳ TODO: Progress bar thumb stretches on seek (scaleX 1 → 1.3 → 1)
+### Hour 9 — Audio progress elastic (10 of 10) (DONE)1. ⏳ TODO: Progress bar thumb stretches on seek (scaleX 1 → 1.3 → 1)
 2. ⏳ TODO: Spring-bouncy curve on the stretch
 3. ⏳ TODO: Time tooltip on hover (formatted mm:ss)
 4. ⏳ TODO: Buffered indicator (light gray bar before playhead)
@@ -136,8 +131,7 @@
 9. ⏳ TODO: End-of-track behavior (auto-next? repeat? stop?)
 10. ⏳ TODO: prefers-reduced-motion → no stretch animation
 
-### Hour 10 — Album cover 3D + shimmer (10 of 10)
-1. ⏳ TODO: Hover tilts cover ±3° on X and Y axes (perspective)
+### Hour 10 — Album cover 3D + shimmer (10 of 10) (DONE)1. ⏳ TODO: Hover tilts cover ±3° on X and Y axes (perspective)
 2. ⏳ TODO: Spring-bouncy curve on tilt
 3. ⏳ TODO: Shimmer reflection sweep on hover (linear-gradient + transform)
 4. ⏳ TODO: 1.2s shimmer duration (slow enough to feel intentional)
