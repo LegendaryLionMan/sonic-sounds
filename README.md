@@ -9,6 +9,44 @@ A daemon-driven workspace for music-album creation. The user answers 26 question
 
 ---
 
+<div align="center">
+
+<pre>
+<span style="color:#5a5a72">──────────────────────────────────────────────────────────────────────</span>
+   <span style="color:#ff6a4e">▁</span>   <span style="color:#ff7b3e">▂</span><span style="color:#ff8039">▃</span>   <span style="color:#ff9129">▁</span>    <span style="color:#ffa420">▂</span><span style="color:#ffa822">▃</span><span style="color:#ffab24">▅</span><span style="color:#ffae26">▃</span><span style="color:#ffb229">▂</span>  <span style="color:#ffbc30">▁</span>    <span style="color:#ffcc3b">▂</span><span style="color:#ffd03d">▃</span><span style="color:#fbd23e">▅</span>   <span style="color:#e3d338">▁</span>   <span style="color:#cbd432">▂</span><span style="color:#c5d531">▃</span>   <span style="color:#acd62b">▁</span><span style="color:#a6d62a">▂</span><span style="color:#a0d62b">▃</span>   <span style="color:#8ad454">▁</span><span style="color:#85d35e">▂</span><span style="color:#7fd268">▃</span><span style="color:#7ad272">▅</span>   <span style="color:#64cf9b">▁</span><span style="color:#5ecea5">▂</span><span style="color:#59ceaf">▃</span>  
+ <span style="color:#ff6256">▂</span><span style="color:#ff6652">▃</span><span style="color:#ff6a4e">▅</span> <span style="color:#ff7346">▄</span><span style="color:#ff7742">▅</span><span style="color:#ff7b3e">▇</span><span style="color:#ff8039">▅</span> <span style="color:#ff8831">▃</span><span style="color:#ff8c2d">▅</span> <span style="color:#ff9525">▂</span><span style="color:#ff9921">▄</span><span style="color:#ff9d1d">▆</span><span style="color:#ffa11d">▇</span><span style="color:#ffa420">▇</span><span style="color:#ffa822">▆</span><span style="color:#ffab24">▅</span><span style="color:#ffae26">▄</span><span style="color:#ffb229">▃</span><span style="color:#ffb52b">▄</span> <span style="color:#ffbc30">▃</span><span style="color:#ffbf32">▅</span><span style="color:#ffc234">▂</span><span style="color:#ffc636">▄</span><span style="color:#ffc939">▇</span><span style="color:#ffcc3b">▇</span><span style="color:#ffd03d">▅</span> <span style="color:#f5d23c">▃</span><span style="color:#efd23b">▅</span><span style="color:#e9d339">▄</span><span style="color:#e3d338">▆</span><span style="color:#ddd337">▅</span><span style="color:#d7d435">▃</span> <span style="color:#cbd432">▄</span><span style="color:#c5d531">▆</span><span style="color:#bed52f">▇</span><span style="color:#b8d52e">▅</span><span style="color:#b2d62c">▃</span><span style="color:#acd62b">▄</span><span style="color:#a6d62a">▆</span><span style="color:#a0d62b">▇</span><span style="color:#9bd635">▇</span> <span style="color:#90d44a">▄</span><span style="color:#8ad454">▆</span><span style="color:#85d35e">▇</span><span style="color:#7fd268">▅</span><span style="color:#7ad272">▄</span>        
+ <span style="color:#ff6256">█</span><span style="color:#ff6652">█</span><span style="color:#ff6a4e">█</span>  <span style="color:#ff7742">█</span><span style="color:#ff7b3e">█</span><span style="color:#ff8039">█</span> <span style="color:#ff8831">█</span><span style="color:#ff8c2d">█</span>   <span style="color:#ff9d1d">█</span><span style="color:#ffa11d">█</span><span style="color:#ffa420">█</span><span style="color:#ffa822">█</span><span style="color:#ffab24">█</span><span style="color:#ffae26">█</span><span style="color:#ffb229">█</span><span style="color:#ffb52b">█</span> <span style="color:#ffbc30">█</span><span style="color:#ffbf32">█</span>  <span style="color:#ffc939">█</span><span style="color:#ffcc3b">█</span><span style="color:#ffd03d">█</span><span style="color:#fbd23e">█</span> <span style="color:#efd23b">█</span><span style="color:#e9d339">█</span>  <span style="color:#d7d435">█</span><span style="color:#d1d434">█</span><span style="color:#cbd432">█</span> <span style="color:#bed52f">█</span><span style="color:#b8d52e">█</span> <span style="color:#acd62b">█</span><span style="color:#a6d62a">█</span><span style="color:#a0d62b">█</span> <span style="color:#95d53f">█</span><span style="color:#90d44a">█</span><span style="color:#8ad454">█</span><span style="color:#85d35e">█</span>  <span style="color:#74d17c">█</span><span style="color:#6fd087">█</span><span style="color:#69d091">█</span>     
+    <span style="color:#ff6f4a">█</span>    <span style="color:#ff8435">█</span>    <span style="color:#ff9921">█</span>    <span style="color:#ffab24">█</span><span style="color:#ffae26">█</span>    <span style="color:#ffbf32">█</span>  <span style="color:#ffc939">█</span><span style="color:#ffcc3b">█</span>    <span style="color:#e9d339">█</span>   <span style="color:#d1d434">█</span><span style="color:#cbd432">█</span>    <span style="color:#acd62b">█</span>    <span style="color:#90d44a">█</span><span style="color:#8ad454">█</span>    <span style="color:#6fd087">█</span><span style="color:#69d091">█</span>     
+<span style="color:#5a5a72">──────────────────────────────────────────────────────────────────────</span>
+
+    <span style="color:#ffd23f">█</span>    
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">▓</span> <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">░</span> <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>   <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>   <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+    <span style="color:#ffd23f">░</span>    
+    <span style="color:#ffd23f">▓</span>    
+    <span style="color:#ffd23f">█</span>    
+         
+
+    <span style="color:#ffd23f">█</span> <span style="color:#a2d729">█</span> <span style="color:#4ecdc4">█</span>  
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">▓</span> <span style="color:#a2d729">▓</span> <span style="color:#4ecdc4">▓</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">░</span> <span style="color:#a2d729">░</span> <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>     <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>     <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+    <span style="color:#ffd23f">░</span> <span style="color:#a2d729">░</span>    
+    <span style="color:#ffd23f">▓</span> <span style="color:#a2d729">▓</span>    
+    <span style="color:#ffd23f">█</span> <span style="color:#a2d729">█</span>    
+           
+
+</pre>
+
+**Local-first music-album design + production studio.**
+
+</div>
+
+---
+
 ## ✨ What's inside
 
 | | |
@@ -197,4 +235,40 @@ MIT — see [LICENSE](./LICENSE).
 - Music: [Maren Sol](https://github.com/LegendaryLionMan) — the seeded demo album is "Half-Light Hours" (dream-folk, 10 tracks, 40 min)
 - Cassette sticker: hand-illustrated, included in `site/assets/cassette-yellow-tape.jpg`
 - Theme palette research: 6 themes hand-curated from Omarchy OS, Catppuccin, Tokyo Night, Gruvbox, Everforest, Kanagawa
-- Type: Bebas Neue + Inter + JetBrains Mono + Caveat (handwritten)
+- Type: Bebas Neue + Inter + JetBrains Mono + Caveat (handwritten)<div align="center">
+
+<pre>
+<span style="color:#5a5a72">──────────────────────────────────────────────────────────────────────</span>
+   <span style="color:#ff6a4e">▁</span>   <span style="color:#ff7b3e">▂</span><span style="color:#ff8039">▃</span>   <span style="color:#ff9129">▁</span>    <span style="color:#ffa420">▂</span><span style="color:#ffa822">▃</span><span style="color:#ffab24">▅</span><span style="color:#ffae26">▃</span><span style="color:#ffb229">▂</span>  <span style="color:#ffbc30">▁</span>    <span style="color:#ffcc3b">▂</span><span style="color:#ffd03d">▃</span><span style="color:#fbd23e">▅</span>   <span style="color:#e3d338">▁</span>   <span style="color:#cbd432">▂</span><span style="color:#c5d531">▃</span>   <span style="color:#acd62b">▁</span><span style="color:#a6d62a">▂</span><span style="color:#a0d62b">▃</span>   <span style="color:#8ad454">▁</span><span style="color:#85d35e">▂</span><span style="color:#7fd268">▃</span><span style="color:#7ad272">▅</span>   <span style="color:#64cf9b">▁</span><span style="color:#5ecea5">▂</span><span style="color:#59ceaf">▃</span>  
+ <span style="color:#ff6256">▂</span><span style="color:#ff6652">▃</span><span style="color:#ff6a4e">▅</span> <span style="color:#ff7346">▄</span><span style="color:#ff7742">▅</span><span style="color:#ff7b3e">▇</span><span style="color:#ff8039">▅</span> <span style="color:#ff8831">▃</span><span style="color:#ff8c2d">▅</span> <span style="color:#ff9525">▂</span><span style="color:#ff9921">▄</span><span style="color:#ff9d1d">▆</span><span style="color:#ffa11d">▇</span><span style="color:#ffa420">▇</span><span style="color:#ffa822">▆</span><span style="color:#ffab24">▅</span><span style="color:#ffae26">▄</span><span style="color:#ffb229">▃</span><span style="color:#ffb52b">▄</span> <span style="color:#ffbc30">▃</span><span style="color:#ffbf32">▅</span><span style="color:#ffc234">▂</span><span style="color:#ffc636">▄</span><span style="color:#ffc939">▇</span><span style="color:#ffcc3b">▇</span><span style="color:#ffd03d">▅</span> <span style="color:#f5d23c">▃</span><span style="color:#efd23b">▅</span><span style="color:#e9d339">▄</span><span style="color:#e3d338">▆</span><span style="color:#ddd337">▅</span><span style="color:#d7d435">▃</span> <span style="color:#cbd432">▄</span><span style="color:#c5d531">▆</span><span style="color:#bed52f">▇</span><span style="color:#b8d52e">▅</span><span style="color:#b2d62c">▃</span><span style="color:#acd62b">▄</span><span style="color:#a6d62a">▆</span><span style="color:#a0d62b">▇</span><span style="color:#9bd635">▇</span> <span style="color:#90d44a">▄</span><span style="color:#8ad454">▆</span><span style="color:#85d35e">▇</span><span style="color:#7fd268">▅</span><span style="color:#7ad272">▄</span>        
+ <span style="color:#ff6256">█</span><span style="color:#ff6652">█</span><span style="color:#ff6a4e">█</span>  <span style="color:#ff7742">█</span><span style="color:#ff7b3e">█</span><span style="color:#ff8039">█</span> <span style="color:#ff8831">█</span><span style="color:#ff8c2d">█</span>   <span style="color:#ff9d1d">█</span><span style="color:#ffa11d">█</span><span style="color:#ffa420">█</span><span style="color:#ffa822">█</span><span style="color:#ffab24">█</span><span style="color:#ffae26">█</span><span style="color:#ffb229">█</span><span style="color:#ffb52b">█</span> <span style="color:#ffbc30">█</span><span style="color:#ffbf32">█</span>  <span style="color:#ffc939">█</span><span style="color:#ffcc3b">█</span><span style="color:#ffd03d">█</span><span style="color:#fbd23e">█</span> <span style="color:#efd23b">█</span><span style="color:#e9d339">█</span>  <span style="color:#d7d435">█</span><span style="color:#d1d434">█</span><span style="color:#cbd432">█</span> <span style="color:#bed52f">█</span><span style="color:#b8d52e">█</span> <span style="color:#acd62b">█</span><span style="color:#a6d62a">█</span><span style="color:#a0d62b">█</span> <span style="color:#95d53f">█</span><span style="color:#90d44a">█</span><span style="color:#8ad454">█</span><span style="color:#85d35e">█</span>  <span style="color:#74d17c">█</span><span style="color:#6fd087">█</span><span style="color:#69d091">█</span>     
+    <span style="color:#ff6f4a">█</span>    <span style="color:#ff8435">█</span>    <span style="color:#ff9921">█</span>    <span style="color:#ffab24">█</span><span style="color:#ffae26">█</span>    <span style="color:#ffbf32">█</span>  <span style="color:#ffc939">█</span><span style="color:#ffcc3b">█</span>    <span style="color:#e9d339">█</span>   <span style="color:#d1d434">█</span><span style="color:#cbd432">█</span>    <span style="color:#acd62b">█</span>    <span style="color:#90d44a">█</span><span style="color:#8ad454">█</span>    <span style="color:#6fd087">█</span><span style="color:#69d091">█</span>     
+<span style="color:#5a5a72">──────────────────────────────────────────────────────────────────────</span>
+
+    <span style="color:#ffd23f">█</span>    
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">▓</span> <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">░</span> <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>   <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>   <span style="color:#9d6cff">█</span> <span style="color:#4ecdc4">█</span>
+    <span style="color:#ffd23f">░</span>    
+    <span style="color:#ffd23f">▓</span>    
+    <span style="color:#ffd23f">█</span>    
+         
+
+    <span style="color:#ffd23f">█</span> <span style="color:#a2d729">█</span> <span style="color:#4ecdc4">█</span>  
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">▓</span> <span style="color:#a2d729">▓</span> <span style="color:#4ecdc4">▓</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span> <span style="color:#ffd23f">░</span> <span style="color:#a2d729">░</span> <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>     <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+<span style="color:#ff5e5b">█</span> <span style="color:#ff9f1c">█</span>     <span style="color:#4ecdc4">█</span> <span style="color:#4361ee">█</span>
+    <span style="color:#ffd23f">░</span> <span style="color:#a2d729">░</span>    
+    <span style="color:#ffd23f">▓</span> <span style="color:#a2d729">▓</span>    
+    <span style="color:#ffd23f">█</span> <span style="color:#a2d729">█</span>    
+           
+
+</pre>
+
+**Local-first music-album design + production studio.**
+
+</div>
+
+
