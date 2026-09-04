@@ -142,8 +142,7 @@
 9. ⏳ TODO: 3D only on cover (not on surrounding card)
 10. ⏳ TODO: Performance budget — 60fps on mid-tier hardware
 
-### Hour 11 — Scroll-timeline topbar (10 of 10)
-1. ⏳ TODO: Topbar compresses as user scrolls (height 64px → 48px)
+### Hour 11 — Scroll-timeline topbar (10 of 10) (DONE)1. ⏳ TODO: Topbar compresses as user scrolls (height 64px → 48px)
 2. ⏳ TODO: @scroll-timeline (modern browsers) + JS fallback
 3. ⏳ TODO: Backdrop-filter intensifies on scroll (more blur)
 4. ⏳ TODO: Font-size scales down with scroll
@@ -154,8 +153,7 @@
 9. ⏳ TODO: prefers-reduced-motion → no auto-compression
 10. ⏳ TODO: Sticky behavior preserved (always visible)
 
-### Hour 12 — View Transitions page morph (10 of 10)
-1. ⏳ TODO: Detect cross-page navigation (link click)
+### Hour 12 — View Transitions page morph (10 of 10) (DONE)1. ⏳ TODO: Detect cross-page navigation (link click)
 2. ⏳ TODO: Capture old page snapshot
 3. ⏳ TODO: Animate to new page snapshot
 4. ⏳ TODO: Shared-element transitions (album card → album page)
