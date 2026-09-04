@@ -595,3 +595,243 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 
   body.has-header-player { padding-top: calc(var(--hp-h) + 24px); }
 }
+
+
+/* ============================================================
+ * IMPROVEMENT #1: Skip ±15s buttons (.hp-btn-seeksec)
+ * Smaller text than transport buttons. Dim by default.
+ * ============================================================ */
+.hp-btn-seeksec {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  min-width: 28px;
+  color: var(--ink-faint);
+}
+.hp-btn-seeksec:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.hp-btn-seeksec:active { transform: scale(0.92); color: var(--accent); }
+
+/* ============================================================
+ * IMPROVEMENT #2: Mini buttons (sleep, lyrics) — square icon size
+ * ============================================================ */
+.hp-btn-mini {
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: background var(--t-base) ease, color var(--t-base) ease, transform var(--t-quick) var(--t-spring);
+}
+.hp-btn-mini:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.hp-btn-mini:active { transform: scale(0.9); }
+.hp-btn-mini.is-active { color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+
+/* ============================================================
+ * IMPROVEMENT #3: Seek-bar hover preview (Spotify/YouTube pattern)
+ * Vertical bar showing hover position + tooltip with m:ss time
+ * ============================================================ */
+.hp-seek { position: relative; overflow: visible; }
+.hp-seek-hover {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: color-mix(in srgb, var(--ink-soft) 30%, transparent);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: width 60ms linear;
+}
+.hp-seek-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 80ms ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+ * IMPROVEMENT #4: Progressive shimmer on progress fill while playing.
+ * A subtle moving highlight across the seek-fill to convey motion.
+ * ============================================================ */
+@keyframes hp-seek-shimmer {
+  0%   { transform: translateX(-30%); opacity: 0.0; }
+  10%  { opacity: 0.55; }
+  100% { transform: translateX(150%); opacity: 0.0; }
+}
+.hp-seek-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  animation: hp-seek-shimmer 1.8s linear infinite;
+  pointer-events: none;
+}
+.header-player:not(.is-playing) .hp-seek-fill::after { animation: none; opacity: 0; }
+
+/* ============================================================
+ * IMPROVEMENT #5: Now-playing pip on the cassette corner.
+ * Small green pulsing dot like Spotify's "now playing" indicator.
+ * ============================================================ */
+.hp-np-pip {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success), 0 0 12px color-mix(in srgb, var(--success) 60%, transparent);
+  opacity: 0;
+  transition: opacity var(--t-base) ease;
+  pointer-events: none;
+}
+.header-player.is-pip .hp-np-pip {
+  opacity: 1;
+  animation: hp-pip-pulse 1.4s ease-in-out infinite;
+}
+@keyframes hp-pip-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+/* ============================================================
+ * IMPROVEMENT #6: Cassette glow + reel speed up when playing
+ * ============================================================ */
+@keyframes hp-cassette-glow {
+  0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset,
+                                0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+  50% { box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08) inset,
+                                0 0 14px 2px color-mix(in srgb, var(--accent) 28%, transparent); }
+}
+.header-player.is-pip .hp-cassette-art {
+  animation: hp-cassette-glow 2.6s ease-in-out infinite;
+}
+.header-player.is-pip .hp-reel,
+.header-player.is-pip .hp-reel::before,
+.header-player.is-pip .hp-reel::after {
+  animation-duration: 1.2s !important;
+}
+
+/* ============================================================
+ * IMPROVEMENT #7: Lyrics slide-out panel (slides in from the right)
+ * ============================================================ */
+.hp-lyrics-panel {
+  position: fixed;
+  top: var(--hp-h);
+  right: 0;
+  width: min(520px, 50vw);
+  max-height: 70vh;
+  background: var(--bg-solid);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 0 14px;
+  box-shadow: -8px 12px 32px rgba(0,0,0,0.5);
+  z-index: 9997;
+  transform: translateX(110%);
+  transition: transform 280ms var(--t-spring);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-player.lyrics-open .hp-lyrics-panel {
+  transform: translateX(0);
+}
+.hp-lyrics-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.hp-lyrics-head span { color: var(--ink); font-weight: 600; }
+.hp-lyrics-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.hp-lyrics-empty {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--ink-muted);
+}
+.hp-lyrics-empty .hand {
+  font-family: var(--hand);
+  font-size: 18px;
+  color: var(--accent);
+}
+
+/* ============================================================
+ * IMPROVEMENT #8: tracklist row entrance stagger
+ * ============================================================ */
+@keyframes hp-track-enter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.hp-track-item {
+  animation: hp-track-enter 240ms var(--t-spring) backwards;
+}
+
+/* ============================================================
+ * IMPROVEMENT #9: 'now-playing pip' on current tracklist row
+ * ============================================================ */
+.hp-track-item.is-current {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-left: 3px solid var(--accent);
+  padding-left: 7px;
+  animation: hp-curr-pulse 2.4s ease-in-out infinite;
+}
+@keyframes hp-curr-pulse {
+  0%, 100% { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  50%      { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+}
+.hp-track-item.is-current .hp-track-play {
+  color: var(--accent);
+  animation: hp-curr-blink 1.4s ease-in-out infinite;
+}
+@keyframes hp-curr-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+/* ============================================================
+ * IMPROVEMENT #10: Sleep button shows remaining minutes when active
+ * ============================================================ */
+.hp-btn-mini.is-active { color: var(--accent); }
+
+/* Mobile / narrow: hide seek-15s text and lyrics panel slides over full width */
+@media (max-width: 720px) {
+  .hp-lyrics-panel { width: 100vw; border-radius: 0; }
+  .hp-btn-seeksec { display: none; }
+}
+@media (max-width: 600px) {
+  .hp-btn-mini { width: 24px; height: 24px; font-size: 11px; }
+}

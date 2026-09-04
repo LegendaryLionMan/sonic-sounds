@@ -55,6 +55,7 @@
           state.currentIdx = saved.currentIdx != null ? saved.currentIdx : -1;
           state.repeat = (saved.repeat === 'all' || saved.repeat === 'one') ? saved.repeat : 'off';
           state.shuffle = !!saved.shuffle;
+          state.sleepAt = saved.sleepAt || null;
         }
       }
     } catch (e) { /* ignore */ }
@@ -71,6 +72,7 @@
         muted: state.muted,
         repeat: state.repeat,
         shuffle: state.shuffle,
+        sleepAt: state.sleepAt,
         isPlaying: state.isPlaying,
         ts: Date.now(),
       }));
@@ -90,6 +92,7 @@
             <div class="hp-reel"></div>
           </div>
           <div class="hp-pause-indicator">||</div>
+          <div class="hp-np-pip" aria-hidden="true"></div>
         </div>
         <div class="hp-meta">
           <p class="hp-meta-eyebrow">/cassette · no album loaded</p>
@@ -100,15 +103,21 @@
 
       <div class="hp-transport">
         <button class="hp-btn hp-btn-mode" data-action="shuffle" aria-label="Shuffle" title="Shuffle">🔀</button>
+        <button class="hp-btn hp-btn-seeksec" data-action="seek-back" aria-label="Back 15 seconds" title="−15s">−15</button>
         <button class="hp-btn hp-btn-skip" data-action="prev" aria-label="Previous">⏮</button>
         <button class="hp-btn hp-btn-play" data-action="play" aria-label="Play/Pause">▷</button>
         <button class="hp-btn hp-btn-skip" data-action="next" aria-label="Next">⏭</button>
+        <button class="hp-btn hp-btn-seeksec" data-action="seek-fwd" aria-label="Forward 15 seconds" title="+15s">+15</button>
         <button class="hp-btn hp-btn-mode" data-action="repeat" aria-label="Repeat" title="Repeat: off">↻</button>
       </div>
 
       <div class="hp-progress">
         <span class="hp-time" data-role="cur">0:00</span>
-        <div class="hp-seek" data-role="seek"><div class="hp-seek-fill"></div></div>
+        <div class="hp-seek" data-role="seek">
+          <div class="hp-seek-fill"></div>
+          <div class="hp-seek-hover" data-role="seek-hover"></div>
+          <div class="hp-seek-tooltip" data-role="seek-tooltip">0:00</div>
+        </div>
         <span class="hp-time" data-role="dur">0:00</span>
       </div>
 
@@ -117,7 +126,19 @@
           <button class="hp-btn-mute" data-action="mute" aria-label="Mute" title="Mute / Unmute" type="button">🔊</button>
           <input type="range" class="hp-vol" min="0" max="1" step="0.01" value="0.7">
         </div>
+        <button class="hp-btn-mini" data-action="sleep" aria-label="Sleep timer" title="Sleep timer (off)">⏱</button>
+        <button class="hp-btn-mini" data-action="lyrics" aria-label="Lyrics" title="Lyrics">♪</button>
         <button class="hp-list-btn" data-action="toggle-list">▤ tracks</button>
+      </div>
+
+      <div class="hp-lyrics-panel" role="dialog" aria-label="Lyrics">
+        <div class="hp-lyrics-head">
+          <span data-role="lyrics-track-name">—</span>
+          <button class="hp-btn-mini" data-action="close-lyrics" aria-label="Close lyrics" title="Close lyrics">✕</button>
+        </div>
+        <div class="hp-lyrics-body" data-role="lyrics-body">
+          <p class="hp-lyrics-empty">Lyrics aren't transcribed yet.<br><span class="hand">They'll appear here when available.</span></p>
+        </div>
       </div>
 
       <div class="hp-tracklist-panel">
@@ -157,10 +178,22 @@
       else if (act === 'mute') toggleMute();
       else if (act === 'repeat') cycleRepeat();
       else if (act === 'shuffle') toggleShuffle();
+      else if (act === 'seek-back') skipSec(-15);
+      else if (act === 'seek-fwd') skipSec(+15);
+      else if (act === 'sleep') cycleSleep();
+      else if (act === 'lyrics') root.classList.toggle('lyrics-open');
+      else if (act === 'close-lyrics') root.classList.remove('lyrics-open');
     });
 
-    // Seek bar
+    // Seek bar — click to seek, hover shows preview tooltip + vertical
+    // indicator line at the hover position (YouTube/Spotify pattern).
     const seek = root.querySelector('[data-role="seek"]');
+    const seekHover = root.querySelector('[data-role="seek-hover"]');
+    const seekTooltip = root.querySelector('[data-role="seek-tooltip"]');
+    function hideHover() {
+      if (seekHover) seekHover.style.width = '0%';
+      if (seekTooltip) { seekTooltip.style.opacity = '0'; seekTooltip.style.left = '0'; }
+    }
     seek.addEventListener('click', (e) => {
       if (!state.duration) return;
       const r = seek.getBoundingClientRect();
@@ -171,6 +204,35 @@
       paint();
       saveLS();
     });
+    seek.addEventListener('mousemove', (e) => {
+      if (!state.duration) return;
+      const r = seek.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      const t = ratio * state.duration;
+      const pct = (ratio * 100).toFixed(2) + '%';
+      if (seekHover) seekHover.style.width = pct;
+      if (seekTooltip) {
+        seekTooltip.textContent = fmt(t);
+        seekTooltip.style.left = pct;
+        seekTooltip.style.opacity = '1';
+      }
+    });
+    seek.addEventListener('mouseleave', hideHover);
+    // Touch support: also update on touchmove
+    seek.addEventListener('touchmove', (e) => {
+      if (!state.duration || !e.touches[0]) return;
+      const r = seek.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.touches[0].clientX - r.left) / r.width));
+      const t = ratio * state.duration;
+      const pct = (ratio * 100).toFixed(2) + '%';
+      if (seekHover) seekHover.style.width = pct;
+      if (seekTooltip) {
+        seekTooltip.textContent = fmt(t);
+        seekTooltip.style.left = pct;
+        seekTooltip.style.opacity = '1';
+      }
+    }, { passive: true });
+    seek.addEventListener('touchend', hideHover);
 
     // Volume
     const vol = root.querySelector('.hp-vol');
@@ -184,6 +246,13 @@
     // Audio events
     audio.addEventListener('timeupdate', () => {
       state.currentTime = audio.currentTime;
+      // Sleep timer: if the deadline has passed, pause playback.
+      // We use audio.currentTime % 1 to throttle — check at most ~once a second.
+      if (state.sleepAt && Date.now() >= state.sleepAt) {
+        state.sleepAt = null;
+        try { audio.pause(); } catch (e) {}
+        saveLS();
+      }
       paint();
       // Save every 2s so a page reload can resume
       if (Math.floor(audio.currentTime) % 2 === 0) saveLS();
@@ -302,6 +371,52 @@
     saveLS();
   }
 
+  // Skip forward / backward by N seconds while a track is playing.
+  // Clamps to [0, duration] so we don't seek past the end or before 0.
+  function skipSec(sec) {
+    if (!state.duration) return;
+    let t = state.currentTime + sec;
+    if (t < 0) t = 0;
+    if (t > state.duration) t = state.duration;
+    state.audio.currentTime = t;
+    state.currentTime = t;
+    paint();
+    saveLS();
+  }
+
+  // Sleep timer: cycles through off → 15m → 30m → 60m → off.
+  // When set, stores an epoch-ms deadline; a 1s poll in timeupdate will
+  // auto-pause when the deadline passes.
+  function cycleSleep() {
+    const now = Date.now();
+    // Duration to next deadline per state (in minutes)
+    const next = ({ null: 15, 15: 30, 30: 60, 60: null }); // null = off
+    const minutes = next[minutesFromSleep()];
+    if (minutes == null) {
+      state.sleepAt = null;
+    } else {
+      state.sleepAt = now + minutes * 60 * 1000;
+    }
+    paint();
+    saveLS();
+  }
+  function minutesFromSleep() {
+    if (state.sleepAt == null) return null;
+    const ms = state.sleepAt - Date.now();
+    if (ms <= 0) return null;
+    if (ms <= 15 * 60 * 1000) return 15;
+    if (ms <= 30 * 60 * 1000) return 30;
+    return 60;
+  }
+  function fmtSleepRemaining() {
+    if (state.sleepAt == null) return null;
+    const ms = state.sleepAt - Date.now();
+    if (ms <= 0) return 'done';
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    return `${m}m ${s}s`;
+  }
+
   function loadTrack(idx, autoplay) {
     if (idx < 0 || idx >= state.tracks.length) return;
     const t = state.tracks[idx];
@@ -413,7 +528,68 @@
     } else {
       tl.innerHTML = `<li class="hp-empty" style="padding:14px;text-align:center;">no tracks yet</li>`;
     }
+
+    // Cassette 'now playing' pip — green dot when audio is playing.
+    // Updates the root class so CSS can animate the cassette (glow + reel spin
+    // speed boost) and show a tiny pulsing pip on the cassette corner.
+    state.nowPlaying = audio && !audio.paused && state.duration > 0;
+    root.classList.toggle('is-pip', !!state.nowPlaying);
+
+    // Sleep timer button label
+    const sleepBtn = root.querySelector('.hp-btn-mini[data-action="sleep"]');
+    if (sleepBtn) {
+      const mins = minutesFromSleep();
+      sleepBtn.classList.toggle('is-active', !!mins);
+      sleepBtn.title = mins ? `Sleep in ${mins} min` : 'Sleep timer (off)';
+      sleepBtn.setAttribute('aria-label', sleepBtn.title);
+      // Show remaining time inside the icon when active
+      sleepBtn.textContent = mins ? `${mins}` : '⏱';
+    }
+
+    // Lyrics track name in the panel
+    const lyricName = root.querySelector('[data-role="lyrics-track-name"]');
+    if (lyricName) {
+      const cur = state.currentIdx >= 0 ? state.tracks[state.currentIdx] : null;
+      lyricName.textContent = cur ? cur.title : '— no track —';
+    }
   }
+
+  // ---- Keyboard shortcuts ----
+  // Space=play/pause, ←/→=prev/next, ↑/↓=volume, M=mute, R=repeat,
+  // S=shuffle, comma/period=±15s skip, L=lyrics, T=tracks panel
+  function onKeydown(e) {
+    const t = e.target;
+    // Don't intercept typing in inputs
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    const k = e.key.toLowerCase();
+    if (k === ' ') { e.preventDefault(); togglePlay(); }
+    else if (k === 'm') toggleMute();
+    else if (k === 'r') cycleRepeat();
+    else if (k === 's') toggleShuffle();
+    else if (k === 'l') {
+      if (state.root) state.root.classList.toggle('lyrics-open');
+    }
+    else if (k === 't') {
+      if (state.root) state.root.classList.toggle('is-open');
+    }
+    else if (k === ',') skipSec(-15);
+    else if (k === '.') skipSec(+15);
+    else if (e.key === 'ArrowLeft') skip(-1);
+    else if (e.key === 'ArrowRight') skip(+1);
+    else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const v = Math.min(1, parseFloat(state.root.querySelector('.hp-vol').value) + 0.05);
+      state.root.querySelector('.hp-vol').value = v;
+      state.root.querySelector('.hp-vol').dispatchEvent(new Event('input'));
+    }
+    else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const v = Math.max(0, parseFloat(state.root.querySelector('.hp-vol').value) - 0.05);
+      state.root.querySelector('.hp-vol').value = v;
+      state.root.querySelector('.hp-vol').dispatchEvent(new Event('input'));
+    }
+  }
+  document.addEventListener('keydown', onKeydown);
 
   function idx0(a, b) { return a != null ? a : b; }
 
