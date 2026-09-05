@@ -825,7 +825,7 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
 }
 @keyframes hp-marquee {
   0%, 30% { transform: translateX(0); }
-  70%, 100% { transform: translateX(min(-100%, -200px))); }
+  70%, 100% { transform: translateX(min(-100%, -200px)); }
 }
 
 /* ============================================================

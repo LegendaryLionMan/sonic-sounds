@@ -413,14 +413,15 @@
         <span class="mv">${esc(v)}</span>
       </div>`).join('') : `<div class="empty-note">no sonic DNA on file</div>`;
 
-    // Assets — try /api/assets?album_id=... if it exists, else empty
+    // Assets — /api/albums/<id>/assets is the canonical sub-resource route
     try {
-      const assets = await api(`/api/assets?album_id=${encodeURIComponent(albumId)}`);
-      $('#assets-count').textContent = assets.length || 0;
-      $('#asset-list').innerHTML = (assets && assets.length) ? assets.map((a) => `
+      const assets = await api(`/api/albums/${encodeURIComponent(albumId)}/assets`);
+      const arr = Array.isArray(assets) ? assets : [];
+      $('#assets-count').textContent = arr.length || 0;
+      $('#asset-list').innerHTML = arr.length ? arr.map((a) => `
         <div class="asset-row">
           <span class="a-kind">${esc(a.kind || a.asset_kind || '—')}</span>
-          <span class="a-name">${esc(a.id)} ${a.filename ? '— ' + esc(a.filename) : ''}</span>
+          <span class="a-name">${esc(a.id)} ${a.path ? '— ' + esc(a.path) : ''}</span>
         </div>`).join('') : `<div class="empty-note">no assets yet</div>`;
     } catch (e) {
       $('#assets-count').textContent = '?';

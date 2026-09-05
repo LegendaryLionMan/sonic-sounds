@@ -54,20 +54,42 @@ def _row_to_dict(row, cursor_description=None) -> Optional[dict]:
 
 
 def queue_job(album_id: str, layer_id: str, *,
-             db_path: Optional[Union[str, Path]] = None) -> dict:
-    """Queue a build job for (album_id, layer_id). Idempotent: returns existing if queued.
+             db_path: Optional[Union[str, Path]] = None,
+             retry: bool = False) -> dict:
+    """Queue a build job for (album_id, layer_id). Idempotent by default.
 
     Validates that layer_id is one of the 12 LAYER_ORDER layers. Uses
     db/pipeline.py for can_run() check before queueing.
+
+    Default behavior is idempotent: if a job already exists, return it
+    (no-op). Pass `retry=True` to explicitly re-queue an already-done
+    or failed job — this resets its status to 'todo' and increments
+    attempts. The error / output_path columns are cleared so the
+    runner sees a fresh job.
     """
     if layer_id not in LAYER_ORDER:
         raise ValueError(f"Unknown layer_id: {layer_id}. "
                           f"Must be one of {LAYER_ORDER}")
     conn = open_db(db_path)
-    # Idempotent: if a job already exists, return it
     existing = get_job(album_id, layer_id, db_path=db_path)
     if existing:
-        return existing
+        if not retry:
+            return existing
+        # Explicit retry: reset the row so the runner sees a clean job.
+        conn.execute("""
+            UPDATE build_jobs
+            SET status = 'todo',
+                started_at = NULL,
+                completed_at = NULL,
+                error = NULL,
+                output_path = NULL,
+                elapsed_sec = NULL,
+                exit_code = NULL,
+                updated_at = datetime('now')
+            WHERE id = ?
+        """, (existing["id"],))
+        conn.commit()
+        return get_job_by_id(existing["id"], db_path=db_path)
     cur = conn.execute("""
         INSERT INTO build_jobs (album_id, layer_id, status, attempts)
         VALUES (?, ?, 'todo', 0)
@@ -85,13 +107,17 @@ def mark_running(job_id: int, *,
     Note: the build_jobs table does NOT track PIDs (per v3.2 schema). The
     daemon's process supervisor tracks child PIDs in memory for
     orphan recovery (see Day 6 build/lock.py).
+
+    Accepts the post-approval `ready` state in addition to `todo` and
+    `needs_approval`. Approval-required layers transition to `ready`
+    via mark_approved() (db/pipeline.py) before becoming runnable.
     """
     conn = open_db(db_path)
     started = started_at or _now()
     conn.execute("""
         UPDATE build_jobs
         SET status = 'running', started_at = ?, updated_at = ?
-        WHERE id = ? AND status IN ('todo', 'needs_approval')
+        WHERE id = ? AND status IN ('todo', 'needs_approval', 'ready')
     """, (started, started, job_id))
     conn.commit()
     return get_job_by_id(job_id, db_path=db_path)
@@ -201,28 +227,46 @@ def mark_approved_via_pipeline(album_id: str, layer_id: str,
     return pipeline_mark_approved(layer_id, album_id, db_path=db_path)
 
 
-def recover_orphans(known_pids: set = None, *,
+def recover_orphans(known_job_ids: set = None, *,
+                  known_pids: set = None,
                   db_path: Optional[Union[str, Path]] = None) -> list[dict]:
     """Mark 'running' jobs whose worker is no longer alive as 'crashed'.
 
     Per Day 7: 'Crash recovery on daemon startup: walks build_jobs for `running`
     rows with dead pids → marks `crashed`'.
 
-    The build_jobs table doesn't track PIDs (per v3.2 schema). The daemon
-    passes the set of currently-known child PIDs from its process supervisor.
+    IMPORTANT (2026-09-05 audit): The build_jobs table does NOT track PIDs
+    (per v3.2 schema). The parameter is named `known_job_ids` to reflect
+    that it accepts a set of build_jobs.id integers, not OS PIDs. Earlier
+    versions of this function were named `known_pids` which was a
+    documented footgun: callers that passed actual OS PIDs would see
+    every running job marked crashed (because build_jobs.id is in a
+    different namespace from PIDs). `known_pids` is still accepted as
+    a deprecated alias for backward compat with existing test fixtures.
 
     Semantics:
-      - known_pids=None → marks ALL old running jobs as crashed (assumes
-        fresh daemon startup with no inherited children).
-      - known_pids=set() → marks ALL old running jobs as crashed (same as None).
-      - known_pids={1, 2, 3} → marks running jobs as crashed only if their
-        row id is NOT in known_pids (since build_jobs.id is an INTEGER pk,
-        not a PID, this means "all jobs whose row id isn't in the set";
-        this is the safest behavior given the schema).
+      - known_job_ids=None (default) → marks ALL old running jobs as
+        crashed (assumes fresh daemon startup with no inherited children).
+      - known_job_ids=set() → marks ALL old running jobs as crashed.
+      - known_job_ids={1, 2, 3} → marks running jobs crashed only if
+        their row id is NOT in the set.
 
     A 5-minute grace period protects recently-started jobs from being
     marked crashed by a fast restart loop.
     """
+    # Backwards-compat: `known_pids` is the old (misnamed) keyword. If
+    # a caller passes it, use that value and warn. New code should pass
+    # `known_job_ids`.
+    if known_pids is not None and known_job_ids is None:
+        import warnings
+        warnings.warn(
+            "recover_orphans(known_pids=...) is deprecated, use "
+            "recover_orphans(known_job_ids=...) instead. The parameter "
+            "accepts build_jobs.id integers, not OS PIDs.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        known_job_ids = known_pids
     conn = open_db(db_path)
     # 5-minute heuristic: only mark running jobs as crashed if they have
     # been running for at least 5 minutes (recent jobs get a grace period
@@ -235,19 +279,19 @@ def recover_orphans(known_pids: set = None, *,
     crashed = []
     for row in rows:
         d = dict(row)
-        # known_pids is a set of build_jobs row IDs the daemon manages.
-        # If the daemon provided a known_pids set, skip rows whose id is in it.
-        if known_pids is not None and d["id"] in known_pids:
+        # known_job_ids is a set of build_jobs.id integers the daemon is
+        # currently running in its in-memory worker table. Skip those.
+        if known_job_ids is not None and d["id"] in known_job_ids:
             continue
         conn.execute("""
             UPDATE build_jobs
-            SET status = 'crashed', error = 'worker not in known_pids set',
+            SET status = 'crashed', error = 'worker not in known_job_ids set',
                 updated_at = datetime('now')
             WHERE id = ?
         """, (d["id"],))
         conn.commit()
         d["status"] = "crashed"
-        d["error"] = "worker not in known_pids set"
+        d["error"] = "worker not in known_job_ids set"
         crashed.append(d)
     return crashed
 

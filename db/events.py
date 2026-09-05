@@ -45,6 +45,15 @@ def create_event(session_id: str, role: str, kind: str, content: str = None,
       event_id: explicit ID (defaults to auto-increment)
 
     Returns the inserted event dict.
+
+    Side effect: if this is a chat event (user or assistant role) with
+    a session_id, the session's last_activity_at is updated so the
+    12h idle auto-pause sweeper doesn't prematurely pause an actively
+    chatting session. Per CATCH-UP 2026-09-05 audit #15: previously the
+    studio never called touch_activity on chat, so a busy chat session
+    could be paused after 12h of inactivity even though the user was
+    actively typing. Auto-touching here keeps the timestamp fresh
+    without requiring every caller to remember.
     """
     conn = open_db(db_path)
     # `payload is not None` (not `if payload`) — empty dict {} is a
@@ -56,6 +65,17 @@ def create_event(session_id: str, role: str, kind: str, content: str = None,
     """, (event_id, session_id, album_id, role, kind, content, payload_json))
     inserted_id = cur.lastrowid
     conn.commit()
+    # Auto-touch the session for chat events. Local import avoids the
+    # events<->sessions circular import at module load.
+    if session_id and role in ("user", "assistant") and kind == "chat":
+        try:
+            from db.sessions import touch_activity as _touch
+            _touch(session_id, db_path=db_path)
+        except Exception:
+            # Best-effort: if the session row is missing or the db is
+            # busy, don't fail the event write. The next event will
+            # retry the touch.
+            pass
     return get_event(inserted_id, db_path=db_path)
 
 

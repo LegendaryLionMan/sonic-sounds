@@ -64,6 +64,13 @@ def _extract_form_to_questions(form: dict) -> dict:
 
     intake.html uses `name="M01_concept"`, `name="M02_scope"`, etc. Multi-
     value questions like M04_references use name="M04_ref1/2/3".
+
+    Per CATCH-UP 2026-09-05 audit (#13): the JSON path now ALSO collapses
+    M04_ref1/2/3 — previously, a JSON submission with M04_ref1=... would
+    stay as M04_ref1, while a FormData submission would collapse to
+    M04_references, producing two different brief_json shapes for the
+    same answer. The collapsed M04_references list is the canonical
+    shape per db/album_briefs.py MANDATORY_M_QUESTIONS.
     """
     questions: dict[str, Any] = {}
     for key, value in form.items():
@@ -77,6 +84,29 @@ def _extract_form_to_questions(form: dict) -> dict:
     # Always include the question ids even if empty (so the brief JSON has
     # stable shape)
     return questions
+
+
+def _normalize_json_to_questions(payload: dict) -> dict:
+    """Apply the same form-side normalizations to a JSON payload.
+
+    JSON callers sometimes send M04_ref1/M04_ref2/M04_ref3 as separate
+    keys (mirroring the form) instead of a single M04_references list.
+    Collapse those into M04_references so both paths produce identical
+    brief_json shapes.
+    """
+    if not isinstance(payload, dict):
+        return {}
+    out = dict(payload)
+    refs = []
+    for k in ("M04_ref1", "M04_ref2", "M04_ref3"):
+        v = out.pop(k, None)
+        if isinstance(v, str) and v.strip():
+            refs.append(v)
+        elif isinstance(v, list):
+            refs.extend(x for x in v if x)
+    if refs and "M04_references" not in out:
+        out["M04_references"] = refs
+    return out
 
 
 def _extract_m09_sonic_dna(questions: dict) -> Optional[dict]:
@@ -123,7 +153,9 @@ async def submit_intake():
     payload: dict = {}
     if "application/json" in ctype:
         payload = await request.get_json(silent=True) or {}
-        questions = dict(payload.get("questions", {}))
+        # Per audit #13: normalize the JSON payload the same way the
+        # FormData path does (collapse M04_ref1/2/3 -> M04_references).
+        questions = _normalize_json_to_questions(payload.get("questions", {}))
         album_id = payload.get("album_id")
         artist_id = payload.get("artist_id") or payload.get("primary_artist_id")
         sonic_dna = _extract_m09_sonic_dna(questions)
@@ -148,8 +180,15 @@ async def submit_intake():
     if not album_id:
         # Derive album_id from R09_title (album title). If R09_title is
         # missing or unusable, reject — we can't create an album without
-        # a title.
-        title = questions.get("R09_title") or questions.get("M01_concept", "untitled-album")
+        # a title. Per CATCH-UP 2026-09-05 audit #18: previously fell
+        # back to "untitled-album" when both R09_title and M01_concept
+        # were empty, contradicting the 400 logic. Now we reject instead.
+        title = questions.get("R09_title") or questions.get("M01_concept")
+        if not title or not str(title).strip():
+            return jsonify({
+                "error": "album_id is required OR R09_title (album title) must be non-empty",
+                "validation_errors": validation_errors,
+            }), 400
         # Slugify the title
         slug = "".join(c.lower() if c.isalnum() else "-" for c in str(title)[:64]).strip("-")
         if not slug:
@@ -170,10 +209,19 @@ async def submit_intake():
             runtime_min = int(str(questions.get("M07_runtime", "0")).strip() or 0)
         except (ValueError, TypeError):
             runtime_min = 0
-        # Ensure the artist exists (creates a stub if not)
+        # Ensure the artist exists (creates a stub if not).
+        # Per CATCH-UP 2026-09-05 audit #14: the previous call passed
+        # `artist_id` as both id and name, so the artists row had name
+        # == id (e.g. name="maren-sol"). Use the M08_artist answer if
+        # available — that's the human-readable stage name — and fall
+        # back to the slug if not.
         existing_artist = await _run(db_albums.get_artist, artist_id)
         if existing_artist is None:
-            await _run(db_albums.create_artist, artist_id, artist_id)
+            artist_name = (
+                questions.get("M08_artist")
+                or artist_id.replace("-", " ").title()
+            )
+            await _run(db_albums.create_artist, artist_id, artist_name)
         # Now create the album. Catch UNIQUE constraint failures (album
         # already exists from a previous submission) — that's fine;
         # we reuse the existing row.

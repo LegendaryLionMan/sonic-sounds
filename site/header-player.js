@@ -129,6 +129,7 @@
           <button class="hp-btn-mute" data-action="mute" aria-label="Mute" title="Mute / Unmute" type="button">🔊</button>
           <input type="range" class="hp-vol" min="0" max="1" step="0.01" value="0.7">
         </div>
+        <button class="hp-btn-mini hp-btn-sleep" data-action="sleep" aria-label="Sleep timer (off)" title="Sleep timer (off)" type="button">⏱</button>
         <button class="hp-list-btn" data-action="toggle-list">▤ tracks</button>
       </div>
 
@@ -209,6 +210,7 @@
       else if (act === 'seek-fwd') skipSec(+15);
       else if (act === 'close-lyrics') root.classList.remove('lyrics-open');
       else if (act === 'close-keys') root.classList.remove('keys-open');
+      else if (act === 'sleep') cycleSleep();
     });
 
     // Click-outside closes tracklist + lyrics + shortcut popover
@@ -729,6 +731,11 @@
         state.album = chosen.album;
         state.tracks = chosen.tracks;
       }
+      // Set state.albumId so the resume-on-reload branch (below) can fire
+      // when the user navigates between pages and the same album is loaded
+      // again. Without this, loadLS() always returns null for albumId and
+      // resume never triggers. See CATCH-UP bug audit 2026-09-05 #7.
+      state.albumId = state.album ? state.album.id : null;
 
       paint();
 

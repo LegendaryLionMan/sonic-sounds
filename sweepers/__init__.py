@@ -33,6 +33,18 @@ INTERVALS = {
     "log_rotate": 5 * 60,        # 5 min
 }
 
+# Per-sweeper "run once at thread start" flag. The first sweep fires
+# immediately so the daemon doesn't wait a full interval before the
+# first WAL flush / quota snapshot / log rotate. Set per-sweeper so
+# mirror (which is heavy and not strictly needed at boot) can opt out.
+RUN_AT_START = {
+    "idle_pause": True,        # cheap — pause orphan sessions right away
+    "wal_checkpoint": True,    # cheap — flush WAL on daemon boot
+    "quota": True,             # cheap — capture initial snapshot
+    "mirror": False,           # heavy — defer by one hour after boot
+    "log_rotate": True,        # cheap — rotate oversized log immediately
+}
+
 
 class _StopEvent:
     """Thread-safe stop signal. Daemon threads poll this."""
@@ -91,11 +103,11 @@ def start_all(stop_event: Optional[_StopEvent] = None) -> tuple[list[threading.T
         stop_event = _StopEvent()
 
     sweepers = [
-        ("idle_pause",    INTERVALS["idle_pause"],    idle_pause.run_sweep,    False),
-        ("wal_checkpoint", INTERVALS["wal_checkpoint"], wal_checkpoint.run_sweep, False),
-        ("quota",         INTERVALS["quota"],         quota.run_sweep,         False),
-        ("mirror",        INTERVALS["mirror"],        mirror.run_sweep,        False),
-        ("log_rotate",    INTERVALS["log_rotate"],    log_rotate.run_sweep,    False),
+        ("idle_pause",    INTERVALS["idle_pause"],    idle_pause.run_sweep,    RUN_AT_START["idle_pause"]),
+        ("wal_checkpoint", INTERVALS["wal_checkpoint"], wal_checkpoint.run_sweep, RUN_AT_START["wal_checkpoint"]),
+        ("quota",         INTERVALS["quota"],         quota.run_sweep,         RUN_AT_START["quota"]),
+        ("mirror",        INTERVALS["mirror"],        mirror.run_sweep,        RUN_AT_START["mirror"]),
+        ("log_rotate",    INTERVALS["log_rotate"],    log_rotate.run_sweep,    RUN_AT_START["log_rotate"]),
     ]
     threads: list[threading.Thread] = []
     for name, interval, fn, run_first in sweepers:

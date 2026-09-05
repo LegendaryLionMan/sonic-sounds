@@ -50,13 +50,18 @@ def create_decision(code: str, tier: str, question: str = None,
     rather than upsert — multiple walks may produce multiple rows for the
     same code (each walk is its own history).
 
-    `locked_at` is set to the current time on create (with subsecond
-    precision so consecutive creates + patches stay strictly ordered) —
-    a fresh decision IS the lock event (otherwise the timestamp would
-    be unknown until the user PATCHes, which they may never do).
+    `locked_at` is set to the current UTC time on create (with
+    subsecond precision so consecutive creates + patches stay strictly
+    ordered) — a fresh decision IS the lock event (otherwise the
+    timestamp would be unknown until the user PATCHes, which they may
+    never do).
+
+    Per CATCH-UP 2026-09-05 audit: was previously local-time via
+    `_time.localtime()` even though the docstring says ISO 8601 UTC.
+    Now uses `datetime.now(timezone.utc)` to match the docstring.
     """
-    import time as _time
-    locked_at = _time.strftime("%Y-%m-%d %H:%M:%S", _time.localtime()) + f".{int(_time.time()*1000)%1000:03d}"
+    from datetime import datetime, timezone
+    locked_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") + f".{int(datetime.now(timezone.utc).timestamp()*1000)%1000:03d}"
     conn = open_db(db_path)
     cur = conn.execute("""
         INSERT INTO decisions (session_id, album_id, code, tier, question,
@@ -141,8 +146,16 @@ def update_decision(decision_id: int, *,
     consecutive patches in the same wall-clock second produce
     monotonically-increasing timestamps. Without this, locked_at
     collisions would silently break audit-trail ordering.
+
+    Timestamps are UTC (per CATCH-UP 2026-09-05 audit). Earlier versions
+    used `_time.localtime()` which is host-local; the schema column is
+    type-agnostic so this is a cosmetic-but-meaningful fix for clients
+    that compare decisions across timezones.
     """
-    import time as _time
+    from datetime import datetime, timezone
+    def _utc_now_with_ms():
+        now = datetime.now(timezone.utc)
+        return now.strftime("%Y-%m-%d %H:%M:%S") + f".{int(now.timestamp()*1000)%1000:03d}"
     conn = open_db(db_path)
     fields = []
     values = []
@@ -163,8 +176,8 @@ def update_decision(decision_id: int, *,
             fields.append("source_doc = ?"); values.append(source_doc)
     if not fields:
         return get_decision_by_id(decision_id, db_path=db_path)
-    # Subsecond precision: %Y-%m-%d %H:%M:%S.fff (SQLite accepts this).
-    fields.append("locked_at = ?"); values.append(_time.strftime("%Y-%m-%d %H:%M:%S", _time.localtime()) + f".{int(_time.time()*1000)%1000:03d}")
+    # Subsecond precision: %Y-%m-%d %H:%M:%S.fff (SQLite accepts this). UTC.
+    fields.append("locked_at = ?"); values.append(_utc_now_with_ms())
     values.append(decision_id)
     conn.execute(f"UPDATE decisions SET {', '.join(fields)} WHERE id = ?", values)
     conn.commit()
