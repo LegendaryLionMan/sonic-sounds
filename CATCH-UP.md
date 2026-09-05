@@ -254,3 +254,12 @@ auto-synced via OneDrive. If OneDrive ever wipes that folder again
 (which has happened earlier in this session), the canonical working
 copy at `C:\Dev\sonic-sounds\` is unaffected — git history is the
 source of truth, not the OneDrive mirror.
+
+---
+
+## 9. GitHub access verified (test push, 2026-09-05)
+
+Round-trip `git push origin master` from this agent's shell session
+to `https://github.com/LegendaryLionMan/sonic-sounds.git` succeeded.
+`gh auth status` shows scopes `gist`, `read:org`, `repo`, `workflow`.
+Safe to use this session for real fixes.
