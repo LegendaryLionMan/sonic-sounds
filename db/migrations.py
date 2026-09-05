@@ -236,7 +236,15 @@ def run_migrations(db_path: Union[str, Path, None] = None) -> dict:
         "skipped": list[(int, str)],  # tuples already applied
         "errors": list[str],         # any migration errors
       }
+
+    On a fresh checkout, `.meta/migrations/` is empty (the canonical 001
+    file is gitignored). Tests that call run_migrations() directly without
+    first calling bootstrap_initial_migration() would see zero migrations
+    and end up with an empty schema. To make the function self-healing we
+    bootstrap the initial file on first invocation. Idempotent — does
+    nothing if 001_initial_schema.sql already exists.
     """
+    bootstrap_initial_migration(db_path)
     path = Path(db_path) if db_path else DEFAULT_DB_PATH
     conn = open_db(path)
     migrations_dir = _resolve_migrations_dir(path)

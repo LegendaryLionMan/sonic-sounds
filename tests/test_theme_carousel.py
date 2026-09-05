@@ -115,9 +115,20 @@ class TestAccentPicker(unittest.TestCase):
 
 
 class TestPerThemeFont(unittest.TestCase):
-    """Day 1 Hour 4: per-theme font-family override."""
+    """Day 1 Hour 4: per-theme font-family override.
 
-    EXPECTED_THEMES = ["mixtape85", "tokyonight", "catppuccin", "gruvbox"]
+    Per CATCH-UP.md §2.3, the canonical 6 theme ids are:
+    mixtape85, tokyo-night, catppuccin-latte, gruvbox-dark, everforest, kanagawa.
+    """
+
+    EXPECTED_THEMES = [
+        "mixtape85",
+        "tokyo-night",
+        "catppuccin-latte",
+        "gruvbox-dark",
+        "everforest",
+        "kanagawa",
+    ]
 
     def test_all_themes_have_font_object(self):
         content = THEMES_JS.read_text(encoding="utf-8")

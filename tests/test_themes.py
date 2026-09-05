@@ -1,10 +1,17 @@
 """tests/test_themes.py - Day 15 (hour 1) theme switcher tests.
 
-Static + behavior tests for the Omarchy-inspired 4-theme palette:
-  - mixtape85 (default)
-  - tokyonight
-  - catppuccin
-  - gruvbox
+Static + behavior tests for the 6-theme palette:
+  - mixtape85       (default · locked 2026-08-05)
+  - tokyo-night
+  - catppuccin-latte
+  - gruvbox-dark
+  - everforest
+  - kanagawa
+
+Per CATCH-UP.md §2.3, these are the locked 6 themes. Earlier versions of
+this file referenced a 4-theme subset (without everforest/kanagawa and
+with shorter ids like tokyonight/catppuccin/gruvbox); those tests failed
+once the 6-theme system shipped on Day 18 (2026-09-04).
 
 Run: pytest tests/test_themes.py -v
 """
@@ -21,9 +28,16 @@ LIBRARY_HTML = PROJECT_ROOT / "site" / "library.html"
 
 
 class TestThemesAssets(unittest.TestCase):
-    """The theme assets must exist and contain the expected 4 themes."""
+    """The theme assets must exist and contain the expected 6 themes."""
 
-    EXPECTED_THEMES = ("mixtape85", "tokyonight", "catppuccin", "gruvbox")
+    EXPECTED_THEMES = (
+        "mixtape85",
+        "tokyo-night",
+        "catppuccin-latte",
+        "gruvbox-dark",
+        "everforest",
+        "kanagawa",
+    )
 
     def test_themes_css_exists_and_nonempty(self):
         self.assertTrue(THEMES_CSS.exists(), f"missing {THEMES_CSS}")
@@ -35,7 +49,7 @@ class TestThemesAssets(unittest.TestCase):
         content = THEMES_JS.read_text(encoding="utf-8")
         self.assertGreater(len(content), 1500)
 
-    def test_all_four_themes_defined_in_css(self):
+    def test_all_six_themes_defined_in_css(self):
         """Each theme has its own :root[data-theme="..."] block."""
         content = THEMES_CSS.read_text(encoding="utf-8")
         for theme in self.EXPECTED_THEMES:
@@ -45,10 +59,10 @@ class TestThemesAssets(unittest.TestCase):
                 f"missing :root[data-theme=\"{theme}\"] block in themes.css",
             )
 
-    def test_all_four_themes_in_js_themes_array(self):
+    def test_all_six_themes_in_js_themes_array(self):
         content = THEMES_JS.read_text(encoding="utf-8")
-        themematch = re.findall(r'id:\s*"([^"]+)"', content)
-        # The THEMES array contains exactly these 4 ids
+        themematch = re.findall(r"id:\s*['\"]([^'\"]+)['\"]", content)
+        # The THEMES array contains exactly these 6 ids
         for theme in self.EXPECTED_THEMES:
             self.assertIn(theme, themematch,
                           f"theme '{theme}' missing from THEMES array")

@@ -327,7 +327,7 @@
 <link rel="stylesheet" href="/site/decisions.css">
 <link rel="stylesheet" href="/site/header-player.css">
 </head>
-<body><span data-theme-mount class=\"theme-picker-host\"></span>
+<body><span data-theme-mount class="theme-picker-host"></span>
   <main>
     <header class="masthead">
       <div class="eyebrow">sonic-sounds · intake</div>
@@ -454,6 +454,12 @@
           <h3>Artist stage name</h3>
           <p class="hint">New or existing persona. This becomes the album slug prefix.</p>
           <input class="control" name="M08_artist" placeholder="e.g. Maren Sol">
+        </article>
+
+        <!-- M·09 sonic DNA (auto-derived from M03 / M05 / M07 / R12) -->
+        <article class="question" data-tier="M" data-qid="M09_sonicDNA">
+          <input type="hidden" class="control" name="M09_sonicDNA" id="M09_sonicDNA" value="">
+          <p class="hint">Auto-computed from your genre, vocal, runtime, and production answers. No input needed.</p>
         </article>
       </section>
 
@@ -700,9 +706,11 @@
       '[data-qid="M05_vocal"] select',
       '[data-qid="M06_language"] input',
       '[data-qid="M07_runtime"] select',
-      // M08 split v2.1: artistName is the required one
-      '[data-qid="M08_artistName"] input',
-      // M09 NEW v2.2: sonic DNA lock — derived from M03/M05/R12/M07, computed at approval
+      // M08 is the artist stage name on this form (matches the name="M08_artist" input)
+      '[data-qid="M08_artist"] input',
+      // M09 sonic DNA is a hidden input auto-populated from M03/M05/M07/R12.
+      // isFilled checks for non-empty value; the recomputeSonicDNA() handler
+      // below keeps it in sync with the source fields.
       '[data-qid="M09_sonicDNA"] input',
     ];
     const recommendedSelectors = [
@@ -744,6 +752,36 @@
       return Array.from(els).some(e => e.value.trim());
     };
 
+    /* ---------------- C.1 auto-derive M09_sonicDNA from M03/M05/M07/R12 ---------------- */
+    // The brief validator requires M09_sonicDNA as a JSON string. Rather than
+    // ask the user to paste JSON, derive it from the genre / vocal / runtime /
+    // production answers they already gave. Stays in sync via the same
+    // debounced autosave path.
+    const recomputeSonicDNA = () => {
+      const genre = (document.querySelector('[name="M03_genre"]') || {}).value || '';
+      const approach = (document.querySelector('[name="M05_approach"]') || {}).value || '';
+      const character = (document.querySelector('[name="M05_character"]') || {}).value || '';
+      const runtime = (document.querySelector('[name="M07_runtime"]') || {}).value || '';
+      const production = (document.querySelector('[name="R12_production"]') || {}).value || '';
+      // Only emit DNA once the minimum upstream fields are filled. The brief
+      // validator accepts any non-empty JSON string for M09_sonicDNA, so even
+      // a partial snapshot is enough to flip the gate.
+      if (!genre && !approach && !runtime) {
+        const dnaField = document.getElementById('M09_sonicDNA');
+        if (dnaField) dnaField.value = '';
+        return;
+      }
+      const dna = {
+        genre: genre,
+        vocal: { approach: approach, character: character },
+        runtime: runtime,
+        production: production,
+        derived_at: new Date().toISOString(),
+      };
+      const dnaField = document.getElementById('M09_sonicDNA');
+      if (dnaField) dnaField.value = JSON.stringify(dna);
+    };
+
     const generateBtn = document.getElementById('generateBtn');
     const mandatoryResolvedEl = document.getElementById('mandatoryResolved');
     const recommendedResolvedEl = document.getElementById('recommendedResolved');
@@ -763,7 +801,9 @@
         ? `Generate CONCEPT-BRIEF · ${m}/9 mandatory ✓`
         : `Generate CONCEPT-BRIEF · ${m}/9 mandatory required`;
     };
-    form.addEventListener('input', refreshGate);
+    form.addEventListener('input', () => { recomputeSonicDNA(); refreshGate(); });
+    recomputeSonicDNA();
+    refreshGate();
 
     /* ---------------- D. export ---------------- */
     const confirmationCard = document.getElementById('confirmationCard');

@@ -25,11 +25,14 @@ Pattern (from Day 3 build/serve.py):
   write lock from a previous (failed) request.
 """
 import asyncio
+import logging
 from typing import Any
 
 from quart import Blueprint, request, jsonify
 
 from db import albums as db_albums
+
+_log = logging.getLogger("sonic_sounds.handlers.albums")
 
 
 # Import db.connection lazily inside each function so per-test tempdb
