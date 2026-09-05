@@ -238,3 +238,17 @@ If something goes wrong, the failure modes are usually:
 ## 8. The 1-paragraph project summary
 
 Sonic Sounds is a local-first Python+JS music-album design + production studio. A user fills out a 26-question intake form, the brief locks into SQLite, and 13 build layers execute in sequence via click-to-invoke buttons, producing a complete album package (10 tracks, ISRC codes, ID3v2.3 tags, 9 cover designs). The header player (cassette visual, 15 keyboard shortcuts, 6 themes) persists across all pages. The user Francisco (LegendaryLionMan) iterates daily and has built ~19 days of polish into the player specifically. Local-first, no cloud, MIT-licensed. The current focus is visual polish + power-user features (keyboard shortcuts, A/B loop, sleep timer, playback speed).
+
+## Working folder note
+
+The canonical local project folder is `C:\Temp\sonic-sounds\`
+(this is the git-tracked working tree).
+
+There is a parallel mirror at `C:\Users\lion_\Documents\Projects\sonic-sounds\`
+that gets auto-synced via OneDrive. During this session, the
+OneDrive sync occasionally wiped files mid-operation; the workaround
+was to do all git operations in `C:\Temp\sonic-sounds\` instead.
+
+For the user-facing folder (where you open in your editor), use
+`C:\Users\lion_\Documents\Projects\sonic-sounds\`. Both folders
+are kept in sync.
