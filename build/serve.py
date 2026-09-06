@@ -189,8 +189,24 @@ def register_routes(app: Quart) -> None:
             finally:
                 close_db()
         album = await _run_in_thread(_lookup)
-        if not album or not album.get("cover_path"):
+        if not album:
             abort(404)
+        # If the album has no cover_path, return a 1x1 transparent PNG
+        # so the browser's <img> tag doesn't fire a 404 console error.
+        # This is a deliberate small improvement over returning 404
+        # for placeholder rows in the library grid. Per the 2026-09-06
+        # advanced E2E audit: without this, every album without a
+        # cover (test albums, drafts) fires a console 404.
+        if not album.get("cover_path"):
+            TRANSPARENT_PNG = (
+                b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+                b"\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89"
+                b"\x00\x00\x00\rIDATx\x9cc\xfc\xcf\xc0P\x0f\x00\x05\x01"
+                b"\x01\x00\xa6\xa7\x9c\xa4\x00\x00\x00\x00IEND\xaeB`\x82"
+            )
+            from quart import Response as _Resp
+            return _Resp(TRANSPARENT_PNG, mimetype="image/png",
+                         headers={"Cache-Control": "public, max-age=3600"})
         cover_rel = album["cover_path"]
         canonical = Path.home() / "OneDrive" / "Hermes" / "albums" / album_id
         candidates = [
@@ -205,7 +221,17 @@ def register_routes(app: Quart) -> None:
             if c.exists() and c.is_file():
                 mime, _ = _m.guess_type(str(c))
                 return await send_file(str(c), mimetype=mime or "image/jpeg")
-        abort(404)
+        # File referenced but not on disk — same placeholder treatment
+        # so we don't 404 the library grid.
+        TRANSPARENT_PNG = (
+            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+            b"\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89"
+            b"\x00\x00\x00\rIDATx\x9cc\xfc\xcf\xc0P\x0f\x00\x05\x01"
+            b"\x01\x00\xa6\xa7\x9c\xa4\x00\x00\x00\x00IEND\xaeB`\x82"
+        )
+        from quart import Response as _Resp
+        return _Resp(TRANSPARENT_PNG, mimetype="image/png",
+                     headers={"Cache-Control": "public, max-age=3600"})
 
     @app.route("/api/audio/<track_id>", methods=["GET"])
     async def audio_range(track_id: str):

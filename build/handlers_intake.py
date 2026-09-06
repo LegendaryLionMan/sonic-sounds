@@ -177,56 +177,76 @@ async def submit_intake():
     validation_errors = db_briefs.validate_brief_payload(brief_payload)
 
     # Album + session bootstrap if needed
+    # Derive album_id from R09_title if not provided.
+    title_for_album = questions.get("R09_title") or questions.get("M01_concept")
     if not album_id:
-        # Derive album_id from R09_title (album title). If R09_title is
-        # missing or unusable, reject — we can't create an album without
-        # a title. Per CATCH-UP 2026-09-05 audit #18: previously fell
-        # back to "untitled-album" when both R09_title and M01_concept
-        # were empty, contradicting the 400 logic. Now we reject instead.
-        title = questions.get("R09_title") or questions.get("M01_concept")
-        if not title or not str(title).strip():
+        if not title_for_album or not str(title_for_album).strip():
             return jsonify({
                 "error": "album_id is required OR R09_title (album title) must be non-empty",
                 "validation_errors": validation_errors,
             }), 400
         # Slugify the title
-        slug = "".join(c.lower() if c.isalnum() else "-" for c in str(title)[:64]).strip("-")
+        slug = "".join(c.lower() if c.isalnum() else "-" for c in str(title_for_album)[:64]).strip("-")
         if not slug:
             return jsonify({
                 "error": "album_id is required OR R09_title (album title) must be non-empty",
                 "validation_errors": validation_errors,
             }), 400
         album_id = slug
-        # Artist must be supplied or the album can't be created
-        if not artist_id:
-            return jsonify({
-                "error": "primary_artist_id is required when creating a new album",
-                "validation_errors": validation_errors,
-            }), 400
-        # Create the album. Use runtime_min from M07 if available, else 0.
+    # From here, album_id is always set. Artist is required to create
+    # the album row (FK constraint).
+    if not artist_id:
+        return jsonify({
+            "error": "primary_artist_id is required",
+            "validation_errors": validation_errors,
+        }), 400
+
+    # Runtime_min from M07 if available, else 0.
+    runtime_min = 0
+    try:
+        runtime_min = int(str(questions.get("M07_runtime", "0")).strip() or 0)
+    except (ValueError, TypeError):
         runtime_min = 0
+
+    # Ensure the artist exists. Per the 2026-09-06 advanced E2E audit,
+    # we previously hit a UNIQUE constraint failed on artists.name when
+    # the auto-defaulted artist_id matched the name of an existing
+    # artist. Reuse existing artist by name when M08_artist matches
+    # one already in the table.
+    existing_artist = await _run(db_albums.get_artist, artist_id)
+    if existing_artist is None:
+        requested_name = (
+            questions.get("M08_artist")
+            or artist_id.replace("-", " ").title()
+        )
+        # Check if any artist already has this name; reuse it under the
+        # caller-supplied artist_id by skipping the create. If not,
+        # create fresh.
+        all_artists = await _run(db_albums.list_artists)
+        name_match = next(
+            (a for a in (all_artists or []) if a.get("name") == requested_name),
+            None,
+        )
+        if name_match is not None:
+            # Reuse the existing artist's id; update the album's
+            # primary_artist_id accordingly.
+            artist_id = name_match["id"]
+        else:
+            try:
+                await _run(db_albums.create_artist, artist_id, requested_name)
+            except (ValueError, sqlite3.IntegrityError) as e:
+                _log.info(f"artist {artist_id} already exists, reusing: {e}")
+
+    # Ensure the album exists. Per the 2026-09-06 advanced E2E audit:
+    # when the caller supplies album_id, we previously skipped the
+    # create-album branch and crashed with FOREIGN KEY constraint
+    # failed when upsert_brief tried to insert the brief against a
+    # non-existent album. Now we always ensure the album exists.
+    existing_album = await _run(db_albums.get_album, album_id)
+    if existing_album is None:
+        album_title = str(title_for_album or album_id).strip() or album_id
         try:
-            runtime_min = int(str(questions.get("M07_runtime", "0")).strip() or 0)
-        except (ValueError, TypeError):
-            runtime_min = 0
-        # Ensure the artist exists (creates a stub if not).
-        # Per CATCH-UP 2026-09-05 audit #14: the previous call passed
-        # `artist_id` as both id and name, so the artists row had name
-        # == id (e.g. name="maren-sol"). Use the M08_artist answer if
-        # available — that's the human-readable stage name — and fall
-        # back to the slug if not.
-        existing_artist = await _run(db_albums.get_artist, artist_id)
-        if existing_artist is None:
-            artist_name = (
-                questions.get("M08_artist")
-                or artist_id.replace("-", " ").title()
-            )
-            await _run(db_albums.create_artist, artist_id, artist_name)
-        # Now create the album. Catch UNIQUE constraint failures (album
-        # already exists from a previous submission) — that's fine;
-        # we reuse the existing row.
-        try:
-            await _run(db_albums.create_album, album_id, str(title), artist_id,
+            await _run(db_albums.create_album, album_id, album_title, artist_id,
                        runtime_min=runtime_min)
         except (ValueError, sqlite3.IntegrityError) as e:
             _log.info(f"album {album_id} already exists, reusing: {e}")

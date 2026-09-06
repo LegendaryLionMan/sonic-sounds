@@ -230,13 +230,18 @@
       candidates.push(PROJECT_BASE + '.meta/state.json');
       // Fallback: site-local music dir for sites that ship state under /site/music
       if (slugHint) candidates.push(SITE_BASE + `music/${slugHint}/state.json`);
-      // Walk the sonic-sounds tree for any music/<slug>/state.json (best effort)
-      try {
-        const index = await fetchJson(PROJECT_BASE + '.od/projects/sonic-sounds/music');
-        if (index && Array.isArray(index.albums)) {
-          for (const slug of index.albums) candidates.push(PROJECT_BASE + `music/${slug}/state.json`);
-        }
-      } catch {}
+      // Walk the sonic-sounds tree for any music/<slug>/state.json (best effort).
+      // The .od/ (OneDrive-mirrored) prefix only exists in the Hermes desktop
+      // preview context, not in the standalone daemon. Skipping the fetch
+      // entirely when not running under Hermes prevents a 404 console error.
+      if (window.__HERMES_AGENT__ || location.protocol === 'file:') {
+        try {
+          const index = await fetchJson(PROJECT_BASE + '.od/projects/sonic-sounds/music');
+          if (index && Array.isArray(index.albums)) {
+            for (const slug of index.albums) candidates.push(PROJECT_BASE + `music/${slug}/state.json`);
+          }
+        } catch {}
+      }
       return candidates;
     };
 
@@ -385,6 +390,6 @@
     setInterval(tryLoad, POLL_MS);
   </script>
 <script src="/site/themes.js" defer></script>
-<script src="/site/header-player.js?v=hp2"></script>
+<script src="/site/header-player.js?v=hp3"></script>
 </body>
 </html>

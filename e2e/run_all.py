@@ -129,7 +129,7 @@ def main() -> int:
     # Suite 1: API + UX contract (no browser needed)
     # ─────────────────────────────────────────────
     print("\n" + "=" * 70)
-    print("[suite 1/4] e2e/test_ui_full_ux.py — API + UX contract")
+    print(f"[suite 1/5] e2e/test_ui_full_ux.py — API + UX contract")
     print("=" * 70)
     api_pass = False
     api_count = None
@@ -187,7 +187,7 @@ def main() -> int:
     # Suite 2: Day 13-14 surface tests (cover, audio, guide, track_count)
     # ─────────────────────────────────────────────
     print("\n" + "=" * 70)
-    print("[suite 2/4] e2e/test_surfaces_day13.py — Day 13-14 surfaces")
+    print("[suite 2/5] e2e/test_surfaces_day13.py — Day 13-14 surfaces")
     print("=" * 70)
     surf_pass = False
     surf_count = None
@@ -220,7 +220,7 @@ def main() -> int:
     # Suite 3: Playwright (if installed)
     # ─────────────────────────────────────────────
     print("\n" + "=" * 70)
-    print("[suite 3/4] e2e/test_playwright_e2e.py — Playwright sync API")
+    print("[suite 3/5] e2e/test_playwright_e2e.py — Playwright sync API")
     print("=" * 70)
     pw_pass = False
     pw_count = None
@@ -258,7 +258,7 @@ def main() -> int:
     # Suite 4: JS console-error guard (Day 14)
     # ─────────────────────────────────────────────
     print("\n" + "=" * 70)
-    print("[suite 4/4] JS console-error guard — no $(...).forEach etc.")
+    print("[suite 4/5] JS console-error guard — no $(...).forEach etc.")
     print("=" * 70)
     # The console-error guard is also enforced by tests/test_studio_guide.py
     # ::TestNoDollarForEachBug. Run that pytest here for completeness.
@@ -280,6 +280,48 @@ def main() -> int:
                     print("    " + line)
     except Exception as e:
         print(f"  SKIP  exception: {type(e).__name__}: {e}")
+
+    # ─────────────────────────────────────────────
+    # Suite 5: Advanced 10-suite verification (perf + security + SEO +
+    #           a11y + UI flows + visual + keyboard + intake parity)
+    # ─────────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print("[suite 5/5] e2e/test_advanced.py — 10 advanced suites")
+    print("=" * 70)
+    adv_pass = False
+    adv_count = None
+    try:
+        r = subprocess.run(
+            [sys.executable, os.path.join(HERE, "test_advanced.py")],
+            capture_output=True, text=True, env=env, cwd=ROOT, timeout=600,
+        )
+        # Parse the "ADVANCED E2E TOTAL: N/N passed" line
+        for line in r.stdout.splitlines():
+            if "ADVANCED E2E TOTAL:" in line:
+                adv_count = line.strip()
+                break
+        if r.returncode == 0:
+            print(f"  PASS  ({adv_count or 'see above'})")
+            adv_pass = True
+        else:
+            print(f"  FAIL  rc={r.returncode}")
+            # Print the FAILED CHECKS section if present
+            in_fail_section = False
+            for line in r.stdout.splitlines():
+                if "FAILED CHECKS:" in line:
+                    in_fail_section = True
+                if in_fail_section:
+                    print("    " + line)
+            # Tail of stderr for any tracebacks
+            err_lines = [l for l in r.stderr.splitlines() if l.strip()]
+            if err_lines:
+                print("  --- stderr (last 20 lines) ---")
+                for line in err_lines[-20:]:
+                    print("    " + line)
+    except subprocess.TimeoutExpired:
+        print("  FAIL  timeout after 600s")
+    except Exception as e:
+        print(f"  FAIL  exception: {type(e).__name__}: {e}")
 
     # ─────────────────────────────────────────────
     # Teardown
@@ -306,8 +348,10 @@ def main() -> int:
     else:
         print("  suite 3 (Playwright):  SKIP  (not installed)")
     print(f"  suite 4 (JS lint):     {'PASS' if js_pass else 'FAIL'}")
+    print(f"  suite 5 (advanced 10): {'PASS' if adv_pass else 'FAIL'}  {adv_count or ''}")
 
-    overall = api_pass and surf_pass and js_pass and (pw_pass if pw_available else True)
+    overall = (api_pass and surf_pass and js_pass and adv_pass
+               and (pw_pass if pw_available else True))
     print("\n  OVERALL: " + ("PASS" if overall else "FAIL"))
     print("=" * 70)
     return 0 if overall else 1
