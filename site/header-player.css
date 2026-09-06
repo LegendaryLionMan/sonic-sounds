@@ -910,8 +910,11 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
   /* Per 2026-09-06 user feedback: the panel used to overlay the
    * cassette visual on the left. Position it on the RIGHT side of
    * the viewport (top-right corner) instead, where it does not
-   * collide with the player's transport controls or cassette art. */
-  top: var(--hp-h);
+   * collide with the player's transport controls or cassette art.
+   * Fixed at top:0 (not var(--hp-h)) because translateY(-100%) needs
+   * to fully clear the panel; with top:var(--hp-h) the bottom ~76px
+   * would remain visible. */
+  top: 0;
   right: 16px;
   width: min(440px, 60vw);
   max-height: 70vh;

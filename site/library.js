@@ -36,13 +36,26 @@
     grid.innerHTML = albums.map(a => {
       const status = (a.status || 'active').toLowerCase();
       // Cover art: live <img> from /api/albums/:id/cover so the OneDrive
-      // canonical path resolves. Falls back to alt text if 404.
-      const coverUrl = `/api/albums/${encodeURIComponent(a.id)}/cover`;
+      // canonical path resolves. Per 2026-09-06 user feedback: when an
+      // album has no cover, the endpoint returns a 1x1 transparent PNG.
+      // We render a CSS placeholder tile instead so the album card
+      // doesn't explode to 1377x1377 (the aspect-ratio:1/1 with width:100%
+      // + a 1x1 natural source fills the whole card). The placeholder uses
+      // the theme's --bg-elevated token + the album's first letter.
+      const hasCover = !!a.cover_path;
       const coverAlt = `${a.title || a.id} — album cover`;
-      return `<article class="card shell">
-        <img src="${esc(coverUrl)}" alt="${esc(coverAlt)}"
+      const coverBlock = hasCover
+        ? `<img src="${esc(`/api/albums/${encodeURIComponent(a.id)}/cover`)}" alt="${esc(coverAlt)}"
              style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; display:block;"
-             loading="lazy" />
+             loading="lazy"
+             onerror="this.style.display='none'" />`
+        : `<div class="cover-placeholder" aria-label="${esc(coverAlt)}"
+               style="width:100%; aspect-ratio:1/1; display:flex; align-items:center;
+                      justify-content:center; border-radius:8px; background:var(--bg-elevated, #1a1a22);
+                      font-family:var(--display, sans-serif); font-size:5rem; color:var(--accent,#f0c53c);
+                      letter-spacing:.04em;">${esc((a.title || a.id).slice(0, 2).toUpperCase())}</div>`;
+      return `<article class="card shell">
+        ${coverBlock}
         <p class="eyebrow">${esc(status.toUpperCase())} · ${esc(a.runtime_min || 0)} MIN · ${esc(a.track_count ?? '?')} TRACKS</p>
         <h3>${esc(a.title || a.id)}</h3>
         <p>Album id: <code>${esc(a.id)}</code></p>
