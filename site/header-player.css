@@ -907,14 +907,17 @@ body.has-header-player nav.topbar { top: var(--hp-h); }
  * ============================================================ */
 .hp-keys-panel {
   position: fixed;
+  /* Per 2026-09-06 user feedback: the panel used to overlay the
+   * cassette visual on the left. Position it on the RIGHT side of
+   * the viewport (top-right corner) instead, where it does not
+   * collide with the player's transport controls or cassette art. */
   top: var(--hp-h);
-  left: 0;
+  right: 16px;
   width: min(440px, 60vw);
   max-height: 70vh;
   background: var(--bg-solid);
   border: 1px solid var(--rule);
-  border-top: 0;
-  border-radius: 0 0 14px 0;
+  border-radius: 0 0 0 14px;
   box-shadow: 8px 12px 32px rgba(0,0,0,0.5);
   z-index: 9997;
   transform: translateY(-100%);

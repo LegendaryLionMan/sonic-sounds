@@ -310,6 +310,55 @@ def register_routes(app: Quart) -> None:
         return _Resp(TRANSPARENT_PNG, mimetype="image/png",
                      headers={"Cache-Control": "public, max-age=3600"})
 
+    # === Asset binary streaming ============================================
+    # Per the 2026-09-06 audit: assets were listed but had no preview UI.
+    # To enable the lightbox on the album page, assets need to be
+    # streamable via a single endpoint that resolves the same fallback
+    # paths the cover handler uses (project root, OneDrive canonical,
+    # project subdirs). Mirrors album_cover above but per-asset.
+    @app.route("/api/assets/<asset_id>", methods=["GET"])
+    async def asset_binary(asset_id: str):
+        from db.connection import open_db, close_db
+        # Asset ids look like "<album_id>:<kind>:<stem>" (e.g.
+        # "half-light-hours:cover:album-cover-front-square"). The album
+        # id may contain hyphens; we split from the LEFT on the first
+        # two colons.
+        parts = asset_id.split(":", 2)
+        if len(parts) != 3:
+            abort(404, description=f"malformed asset id: {asset_id!r}")
+        album_id, kind, stem = parts
+
+        def _lookup():
+            conn = open_db()
+            try:
+                row = conn.execute(
+                    "SELECT path FROM assets WHERE id = ?",
+                    (asset_id,),
+                ).fetchone()
+                if row:
+                    return row["path"]
+                return None
+            finally:
+                close_db()
+        rel = await _run_in_thread(_lookup)
+        if not rel:
+            abort(404, description=f"asset not found: {asset_id!r}")
+        canonical = Path.home() / "OneDrive" / "Hermes" / "albums" / album_id
+        candidates = [
+            PROJ_ROOT / rel,
+            PROJ_ROOT / kind / Path(rel).name,
+            PROJ_ROOT / "albums" / album_id / rel,
+            PROJ_ROOT / "albums" / album_id / kind / Path(rel).name,
+            canonical / rel,
+            canonical / kind / Path(rel).name,
+        ]
+        import mimetypes as _m
+        for c in candidates:
+            if c.exists() and c.is_file():
+                mime, _ = _m.guess_type(str(c))
+                return await send_file(str(c), mimetype=mime or "application/octet-stream")
+        abort(404, description=f"asset file missing on disk: {rel}")
+
     @app.route("/api/audio/<track_id>", methods=["GET"])
     async def audio_range(track_id: str):
         """Audio handler with HTTP Range support (per Day 3 plan).

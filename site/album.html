@@ -14,15 +14,15 @@
 <meta name="twitter:description" content="An individual album page. Tracklist, cover art, ISRC codes, credits.">
 <link rel="canonical" href="http://127.0.0.1:8765/site/album.html">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/site/themes.css">
-<link rel="stylesheet" href="/site/album-card.css">
-<link rel="stylesheet" href="/site/albums.module.css">
-<link rel="stylesheet" href="/site/spring.css">
-<link rel="stylesheet" href="/site/spring-extra.css">
-<link rel="stylesheet" href="/site/status.css">
-<link rel="stylesheet" href="/site/decisions.css">
-<link rel="stylesheet" href="/site/modals.css">
-<link rel="stylesheet" href="/site/header-player.css">
+<link rel="stylesheet" href="/site/themes.css?v=hp6">
+<link rel="stylesheet" href="/site/album-card.css?v=hp6">
+<link rel="stylesheet" href="/site/albums.module.css?v=hp6">
+<link rel="stylesheet" href="/site/spring.css?v=hp6">
+<link rel="stylesheet" href="/site/spring-extra.css?v=hp6">
+<link rel="stylesheet" href="/site/status.css?v=hp6">
+<link rel="stylesheet" href="/site/decisions.css?v=hp6">
+<link rel="stylesheet" href="/site/modals.css?v=hp6">
+<link rel="stylesheet" href="/site/header-player.css?v=hp6">
 <style>
 /* album.html — dedicated full album view (replaces drawer) */
 .album-hero {
@@ -129,7 +129,7 @@
  .track-row-full .t-play     { grid-column: 3; grid-row: 3; padding: 8px 14px; font-size: 11px; }
 }
 
-.session-list, .asset-list { display: flex; flex-direction: column; gap: 6px; }
+.session-list { display: flex; flex-direction: column; gap: 6px; }
 .session-row, .asset-row {
   display: flex;
   gap: 18px;
@@ -142,8 +142,140 @@
 }
 .session-row .s-id { color: var(--ink); }
 .session-row .s-status { margin-left: auto; }
-.asset-row .a-kind { color: var(--accent); text-transform: uppercase; }
-.asset-row .a-name { color: var(--ink); }
+
+/* === Asset gallery grid ==============================================
+ * Per 2026-09-06 user feedback: assets had no preview UI. This grid
+ * turns each asset row into a clickable thumbnail tile that opens a
+ * lightbox. Group tiles by kind for scannability. */
+.asset-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  padding: 4px;
+}
+.asset-tile {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  cursor: pointer;
+  transition: transform var(--t-base) var(--t-spring),
+              border-color var(--t-base) ease,
+              box-shadow var(--t-base) ease;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.asset-tile:hover,
+.asset-tile:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  outline: none;
+}
+.asset-tile .thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--bg-elevated);
+}
+.asset-tile .thumb.video {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: var(--accent);
+  background: linear-gradient(135deg, var(--bg-elevated), var(--bg-soft));
+}
+.asset-tile .badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  padding: 3px 7px;
+  background: rgba(0,0,0,0.7);
+  color: var(--accent);
+  border-radius: 999px;
+}
+.asset-tile .label {
+  display: block;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === Asset lightbox ================================================== */
+.asset-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  padding: 32px;
+}
+.asset-lightbox.is-open { display: flex; }
+.asset-lightbox .lb-stage {
+  max-width: min(90vw, 1200px);
+  max-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.asset-lightbox img,
+.asset-lightbox video {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  background: black;
+}
+.asset-lightbox video { width: 100%; }
+.asset-lightbox .lb-meta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 32px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+.asset-lightbox .lb-meta .a-kind { color: var(--accent); text-transform: uppercase; }
+.asset-lightbox .lb-meta .a-name { color: var(--ink-soft); }
+.asset-lightbox .lb-meta a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--rule); }
+.asset-lightbox .lb-meta a:hover { color: var(--accent-2); }
+.asset-lightbox .lb-close {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 18px;
+  cursor: pointer;
+}
+.asset-lightbox .lb-close:hover { background: var(--accent-soft); }
 
 .sonic-dna {
   display: grid;
@@ -252,7 +384,7 @@
 
     <section>
       <h2 class="section-title">/assets <span class="count" id="assets-count">0</span></h2>
-      <div class="asset-list" id="asset-list"></div>
+      <div class="asset-gallery" id="asset-list"></div>
     </section>
   </main>
 
@@ -265,6 +397,15 @@
 </div>
 
 <audio id="audio-el" preload="none" hidden></audio>
+
+<!-- Asset lightbox (hidden by default). Populated by clicking a
+     tile in #asset-list. Closes on Esc / backdrop / X button. -->
+<div id="asset-lightbox" class="asset-lightbox" role="dialog"
+     aria-modal="true" aria-hidden="true" aria-label="Asset preview">
+  <button type="button" class="lb-close" aria-label="Close preview">&times;</button>
+  <div class="lb-stage"></div>
+  <div class="lb-meta"></div>
+</div>
 
 <script>
 /* album.html — dedicated full album page. Replaces drawer.
@@ -428,14 +569,74 @@
       const assets = await api(`/api/albums/${encodeURIComponent(albumId)}/assets`);
       const arr = Array.isArray(assets) ? assets : [];
       $('#assets-count').textContent = arr.length || 0;
-      $('#asset-list').innerHTML = arr.length ? arr.map((a) => `
-        <div class="asset-row">
-          <span class="a-kind">${esc(a.kind || a.asset_kind || '—')}</span>
-          <span class="a-name">${esc(a.id)} ${a.path ? '— ' + esc(a.path) : ''}</span>
-        </div>`).join('') : `<div class="empty-note">no assets yet</div>`;
+      $('#asset-list').innerHTML = arr.length ? arr.map((a) => {
+        const kind = (a.kind || a.asset_kind || 'asset').toLowerCase();
+        const mime = (a.mime || '').toLowerCase();
+        const isVideo = kind === 'video' || mime.startsWith('video/');
+        const id = esc(a.id);
+        const path = esc(a.path || '');
+        const label = esc(a.path ? a.path.split('/').pop() : a.id);
+        // Use the streaming endpoint so the browser can fetch the
+        // file even though the static handler doesn't serve from
+        // /cover-art/, /merch/, etc.
+        const src = `/api/assets/${encodeURIComponent(id)}`;
+        const thumb = isVideo
+          ? `<div class="thumb video" aria-hidden="true">▶</div>`
+          : `<img class="thumb" src="${src}" alt="" loading="lazy">`;
+        return `<button type="button" class="asset-tile"
+                       data-asset-id="${id}" data-asset-kind="${esc(kind)}"
+                       data-asset-mime="${esc(mime)}" data-asset-path="${path}"
+                       aria-label="Preview ${label}">
+          ${thumb}
+          <span class="badge">${esc(kind)}</span>
+          <span class="label" title="${path}">${label}</span>
+        </button>`;
+      }).join('') : `<div class="empty-note">no assets yet</div>`;
     } catch (e) {
       $('#assets-count').textContent = '?';
       $('#asset-list').innerHTML = `<div class="empty-note">asset lookup unavailable</div>`;
+    }
+
+    // Asset tile click → open lightbox. Delegated on the gallery so
+    // dynamically-rendered tiles work.
+    const lightbox = document.getElementById('asset-lightbox');
+    const lbStage = lightbox?.querySelector('.lb-stage');
+    const lbMeta = lightbox?.querySelector('.lb-meta');
+    const lbClose = lightbox?.querySelector('.lb-close');
+    $('#asset-list').addEventListener('click', (ev) => {
+      const tile = ev.target.closest('.asset-tile');
+      if (!tile || !lightbox) return;
+      const id = tile.dataset.assetId;
+      const kind = tile.dataset.assetKind;
+      const path = tile.dataset.assetPath;
+      const mime = tile.dataset.assetMime;
+      const src = `/api/assets/${encodeURIComponent(id)}`;
+      const isVideo = kind === 'video' || mime.startsWith('video/');
+      lbStage.innerHTML = isVideo
+        ? `<video src="${src}" controls autoplay></video>`
+        : `<img src="${src}" alt="">`;
+      lbMeta.innerHTML =
+        `<span><span class="a-kind">${esc(kind)}</span> ` +
+        `<span class="a-name">${esc(path || id)}</span></span>` +
+        `<a href="${esc(src)}" download>Download</a>`;
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+    });
+    lbClose?.addEventListener('click', () => closeLightbox());
+    lightbox?.addEventListener('click', (ev) => {
+      if (ev.target === lightbox) closeLightbox();  // backdrop click
+    });
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && lightbox?.classList.contains('is-open')) {
+        closeLightbox();
+        ev.stopPropagation();
+      }
+    });
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lbStage.innerHTML = '';  // stop any playing video
     }
 
     // Open-session button
