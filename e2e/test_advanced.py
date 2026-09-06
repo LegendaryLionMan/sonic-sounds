@@ -916,6 +916,10 @@ def main() -> int:
         ("13", suite_music_player_button_states, True),
         ("14", suite_asset_gallery,       True),
         ("15", suite_keys_panel_no_overlap, True),
+        ("16", suite_theme_persistence,   True),
+        ("17", suite_intake_autosave,     True),
+        ("18", suite_max_sessions_guard,  False),
+        ("19", suite_player_state_machine, True),
     ]
 
     total_pass = total_fail = 0
@@ -1449,6 +1453,442 @@ def suite_keys_panel_no_overlap(base: str, pw_ctx) -> Suite:
         )
     except Exception as e:
         s.check("keys panel run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
+# SUITE 16 - THEME PERSISTENCE (localStorage)
+# =====================================================================
+# Per CATCH-UP §2.3 the chosen theme is persisted in localStorage as
+# "sonic-sounds:theme:v1". Verify:
+# - Setting a theme then reloading preserves it
+# - Resetting to mixtape85 (default) clears any explicit user choice
+# - data-theme attribute on <html> reflects localStorage on load
+
+def suite_theme_persistence(base: str, pw_ctx) -> Suite:
+    """Verify theme choice survives a page reload."""
+    s = Suite("THEME PERSISTENCE: localStorage roundtrip")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        page = browser.contexts[0].pages[0]
+        # 1. Closed loop: set tokyo-night, navigate to another page, check
+        # it carries over.
+        page.goto(f"{base}/site/albums.html?v=tpersist",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(800)
+        page.evaluate("window.Themes.set('tokyo-night')")
+        page.wait_for_timeout(200)
+        # Navigate to a different page; theme should persist
+        page.goto(f"{base}/site/library.html?v=tpersist",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(800)
+        theme_after_nav = page.evaluate("document.documentElement.dataset.theme")
+        s.check(
+            "theme persists across page navigations",
+            theme_after_nav == "tokyo-night",
+            f"got {theme_after_nav!r}",
+        )
+        # Reload should also preserve
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(800)
+        theme_after_reload = page.evaluate("document.documentElement.dataset.theme")
+        s.check(
+            "theme persists across hard reload",
+            theme_after_reload == "tokyo-night",
+            f"got {theme_after_reload!r}",
+        )
+        # localStorage should contain the theme key
+        ls_theme = page.evaluate(
+            "(() => { try { return JSON.parse(localStorage.getItem('sonic-sounds:theme:v1') || '{}').theme; } catch(e) { return null; } })()"
+        )
+        s.check(
+            "theme persisted to localStorage",
+            ls_theme == "tokyo-night",
+            f"got {ls_theme!r}",
+        )
+        # 2. Reset to mixtape85 (default) and reload — should persist.
+        page.evaluate("window.Themes.set('mixtape85')")
+        page.wait_for_timeout(200)
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(800)
+        theme_reset = page.evaluate("document.documentElement.dataset.theme")
+        s.check(
+            "reset to mixtape85 (default) persists",
+            theme_reset == "mixtape85",
+            f"got {theme_reset!r}",
+        )
+        # 3. Clearing localStorage should fall back to default
+        page.evaluate("localStorage.removeItem('sonic-sounds:theme:v1')")
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(800)
+        theme_cleared = page.evaluate("document.documentElement.dataset.theme")
+        s.check(
+            "cleared localStorage falls back to default (mixtape85)",
+            theme_cleared == "mixtape85",
+            f"got {theme_cleared!r}",
+        )
+    except Exception as e:
+        s.check("theme persistence run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
+# SUITE 17 - INTAKE FORM auto-save + validation
+# =====================================================================
+# Per intake.html the form auto-saves on every keystroke (800ms
+# debounce). Verify:
+# - Typing into a field produces a localStorage key with the value
+# - Required fields (M01-M08 + R09) without answers block export
+# - JSON export produces a downloadable .json file with the answers
+# - Clearing localStorage and refreshing resets the form
+
+INTAKE_FIELDS = [
+    ("[name=\"M01_concept\"]", "memory journal"),
+    ("[name=\"M02_scope\"]", "album"),
+    ("[name=\"M03_genre\"]", "dream-folk"),
+    ("[name=\"M04_ref1\"]", "Sufjan Stevens"),
+    ("[name=\"M05_approach\"]", "solo"),
+    ("[name=\"M06_languages\"]", "English"),
+    ("[name=\"M07_runtime\"]", "standard"),
+    ("[name=\"M08_artist\"]", "Test Artist"),
+    ("[name=\"R09_title\"]", "E2E Blind Spot Album"),
+]
+
+
+def suite_intake_autosave(base: str, pw_ctx) -> Suite:
+    """Verify intake auto-save + required-field gating."""
+    s = Suite("INTAKE: auto-save + required-field gating")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        page = browser.contexts[0].pages[0]
+        page.goto(f"{base}/site/intake.html?v=autosave",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1500)
+        # 1. Initial state: all fields empty, generate button disabled
+        disabled = page.evaluate(
+            "document.getElementById('generateBtn').disabled"
+        )
+        s.check(
+            "intake initial state: generate disabled with empty fields",
+            disabled is True,
+            f"got {disabled}",
+        )
+        # 2. Type a value via JS (page.fill() sometimes fails on selects
+        # that share names with text inputs in the R10 tracklist), wait
+        # 2s (>800ms debounce), check localStorage.
+        page.evaluate(f"""
+            (() => {{
+                const el = document.querySelector({json.dumps(INTAKE_FIELDS[0][0])});
+                el.value = {json.dumps(INTAKE_FIELDS[0][1])};
+                el.dispatchEvent(new Event('input', {{bubbles: true}}));
+            }})()
+        """)
+        page.wait_for_timeout(2000)
+        ls_state = page.evaluate(
+            "Object.keys(localStorage).filter(k => k.startsWith('sonic-sounds.intake.'))"
+        )
+        s.check(
+            "auto-save persisted intake data to localStorage",
+            len(ls_state) > 0,
+            f"got keys {ls_state}",
+        )
+        # 3. Verify the saved value matches what we typed
+        if ls_state:
+            saved_m01 = page.evaluate("""
+                () => {
+                    const keys = Object.keys(localStorage).filter(k => k.startsWith('sonic-sounds.intake.'));
+                    if (!keys.length) return null;
+                    const data = JSON.parse(localStorage.getItem(keys[0]));
+                    return data.formVersion ? (data.data?.M01_concept ?? null) : null;
+                }
+            """)
+            s.check(
+                "saved M01_concept matches typed value",
+                saved_m01 == INTAKE_FIELDS[0][1],
+                f"got {saved_m01!r}",
+            )
+        # 4. Fill all required fields via JS (robust against <select>/<input>
+        # type confusion), verify gate flips to enabled
+        for selector, value in INTAKE_FIELDS:
+            page.evaluate(f"""
+                (() => {{
+                    const el = document.querySelector({json.dumps(selector)});
+                    if (el) {{
+                        el.value = {json.dumps(value)};
+                        el.dispatchEvent(new Event('input', {{bubbles: true}}));
+                        el.dispatchEvent(new Event('change', {{bubbles: true}}));
+                    }}
+                }})()
+            """)
+        page.wait_for_timeout(1500)
+        disabled_after = page.evaluate(
+            "document.getElementById('generateBtn').disabled"
+        )
+        s.check(
+            "intake gate flips to enabled after filling required fields",
+            disabled_after is False,
+            f"got disabled={disabled_after}",
+        )
+        # 5. The mandatoryResolved text reflects 9/9
+        resolved_text = page.evaluate(
+            "document.getElementById('mandatoryResolved').textContent.trim()"
+        )
+        s.check(
+            "intake mandatory counter shows 9 of 9",
+            "9 of 9" in resolved_text or "9/9" in resolved_text,
+            f"got {resolved_text!r}",
+        )
+        # 6. Clear a required field — gate must re-disable
+        page.evaluate("""
+            (() => {
+                const el = document.querySelector('[name=\"M08_artist\"]');
+                el.value = '';
+                el.dispatchEvent(new Event('input', {bubbles: true}));
+            })()
+        """)
+        page.wait_for_timeout(1000)
+        disabled_when_empty = page.evaluate(
+            "document.getElementById('generateBtn').disabled"
+        )
+        s.check(
+            "clearing required field re-disables generate",
+            disabled_when_empty is True,
+            f"got disabled={disabled_when_empty}",
+        )
+    except Exception as e:
+        s.check("intake autosave run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
+# SUITE 18 - MAX-3 SESSIONS concurrent guard
+# =====================================================================
+# Per db/sessions.py MAX_ACTIVE_SESSIONS = 3. Verify that opening a
+# 4th active session returns 409 (or equivalent) and that closing one
+# frees a slot.
+
+def suite_max_sessions_guard(base: str, pw_ctx) -> Suite:
+    """Verify the max-3-active-sessions enforcement on POST /api/sessions."""
+    s = Suite("MAX-3 SESSIONS: concurrent guard")
+    try:
+        # Close any pre-existing active sessions first to start clean
+        _, existing = _api("GET", "/api/sessions", base=base)
+        for sess in (existing or []):
+            if sess.get("status") == "active":
+                _api("POST", f"/api/sessions/{sess['id']}/complete", base=base)
+                # Or pause, since complete requires session_id
+                pass
+    except Exception as e:
+        s.check("pre-test cleanup", False, str(e))
+        return s
+    # Open 3 sessions
+    try:
+        album_id = "half-light-hours"
+        opened = []
+        for i in range(3):
+            code, body = _api("POST", "/api/sessions",
+                              base=base, data={"album_id": album_id})
+            if code == 201 and isinstance(body, dict) and "id" in body:
+                opened.append(body["id"])
+        s.check(
+            "can open 3 active sessions (within max)",
+            len(opened) == 3,
+            f"opened {len(opened)}, bodies={opened[:2]}...",
+        )
+        # Try to open a 4th — should be rejected
+        code4, body4 = _api("POST", "/api/sessions",
+                            base=base, data={"album_id": album_id})
+        s.check(
+            "4th active session rejected (409)",
+            code4 == 409,
+            f"got code={code4} body={str(body4)[:80]}",
+        )
+        # Complete one session — slot should free up
+        if opened:
+            code_c, _ = _api("POST",
+                              f"/api/sessions/{opened[0]}/complete",
+                              base=base)
+            s.check(
+                "closing a session succeeds",
+                code_c == 200,
+                f"got {code_c}",
+            )
+            # Now another open should succeed
+            code5, body5 = _api("POST", "/api/sessions",
+                                base=base, data={"album_id": album_id})
+            s.check(
+                "4th session now succeeds after freeing a slot",
+                code5 == 201,
+                f"got {code5}",
+            )
+        # Cleanup: close all active sessions we opened
+        _, all_sess = _api("GET", "/api/sessions", base=base)
+        for sess in (all_sess or []):
+            if sess.get("status") == "active" and sess.get("id") in opened + ([body5.get("id")] if code5 == 201 else []):
+                _api("POST", f"/api/sessions/{sess['id']}/complete", base=base)
+    except Exception as e:
+        s.check("max-sessions run", False, str(e))
+    return s
+
+
+# =====================================================================
+# SUITE 19 - HEADER PLAYER state machine (mute / volume / sleep persistence)
+# =====================================================================
+# Verify the additional state-machine edges in the header player:
+# - mute button toggles audio.muted and persists
+# - volume slider has min=0 max=1 step=0.01
+# - sleep cycle + audio.play() + audio.pause() don't crash
+# - clicking the same track's play button toggles between play/pause
+
+def suite_player_state_machine(base: str, pw_ctx) -> Suite:
+    """Verify mute / volume / playback state mutations."""
+    s = Suite("PLAYER STATE MACHINE: mute / volume / playback")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        page = browser.contexts[0].pages[0]
+        page.goto(f"{base}/site/albums.html?v=player-state",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1500)
+        # Reset state
+        page.evaluate("""
+            localStorage.removeItem('sonic-sounds:header-player:v1');
+            const hp = document.querySelector('.header-player');
+            if (hp) hp.classList.remove('keys-open', 'lyrics-open', 'is-open');
+        """)
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(1500)
+        # 1. Volume slider has the right shape
+        vol_attrs = page.evaluate("""
+            () => {
+                const v = document.querySelector('.hp-vol');
+                return v ? {min: v.min, max: v.max, step: v.step,
+                            type: v.type, value: v.value} : null;
+            }
+        """)
+        s.check(
+            "volume slider has min=0 max=1 step=0.01",
+            vol_attrs and vol_attrs['min'] == '0' and vol_attrs['max'] == '1'
+            and vol_attrs['step'] == '0.01',
+            f"got {vol_attrs}",
+        )
+        # 2. Mute button silences audio (volume=0). Note: the audio
+        # element's .muted DOM property isn't reliable without a src, so
+        # we verify volume=0 + button ARIA-label flipping instead.
+        page.evaluate("document.querySelector('[data-action=\"mute\"]').click()")
+        page.wait_for_timeout(200)
+        muted_state = page.evaluate("""
+            () => {
+                const a = document.getElementById('hp-audio');
+                const btn = document.querySelector('[data-action="mute"]');
+                return {
+                    vol: a.volume,
+                    aria: btn.getAttribute('aria-label'),
+                    text: btn.textContent.trim(),
+                };
+            }
+        """)
+        s.check(
+            "mute click silences audio (volume=0)",
+            muted_state['vol'] == 0,
+            f"got vol={muted_state['vol']}",
+        )
+        s.check(
+            "mute button still clickable after click",
+            muted_state['aria'] in ('Mute', 'Unmute', 'Mute / Unmute'),
+            f"got aria-label={muted_state['aria']!r}",
+        )
+        # 3. Click again to unmute
+        page.evaluate("document.querySelector('[data-action=\"mute\"]').click()")
+        page.wait_for_timeout(200)
+        unmuted_state = page.evaluate(
+            "document.getElementById('hp-audio').volume"
+        )
+        s.check(
+            "second mute click restores volume to 0.7 (default)",
+            abs(unmuted_state - 0.7) < 0.01,
+            f"got vol={unmuted_state}",
+        )
+        # 4. Sleep cycle persists across page navigation
+        page.evaluate("document.querySelector('[data-action=\"sleep\"]').click()")
+        page.wait_for_timeout(200)
+        sleep_before = page.evaluate(
+            "document.querySelector('[data-action=\"sleep\"]').title"
+        )
+        s.check(
+            "sleep click sets timer state",
+            "15" in sleep_before,
+            f"got title={sleep_before!r}",
+        )
+        # Navigate to another page and verify sleep state restored
+        page.goto(f"{base}/site/library.html?v=player-state",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1200)
+        sleep_after = page.evaluate(
+            "document.querySelector('[data-action=\"sleep\"]')?.title"
+        )
+        s.check(
+            "sleep state persists across navigation",
+            "15" in sleep_after or "min remaining" in sleep_after.lower(),
+            f"got title={sleep_after!r}",
+        )
+        # 5. Click the same track's play button — verify it toggles
+        # (audio.paused changes). With autoplay blocked, audio starts paused.
+        page.evaluate("localStorage.removeItem('sonic-sounds:header-player:v1')")
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(1500)
+        # Initial state
+        before_play = page.evaluate(
+            "document.getElementById('hp-audio').paused"
+        )
+        # Click play via direct JS to bypass Playwright flake
+        page.evaluate("document.querySelector('[data-action=\"play\"]').click()")
+        page.wait_for_timeout(300)
+        after_play = page.evaluate(
+            "document.getElementById('hp-audio').paused"
+        )
+        # Note: autoplay policy may block the play() call. We just
+        # verify the click handler fires (audio.paused should differ
+        # or should be 'false' if play succeeded).
+        s.check(
+            "play click changes audio.paused state",
+            before_play != after_play or after_play is False,
+            f"before={before_play} after={after_play}",
+        )
+    except Exception as e:
+        s.check("player state machine run", False, str(e))
     finally:
         if own_pw:
             pw_ctx.stop()

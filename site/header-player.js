@@ -392,14 +392,26 @@
       const v = state.volumeBeforeMute > 0.05 ? state.volumeBeforeMute : 0.7;
       state.volume = v;
       state.muted = false;
-      state.audio.volume = v;
+      // Restore both the volume AND the .muted property so the
+      // browser's audio pipeline actually un-mutes (not just volume-up).
+      if (state.audio) {
+        state.audio.muted = false;
+        state.audio.volume = v;
+      }
       const slider = state.root.querySelector('.hp-vol');
       if (slider) { slider.value = v; slider.style.setProperty('--vol-pct', (v * 100).toFixed(1) + '%'); }
     } else {
       if (state.volume > 0.05) state.volumeBeforeMute = state.volume;
       state.volume = 0;
       state.muted = true;
-      state.audio.volume = 0;
+      // Set BOTH volume=0 and .muted=true. Setting .muted=true is what
+      // actually silences the audio output (volume=0 alone keeps the
+      // audio pipeline active and emits "playing" events). This fixes
+      // a real bug found by suite 19 of the E2E advanced suite.
+      if (state.audio) {
+        state.audio.muted = true;
+        state.audio.volume = 0;
+      }
       const slider = state.root.querySelector('.hp-vol');
       if (slider) { slider.value = 0; slider.style.setProperty('--vol-pct', '0%'); }
     }

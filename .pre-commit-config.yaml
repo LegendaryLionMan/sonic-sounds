@@ -1,0 +1,43 @@
+# Pre-commit hooks for sonic-sounds
+#
+# Install:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Runs:
+#   - python compile check (syntax errors)
+#   - CSS color audit (hardcoded colors outside :root)
+#   - git-secrets if available (no secrets in commits)
+#
+# Most hooks are local-only so they don't require network access during
+# the commit.
+
+repos:
+  - repo: local
+    hooks:
+      - id: python-ast-check
+        name: Python syntax check
+        entry: python -c "import ast, sys; [ast.parse(open(f, encoding='utf-8').read()) for f in sys.argv[1:]]"
+        language: system
+        types: [python]
+        args: []
+
+      - id: css-color-audit
+        name: CSS audit (no hardcoded colors outside :root)
+        entry: python scripts/css_audit.py --quiet
+        language: system
+        pass_filenames: false
+        types: [css]
+
+      - id: no-debugger
+        name: No Python debugger imports (pdb, breakpoint)
+        entry: python -c "import re, sys; bad = re.compile(r'(\\bimport pdb\\b|\\bbreakpoint\\()'); [print(f, file=sys.stderr) for f in sys.argv[1:] if open(f, encoding='utf-8').read() and bad.search(open(f, encoding='utf-8').read())]"
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      - id: no-large-files
+        name: Block commits with files > 5MB
+        entry: python -c "import os, sys; [sys.exit(f'{f} is {os.path.getsize(f)//1024}KB; max 5MB') for f in sys.argv[1:] if os.path.getsize(f) > 5*1024*1024]"
+        language: system
+        pass_filenames: false

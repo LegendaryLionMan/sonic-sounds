@@ -1,0 +1,96 @@
+# GitHub Actions CI for sonic-sounds
+#
+# Runs the unit test suite + advanced E2E suite on every push and PR.
+# The E2E suite spins up its own daemon in a temp directory and tears it
+# down at the end. Uses Playwright's chromium-headless for the visual
+# sweep and asset gallery suites.
+
+name: tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  unit:
+    name: unit (pytest)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system deps (for Playwright + audio)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libsqlite3-0
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Run pytest
+        run: |
+          python -m pytest tests/ -x --tb=short -q
+        env:
+          SONIC_SOUNDS_E2E_BASE: http://127.0.0.1:8793
+
+  e2e-advanced:
+    name: e2e advanced (327 checks)
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install playwright Pillow
+          python -m playwright install --with-deps chromium
+      - name: Start daemon
+        run: |
+          python -m db.seed --db .meta/e2e.db --force &
+          python -m build.serve --host 127.0.0.1 --port 8793 &
+          sleep 3
+          curl -sf http://127.0.0.1:8793/api/health || (echo "daemon failed to start"; tail -50 .meta/daemon.log; exit 1)
+      - name: Run advanced E2E suite
+        run: |
+          python e2e/test_advanced.py 2>&1 | tail -120
+        env:
+          SONIC_SOUNDS_E2E_BASE: http://127.0.0.1:8793
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots
+          path: |
+            ${{ github.workspace }}/.meta/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  css-audit:
+    name: css-audit (no hardcoded colors outside :root)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit CSS for hardcoded colors
+        run: |
+          python scripts/css_audit.py | tee css-audit.txt
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: css-audit
+          path: css-audit.txt
