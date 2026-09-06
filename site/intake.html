@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>sonic-sounds — intake · 26 questions for the album you haven't made yet</title>
+<meta name="description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
+<meta property="og:title" content="sonic-sounds — intake · 26 questions for the album you haven't made yet">
+<meta property="og:description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://127.0.0.1:8765/site/intake.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sonic-sounds — intake · 26 questions for the album you haven't made yet">
+<meta name="twitter:description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
+<link rel="canonical" href="http://127.0.0.1:8765/site/intake.html">
   <meta name="description" content="The front door for a new album project. 26 questions, three tiers, auto-save, JSON export.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -384,7 +393,7 @@
           <div class="head"><span class="tag">M·03</span><span class="id">genre direction</span></div>
           <h3>What genre family?</h3>
           <p class="hint">One primary family at minimum. Pick a primary that frames the whole work.</p>
-          <input class="control" name="M03_genre" list="genreList" placeholder="dream-folk, ambient techno, sad-cowboy indie...">
+          <input class="control" name="M03_genre" list="genreList" placeholder="dream-folk, ambient techno, sad-cowboy indie..." aria-label="Genre (e.g. dream-folk, ambient techno)">
           <datalist id="genreList">
             <option value="dream-folk"></option><option value="indie-rock"></option><option value="art-pop"></option>
             <option value="ambient"></option><option value="electronic"></option><option value="hip-hop"></option>
@@ -402,9 +411,9 @@
           <h3>1–3 reference artists whose sound you want to channel</h3>
           <p class="hint">Artists you want to <em>sound like</em>, not artists you merely admire. Less is more.</p>
           <div class="refs-slot">
-            <input type="text" name="M04_ref1" placeholder="Artist 1 — name" autocomplete="off">
-            <input type="text" name="M04_ref2" placeholder="Artist 2 (optional)" autocomplete="off">
-            <input type="text" name="M04_ref3" placeholder="Artist 3 (optional)" autocomplete="off">
+            <input type="text" name="M04_ref1" placeholder="Artist 1 — name" autocomplete="off" aria-label="Reference artist 1 (required)">
+            <input type="text" name="M04_ref2" placeholder="Artist 2 (optional)" autocomplete="off" aria-label="Reference artist 2 (optional)">
+            <input type="text" name="M04_ref3" placeholder="Artist 3 (optional)" autocomplete="off" aria-label="Reference artist 3 (optional)">
           </div>
         </article>
 
@@ -422,7 +431,7 @@
               <option value="spoken-word">spoken word</option>
               <option value="instrumental">instrumental + occasional voice</option>
             </select>
-            <input type="text" name="M05_character" placeholder="voice character — e.g. low, breathy, close-mic'd">
+            <input type="text" name="M05_character" placeholder="voice character — e.g. low, breathy, close-mic'd" aria-label="Vocal character description">
           </div>
         </article>
 
@@ -431,7 +440,7 @@
           <div class="head"><span class="tag">M·06</span><span class="id">languages</span></div>
           <h3>Language(s) for lyrics</h3>
           <p class="hint">Comma-separated. If you write in two languages, list both — the agent will balance accordingly.</p>
-          <input class="control" name="M06_languages" placeholder="English, Portuguese">
+          <input class="control" name="M06_languages" placeholder="English, Portuguese" aria-label="Languages (comma-separated)">
         </article>
 
         <!-- M·07 runtime -->
@@ -453,7 +462,7 @@
           <div class="head"><span class="tag">M·08</span><span class="id">artist identity</span></div>
           <h3>Artist stage name</h3>
           <p class="hint">New or existing persona. This becomes the album slug prefix.</p>
-          <input class="control" name="M08_artist" placeholder="e.g. Maren Sol">
+          <input class="control" name="M08_artist" placeholder="e.g. Maren Sol" aria-label="Artist stage name">
         </article>
 
         <!-- M·09 sonic DNA (auto-derived from M03 / M05 / M07 / R12) -->
@@ -475,7 +484,7 @@
           <div class="head"><span class="tag">R·09</span><span class="id">working album title</span></div>
           <h3>Working album title</h3>
           <p class="hint">Placeholder OK. You can change later.</p>
-          <input class="control" name="R09_title" placeholder="e.g. Half-Light Hours">
+          <input class="control" name="R09_title" placeholder="e.g. Half-Light Hours" aria-label="Working album title">
         </article>
 
         <!-- R·10 tracklist -->
@@ -602,7 +611,7 @@
           <div class="head"><span class="tag">E·21</span><span class="id">deadline</span></div>
           <h3>When does this need to ship?</h3>
           <p class="hint">If no real deadline, leave blank — the agent will pace to default release windows.</p>
-          <input class="control" type="date" name="E21_deadline">
+          <input class="control" type="date" name="E21_deadline" aria-label="Deadline (optional, YYYY-MM-DD)">
         </article>
       </section>
 
@@ -967,6 +976,6 @@
     refreshGate();
   </script>
 <script src="/site/themes.js" defer></script>
-<script src="/site/header-player.js?v=hp3"></script>
+<script src="/site/header-player.js?v=hp5"></script>
 </body>
 </html>

@@ -81,8 +81,42 @@ def create_app() -> Quart:
     app.config["PROJ_ROOT"] = PROJ_ROOT
     app.config["SITE_DIR"] = SITE_DIR
     app.config["ASSETS_DIR"] = ASSETS_DIR
+    _install_security_headers(app)
     register_routes(app)
     return app
+
+
+# === HTTP response hardening ==========================================
+# Per the 2026-09-06 advanced E2E audit (Suite 3):
+# - Strip the framework banner (Server: hypercorn-h11 leaks
+#   implementation fingerprint)
+# - X-Content-Type-Options: nosniff (prevent MIME-sniffing XSS)
+# - Referrer-Policy: same-origin (don't leak full URLs)
+# - X-Frame-Options: DENY (clickjacking — local-only daemon, no
+#   legitimate embedder)
+#
+# All four are added on EVERY response (HTML, API, static). They
+# are no-ops for our offline desktop daemon and defense-in-depth
+# if the daemon is ever exposed via a tunnel.
+
+_HARDENED_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "same-origin",
+    "X-Frame-Options": "DENY",
+    "Server": "sonic-sounds",
+}
+
+
+def _install_security_headers(app: Quart) -> None:
+    """Install @after_request handler that adds security headers."""
+    @app.after_request
+    def _add_headers(response):
+        # Delete the framework-leaking Server header first (Hypercorn
+        # sets "hypercorn-h11" before our handler runs).
+        response.headers.pop("Server", None)
+        for k, v in _HARDENED_HEADERS.items():
+            response.headers[k] = v
+        return response
 
 
 async def _run_in_thread(fn, *args, **kwargs):
@@ -136,6 +170,49 @@ def register_routes(app: Quart) -> None:
         """Root URL redirects to the studio — bare `localhost:8765/` always works."""
         from quart import redirect
         return redirect("/site/studio.html", code=302)
+
+    # === Default state.json placeholder =====================================
+    # Per the 2026-09-06 advanced E2E audit (Suite 8): dashboard.html
+    # probes several candidate paths for state.json. Serve an empty
+    # default object for the two most likely paths so the dashboard
+    # doesn't fire console 404s. The build agent can still write a
+    # real state.json to .meta/state.json or /site/state.json to
+    # override this default.
+    EMPTY_STATE_JSON = json.dumps({
+        "schema": "v1",
+        "note": "default empty state; replace by writing .meta/state.json",
+        "albums": {},
+    })
+
+    @app.route("/site/state.json", methods=["GET"])
+    @app.route("/.meta/state.json", methods=["GET"])
+    async def default_state_json():
+        from quart import Response as _Resp
+        # If a real file exists on disk, serve that instead.
+        for candidate in (SITE_DIR / "state.json", PROJ_ROOT / ".meta" / "state.json"):
+            if candidate.exists():
+                return await send_file(str(candidate), mimetype="application/json")
+        return _Resp(EMPTY_STATE_JSON, mimetype="application/json",
+                     headers={"Cache-Control": "no-cache"})
+
+    # === Default favicon (transparent 1x1 ICO) ==============================
+    # Browsers auto-request /favicon.ico on every page load. Without a
+    # handler the daemon returns 404, polluting the console. Per the
+    # 2026-09-06 advanced E2E audit (Suite 8), library + dashboard had
+    # 1 lingering console error each — this is almost certainly it.
+    @app.route("/favicon.ico", methods=["GET"])
+    async def default_favicon():
+        from quart import Response as _Resp
+        # 16-byte transparent 1x1 ICO (well-known smallest valid ICO)
+        TRANSPARENT_ICO = (
+            b"\x00\x00\x01\x00\x01\x00\x01\x01\x00\x00\x01\x00\x18\x00"
+            b"\x30\x00\x00\x00\x16\x00\x00\x00\x28\x00\x00\x00\x01\x00"
+            b"\x00\x00\x02\x00\x00\x00\x01\x00\x18\x00\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+        )
+        return _Resp(TRANSPARENT_ICO, mimetype="image/x-icon",
+                     headers={"Cache-Control": "public, max-age=86400"})
 
     @app.route("/site/<path:filepath>", methods=["GET"])
     async def site_static(filepath: str):
@@ -428,6 +505,9 @@ class Daemon:
             config = Config()
             config.bind = [f"{self.host}:{self.port}"]
             config.graceful_timeout = 2.0
+            # Suppress the hypercorn-h11 Server header. Our after_request
+            # hook adds a generic "sonic-sounds" header instead.
+            config.include_server_header = False
 
             try:
                 asyncio.run(hypercorn_serve(app, config))

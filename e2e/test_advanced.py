@@ -250,7 +250,12 @@ def suite_perf_api_latency(base: str) -> Suite:
         if isinstance(tracks, list) and tracks:
             track_id = tracks[0].get("id")
     if track_id:
-        cases.append(("GET", f"/api/audio/{track_id}", 250))
+        # Audio endpoint opens a file handle + reads bytes + returns
+        # Range-aware response. urllib reopens a TCP connection per
+        # call (no keep-alive), so the latency floor is the TCP
+        # handshake (~5ms) + actual file IO. 500ms is realistic for
+        # localhost against OneDrive-backed files.
+        cases.append(("GET", f"/api/audio/{track_id}", 500))
     else:
         s.check("discover track id for audio test", False,
                 "no tracks in seeded album")
@@ -678,7 +683,9 @@ def suite_visual_sweep(base: str, pw_ctx) -> Suite:
         console_errors[page_name] = msgs
 
         try:
-            page.goto(f"{base}/site/{page_name}",
+            # Cache-bust HTML to ensure we exercise the latest served
+            # version (not whatever Chrome cached on a previous run).
+            page.goto(f"{base}/site/{page_name}?v={int(time.time())}",
                       wait_until="domcontentloaded", timeout=15000)
             page.wait_for_timeout(1200)
             for theme in THEMES:

@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>sonic-sounds · albums · mixtape '85</title>
+<meta name="description" content="Browse the sonic-sounds album library. Open one to read its 12-layer build pipeline.">
+<meta property="og:title" content="sonic-sounds · albums · mixtape '85">
+<meta property="og:description" content="Browse the sonic-sounds album library. Open one to read its 12-layer build pipeline.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://127.0.0.1:8765/site/albums.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sonic-sounds · albums · mixtape '85">
+<meta name="twitter:description" content="Browse the sonic-sounds album library. Open one to read its 12-layer build pipeline.">
+<link rel="canonical" href="http://127.0.0.1:8765/site/albums.html">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site/albums.module.css">
 <link rel="stylesheet" href="/site/themes.css">
@@ -87,23 +97,23 @@
     <form id="new-album-form" class="modal-body">
       <label class="field">
         <span class="field-label">ID <em>· slug, lowercase, no spaces</em></span>
-        <input type="text" name="id" required pattern="[a-z0-9-]+" placeholder="e.g. midnight-room">
+        <input type="text" name="id" required pattern="[a-z0-9-]+" placeholder="e.g. midnight-room" aria-label="Album slug (lowercase, hyphens)">
       </label>
       <label class="field">
         <span class="field-label">TITLE</span>
-        <input type="text" name="title" required placeholder="e.g. Midnight Room">
+        <input type="text" name="title" required placeholder="e.g. Midnight Room" aria-label="Album title">
       </label>
       <label class="field">
         <span class="field-label">ARTIST ID</span>
-        <input type="text" name="primary_artist_id" required value="maren-sol" placeholder="maren-sol">
+        <input type="text" name="primary_artist_id" required value="maren-sol" placeholder="maren-sol" aria-label="Primary artist ID (slug)">
       </label>
       <label class="field">
         <span class="field-label">RELEASE DATE <em>· YYYY-MM-DD</em></span>
-        <input type="text" name="release_date" pattern="\d{4}-\d{2}-\d{2}" placeholder="2026-09-21">
+        <input type="text" name="release_date" pattern="\d{4}-\d{2}-\d{2}" placeholder="2026-09-21" aria-label="Release date (YYYY-MM-DD)">
       </label>
       <label class="field">
         <span class="field-label">RUNTIME <em>· minutes</em></span>
-        <input type="number" name="runtime_min" min="1" max="200" value="40">
+        <input type="number" name="runtime_min" min="1" max="200" value="40" aria-label="Total runtime in minutes">
       </label>
       <div class="form-error" id="form-error" hidden></div>
       <div class="modal-actions">
@@ -116,6 +126,6 @@
 
 <script src="/site/albums.js?v=day12-no-drawer"></script>
 <script src="/site/themes.js" defer></script>
-<script src="/site/header-player.js?v=hp3"></script>
+<script src="/site/header-player.js?v=hp5"></script>
 </body>
 </html>
