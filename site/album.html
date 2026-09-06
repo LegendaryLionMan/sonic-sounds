@@ -14,22 +14,51 @@
 <meta name="twitter:description" content="An individual album page. Tracklist, cover art, ISRC codes, credits.">
 <link rel="canonical" href="http://127.0.0.1:8765/site/album.html">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/site/themes.css?v=hp6">
-<link rel="stylesheet" href="/site/album-card.css?v=hp6">
-<link rel="stylesheet" href="/site/albums.module.css?v=hp6">
+<link rel="stylesheet" href="/site/themes.css?v=hp7">
+<link rel="stylesheet" href="/site/album-card.css?v=hp7">
+<link rel="stylesheet" href="/site/albums.module.css?v=hp8">
 <link rel="stylesheet" href="/site/spring.css?v=hp6">
 <link rel="stylesheet" href="/site/spring-extra.css?v=hp6">
 <link rel="stylesheet" href="/site/status.css?v=hp6">
 <link rel="stylesheet" href="/site/decisions.css?v=hp6">
 <link rel="stylesheet" href="/site/modals.css?v=hp6">
-<link rel="stylesheet" href="/site/header-player.css?v=hp6">
+<link rel="stylesheet" href="/site/header-player.css?v=hp7">
 <style>
 /* album.html — dedicated full album view (replaces drawer) */
 .album-hero {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  /* minmax(0, 360px) instead of fixed 360px so the column can shrink
+   * below 360 on mobile (otherwise the cover image forces the column
+   * past the viewport and breaks the 1fr collapse to single column). */
+  grid-template-columns: minmax(0, 360px) 1fr;
   gap: 40px;
   padding: 48px 0 24px;
+}
+
+/* On narrow viewports the album-hero grid collapses to a single
+ * column so the 360px cover doesn't overflow. Without this, the cover
+ * + headline + meta grid all fight for space below 700px viewport. */
+@media (max-width: 720px) {
+  .album-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px 16px;
+  }
+  /* The H1 needs higher specificity than .album-headline h1 (which
+   * sets 56px unconditionally) so the media query wins on mobile.
+   * Also force word-wrap so long titles like "Half-Light Hours"
+   * don't blow out the column width. */
+  .album-hero .album-headline h1 {
+    font-size: 28px;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .album-hero .album-meta-grid { grid-template-columns: repeat(2, 1fr); }
+  /* The album-cover-large had aspect-ratio: 1/1 with no max-width;
+   * at desktop 360px, at mobile it should fit the viewport minus
+   * padding. */
+  .album-cover-large { max-width: 100%; margin: 0 auto; }
 }
 .album-cover-large {
   aspect-ratio: 1/1;
@@ -50,7 +79,13 @@
 .album-headline { display: flex; flex-direction: column; gap: 14px; }
 .album-headline .eyebrow { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; }
 .album-headline h1 { font-family: var(--display); font-size: 56px; line-height: 1.05; letter-spacing: -.01em; margin: 0; }
-.album-headline .lede { color: var(--ink-muted); font-size: 16px; max-width: 56ch; }
+.album-headline .lede { color: var(--ink-muted); font-size: 16px; max-width: 56ch; overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 720px) {
+  /* On mobile the album-headline grid is 1fr. The lede's max-width:56ch
+   * still applies but we additionally cap to 100% of the parent so
+   * the headline never exceeds the viewport. */
+  .album-headline .lede { max-width: 100%; }
+}
 
 .album-meta-grid {
   display: grid;
@@ -666,6 +701,6 @@
 })();
 </script>
 <script src="/site/themes.js" defer></script>
-<script src="/site/header-player.js?v=hp5"></script>
+<script src="/site/header-player.js?v=hp6"></script>
 </body>
 </html>

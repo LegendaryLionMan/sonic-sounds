@@ -356,6 +356,13 @@ a:hover { color: var(--yellow); }
   flex-direction: column;
   gap: var(--sp-xl);
 }
+/* On narrow viewports the 56px side padding + 280px grid minmax
+ * is wider than the viewport, causing horizontal overflow. Reduce
+ * both so mobile fits cleanly. */
+@media (max-width: 720px) {
+  .shell-page { padding: var(--sp-lg) var(--sp-md); gap: var(--sp-lg); }
+  .shell-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
 .shell-grid {
   display: grid;
   gap: var(--sp-md);
@@ -384,10 +391,17 @@ a:hover { color: var(--yellow); }
   border-top: 1px solid var(--rule);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--sp-md);
   font-family: var(--mono);
   font-size: var(--fs-xs);
   color: var(--ink-muted);
+}
+@media (max-width: 720px) {
+  /* On mobile, the footer row overflows because health + 2 quota
+   * widgets exceed 375px. Wrap them and shrink the quota bars. */
+  .footer .quota { font-size: 10px; }
+  .footer .quota .bar { width: 80px; }
 }
 .footer .health { display: flex; align-items: center; gap: 6px; }
 .footer .health .dot {

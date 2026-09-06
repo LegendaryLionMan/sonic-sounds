@@ -150,7 +150,12 @@ html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-siz
   .section-head h2{font-size:40px}
 }
 @media(max-width:600px){
-  .hero h1{font-size:40px}
+  .hero{padding:24px 16px;gap:20px;min-width:0}
+  .hero-text{min-width:0;max-width:100%}
+  .hero h1{font-size:32px;line-height:1.05;overflow-wrap:anywhere;word-break:break-word;min-width:0}
+  .hero-stacked{padding:16px;min-width:0}
+  .hero-stat{padding:16px 20px;min-width:0}
+  .eyebrow,.lede{min-width:0;overflow-wrap:anywhere;word-break:break-word;max-width:100%}
   .session-grid,.album-grid{grid-template-columns:1fr}
   .meta-grid{grid-template-columns:1fr}
 }

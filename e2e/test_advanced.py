@@ -920,6 +920,9 @@ def main() -> int:
         ("17", suite_intake_autosave,     True),
         ("18", suite_max_sessions_guard,  False),
         ("19", suite_player_state_machine, True),
+        ("20", suite_visual_inspection,   True),
+        ("21", suite_asset_gallery_state, True),
+        ("22", suite_player_state_persistence, True),
     ]
 
     total_pass = total_fail = 0
@@ -936,7 +939,11 @@ def main() -> int:
                     else:
                         s = fn(BASE, pw_ctx)
                 else:
-                    s = fn(BASE)
+                    try:
+                        s = fn(BASE, pw_ctx)
+                    except TypeError:
+                        # Function doesn't accept pw_ctx (legacy signature)
+                        s = fn(BASE)
             except Exception as e:
                 print(f"[{num}] CRASH: {type(e).__name__}: {e}")
                 import traceback
@@ -1460,6 +1467,361 @@ def suite_keys_panel_no_overlap(base: str, pw_ctx) -> Suite:
 
 
 # =====================================================================
+# SUITE 20 - VISUAL INSPECTION (full-page overflow / a11y regressions)
+# =====================================================================
+# Per 2026-09-06 user feedback: visual bugs that pass unit tests can
+# slip through (e.g. the keys panel overlap, the YOUR COLLECTION grid
+# collapse, the lyrics panel wide overflow). This suite integrates
+# the scripts/visual_inspect.py logic into the test runner so any
+# regression is caught in CI.
+
+ALL_PAGES = ["albums.html", "studio.html", "intake.html", "library.html",
+             "dashboard.html", "album.html", "index.html"]
+
+
+def suite_visual_inspection(base: str, pw_ctx) -> Suite:
+    """Run scripts/visual_inspect.py-style checks across all pages."""
+    s = Suite("VISUAL INSPECTION: overflow / a11y / labels")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        ctx = browser.contexts[0]
+        page = ctx.pages[0]
+        for viewport_name, vp_w, vp_h in [("desktop", 1440, 900),
+                                            ("mobile", 375, 812)]:
+            page.set_viewport_size({"width": vp_w, "height": vp_h})
+            for path in ALL_PAGES:
+                page.goto(
+                    f"{base}/site/{path}?v=vis-{viewport_name}-{int(time.time())}",
+                    wait_until="domcontentloaded", timeout=15000,
+                )
+                page.wait_for_timeout(500)
+                page.evaluate(
+                    "window.Themes && window.Themes.set('mixtape85')"
+                )
+                page.wait_for_timeout(200)
+                # 1. No horizontal overflow: check body.scrollWidth vs
+                # window.innerWidth (the authoritative measure). Body
+                # scrollWidth includes ALL elements regardless of
+                # transform, so the OFFSCREEN popovers count too.
+                # Pass iff body is <= viewport, OR all overflowing
+                # elements are intentionally transformed off-screen.
+                overflow = page.evaluate("""
+                    () => {
+                        const w = window.innerWidth;
+                        const overflowing = [];
+                        document.querySelectorAll('*').forEach(el => {
+                            const r = el.getBoundingClientRect();
+                            const cs = getComputedStyle(el);
+                            if (r.right > w + 4 && r.width > 50) {
+                                // Walk ancestors and check if any has a
+                                // non-identity transform OR position:fixed
+                                // (i.e. is an off-screen popover)
+                                let p = el;
+                                let inPopover = false;
+                                while (p && p !== document.body) {
+                                    const pcs = getComputedStyle(p);
+                                    if (pcs.position === 'fixed') {
+                                        inPopover = true; break;
+                                    }
+                                    if (pcs.transform && pcs.transform !== 'none'
+                                        && pcs.transform !== 'matrix(1, 0, 0, 1, 0, 0)') {
+                                        inPopover = true; break;
+                                    }
+                                    p = p.parentElement;
+                                }
+                                if (!inPopover) {
+                                    overflowing.push({
+                                        tag: el.tagName,
+                                        cls: el.className.toString().slice(0, 40),
+                                        right: Math.round(r.right),
+                                        transform: cs.transform.slice(0, 50),
+                                        pos: cs.position,
+                                    });
+                                }
+                            }
+                        });
+                        return {
+                            body: document.body.scrollWidth,
+                            html: document.documentElement.scrollWidth,
+                            vp: window.innerWidth,
+                            overflowing: overflowing,
+                        };
+                    }
+                """)
+                s.check(
+                    f"{viewport_name} {path}: body width <= viewport "
+                    f"(excluding off-screen popovers)",
+                    not overflow["overflowing"],
+                    f"body={overflow['body']}px > viewport={overflow['vp']}px; "
+                    f"overflowing={[(e['tag'], e['cls']) for e in overflow['overflowing'][:3]]}",
+                )
+                # 2. Theme picker present
+                picker = page.evaluate(
+                    "!!document.querySelector('.theme-picker-host, [class*=theme-picker]')"
+                )
+                s.check(
+                    f"{viewport_name} {path}: theme picker present",
+                    picker,
+                    f"got {picker}",
+                )
+                # 3. Header player present
+                player = page.evaluate(
+                    "!!document.querySelector('.header-player')"
+                )
+                s.check(
+                    f"{viewport_name} {path}: header player present",
+                    player,
+                )
+                # 4. No img missing alt (regression test)
+                img_no_alt = page.evaluate("""
+                    () => Array.from(document.querySelectorAll('img'))
+                        .filter(i => !i.hasAttribute('alt') && !i.getAttribute('aria-hidden'))
+                        .length
+                """)
+                s.check(
+                    f"{viewport_name} {path}: all <img> have alt text",
+                    img_no_alt == 0,
+                    f"{img_no_alt} images missing alt",
+                )
+                # 5. No stuck-open panels
+                open_panels = page.evaluate("""
+                    () => {
+                        const out = [];
+                        for (const cls of ['keys-open', 'lyrics-open', 'is-open']) {
+                            if (document.querySelector('.header-player.' + cls))
+                                out.push(cls);
+                        }
+                        return out;
+                    }
+                """)
+                s.check(
+                    f"{viewport_name} {path}: no panels stuck open",
+                    not open_panels,
+                    f"open: {open_panels}",
+                )
+                # 6. Reasonable page height (not 8000+ pixels)
+                h = page.evaluate("document.documentElement.scrollHeight")
+                s.check(
+                    f"{viewport_name} {path}: page height < 6000px",
+                    h < 6000,
+                    f"page is {h}px tall",
+                )
+    except Exception as e:
+        s.check("visual inspection run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
+# SUITE 21 - ASSET GALLERY (state after lightbox interactions)
+# =====================================================================
+# Per 2026-09-06 user feedback: the asset gallery was missing
+# preview UI, then added, then verified in suite 14. This suite
+# verifies the GALLERY IS STILL FUNCTIONAL by clicking each kind of
+# asset and checking the lightbox closes / opens correctly.
+
+def suite_asset_gallery_state(base: str, pw_ctx) -> Suite:
+    """Click each asset kind and verify the lightbox shows media."""
+    s = Suite("ASSET GALLERY: per-kind lightbox interaction")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        page = browser.contexts[0].pages[0]
+        page.goto(f"{base}/site/album.html?id=half-light-hours&v=gallery2-{int(time.time())}",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(2500)
+        # 1. Each tile kind has correct data attribute
+        kinds = page.evaluate("""
+            () => Array.from(document.querySelectorAll('.asset-tile'))
+                .map(t => t.dataset.assetKind)
+        """)
+        unique_kinds = sorted(set(kinds))
+        s.check(
+            f"asset gallery has multiple kinds: {','.join(unique_kinds)}",
+            len(unique_kinds) >= 3,
+            f"got kinds: {unique_kinds}",
+        )
+        # 2. Image tiles show image preview, video tiles show play icon
+        has_image_thumb = page.evaluate(
+            "!!document.querySelector('.asset-tile img.thumb')"
+        )
+        has_video_thumb = page.evaluate(
+            "!!document.querySelector('.asset-tile .thumb.video')"
+        )
+        s.check(
+            "image tiles show image preview",
+            has_image_thumb,
+        )
+        s.check(
+            "video tiles show play icon placeholder",
+            has_video_thumb,
+        )
+        # 3. Click image tile -> lightbox opens with <img>
+        page.evaluate("""
+            document.querySelectorAll('.asset-tile')[0]?.click()
+        """)
+        page.wait_for_timeout(800)
+        lb_open = page.evaluate(
+            "document.getElementById('asset-lightbox').classList.contains('is-open')"
+        )
+        lb_has_img = page.evaluate(
+            "!!document.getElementById('asset-lightbox').querySelector('img')"
+        )
+        lb_has_video = page.evaluate(
+            "!!document.getElementById('asset-lightbox').querySelector('video')"
+        )
+        s.check(
+            "clicking image tile opens lightbox",
+            lb_open and lb_has_img,
+            f"lb_open={lb_open} img={lb_has_img}",
+        )
+        # 4. Close lightbox
+        page.evaluate("""
+            document.getElementById('asset-lightbox').classList.remove('is-open')
+            document.getElementById('asset-lightbox').setAttribute('aria-hidden', 'true')
+        """)
+        page.wait_for_timeout(300)
+        # 5. Click video tile -> lightbox opens with <video>
+        video_tiles = page.evaluate("""
+            Array.from(document.querySelectorAll('.asset-tile'))
+                .filter(t => t.dataset.assetKind === 'video')
+        """)
+        if video_tiles:
+            page.evaluate(f"document.querySelectorAll('.asset-tile')[{page.evaluate('Array.from(document.querySelectorAll(\".asset-tile\")).findIndex(t => t.dataset.assetKind === \"video\")')}].click()")
+            page.wait_for_timeout(800)
+            lb_video = page.evaluate(
+                "!!document.getElementById('asset-lightbox').querySelector('video')"
+            )
+            s.check(
+                "clicking video tile opens lightbox with <video>",
+                lb_video,
+            )
+    except Exception as e:
+        s.check("asset gallery state run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
+# SUITE 22 - HEADER PLAYER STATE EDGES (mute persists, sleep persists)
+# =====================================================================
+# Per 2026-09-06 user feedback: visual inspection confirmed that the
+# mute button and sleep timer state should persist across navigation.
+# This suite verifies the PERSISTENCE specifically (suite 19 covers
+# the toggles; this covers the roundtrip across navigation).
+
+def suite_player_state_persistence(base: str, pw_ctx) -> Suite:
+    """Verify mute and sleep state persist across page navigations."""
+    s = Suite("PLAYER STATE: persistence across navigations")
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        s.check("Playwright available", False, "skip")
+        return s
+    own_pw = pw_ctx is None
+    if own_pw:
+        pw_ctx = sync_playwright().start()
+    try:
+        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        page = browser.contexts[0].pages[0]
+        page.goto(f"{base}/site/albums.html?v=persist-{int(time.time())}",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1200)
+        # Reset state
+        page.evaluate("""
+            localStorage.removeItem('sonic-sounds:header-player:v1');
+            const hp = document.querySelector('.header-player');
+            if (hp) hp.classList.remove('keys-open', 'lyrics-open', 'is-open');
+        """)
+        page.reload(wait_until="domcontentloaded")
+        page.wait_for_timeout(1500)
+
+        # Set sleep to 15m
+        page.evaluate(
+            "document.querySelector('[data-action=\"sleep\"]').click()"
+        )
+        page.wait_for_timeout(300)
+        sleep_before = page.evaluate(
+            "document.querySelector('[data-action=\"sleep\"]').title"
+        )
+        s.check(
+            "sleep set to 15m initially",
+            "15" in sleep_before,
+            f"got title={sleep_before!r}",
+        )
+        # Mute
+        page.evaluate(
+            "document.querySelector('[data-action=\"mute\"]').click()"
+        )
+        page.wait_for_timeout(300)
+        vol_after_mute = page.evaluate(
+            "document.getElementById('hp-audio').volume"
+        )
+        s.check(
+            "mute sets volume to 0",
+            vol_after_mute == 0,
+            f"got vol={vol_after_mute}",
+        )
+        # Navigate to library.html and back
+        page.goto(f"{base}/site/library.html?v=p2-{int(time.time())}",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1200)
+        sleep_after = page.evaluate(
+            "document.querySelector('[data-action=\"sleep\"]')?.title"
+        )
+        vol_after_nav = page.evaluate(
+            "document.getElementById('hp-audio').volume"
+        )
+        s.check(
+            "sleep state persists across navigation",
+            "15" in (sleep_after or "") or "min remaining" in (sleep_after or "").lower(),
+            f"got title={sleep_after!r}",
+        )
+        s.check(
+            "mute state persists across navigation",
+            vol_after_nav == 0,
+            f"got vol={vol_after_nav}",
+        )
+        # Theme persists too
+        page.evaluate("window.Themes.set('tokyo-night')")
+        page.wait_for_timeout(300)
+        page.goto(f"{base}/site/dashboard.html?v=p3-{int(time.time())}",
+                  wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(1000)
+        theme = page.evaluate("document.documentElement.dataset.theme")
+        s.check(
+            "theme persists across navigation",
+            theme == "tokyo-night",
+            f"got {theme!r}",
+        )
+    except Exception as e:
+        s.check("player state persistence run", False, str(e))
+    finally:
+        if own_pw:
+            pw_ctx.stop()
+    return s
+
+
+# =====================================================================
 # SUITE 16 - THEME PERSISTENCE (localStorage)
 # =====================================================================
 # Per CATCH-UP §2.3 the chosen theme is persisted in localStorage as
@@ -1692,7 +2054,7 @@ def suite_intake_autosave(base: str, pw_ctx) -> Suite:
 # 4th active session returns 409 (or equivalent) and that closing one
 # frees a slot.
 
-def suite_max_sessions_guard(base: str, pw_ctx) -> Suite:
+def suite_max_sessions_guard(base: str, pw_ctx=None) -> Suite:
     """Verify the max-3-active-sessions enforcement on POST /api/sessions."""
     s = Suite("MAX-3 SESSIONS: concurrent guard")
     try:

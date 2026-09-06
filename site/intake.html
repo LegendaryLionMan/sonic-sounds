@@ -328,13 +328,13 @@
       .question .refs-slot { grid-template-columns: 1fr; }
     }
   </style>
-<link rel="stylesheet" href="/site/themes.css?v=hp6">
-<link rel="stylesheet" href="/site/album-card.css?v=hp6">
-<link rel="stylesheet" href="/site/albums.module.css?v=hp6">
+<link rel="stylesheet" href="/site/themes.css?v=hp7">
+<link rel="stylesheet" href="/site/album-card.css?v=hp7">
+<link rel="stylesheet" href="/site/albums.module.css?v=hp8">
 <link rel="stylesheet" href="/site/spring.css?v=hp6">
 <link rel="stylesheet" href="/site/status.css?v=hp6">
 <link rel="stylesheet" href="/site/decisions.css?v=hp6">
-<link rel="stylesheet" href="/site/header-player.css?v=hp6">
+<link rel="stylesheet" href="/site/header-player.css?v=hp7">
 </head>
 <body><span data-theme-mount class="theme-picker-host"></span>
   <main>
@@ -370,7 +370,7 @@
           </div>
           <h3>What is this album <em>about</em>?</h3>
           <p class="hint">The emotional or narrative heart — not genre, not vibe, not references. One sentence you would tell a friend.</p>
-          <textarea class="control" name="M01_concept" placeholder="It is the album about..."></textarea>
+          <textarea class="control" name="M01_concept" placeholder="It is the album about..." aria-label="Album concept"></textarea>
         </article>
 
         <!-- M·02 scope -->
@@ -378,7 +378,7 @@
           <div class="head"><span class="tag">M·02</span><span class="id">project scope</span></div>
           <h3>What scope?</h3>
           <p class="hint">Be honest about your ambition. A single is its own discipline.</p>
-          <select class="control" name="M02_scope">
+          <select class="control" name="M02_scope" aria-label="Project scope">
             <option value="">— pick one —</option>
             <option value="single">single (1 track)</option>
             <option value="ep">EP (3–5 tracks)</option>
@@ -423,7 +423,7 @@
           <h3>Vocal approach + voice character</h3>
           <p class="hint">Pick the structural approach, then describe the <em>character</em> of the voice in one or two lines.</p>
           <div class="row" style="margin-bottom:.6rem;">
-            <select class="control" name="M05_approach">
+            <select class="control" name="M05_approach" aria-label="Vocal approach">
               <option value="">— approach —</option>
               <option value="solo">solo vocal</option>
               <option value="duet">duet (two voices)</option>
@@ -448,7 +448,7 @@
           <div class="head"><span class="tag">M·07</span><span class="id">runtime target</span></div>
           <h3>Runtime target per track</h3>
           <p class="hint">Different mixes for different platforms. Pick the one your album is <em>primarily</em> shaped for.</p>
-          <select class="control" name="M07_runtime">
+          <select class="control" name="M07_runtime" aria-label="Runtime target">
             <option value="">— pick one —</option>
             <option value="radio-edit">radio edit (2:30 – 3:30)</option>
             <option value="standard">standard (3:30 – 4:30)</option>
@@ -502,14 +502,14 @@
           <div class="head"><span class="tag">R·11</span><span class="id">visual motif</span></div>
           <h3>One recurring image</h3>
           <p class="hint">A window, a color, an object. The visual hook the cover and rollout will return to.</p>
-          <textarea class="control" name="R11_motif" placeholder="A half-closed window at dawn..."></textarea>
+          <textarea class="control" name="R11_motif" placeholder="A half-closed window at dawn..." aria-label="Visual motif (one recurring image)"></textarea>
         </article>
 
         <!-- R·12 production -->
         <article class="question" data-tier="R" data-qid="R12_production">
           <div class="head"><span class="tag">R·12</span><span class="id">production style</span></div>
           <h3>Production style</h3>
-          <select class="control" name="R12_production">
+          <select class="control" name="R12_production" aria-label="Production style">
             <option value="">— pick one (default: hybrid) —</option>
             <option value="stripped">stripped / acoustic-first</option>
             <option value="full-band">full band</option>
@@ -523,7 +523,7 @@
         <article class="question" data-tier="R" data-qid="R13_lyricalSource">
           <div class="head"><span class="tag">R·13</span><span class="id">lyrical source</span></div>
           <h3>Who writes the lyrics?</h3>
-          <select class="control" name="R13_lyricalSource">
+          <select class="control" name="R13_lyricalSource" aria-label="Lyrical source">
             <option value="">— pick one (default: co-write) —</option>
             <option value="user-writes">I write all the lyrics</option>
             <option value="agent-writes">agent drafts, I edit</option>
@@ -535,7 +535,7 @@
         <article class="question" data-tier="R" data-qid="R14_distribution">
           <div class="head"><span class="tag">R·14</span><span class="id">distribution intent</span></div>
           <h3>How far does this album go?</h3>
-          <select class="control" name="R14_distribution">
+          <select class="control" name="R14_distribution" aria-label="Distribution intent">
             <option value="">— pick one (default: full-dsp) —</option>
             <option value="just-for-me">just for me / private</option>
             <option value="routenote-free">RouteNote Free / Bandcamp</option>
@@ -557,35 +557,35 @@
           <div class="head"><span class="tag">E·15</span><span class="id">emotional arc</span></div>
           <h3>Shape of the listening experience</h3>
           <p class="hint">Cold → warm → cold?  gentle rise to catharsis?  scattered vignettes?  One paragraph.</p>
-          <textarea class="control" name="E15_arc" placeholder="The album opens at low volume and brightens with each track..."></textarea>
+          <textarea class="control" name="E15_arc" placeholder="The album opens at low volume and brightens with each track..." aria-label="Emotional arc (opening to closing)"></textarea>
         </article>
 
         <!-- E·16 influences -->
         <article class="question" data-tier="E" data-qid="E16_influences">
           <div class="head"><span class="tag">E·16</span><span class="id">non-music influences</span></div>
           <h3>Books, films, places, seasons that shaped the sound</h3>
-          <textarea class="control" name="E16_influences" placeholder="The reading room of the public library on Sundays, before closing. Tarkovsky's Mirror. The first hour of a thunderstorm."></textarea>
+          <textarea class="control" name="E16_influences" placeholder="The reading room of the public library on Sundays, before closing. Tarkovsky's Mirror. The first hour of a thunderstorm." aria-label="Non-music influences (books, films, places)"></textarea>
         </article>
 
         <!-- E·17 cover art -->
         <article class="question" data-tier="E" data-qid="E17_coverArt">
           <div class="head"><span class="tag">E·17</span><span class="id">cover art direction</span></div>
           <h3>Palette, photo vs illustration, typography mood</h3>
-          <textarea class="control" name="E17_coverArt" placeholder="Hand-drawn line illustration on cream paper, sage-green and rust accent, serif title set in lower-case only."></textarea>
+          <textarea class="control" name="E17_coverArt" placeholder="Hand-drawn line illustration on cream paper, sage-green and rust accent, serif title set in lower-case only." aria-label="Cover art direction (palette, photo vs illustration, typography)"></textarea>
         </article>
 
         <!-- E·18 anchor -->
         <article class="question" data-tier="E" data-qid="E18_anchor">
           <div class="head"><span class="tag">E·18</span><span class="id">physical anchor</span></div>
           <h3>The ONE thing the listener should remember</h3>
-          <textarea class="control" name="E18_anchor" placeholder="The breath at the start of track 3. The line: 'I was not ready then, but I am ready now.'"></textarea>
+          <textarea class="control" name="E18_anchor" placeholder="The breath at the start of track 3. The line: 'I was not ready then, but I am ready now.'" aria-label="The ONE thing the listener should remember"></textarea>
         </article>
 
         <!-- E·19 press scope -->
         <article class="question" data-tier="E" data-qid="E19_pressScope">
           <div class="head"><span class="tag">E·19</span><span class="id">press / rollout scope</span></div>
           <h3>How loud is the rollout?</h3>
-          <select class="control" name="E19_pressScope">
+          <select class="control" name="E19_pressScope" aria-label="Press / rollout scope">
             <option value="">— pick one (default: music-only) —</option>
             <option value="music-only">music only (default)</option>
             <option value="music-press">music + press kit (EPK)</option>
@@ -598,7 +598,7 @@
         <article class="question" data-tier="E" data-qid="E20_musicVideos">
           <div class="head"><span class="tag">E·20</span><span class="id">music videos</span></div>
           <h3>How many music videos?</h3>
-          <select class="control" name="E20_musicVideos">
+          <select class="control" name="E20_musicVideos" aria-label="How many music videos">
             <option value="">— pick one (default: 0) —</option>
             <option value="0">0 (default)</option>
             <option value="1-2">1–2 (lead single + one B-side)</option>
@@ -662,9 +662,11 @@
       const title = document.createElement('input');
       title.type = 'text'; title.name = `R10_t${i}_title`;
       title.placeholder = `Track ${i} — title`; title.autocomplete = 'off';
+      title.setAttribute('aria-label', `Track ${i} title (required)`);
       const theme = document.createElement('input');
       theme.type = 'text'; theme.name = `R10_t${i}_theme`;
       theme.placeholder = 'theme (optional)'; theme.autocomplete = 'off';
+      theme.setAttribute('aria-label', `Track ${i} theme (optional)`);
       grid.appendChild(num); grid.appendChild(title); grid.appendChild(theme);
     }
 
@@ -976,6 +978,6 @@
     refreshGate();
   </script>
 <script src="/site/themes.js" defer></script>
-<script src="/site/header-player.js?v=hp5"></script>
+<script src="/site/header-player.js?v=hp6"></script>
 </body>
 </html>
