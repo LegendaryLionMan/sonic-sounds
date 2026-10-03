@@ -165,6 +165,48 @@ def register_routes(app: Quart) -> None:
         }
         return jsonify(payload)
 
+    # === Harness identity endpoint =========================================
+    # Added 2026-10-03. The E2E suite spent a full session validating a
+    # STALE COPY of the project (a second checkout at
+    # Documents/Projects/album-studio) because port 8765 was already held
+    # by a daemon launched from that other tree. All browser assertions
+    # passed -- against the wrong code.
+    #
+    # This endpoint lets the test harness assert that the daemon it is
+    # talking to is serving the same tree it is reading from disk.
+    @app.route("/api/debug/identity", methods=["GET"])
+    async def debug_identity():
+        import hashlib
+        import os as _os
+        from db.connection import default_db_path
+        def _tree_fingerprint():
+            """Hash the mtime+size of a few sentinel files under site/.
+            Changes whenever the served tree changes."""
+            parts = []
+            for name in ("themes.css", "header-player.js", "header-player.css",
+                         "albums.html", "intake.html", "album.html"):
+                p = SITE_DIR / name
+                try:
+                    st = p.stat()
+                    parts.append(f"{name}:{st.st_size}:{int(st.st_mtime)}")
+                except OSError:
+                    parts.append(f"{name}:MISSING")
+            return hashlib.sha256("|".join(parts).encode()).hexdigest()[:16]
+        def _pid_cwd():
+            import psutil  # optional
+            try:
+                return psutil.Process(_os.getpid()).cwd()
+            except Exception:
+                return _os.getcwd()
+        return jsonify({
+            "proj_root": str(PROJ_ROOT),
+            "site_dir": str(SITE_DIR),
+            "db_path": str(default_db_path()),
+            "tree_fingerprint": _tree_fingerprint(),
+            "pid": _os.getpid(),
+            "cwd": _pid_cwd(),
+        })
+
     @app.route("/", methods=["GET"])
     async def index():
         """Root URL redirects to the studio — bare `localhost:8765/` always works."""

@@ -173,7 +173,7 @@ def _connect_chrome(pw_ctx):
     Caller is responsible for the lifetime of pw_ctx. Caller must NOT close
     pw_ctx while the returned browser/context/page are in use.
     """
-    browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+    browser = _connect_browser(pw_ctx)
     ctx = browser.contexts[0] if browser.contexts else browser.new_context()
     page = None
     for c in browser.contexts:
@@ -873,6 +873,221 @@ def suite_intake_paths(base: str) -> Suite:
 
 
 # =====================================================================
+# SUITE 0 - HARNESS SANITY: is the daemon serving THIS tree?
+# =====================================================================
+# Added 2026-10-03 after discovering that port 8765 was held by a
+# daemon launched from a SECOND checkout
+# (Documents/Projects/album-studio), not from this repo. Every browser
+# suite passed -- against the wrong code.
+#
+# This suite runs FIRST and asserts identity, so a mismatch is a loud
+# failure instead of a green run that proved nothing.
+#
+# Checks:
+#   1. GET /api/debug/identity responds
+#   2. proj_root matches the repo this script lives in
+#   3. site_dir matches this repo's site/ directory
+#   4. db_path resolves to this repo's .meta/sonic-sounds.db
+#   5. Served HTML byte-matches on-disk HTML (spot-check 3 pages)
+#   6. Served tree fingerprint matches local tree fingerprint
+
+SUITE0_SENTINEL_PAGES = ["albums.html", "intake.html", "album.html"]
+
+# Chromium candidates, in preference order. The first that exists wins.
+_CHROMIUM_CANDIDATES = [
+    r"C:\Users\lion_\AppData\Local\ms-playwright\chromium-1234\chrome-win64\chrome.exe",
+    r"C:\Users\lion_\AppData\Local\ms-playwright\chromium_headless_shell-1234"
+    r"\chrome-headless-shell-win64\chrome-headless-shell.exe",
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+]
+_CDP_PORT = 9333
+_CDP_PROFILE = r"C:\Users\lion_\AppData\Local\hermes\profiles\chrome-sonic-sounds"
+
+
+def _cdp_alive(port: int = _CDP_PORT, timeout: float = 1.5) -> bool:
+    """Is a CDP endpoint listening on `port`?"""
+    try:
+        with urllib.request.urlopen(
+            f"http://127.0.0.1:{port}/json/version", timeout=timeout
+        ) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def ensure_visible_chrome(port: int = _CDP_PORT, window: bool = True) -> bool:
+    """Make sure a CDP-enabled Chromium is listening on `port`.
+
+    The browser suites need a real browser with remote debugging. Rather
+    than fail with ECONNREFUSED when the operator has not started one
+    (or when it died mid-run, which happened twice in one session), the
+    harness launches its own. Idempotent: if a CDP endpoint is already
+    up, this is a no-op and the existing window is reused.
+
+    Returns True if a CDP endpoint is reachable when this returns.
+    """
+    if _cdp_alive(port):
+        return True
+    from pathlib import Path as _P
+    exe = next((p for p in (_P(c) for c in _CHROMIUM_CANDIDATES) if p.exists()), None)
+    if exe is None:
+        return False
+    import subprocess
+    import time
+    args = [
+        str(exe),
+        f"--remote-debugging-port={port}",
+        "--remote-allow-origins=*",
+        f"--user-data-dir={_CDP_PROFILE}",
+        "--window-size=1440,900",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-features=Translate,MediaRouter",
+        "about:blank",
+    ]
+    try:
+        subprocess.Popen(
+            args,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=(getattr(subprocess, "DETACHED_PROCESS", 0)
+                           | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+            if sys.platform == "win32" else 0,
+        )
+    except Exception:
+        return False
+    # Poll for the endpoint to come up.
+    deadline = time.time() + 20.0
+    while time.time() < deadline:
+        if _cdp_alive(port, timeout=0.8):
+            return True
+        time.sleep(0.4)
+    return False
+
+
+def _connect_browser(pw_ctx):
+    """Connect to the CDP browser, launching one if needed.
+
+    Every browser suite funnels through here. If the CDP endpoint is
+    down (nobody started a browser, or it died mid-run -- which
+    happened twice in a single session) we launch our own and retry
+    once, instead of failing every suite with ECONNREFUSED.
+    """
+    import time as _t
+    url = f"http://127.0.0.1:{_CDP_PORT}"
+    last = None
+    for attempt in range(2):
+        try:
+            return pw_ctx.chromium.connect_over_cdp(url)
+        except Exception as e:  # noqa: BLE001
+            last = e
+            if attempt == 0:
+                ensure_visible_chrome()
+                _t.sleep(1.0)
+    raise last
+
+
+def suite_harness_sanity(base: str, pw_ctx=None) -> Suite:
+    """Assert the daemon under test is serving the repo under test."""
+    s = Suite("HARNESS SANITY: daemon serves this tree")
+    import hashlib
+    import os as _os
+    from pathlib import Path as _Path
+
+    repo = _Path(__file__).resolve().parent.parent
+    import urllib.request as _ur
+
+    def _bytes(path: str) -> bytes:
+        try:
+            with _ur.urlopen(f"{base}{path}", timeout=10) as r:
+                return r.read()
+        except Exception:
+            return b""
+
+    # 0. Content-first check. This is the ground truth and works even
+    #    against an older daemon that lacks /api/debug/identity. If the
+    #    served bytes differ from this repo, we are testing the wrong
+    #    tree -- say so loudly and stop.
+    mismatch = []
+    for page in SUITE0_SENTINEL_PAGES:
+        disk = repo / "site" / page
+        try:
+            disk_bytes = disk.read_bytes()
+        except OSError:
+            continue
+        served_bytes = _bytes(f"/site/{page}")
+        if hashlib.sha256(served_bytes).hexdigest() != \
+                hashlib.sha256(disk_bytes).hexdigest():
+            mismatch.append(page)
+    s.check(
+        "served HTML is byte-identical to this repo (ground truth)",
+        not mismatch,
+        f"mismatched pages: {mismatch}"
+        + ("  <-- DAEMON IS SERVING A DIFFERENT TREE" if mismatch else ""),
+    )
+
+    # 1. identity endpoint responds (best-effort: absent on old daemons)
+    ident = None
+    try:
+        code, ident = _api("GET", "/api/debug/identity", base=base)
+    except Exception as e:
+        s.check("GET /api/debug/identity responds", False, str(e))
+        ident = None
+    if code == 200 and isinstance(ident, dict):
+        s.check("GET /api/debug/identity responds", True)
+    else:
+        # An older daemon may not expose it. Not a failure on its own --
+        # the byte check above already proved tree identity.
+        s.check(
+            "identity endpoint available (informational)",
+            True,
+            f"daemon predates /api/debug/identity (HTTP {code}); "
+            "tree identity proven by byte check instead",
+        )
+
+    if isinstance(ident, dict):
+        # 2. proj_root matches this repo
+        served_root = str(ident.get("proj_root", "")).rstrip("\\/").lower()
+        want_root = str(repo).rstrip("\\/").lower()
+        s.check(
+            "daemon proj_root == repo under test",
+            served_root == want_root,
+            f"daemon serves {ident.get('proj_root')!r}, tests run against {str(repo)!r}"
+            + ("  <-- STALE DAEMON" if served_root != want_root else ""),
+        )
+
+        # 3. site_dir matches
+        served_site = str(ident.get("site_dir", "")).rstrip("\\/").lower()
+        want_site = str(repo / "site").rstrip("\\/").lower()
+        s.check(
+            "daemon site_dir == repo site/",
+            served_site == want_site,
+            f"daemon {ident.get('site_dir')!r} vs {str(repo / 'site')!r}",
+        )
+
+        # 4. db_path resolves under this repo (or an explicit env override)
+        served_db = str(ident.get("db_path", ""))
+        db_ok = (served_db.rstrip("\\/").lower().startswith(want_root)
+                 or _os.environ.get("SONIC_SOUNDS_DB_PATH") is not None)
+        s.check(
+            "daemon db_path is this repo's db (or env override is set)",
+            db_ok,
+            f"db_path={served_db!r}",
+        )
+
+    # If identity failed, the rest of the run is meaningless. Flag it so
+    # the summary is unambiguous.
+    if mismatch:
+        s.results.append(Result(
+            "ABORT: remaining suites would validate the wrong tree",
+            False,
+            "kill the daemon on this port and start it from this repo, then re-run",
+        ))
+    return s
+
+
+# =====================================================================
 # MAIN
 # =====================================================================
 
@@ -901,6 +1116,7 @@ def main() -> int:
         pw_ctx = None
 
     suites = [
+        ("0",  suite_harness_sanity,    False),
         ("1",  suite_perf_page_load,      False),
         ("2",  suite_perf_api_latency,    False),
         ("3",  suite_security_headers,    False),
@@ -1000,7 +1216,7 @@ def suite_theme_alignment(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         ctx = browser.contexts[0]
         page = ctx.pages[0]
 
@@ -1086,7 +1302,7 @@ def suite_music_player_responsive(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         ctx = browser.contexts[0]
 
         for vname, w, h in VIEWPORTS:
@@ -1210,7 +1426,7 @@ def suite_music_player_button_states(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/albums.html?v=btn-states&t={int(time.time())}",
                   wait_until="domcontentloaded", timeout=15000)
@@ -1328,7 +1544,7 @@ def suite_asset_gallery(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/album.html?id=half-light-hours&v=gallery&t={int(time.time())}",
                   wait_until="domcontentloaded", timeout=15000)
@@ -1430,7 +1646,7 @@ def suite_keys_panel_no_overlap(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/albums.html?v=keys&t={int(time.time())}",
                   wait_until="domcontentloaded", timeout=15000)
@@ -1491,7 +1707,7 @@ def suite_visual_inspection(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         ctx = browser.contexts[0]
         page = ctx.pages[0]
         for viewport_name, vp_w, vp_h in [("desktop", 1440, 900),
@@ -1642,7 +1858,7 @@ def suite_asset_gallery_state(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/album.html?id=half-light-hours&v=gallery2-{int(time.time())}",
                   wait_until="domcontentloaded", timeout=15000)
@@ -1741,7 +1957,7 @@ def suite_player_state_persistence(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/albums.html?v=persist-{int(time.time())}",
                   wait_until="domcontentloaded", timeout=15000)
@@ -1842,7 +2058,7 @@ def suite_theme_persistence(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         # 1. Closed loop: set tokyo-night, navigate to another page, check
         # it carries over.
@@ -1943,7 +2159,7 @@ def suite_intake_autosave(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/intake.html?v=autosave",
                   wait_until="domcontentloaded", timeout=15000)
@@ -2139,7 +2355,7 @@ def suite_player_state_machine(base: str, pw_ctx) -> Suite:
     if own_pw:
         pw_ctx = sync_playwright().start()
     try:
-        browser = pw_ctx.chromium.connect_over_cdp("http://127.0.0.1:9333")
+        browser = _connect_browser(pw_ctx)
         page = browser.contexts[0].pages[0]
         page.goto(f"{base}/site/albums.html?v=player-state",
                   wait_until="domcontentloaded", timeout=15000)

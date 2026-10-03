@@ -15,6 +15,12 @@ for your own workflow — they compose, they don't fight each other.
 | Check daemon status | `python scripts/dev.py --status` |
 | Run advanced E2E suite | `python scripts/e2e.py` |
 | Spawn daemon + run E2E | `python scripts/e2e.py --spawn --stop-after` |
+| Full visual inspection | `python scripts/visual_inspect.py` |
+| a11y audit (axe-core) | `python scripts/axe_audit.py` |
+| Visual regression diff | `python scripts/backstop.py --update` then `--threshold 2` |
+| Find broken assets | `python scripts/asset_finder.py` |
+| Perf trace (p50/p95/p99) | `python scripts/perf_trace.py --duration 30` |
+| Snapshot all pages × 6 themes | `python scripts/doc_snapshot.py` |
 | Tail daemon log | `python scripts/log_tail.py` |
 | Tail last 100 lines | `python scripts/log_tail.py --last 100` |
 | Log level histogram | `python scripts/log_tail.py --stats` |
@@ -67,6 +73,55 @@ breaks the cassette aspect ratio).
 ### `daemon_spawn.py` — shared daemon lifecycle helper
 Foundation for `dev.py` and `e2e.py`. Provides `spawn`, `kill_port`,
 `wait_healthy`, `is_port_free`.
+
+---
+
+## Testing hygiene (read this before trusting a green run)
+
+Two failure modes can make a fully-green E2E run meaningless. Both are
+now guarded automatically, but it's worth knowing what they are.
+
+### 1. Stale daemon on the port
+
+There is a **second checkout** of this project at
+`C:\Users\lion_\Documents\Projects\album-studio`. If a daemon from that
+tree already holds `:8765`, every browser assertion in the suite
+validates the *wrong code* — and still passes, because the two trees
+are close enough to satisfy the same assertions.
+
+This happened for a full session on 2026-10-03.
+
+Guards:
+- `GET /api/debug/identity` reports `proj_root`, `site_dir`, `db_path`
+  and a `tree_fingerprint` of the served `site/` files.
+- **Suite 0 (`HARNESS SANITY`)** runs first and compares the served
+  HTML bytes against the files on disk for three sentinel pages. This
+  is ground truth and works even against an older daemon that lacks
+  the identity endpoint. A mismatch adds an explicit `ABORT` failure.
+- `scripts/dev.py` refuses to start silently and prints a boxed
+  warning if the port holder reports a different `proj_root`.
+
+Fix when it trips:
+```
+python scripts/dev.py --stop
+python scripts/dev.py
+```
+
+### 2. No browser / browser died mid-run
+
+The browser suites need Chromium with `--remote-debugging-port=9333`.
+The harness now **launches its own** if that port is closed, and
+retries the CDP connection once. You do not need to start Chrome
+before running the suite. If you want to watch it live, start Chrome
+yourself first and the harness will reuse your window.
+
+### 3. Daemon health in one glance
+
+```
+python scripts/dev.py --status        # counts + pid
+curl -s localhost:8765/api/debug/identity | python -m json.tool
+```
+
 
 ### CI workflow — `.github/workflows/tests.yml`
 Three jobs:

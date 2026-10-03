@@ -81,6 +81,21 @@ def daemon_health(port: int, timeout: float = 1.5) -> dict:
         return {"status": "down", "error": str(e)}
 
 
+def daemon_identity(port: int, timeout: float = 1.5) -> dict | None:
+    """Probe /api/debug/identity to learn which tree a daemon is serving.
+
+    Returns None if the daemon is down, too old to expose the endpoint,
+    or not a sonic-sounds daemon at all.
+    """
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/debug/identity",
+                                     timeout=timeout) as r:
+            import json
+            return json.loads(r.read())
+    except Exception:
+        return None
+
+
 def wait_for_health(port: int, timeout: float = 8.0) -> bool:
     deadline = time.time() + timeout
     while time.time() < deadline:
@@ -95,6 +110,25 @@ def start_daemon(port: int) -> int:
     """Spawn the daemon. Returns the actual port used."""
     actual_port = port
     if not is_port_free(port):
+        # Before blindly grabbing the next port, warn loudly: the thing
+        # holding the port may be a daemon serving a DIFFERENT checkout
+        # of this project (this exact trap cost a full E2E session on
+        # 2026-10-03). Offer the identity endpoint as the oracle.
+        existing = daemon_identity(port)
+        if existing and existing.get("proj_root"):
+            here = str(ROOT).rstrip("\\/").lower()
+            theirs = str(existing.get("proj_root")).rstrip("\\/").lower()
+            if theirs != here:
+                print("!" * 68)
+                print(f"[dev] WARNING: port {port} is held by a daemon from a")
+                print(f"[dev]   DIFFERENT project root:")
+                print(f"[dev]     serving : {existing.get('proj_root')}")
+                print(f"[dev]     expected: {ROOT}")
+                print("[dev]   Any test hitting :" + str(port) +
+                      " would validate the WRONG tree.")
+                print(f"[dev]   stop it with:  python scripts/dev.py --stop --port {port}")
+                print("!" * 68)
+                return 3
         # Scan forward for the next free port (max 20 tries)
         for delta in range(1, 21):
             candidate = port + delta
