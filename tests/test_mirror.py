@@ -149,7 +149,10 @@ class TestPlaywrightE2ESmoke(unittest.TestCase):
         mod = importlib.util.module_from_spec(spec)
         # Don't execute() — that would run the e2e. Just verify the
         # source has the expected symbols by reading the file.
-        with open(PROJECT_ROOT / "e2e" / "test_playwright_e2e.py") as f:
+        # encoding must be explicit: on Windows the default is cp1252,
+        # which raises UnicodeDecodeError on this file's UTF-8 glyphs.
+        with open(PROJECT_ROOT / "e2e" / "test_playwright_e2e.py",
+                  encoding="utf-8") as f:
             content = f.read()
         self.assertIn("def api(", content)
         self.assertIn("def daemon_alive(", content)

@@ -96,12 +96,24 @@ class TestApiRequiredByPlayer(unittest.TestCase):
             parsed = json.loads(r.read())
         albums = parsed if isinstance(parsed, list) else parsed.get("items", [])
         self.assertTrue(albums, "no albums")
-        album_id = albums[0]["id"]
+        # Don't assume albums[0] has tracks — the list is created_at DESC,
+        # so the newest album is first and may legitimately be trackless
+        # (a freshly created draft, or one of the e2e probe albums).
+        # Find the first album that actually has tracks.
+        album_id = None
+        for a in albums:
+            with urllib.request.urlopen(
+                f"{BASE}/api/albums/{a['id']}/tracks", timeout=5
+            ) as r:
+                if json.loads(r.read()):
+                    album_id = a["id"]
+                    break
+        self.assertIsNotNone(album_id, "no seeded album has any tracks")
         with urllib.request.urlopen(
             f"{BASE}/api/albums/{album_id}/tracks", timeout=5
         ) as r:
             tracks = json.loads(r.read())
-        self.assertGreater(len(tracks), 0, "first album has no tracks")
+        self.assertGreater(len(tracks), 0, "chosen album has no tracks")
 
     def test_audio_endpoint_supports_range_request(self):
         """The player's seek slider will fire range requests — they must return 206."""
@@ -109,12 +121,17 @@ class TestApiRequiredByPlayer(unittest.TestCase):
         with urllib.request.urlopen(f"{BASE}/api/albums", timeout=5) as r:
             parsed = json.loads(r.read())
         albums = parsed if isinstance(parsed, list) else parsed.get("items", [])
-        album_id = albums[0]["id"]
-        with urllib.request.urlopen(
-            f"{BASE}/api/albums/{album_id}/tracks", timeout=5
-        ) as r:
-            tracks = json.loads(r.read())
-        track_id = tracks[0]["id"]
+        # Same as above: pick the first album that has at least one track.
+        track_id = None
+        for a in albums:
+            with urllib.request.urlopen(
+                f"{BASE}/api/albums/{a['id']}/tracks", timeout=5
+            ) as r:
+                tks = json.loads(r.read())
+            if tks:
+                track_id = tks[0]["id"]
+                break
+        self.assertIsNotNone(track_id, "no track found across any album")
         req = urllib.request.Request(
             f"{BASE}/api/audio/{track_id}",
             headers={"Range": "bytes=0-1"},

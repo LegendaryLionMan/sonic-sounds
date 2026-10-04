@@ -148,7 +148,7 @@
     const theme = byId[t];
 
     hostEl.innerHTML = `
-      <button class="theme-picker-btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+      <button class="theme-picker-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Theme: ${esc(theme.name)}">
         <span class="tp-dot" style="background:${theme.swatches[0]}"></span>
         <span class="tp-name">${esc(theme.name)}</span>
         <span style="opacity:.6">▾</span>

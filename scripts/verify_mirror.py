@@ -148,10 +148,30 @@ def main() -> int:
     if args.json:
         print(json.dumps(summary, indent=2))
     else:
+        # Windows consoles default to cp1252 and cannot encode the
+        # box-drawing / check glyphs used below -- a bare print() raises
+        # UnicodeEncodeError and the script exits 1 on a perfectly
+        # healthy mirror. Downgrade to ASCII when the output stream
+        # cannot represent the glyphs. (Found by tests/test_mirror.py on
+        # 2026-10-03.)
+        def _sym(glyph: str, fallback: str) -> str:
+            enc = getattr(sys.stdout, "encoding", None) or ""
+            try:
+                glyph.encode(enc or "ascii")
+                return glyph
+            except (UnicodeEncodeError, LookupError):
+                return fallback
+
+        ok_glyph = _sym("\u2705", "[ok]")
+        bad_glyph = _sym("\u274c", "[!!]")
         if summary["ok"]:
-            print(f"✅ Mirror OK ({summary['matched']}/{summary['files_checked']} files matched)")
+            print(f"{ok_glyph} Mirror OK "
+                  f"({summary['matched']}/{summary['files_checked']} files matched)")
         else:
-            print(f"❌ Mirror MISMATCH ({summary['matched']} matched, {len(summary['mismatches'])} mismatched, {len(summary['missing'])} missing, {len(summary['errors'])} errors)")
+            print(f"{bad_glyph} Mirror MISMATCH ({summary['matched']} matched, "
+                  f"{len(summary['mismatches'])} mismatched, "
+                  f"{len(summary['missing'])} missing, "
+                  f"{len(summary['errors'])} errors)")
         if summary.get("error"):
             print(f"  error: {summary['error']}")
         for m in summary["mismatches"][:10]:

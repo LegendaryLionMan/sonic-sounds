@@ -84,15 +84,20 @@ class TestLibraryUISmoke(unittest.TestCase):
             if self.mode == "visible":
                 browser = p.chromium.connect_over_cdp(f"http://127.0.0.1:{CDP_PORT}")
                 ctx = browser.contexts[0]
+                # Only reuse a page that is ALREADY on library.html.
+                # Reusing any page on the host (e.g. one left on
+                # albums.html by another test) means we never navigate and
+                # then wait forever for a .lib-player that this page
+                # does not have.
                 page = None
                 for pg in ctx.pages:
-                    if pg.url.startswith("http://127.0.0.1:8765"):
+                    if "/site/library.html" in (pg.url or ""):
                         page = pg
                         break
                 if page is None:
                     page = ctx.new_page()
-                    page.goto("http://127.0.0.1:8765/site/library.html",
-                              wait_until="networkidle", timeout=20000)
+                page.goto("http://127.0.0.1:8765/site/library.html",
+                          wait_until="networkidle", timeout=20000)
             else:
                 bin_path = _chromium_bin()
                 if not bin_path:

@@ -90,18 +90,34 @@ class TestThemesAssets(unittest.TestCase):
         """The switcher must persist user choice via localStorage."""
         content = THEMES_JS.read_text(encoding="utf-8")
         self.assertIn("localStorage", content)
-        # The storage key
-        self.assertIn("studio-theme", content)
+        # The storage key. Note: this used to be asserted as
+        # "studio-theme", a leftover from the pre-rename era. The
+        # shipped key is "sonic-sounds:theme:v1" (site/themes.js LS_KEY).
+        # Assert the real key plus the surrounding persistence calls.
+        self.assertIn("sonic-sounds:theme:v1", content)
+        self.assertIn("localStorage.setItem", content)
+        self.assertIn("localStorage.getItem", content)
 
     def test_theme_switcher_a11y(self):
-        """The dock + swatches must have role= radiogroup/radio + aria-label."""
+        """The picker must expose a listbox with options + selection state.
+
+        These assertions used to require
+        `setAttribute("role", "radiogroup")` / `"radio"`. The shipped
+        picker is a listbox: it emits static `role="listbox"` on the
+        menu and `role="option"` + `aria-selected` on each row, which
+        is equally valid ARIA for a single-select control. Assert the
+        pattern that actually ships.
+        """
         content = THEMES_JS.read_text(encoding="utf-8")
-        # Look for setAttribute("role", "radiogroup") / setAttribute("role", "radio")
-        # (the actual code uses setAttribute with these values).
-        self.assertIn('setAttribute("role", "radiogroup")', content)
-        self.assertIn('setAttribute("role", "radio")', content)
+        self.assertIn('role="listbox"', content)
+        self.assertIn('role="option"', content)
+        # aria-selected is the correct state attribute for role="option".
+        # (aria-checked belongs to radio/checkbox/menuitemcheckbox and is
+        # NOT valid here -- the old test asserted it, which was wrong.)
+        self.assertIn("aria-selected", content)
+        # and the accessible name + popup affordance on the trigger
+        self.assertIn("aria-haspopup", content)
         self.assertIn('aria-label', content)
-        self.assertIn('aria-checked', content)
 
 
 class TestThemesWiredIntoPages(unittest.TestCase):

@@ -161,6 +161,17 @@ $('#new-album-form').addEventListener('submit', async (e) => {
 });
 function closeModal() { modal.hidden=true; }
 
+/* Escape closes the modal (suite 26 / MODAL flow).
+   A dialog that cannot be dismissed with the keyboard traps focus for
+   anyone not using a mouse. Only bind this while the modal is open so
+   we don't shadow the header player's Esc handler (close-panels). */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !modal.hidden) {
+    e.stopPropagation();
+    closeModal();
+  }
+});
+
 /* ---- wire page event delegation ---- */
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('[data-action]');

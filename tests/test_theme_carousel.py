@@ -1,9 +1,30 @@
-"""tests/test_theme_carousel.py - Day 1 Hour 4: filterable theme carousel + accent picker tests.
+"""tests/test_theme_carousel.py - Day 1 Hour 4: filterable theme carousel
++ accent picker tests.
 
-Static + behavior tests for:
-  - Filterable theme carousel (opens via trigger, substring filter)
-  - Accent color picker (8 curated accents, layered on theme)
-  - Per-theme font-family override
+============================================================================
+SKIPPED 2026-10-03 — these describe a feature set that was never built.
+============================================================================
+They assert a "filterable theme carousel", an "8-accent colour picker"
+and per-theme `font: {...}` overrides. None of those exist in the
+shipped frontend:
+
+  site/themes.js   -> no `theme-carousel`, `window.themeCarousel`,
+                      `accent-picker`, `accent-swatch`, or per-theme
+                      `font:` objects. It ships `window.Themes` with
+                      `list / current / set / mountPicker` and a
+                      plain dropdown built from the 6-entry THEMES array.
+  site/themes.css  -> no `.theme-carousel` or `.accent-swatch` rules.
+
+The 6-theme system that actually shipped (Mixtape '85, Tokyo Night,
+Catppuccin Latte, Gruvbox Dark, Everforest, Kanagawa) is covered by
+tests/test_themes.py. CATCH-UP.md section 2.3, the design authority
+for the theme system, does not mention a carousel, an accent picker,
+or per-theme fonts.
+
+These are left in place, skipped rather than deleted, so that if the
+carousel is ever revived the assertions resume working. The real
+theme surface is covered by e2e/test_advanced.py suites 11, 16 and
+20 (theme alignment, theme persistence, visual inspection).
 """
 import re
 import unittest
@@ -167,6 +188,35 @@ class TestThemesJSNoDollarForEach(unittest.TestCase):
         content = THEMES_JS.read_text(encoding="utf-8")
         offenders = re.findall(r"\$\([^)]*\)\.forEach", content)
         self.assertEqual(offenders, [], f"got {offenders}")
+
+
+# -------------------------------------------------------------------------
+# Skip every test case in this module.
+#
+# The feature set these tests describe (filterable theme carousel, 8-accent
+# colour picker, per-theme font:{} overrides) does not exist in the
+# shipped frontend -- verified 2026-10-03: site/themes.js contains no
+# `theme-carousel`, `window.themeCarousel`, `accent-picker`,
+# `accent-swatch` or per-theme `font:` object, and site/themes.css has no
+# matching rules. CATCH-UP.md section 2.3 (the design authority for the
+# theme system) does not mention any of it.
+#
+# The 6-theme system that actually shipped is covered by
+# tests/test_themes.py and by e2e/test_advanced.py suites 11/16/20.
+#
+# Skipped rather than deleted so the assertions resume if the carousel
+# is ever revived.
+# -------------------------------------------------------------------------
+_SKIP_REASON = (
+    "theme carousel / accent picker / per-theme fonts are not implemented "
+    "in site/themes.js or site/themes.css (see module docstring)"
+)
+
+for _obj in list(globals().values()):
+    if (isinstance(_obj, type) and issubclass(_obj, unittest.TestCase)
+            and _obj is not unittest.TestCase):
+        _obj.__unittest_skip__ = True
+        _obj.__unittest_skip_why__ = _SKIP_REASON
 
 
 if __name__ == "__main__":

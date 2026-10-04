@@ -270,7 +270,18 @@ def register_routes(app: Quart) -> None:
             abort(403)
         if not target.is_file():
             abort(404)
-        return await send_file(str(target))
+        # Dev-friendly caching. `no-cache` does NOT mean "don't cache" --
+        # it means "revalidate before using". The browser still sends
+        # If-None-Match/If-Modified-Since and gets a cheap 304 when
+        # nothing changed, but an edited CSS/JS file is picked up on the
+        # next reload with no cache-busting query strings needed.
+        #
+        # This replaces the hand-bumped "?v=hpN" approach, which was
+        # easy to get wrong (a missed tag silently served stale assets)
+        # and broke tests/test_header_player.py's exact-string assertion.
+        resp = await send_file(str(target), conditional=True)
+        resp.headers["Cache-Control"] = "no-cache"
+        return resp
 
     @app.route("/assets/<path:filepath>", methods=["GET"])
     async def assets_static(filepath: str):
@@ -282,7 +293,9 @@ def register_routes(app: Quart) -> None:
             abort(403)
         if not target.is_file():
             abort(404)
-        return await send_file(str(target))
+        resp = await send_file(str(target), conditional=True)
+        resp.headers["Cache-Control"] = "no-cache"
+        return resp
 
     # === Day 11+: album cover art handler ===
     # The seed stores cover_path relative to ~/OneDrive/Hermes/albums/<album>/.
@@ -459,6 +472,40 @@ def register_routes(app: Quart) -> None:
                 break
         if target is None:
             abort(404)
+
+        # === Suffix byte-range: handle locally ============================
+        # RFC 9110 allows "Range: bytes=-N" meaning "the last N bytes".
+        # Werkzeug (datastructures/range.py) raises
+        # AssertionError("Bad range provided") for that form, which
+        # surfaces as HTTP 500 on an otherwise valid request. Found by
+        # Suite 24 (AUDIO: HTTP Range handling).
+        #
+        # We answer suffix ranges ourselves and return an explicit
+        # 206. Open-ended ("bytes=N-") and closed ("bytes=A-B") ranges
+        # are left to send_file, which handles them correctly.
+        import re as _re
+        _range_hdr = request.headers.get("Range") or ""
+        _m = _re.match(r"^\s*bytes\s*=\s*-(\d+)\s*$", _range_hdr, _re.IGNORECASE)
+        if _m:
+            from quart import Response as _Resp
+            want = int(_m.group(1))
+            size = target.stat().st_size
+            if want <= 0 or size == 0:
+                abort(416)
+            start = max(0, size - want)
+            with open(target, "rb") as fh:
+                fh.seek(start)
+                payload = fh.read()
+            return _Resp(
+                payload,
+                status=206,
+                mimetype="audio/mpeg",
+                headers={
+                    "Content-Range": f"bytes {start}-{size - 1}/{size}",
+                    "Accept-Ranges": "bytes",
+                    "Content-Length": str(len(payload)),
+                },
+            )
 
         return await send_file(str(target), conditional=True, mimetype="audio/mpeg")
 
